@@ -1,11 +1,11 @@
 # coding=utf-8
 import sys
 
-from GOAP2.AccountManager import AccountManager
-from GOAP2.Bootstrapper import Bootstrapper
-from GOAP2.DefaultManager import DefaultManager
-from GOAP2.GameManager import GameManager
-from GOAP2.StateManager import StateManager
+from Foundation.AccountManager import AccountManager
+from Foundation.Bootstrapper import Bootstrapper
+from Foundation.DefaultManager import DefaultManager
+from Foundation.GameManager import GameManager
+from Foundation.StateManager import StateManager
 from Notification import Notification
 
 sys.setrecursionlimit(500)
@@ -114,7 +114,7 @@ def onFinalize():
     SurveyLink = Menge.getGameParamBool("SurveyLink", False)
 
     def isSurvey():
-        """ copy from GOAP2.Utils (cause crash if we import this method) """
+        """ copy from Foundation.Utils (cause crash if we import this method) """
         if Menge.getGameParamUnicode("BuildModeCheckVersion") == u"2.0":
             return Menge.getGameParamUnicode("BuildMode") == u"Survey"
         else:

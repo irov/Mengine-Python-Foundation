@@ -1,6 +1,6 @@
 <Pak>
     <Scripts>
-        <Script Path = "Scripts/" Module = "GOAP2" Initializer = "onInitialize" Finalizer = "onFinalize"/>
+        <Script Path = "Scripts/" Module = "Foundation" Initializer = "onInitialize" Finalizer = "onFinalize"/>
         <Script Path = "Scripts/Lib/"/>
     </Scripts>
     

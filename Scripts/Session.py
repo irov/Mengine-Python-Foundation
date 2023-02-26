@@ -1,4 +1,4 @@
-from GOAP2.Initializer import Initializer
+from Foundation.Initializer import Initializer
 
 class Session(Initializer):
     def _onInitialize(self, accountID):

@@ -1,0 +1,1238 @@
+import copy
+
+from Foundation.Bootstrapper import checkPlatform
+from Foundation.DatabaseManager import DatabaseManager
+from Foundation.GroupManager import GroupManager
+from Notification import Notification
+
+class SceneManager(object):
+    s_scenesType = {}
+
+    s_blockGameScenes = 0
+    s_scenes = {}
+    s_gameScenes = []
+    s_extraScenes = []
+    s_specialScenes = {}
+    s_defaultDescription = {}
+
+    s_slots = {}
+
+    s_currentDescription = None
+
+    s_prevSceneName = None
+
+    s_currentSceneName = None
+    s_currentGameSceneName = None
+    s_currentScene = None
+    s_currentSceneEntering = False
+    s_currentSceneSlots = None
+    s_changeScene = False
+    s_changeSceneName = None
+    s_stageScenes = {}
+
+    s_transitionProgress = False
+
+    onTransitionBeginObserver = None
+    onTransitionEndObserver = None
+
+    module = None
+
+    @staticmethod
+    def getGameScenes():
+        return SceneManager.s_gameScenes
+        pass
+
+    @staticmethod
+    def onInitialize():
+        SceneManager.onTransitionBeginObserver = Notification.addObserver(Notificator.onTransitionBegin, SceneManager.__onTransitionBegin)
+        SceneManager.onTransitionEndObserver = Notification.addObserver(Notificator.onTransitionEnd, SceneManager.__onTransitionEnd)
+        SceneManager.onSessionSaveObserver = Notification.addObserver(Notificator.onSessionSave, SceneManager.__onSessionSave)
+        SceneManager.onSessionLoadObserver = Notification.addObserver(Notificator.onSessionLoad, SceneManager.__onSessionLoad)
+        SceneManager.onSessionRemoveCompleteObserver = Notification.addObserver(Notificator.onSessionRemoveComplete, SceneManager.__onSessionRemoveComplete)
+        pass
+
+    @staticmethod
+    def onFinalize():
+        SceneManager.s_scenes = {}
+        SceneManager.s_gameScenes = []
+        SceneManager.s_extraScenes = []
+        SceneManager.s_specialScenes = {}
+        SceneManager.s_defaultDescription = {}
+        SceneManager.s_slots = {}
+
+        SceneManager.s_currentDescription = None
+
+        SceneManager.s_changeSceneName = None
+        SceneManager.s_currentSceneName = None
+
+        SceneManager.s_currentGameSceneName = None
+
+        SceneManager.s_currentScene = None
+        SceneManager.s_currentSceneEntering = False
+
+        Notification.removeObserver(SceneManager.onTransitionBeginObserver)
+        Notification.removeObserver(SceneManager.onTransitionEndObserver)
+        Notification.removeObserver(SceneManager.onSessionSaveObserver)
+        Notification.removeObserver(SceneManager.onSessionLoadObserver)
+        Notification.removeObserver(SceneManager.onSessionRemoveCompleteObserver)
+        pass
+
+    @staticmethod
+    def getSceneType(name):
+        Type, module = SceneManager.s_scenesType.get(name)
+
+        return Type
+        pass
+
+    @staticmethod
+    def importScene(module, name):
+        Name = "%s" % name
+        FromName = module
+        ModuleName = "%s.%s.%s" % (FromName, Name, Name)
+        Module = __import__(ModuleName, fromlist=[FromName])
+        Type = getattr(Module, Name)
+
+        if name in SceneManager.s_scenesType:
+            Type2, module2 = SceneManager.s_scenesType[name]
+
+            Trace.log("Manager", 0, "SceneManager.importScene scene %s module %s already exist (module '%s')" % (name, module, module2))
+
+            return None
+            pass
+
+        SceneManager.s_scenesType[name] = (Type, module)
+
+        if Menge.addScenePrototypeFinder(name, SceneManager.getSceneType) is False:
+            Trace.log("Manager", 0, "SceneManager.importScene invalid scene %s module %s" % (name, module))
+
+            return None
+            pass
+
+        return Type
+        pass
+
+    @staticmethod
+    def importScenes(module, prototypies):
+        for prototype in prototypies:
+            SceneManager.importScene(module, prototype)
+            pass
+        pass
+
+    @staticmethod
+    def __onTransitionBegin(sceneFrom, sceneTo, ZoomGroupName):
+        SceneManager.s_transitionProgress = True
+
+        if SceneManager.isGameScene(sceneTo) is True:
+            SceneManager.setCurrentGameSceneName(sceneTo)
+            pass
+        elif SceneManager.isGameScene(sceneFrom) is True:
+            SceneManager.setCurrentGameSceneName(sceneFrom)
+            pass
+
+        return False
+        pass
+
+    @staticmethod
+    def __onTransitionEnd(sceneFrom, sceneTo, ZoomGroupName):
+        SceneManager.s_transitionProgress = False
+
+        if SceneManager.isGameScene(sceneTo) is True:
+            SceneManager.setCurrentGameSceneName(sceneTo)
+            pass
+
+        return False
+        pass
+
+    @staticmethod
+    def __onSessionSave(params):
+        params["SceneManager"] = {}
+
+        gameSceneName = SceneManager.getCurrentGameSceneName()
+        prevSceneName = SceneManager.getPrevSceneName()
+        currentSceneName = SceneManager.getCurrentSceneName()
+        if currentSceneName is None:
+            currentSceneName = gameSceneName
+
+        params["SceneManager"]["GameSceneName"] = gameSceneName
+        params["SceneManager"]["CurrentSceneName"] = currentSceneName
+        params["SceneManager"]["PreviousSceneName"] = prevSceneName
+        return False
+        pass
+
+    @staticmethod
+    def __onSessionLoad(params):
+        gameSceneName = params["SceneManager"]["GameSceneName"]
+        prevSceneName = params["SceneManager"].get("PreviousSceneName", None)
+        currentSceneName = params["SceneManager"]["CurrentSceneName"]
+
+        # with TaskManager.createTaskChain() as tc:
+        #     tc.addTask("TaskTransition", SceneName=gameSceneName)
+        SceneManager.setCurrentGameSceneName(gameSceneName)
+        SceneManager.s_prevSceneName = prevSceneName
+
+        return False
+        pass
+
+    @staticmethod
+    def __onSessionRemoveComplete():
+        SceneManager.s_currentGameSceneName = None
+
+        return False
+        pass
+
+    @staticmethod
+    def isTransitionProgress():
+        return SceneManager.s_transitionProgress
+        pass
+
+    @staticmethod
+    def isDebugMenuBlocked(sceneName=None):
+        # used for SystemDebugMenu when DebugMenu occurs errors
+
+        if sceneName is None:
+            sceneName = SceneManager.getCurrentSceneName()
+
+        block = ["Menu", "PreIntro", "SplashScreen", "Dialog"]
+
+        return sceneName in block
+
+    @staticmethod
+    def isCurrentSceneActive():
+        if SceneManager.isTransitionProgress() is True:
+            return False
+            pass
+
+        CurrentScene = SceneManager.getCurrentScene()
+
+        if CurrentScene is None:
+            return False
+            pass
+
+        if CurrentScene.node.isActivate() is False:
+            return False
+            pass
+
+        return True
+        pass
+
+    class SceneDescription(object):
+        def __init__(self, scene, slots):
+            self.scene = scene
+            self.slots = slots
+            self.mainGroupName = None
+            pass
+
+        def getName(self):
+            return self.scene
+            pass
+
+        def getSlotsGroup(self, slotsName):
+            if slotsName not in self.slots:
+                return None
+                pass
+
+            desc = self.slots[slotsName]
+
+            return desc["Group"]
+            pass
+
+        def hasSlotsGroup(self, slotsName):
+            return slotsName in self.slots.keys()
+            pass
+        pass
+
+    class SceneSlot(object):
+        __slots__ = "name", "type", "width", "height", "main"
+
+        def __init__(self, name, type, width, height, main):
+            self.name = name
+            self.type = type
+            self.width = width
+            self.height = height
+            self.main = main
+            pass
+        pass
+
+    @staticmethod
+    def loadParams(module, param):
+        SceneManager.module = module
+        if param == "DefaultSlots":
+            SceneManager.loadDefaultDescriptions(module, "DefaultSlots")
+            pass
+        elif param == "SceneSlots":
+            if SceneManager.loadSceneSlots(module, "SceneSlots") is False:
+                return False
+                pass
+            pass
+        elif param == "Scenes":
+            if SceneManager.loadScenes(module, "Scenes") is False:
+                return False
+                pass
+            pass
+        elif param == "Stages":
+            SceneManager.loadStageStartScenes(module, "Stages")
+            pass
+        else:
+            return False
+            pass
+
+        return True
+        pass
+
+    @staticmethod
+    def loadDefaultDescriptions(module, param):
+        records = DatabaseManager.getDatabaseRecords(module, param)
+
+        for record in records:
+            Platform = record.get("Platform")
+            if checkPlatform(Platform) is False:
+                continue
+
+            SceneName = record.get("SceneName")
+            DefaultSlot = record.get("DefaultSlot")
+
+            SceneManager.loadDefaultDescription(SceneName, module, DefaultSlot)
+            pass
+        pass
+
+    @staticmethod
+    def addStageStartScenes(StageName, SceneName):
+        SceneManager.s_stageScenes[StageName] = SceneName
+        pass
+
+    @staticmethod
+    def getStages():
+        return SceneManager.s_stageScenes.keys()
+        pass
+
+    @staticmethod
+    def getStageStartScene(stageName):
+        if stageName not in SceneManager.s_stageScenes.keys():
+            return None
+            pass
+
+        return SceneManager.s_stageScenes[stageName]
+        pass
+
+    @staticmethod
+    def loadDefaultDescription(name, module, param):
+        records = DatabaseManager.getDatabaseRecords(module, param)
+
+        desc = {}
+        for record in records:
+            Platform = record.get("Platform")
+            if checkPlatform(Platform) is False:
+                continue
+
+            Slot = record.get("Slot")
+            Type = record.get("Type")
+            Group = record.get("Group")
+            Enable = bool(record.get("Enable", 1))
+            ObjectsEnable = bool(record.get("ObjectsEnable", 1))
+
+            desc[Slot] = dict(Type=Type, Group=Group, Enable=Enable, ObjectsEnable=ObjectsEnable)
+            pass
+
+        SceneManager.s_defaultDescription[name] = desc
+        pass
+
+    @staticmethod
+    def changeDefaultSlotGroup(name, slotName, newGroup):
+        desc = SceneManager.s_defaultDescription[name]
+        slot = desc[slotName]
+        slot["Group"] = newGroup
+        pass
+
+    @staticmethod
+    def changeDefaultSlotGroupEnable(name, slotName, value):
+        if name not in SceneManager.s_defaultDescription:
+            return
+            pass
+        desc = SceneManager.s_defaultDescription[name]
+        if slotName not in desc:
+            return
+            pass
+        slot = desc[slotName]
+        slot["Enable"] = value
+        pass
+
+    @staticmethod
+    def loadSceneSlot(name, module, param):
+        records = DatabaseManager.getDatabaseRecords(module, param)
+
+        if records is None:
+            return False
+            pass
+
+        slots = []
+        for record in records:
+            Name = record.get("Name")
+            Type = record.get("Type")
+            Width = record.get("Width")
+            Height = record.get("Height")
+            Main = bool(record.get("Main"))
+
+            if Width is None or Height is None:
+                Trace.log("SceneManager", 0, "SceneManager.loadSceneSlot: scene %s invalid size %s:%s" % (Name, Width, Height))
+                return False
+                pass
+
+            slot = SceneManager.SceneSlot(Name, Type, Width, Height, Main)
+            slots.append(slot)
+            pass
+
+        SceneManager.s_slots[name] = slots
+
+        return True
+        pass
+
+    @staticmethod
+    def loadSceneSlots(module, param):
+        records = DatabaseManager.getDatabaseRecords(module, param)
+
+        if records is None:
+            return False
+            pass
+
+        for record in records:
+            Platform = record.get("Platform")
+            if checkPlatform(Platform) is False:
+                continue
+
+            SceneName = record.get("SceneName")
+            SceneSlots = record.get("SceneSlots")
+
+            if SceneManager.loadSceneSlot(SceneName, module, SceneSlots) is False:
+                return False
+                pass
+            pass
+
+        return True
+        pass
+
+    @staticmethod
+    def loadScenes(module, param):
+        records = DatabaseManager.getDatabaseRecords(module, param)
+        for record in records:
+            Platform = record.get("Platform")
+            if checkPlatform(Platform) is False:
+                continue
+
+            SceneName = record.get("SceneName")
+            DefaultScene = record.get("DefaultScene")
+            BaseScene = record.get("BaseScene")
+            SlotName = record.get("SlotName")
+            SceneType = record.get("SceneType")
+            GroupName = record.get("GroupName")
+            GameScene = bool(record.get("GameScene", 0))
+            ExtraScene = bool(record.get("ExtraScene", 0))
+
+            if SceneManager.addScene(SceneName, DefaultScene, BaseScene, SlotName, SceneType, GroupName, GameScene, ExtraScene) is False:
+                return False
+                pass
+            pass
+
+        return True
+        pass
+
+    @staticmethod
+    def getScenes():
+        """ Return all scenes from Params/Scenes.xlsx """
+        return SceneManager.s_scenes.keys()
+
+    @staticmethod
+    def addScene(SceneName, DefaultScene, BaseScene, SlotName, SceneType, GroupName, GameScene, ExtraScene):
+        if SceneName not in SceneManager.s_scenes:
+            copyDescription = {}
+
+            if DefaultScene is not None:
+                if DefaultScene not in SceneManager.s_defaultDescription:
+                    Trace.log("SceneManager", 0, "SceneManager.loadScenes: not found default scene %s for scene %s" % (DefaultScene, SceneName))
+
+                    return False
+                    pass
+
+                description = SceneManager.s_defaultDescription[DefaultScene]
+
+                copyDescription = copy.deepcopy(description)
+                pass
+
+            SceneManager.s_scenes[SceneName] = SceneManager.SceneDescription(BaseScene, copyDescription)
+            pass
+
+        descriptions = SceneManager.s_scenes[SceneName]
+
+        slots = descriptions.slots
+
+        if SlotName not in slots:
+            slots[SlotName] = {}
+            pass
+
+        slot = slots[SlotName]
+
+        if BaseScene not in SceneManager.s_slots:
+            Trace.log("SceneManager", 0, "SceneManager.loadScenes: not found base scene %s for scene %s" % (BaseScene, SceneName))
+
+            return False
+            pass
+
+        scene_slots = SceneManager.s_slots[BaseScene]
+
+        for descriptionSlot in scene_slots:
+            if descriptionSlot.name != SlotName:
+                continue
+                pass
+
+            if descriptionSlot.main is False:
+                continue
+                pass
+
+            descriptions.mainGroupName = GroupName
+            pass
+
+        slot["Type"] = SceneType
+
+        if SceneType == "Scene":
+            slot["Group"] = GroupName
+            if GameScene is True:
+                SceneManager.s_gameScenes.append(SceneName)
+                pass
+
+            if ExtraScene is True:
+                SceneManager.s_extraScenes.append(SceneName)
+                pass
+        elif SceneType == "Zoom":
+            if "Groups" not in slot:
+                slot["Groups"] = [GroupName]
+            else:
+                slot["Groups"].append(GroupName)
+                pass
+        else:
+            Trace.log("SceneManager", 0, "SceneManager.loadParam: param '%s' scene '%s' slot '%s' invalid type '%s'" % (param, SceneName, SlotName, SceneType))
+            pass
+
+        return True
+        pass
+
+    @staticmethod
+    def blockGameScenes(value):
+        if value is True:
+            SceneManager.s_blockGameScenes += 1
+            pass
+        else:
+            SceneManager.s_blockGameScenes -= 1
+            pass
+        pass
+
+    @staticmethod
+    def isBlockGameScenes():
+        if SceneManager.s_blockGameScenes == 0:
+            return False
+            pass
+        return True
+        pass
+
+    @staticmethod
+    def isCurrentGameScene():
+        SceneName = SceneManager.getCurrentSceneName()
+        if SceneName not in SceneManager.s_gameScenes:
+            return False
+            pass
+
+        return True
+        pass
+
+    @staticmethod
+    def isGameScene(sceneName):
+        if sceneName not in SceneManager.s_gameScenes:
+            return False
+            pass
+
+        return True
+        pass
+
+    @staticmethod
+    def getSceneDescription(name):
+        if name not in SceneManager.s_scenes:
+            Trace.log("SceneManager", 0, "SceneManager.getSceneDescription: description for scene '%s' not found (Maybe add to Scenes.xlsx)" % name)
+            return None
+            pass
+
+        description = SceneManager.s_scenes[name]
+
+        return description
+        pass
+
+    @staticmethod
+    def getSceneGroups(name):
+        return SceneManager.__getSceneGroups(name)
+        pass
+
+    @staticmethod
+    def __getSceneGroups(name):
+        if SceneManager.hasScene(name) is False:
+            return None
+            pass
+
+        groups = []
+
+        sceneDescriptions = SceneManager.getSceneDescription(name)
+
+        for slot, description in sceneDescriptions.slots.iteritems():
+            layerType = description["Type"]
+
+            if layerType == "Scene":
+                groupName = description["Group"]
+                groups.append(groupName)
+                pass
+            # elif layerType == "Zoom":
+            #     groupNames = description.get("Groups")
+            #
+            #     groups.extend(groupNames)
+            #     pass
+            pass
+
+        return groups
+        pass
+
+    @staticmethod
+    def __getDiffSceneGroups(oldSceneName, newSceneName):
+        old_groups = SceneManager.__getSceneGroups(oldSceneName)
+        new_groups = SceneManager.__getSceneGroups(newSceneName)
+
+        if old_groups is None:
+            return []
+            pass
+
+        if new_groups is None:
+            return []
+            pass
+
+        diff_groups = []
+
+        for groupName in old_groups:
+            if groupName in new_groups:
+                diff_groups.append(groupName)
+                pass
+            pass
+
+        return diff_groups
+        pass
+
+    @staticmethod
+    def __cacheResourcesGroups(oldSceneName, newSceneName):
+        cache_groups = SceneManager.__getDiffSceneGroups(oldSceneName, newSceneName)
+
+        cache_groups_resource = []
+
+        for groupName in cache_groups:
+            Group = GroupManager.getGroup(groupName)
+            if isinstance(GroupManager.getGroup(groupName), GroupManager.EmptyGroup):
+                continue
+            Menge.cacheResources(Group.name)
+
+            cache_groups_resource.append(Group)
+            pass
+
+        return cache_groups_resource
+        pass
+
+    @staticmethod
+    def __cacheActiveGroups(oldSceneName, newSceneName):
+        cache_groups = SceneManager.__getDiffSceneGroups(oldSceneName, newSceneName)
+
+        cache_groups_active = []
+
+        for groupName in cache_groups:
+            Group = GroupManager.getGroup(groupName)
+
+            if isinstance(Group, GroupManager.EmptyGroup):
+                continue
+
+            if Group.isActive() is False:
+                continue
+                pass
+
+            Group.onActivate()
+
+            cache_groups_active.append(Group)
+            pass
+
+        return cache_groups_active
+        pass
+
+    @staticmethod
+    def isChangeScene():
+        return SceneManager.s_changeScene
+        pass
+
+    @staticmethod
+    def disableCurrentScene():
+        if SceneManager.s_currentScene is None:
+            Trace.log("SceneManager", 0, "SceneManager.deactivateScene current scene is None")
+
+            return False
+            pass
+
+        SceneManager.s_currentScene.node.disable()
+        pass
+
+    @staticmethod
+    def restartScene(cb):
+        if SceneManager.s_currentSceneName is None:
+            Trace.log("SceneManager", 0, "SceneManager.restartScene: Scene Name is None")
+            return
+            pass
+
+        SceneManager.changeScene(SceneManager.s_currentSceneName, cb, False)
+        pass
+
+    @staticmethod
+    def changeScene(sceneName, cb, check_current=True, immediately=False):
+        if sceneName is None:
+            Trace.log("SceneManager", 0, "SceneManager.changeScene: Scene Name is None")
+            return
+            pass
+
+        if SceneManager.s_changeScene is True:
+            Trace.log("SceneManager", 0, "SceneManager.changeScene: Already Change Scene To %s" % sceneName)
+            return
+            pass
+
+        if SceneManager.hasScene(sceneName) is False:
+            Trace.log("SceneManager", 0, "SceneManager.changeScene: Scene '%s' not found" % sceneName)
+            return
+            pass
+
+        sceneDescription = SceneManager.s_scenes[sceneName]
+
+        if check_current is True and sceneDescription is SceneManager.s_currentDescription:
+            if cb is not None:
+                cb(SceneManager.s_currentScene)
+                pass
+            return
+            pass
+
+        Notification.notify(Notificator.onSceneChange, SceneManager.s_currentSceneName)
+
+        SceneManager.s_prevSceneName = SceneManager.s_currentSceneName
+
+        cache_resources_groups = SceneManager.__cacheResourcesGroups(SceneManager.s_currentSceneName, sceneName)
+        cache_active_groups = SceneManager.__cacheActiveGroups(SceneManager.s_currentSceneName, sceneName)
+
+        SceneManager.s_currentScene = None
+        SceneManager.s_currentSceneName = None
+        SceneManager.s_currentDescription = None
+        SceneManager.s_currentSceneEntering = False
+
+        SceneManager.s_changeScene = True
+        SceneManager.s_changeSceneName = sceneName
+
+        if _DEVELOPMENT is True:
+            Trace.msg("<SceneManager> change scene to '%s'" % sceneName)
+
+        if Menge.createCurrentScene("Main", sceneName, immediately, True, SceneManager._onChangeScene, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb) is False:
+            for Group in cache_resources_groups:
+                Menge.uncacheResources(Group.name)
+                pass
+
+            for Group in cache_active_groups:
+                Group.onDeactivate()
+                pass
+            pass
+        pass
+
+    @staticmethod
+    def _onChangeScene(scene, isActive, isError, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb):
+        if isError is True:
+            for Group in cache_resources_groups:
+                Menge.uncacheResources(Group.name)
+                pass
+
+            for Group in cache_active_groups:
+                Group.onDeactivate()
+                pass
+
+            SceneManager.s_changeSceneName = None
+            SceneManager.s_changeScene = False
+            return
+            pass
+
+        if scene is None:
+            if sceneName in SceneManager.s_gameScenes and sceneName not in SceneManager.s_extraScenes:
+                SceneManager.setCurrentGameSceneName(sceneName)
+                pass
+
+            Notification.notify(Notificator.onSceneRemoved, SceneManager.s_prevSceneName)
+            return
+            pass
+
+        if isActive is False:
+            SceneManager.s_currentScene = scene
+            SceneManager.s_currentSceneName = sceneName
+
+            SceneManager.s_currentDescription = sceneDescription
+            SceneManager.s_currentSceneEntering = False
+
+            scene.setDescription(sceneName, sceneDescription)
+
+            sceneDescription = SceneManager.s_scenes[sceneName]
+            SceneManager.s_currentSceneSlots = SceneManager.s_slots[sceneDescription.scene]
+
+            Notification.notify(Notificator.onScenePreparation, sceneName)
+            return
+            pass
+
+        for Group in cache_resources_groups:
+            Menge.uncacheResources(Group.name)
+            pass
+
+        for Group in cache_active_groups:
+            Group.onDeactivate()
+            pass
+
+        SceneManager.s_changeSceneName = None
+        SceneManager.s_changeScene = False
+        # SceneManager.s_prevSceneName = None
+
+        Notification.notify(Notificator.onSceneInit, sceneName)
+
+        if cb is not None:
+            cb(scene)
+            pass
+        pass
+
+    @staticmethod
+    def removeCurrentScene(cb):
+        SceneManager.s_currentScene = None
+        SceneManager.s_currentSceneName = None
+        SceneManager.s_currentDescription = None
+        SceneManager.s_currentSceneEntering = False
+        SceneManager.s_changeSceneName = None
+        SceneManager.s_changeScene = False
+
+        Menge.removeCurrentScene(False, cb)
+        pass
+
+    @staticmethod
+    def isChangeScene():
+        return SceneManager.s_changeScene
+        pass
+
+    @staticmethod
+    def setCurrentSceneEntering(Value):
+        SceneManager.s_currentSceneEntering = Value
+
+        if Value is True:
+            Notification.notify(Notificator.onSceneEnter, SceneManager.s_currentSceneName)
+        else:
+            Notification.notify(Notificator.onSceneLeave, SceneManager.s_currentSceneName)
+            pass
+        pass
+
+    @staticmethod
+    def isCurrentScene(sceneName):
+        if sceneName != SceneManager.s_currentSceneName:
+            return False
+            pass
+
+        return True
+        pass
+
+    @staticmethod
+    def isSceneInit(sceneName):
+        if SceneManager.s_currentSceneName != sceneName:
+            return False
+            pass
+
+        if SceneManager.s_changeSceneName is not None:
+            return False
+            pass
+
+        return True
+        pass
+
+    @staticmethod
+    def isSceneEnter(sceneName):
+        if SceneManager.s_currentSceneName != sceneName:
+            return False
+            pass
+
+        if SceneManager.s_currentSceneEntering is False:
+            return False
+            pass
+
+        return True
+        pass
+
+    @staticmethod
+    def isCurrentSceneEntering():
+        return SceneManager.s_currentSceneEntering
+        pass
+
+    @staticmethod
+    def getCurrentDescription():
+        return SceneManager.s_currentDescription
+        pass
+
+    @staticmethod
+    def getSceneSlots(SceneName):
+        if SceneName not in SceneManager.s_slots:
+            Trace.log("SceneManager", 0, "SceneManager.getSceneSlots: not found slots for scene %s " % SceneName)
+            return None
+            pass
+
+        slots = SceneManager.s_slots[SceneName]
+
+        return slots
+        pass
+
+    @staticmethod
+    def getCurrentScene():
+        return SceneManager.s_currentScene
+        pass
+
+    @staticmethod
+    def getCurrentSceneName():
+        return SceneManager.s_currentSceneName
+        pass
+
+    @staticmethod
+    def setCurrentGameSceneName(sceneName):
+        Notification.notify(Notificator.onGameSceneChange, SceneManager.s_currentGameSceneName, sceneName)
+        SceneManager.s_currentGameSceneName = sceneName
+        pass
+
+    @staticmethod
+    def getCurrentGameSceneName():
+        return SceneManager.s_currentGameSceneName
+        pass
+
+    @staticmethod
+    def getChangeSceneName():
+        return SceneManager.s_changeSceneName
+        pass
+
+    @staticmethod
+    def getPrevSceneName():
+        return SceneManager.s_prevSceneName
+        pass
+
+    @staticmethod
+    def getSceneLayerGroup(SceneName, LayerName):
+        if SceneName not in SceneManager.s_scenes:
+            Trace.log("SceneManager", 0, "SceneManager.getSceneLayerGroup: not found scene %s %s" % (SceneName, LayerName))
+            return None
+            pass
+
+        currentDescription = SceneManager.s_scenes[SceneName]
+
+        if LayerName not in currentDescription.slots:
+            Trace.log("SceneManager", 0, "SceneManager.getSceneLayerGroup: scene %s not found slot %s" % (SceneName, LayerName))
+            return None
+            pass
+
+        slot = currentDescription.slots[LayerName]
+
+        if slot["Type"] != "Scene":
+            Trace.log("SceneManager", 0, "SceneManager.getSceneLayerGroup: scene %s:%s is not type 'Scene'" % (SceneName, LayerName))
+            return None
+            pass
+
+        groupName = slot["Group"]
+
+        group = GroupManager.getGroup(groupName)
+
+        return group
+        pass
+
+    @staticmethod
+    def enableSceneLayerGroup(SceneName, LayerName):
+        layer_group = SceneManager.getSceneLayerGroup(SceneName, LayerName)
+
+        if layer_group is None:
+            Trace.log("Manager", 0, "Enable Scene %s Layer %s Group is None" % (SceneName, LayerName))
+            return
+
+        enable = layer_group.getEnable()
+
+        if enable is True:
+            return
+
+        layer_group.onEnable()
+        Notification.notify(Notificator.onEnableSceneLayerGroup, SceneName, LayerName)
+        pass
+
+    @staticmethod
+    def disableSceneLayerGroup(SceneName, LayerName):
+        layer_group = SceneManager.getSceneLayerGroup(SceneName, LayerName)
+
+        if layer_group is None:
+            Trace.log("Manager", 0, "Disable Scene %s Layer %s Group is None" % (SceneName, LayerName))
+            return
+
+        enable = layer_group.getEnable()
+
+        if enable is False:
+            return
+
+        layer_group.onDisable()
+        Notification.notify(Notificator.onDisableSceneLayerGroup, SceneName, LayerName)
+
+        pass
+
+    @staticmethod
+    def getSceneLayerGroups(SceneName):
+        if SceneName not in SceneManager.s_scenes:
+            Trace.log("SceneManager", 0, "SceneManager.getSceneLayerGroups: not found scene '%s'" % SceneName)
+            return None
+            pass
+
+        currentDescription = SceneManager.s_scenes[SceneName]
+
+        groups = []
+        for slot in currentDescription.slots.itervalues():
+            if slot["Type"] != "Scene":
+                continue
+                pass
+
+            groupName = slot["Group"]
+
+            group = GroupManager.getGroup(groupName)
+
+            groups.append(group)
+            pass
+
+        return groups
+        pass
+
+    @staticmethod
+    def hasLayerScene(name):
+        scene = SceneManager.s_currentScene
+        if scene is None:
+            return False
+            pass
+
+        result = scene.hasSlot(name)
+
+        return result
+        pass
+
+    @staticmethod
+    def getLayerScene(name):
+        scene = SceneManager.s_currentScene
+
+        slot = scene.getSlot(name)
+
+        return slot
+        pass
+
+    @staticmethod
+    def hasSceneZoom(sceneName, zoomName):
+        if sceneName not in SceneManager.s_scenes:
+            return False
+            pass
+
+        sceneDescription = SceneManager.s_scenes[sceneName]
+
+        if "Zoom" not in sceneDescription.slots:
+            return False
+            pass
+
+        zoomDesc = sceneDescription.slots["Zoom"]
+
+        if zoomDesc["Type"] != "Zoom":
+            return False
+            pass
+
+        zooms = zoomDesc["Groups"]
+
+        if zoomName not in zooms:
+            return False
+            pass
+
+        return True
+        pass
+
+    @staticmethod
+    def getSceneMainGroupName(sceneName):
+        if sceneName is None:
+            return None
+
+        if sceneName not in SceneManager.s_scenes:
+            Trace.log("SceneManager", 0, "SceneManager.getSceneZoom: scene %s not found" % sceneName)
+            return None
+            pass
+
+        sceneDescription = SceneManager.s_scenes[sceneName]
+
+        return sceneDescription.mainGroupName
+        pass
+
+    @staticmethod
+    def getSceneZoomGroup(sceneName, zoomName):
+        if sceneName not in SceneManager.s_scenes:
+            Trace.log("SceneManager", 0, "SceneManager.getSceneZoom: scene %s not found (%s)" % (sceneName, zoomName))
+            return None
+            pass
+
+        scene = SceneManager.s_scenes[sceneName]
+
+        if "Zoom" not in scene.slots:
+            Trace.log("SceneManager", 0, "SceneManager.getSceneZoomGroup: scene %s zoom empty (%s)" % (sceneName, zoomName))
+            return None
+            pass
+
+        zoomDesc = scene.slots["Zoom"]
+
+        if zoomDesc["Type"] != "Zoom":
+            Trace.log("SceneManager", 0, "SceneManager.getSceneZoomGroup: scene %s zoom invalid type (%s)" % (sceneName, zoomName))
+            return None
+            pass
+
+        zooms = zoomDesc["Groups"]
+
+        if zoomName not in zooms:
+            Trace.log("SceneManager", 0, "SceneManager.getSceneZoomGroup: scene %s not have zoom %s" % (sceneName, zoomName))
+            return None
+            pass
+
+        group = GroupManager.getGroup(zoomName)
+
+        return group
+        pass
+
+    @staticmethod
+    def hasScene(sceneName):
+        return sceneName in SceneManager.s_scenes
+        pass
+
+    @staticmethod
+    def hasSceneZooms(sceneName):
+        if sceneName not in SceneManager.s_scenes:
+            return False
+            pass
+
+        sceneDescription = SceneManager.s_scenes[sceneName]
+
+        if "Zoom" not in sceneDescription.slots:
+            return False
+            pass
+
+        zoomDesc = sceneDescription.slots["Zoom"]
+
+        if zoomDesc["Type"] != "Zoom":
+            return False
+            pass
+
+        zooms = zoomDesc["Groups"]
+
+        return len(zooms) != 0
+        pass
+
+    @staticmethod
+    def getSceneZooms(sceneName):
+        if sceneName not in SceneManager.s_scenes:
+            Trace.log("SceneManager", 0, "SceneManager.getSceneZooms: scene %s not found" % sceneName)
+            return False
+            pass
+
+        sceneDescription = SceneManager.s_scenes[sceneName]
+
+        if "Zoom" not in sceneDescription.slots:
+            return None
+            pass
+
+        zoomDesc = sceneDescription.slots["Zoom"]
+
+        if zoomDesc["Type"] != "Zoom":
+            return None
+            pass
+
+        zooms = zoomDesc["Groups"]
+
+        if len(zooms) == 0:
+            return None
+            pass
+
+        return zooms
+        pass
+
+    @staticmethod
+    def findZoomMainScene(zoomGroupName):
+        """
+        Warning! This is slow algorithm, do not use it often
+        """
+        sceneNames = SceneManager.getScenes()
+        for sceneName in sceneNames:
+            sceneZooms = SceneManager.getSceneZooms(sceneName)
+            if sceneZooms and zoomGroupName in sceneZooms:
+                return sceneName
+
+    # ====================================for special scenes=================================
+    @staticmethod
+    def loadSpecialScenes(module, name):
+        records = DatabaseManager.getDatabaseRecords(module, name)
+
+        for value in records:
+            SpecialSceneName = value.get("SpecialSceneName")
+            SceneName = value.get("SceneName")
+
+            SceneManager.s_specialScenes[SpecialSceneName] = SceneName
+            pass
+        pass
+
+    @staticmethod
+    def isSpecialScene(sceneName):
+        if sceneName in SceneManager.s_specialScenes:
+            return True
+            pass
+        return False
+        pass
+
+    @staticmethod
+    def getSpecialSceneName(sceneNameFrom):
+        if SceneManager.hasSpecialScene(sceneNameFrom) is False:
+            Trace.log("SceneManager", 0, "SceneManager.getSpecialSceneName invalid param sceneNameFrom %s, it don't have special scene" % sceneNameFrom)
+            return None
+            pass
+        for special, scene in SceneManager.s_specialScenes.iteritems():
+            if scene == sceneNameFrom:
+                return special
+                pass
+            continue
+            pass
+        pass
+
+    @staticmethod
+    def hasSpecialScene(sceneName):
+        for special, scene in SceneManager.s_specialScenes.iteritems():
+            if scene == sceneName:
+                return True
+                pass
+            continue
+            pass
+        return False
+        pass
+
+    @staticmethod
+    def getSpecialMainSceneName(sceneName):
+        if SceneManager.isSpecialScene(sceneName) is False:
+            Trace.log("SceneManager", 0, "SceneManager.getSpecialMainSceneName  scene %s is not special and don't have related scene" % sceneName)
+            return None
+            pass
+        record = SceneManager.s_specialScenes[sceneName]
+        return record
+        pass
+
+    @staticmethod
+    def getSceneBase(sceneName):
+        records = DatabaseManager.getDatabaseRecords(SceneManager.module, "Scenes")
+        BaseScene = None
+        for record in records:
+            if record.get("SceneName") == sceneName:
+                BaseScene = record.get("BaseScene")
+                break
+                pass
+            pass
+        return BaseScene

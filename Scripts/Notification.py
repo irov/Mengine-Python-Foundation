@@ -1,4 +1,4 @@
-from GOAP2.Identity import Identity
+from Foundation.Identity import Identity
 
 class Notification(object):
     notifies = {}

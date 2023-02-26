@@ -1,6 +1,6 @@
-from GOAP2.DefaultManager import DefaultManager
-from GOAP2.DemonManager import DemonManager
-from GOAP2.TaskManager import TaskManager
+from Foundation.DefaultManager import DefaultManager
+from Foundation.DemonManager import DemonManager
+from Foundation.TaskManager import TaskManager
 from Session import Session
 
 class WalktrhoughSession(Session):

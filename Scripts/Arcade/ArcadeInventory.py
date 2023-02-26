@@ -1,6 +1,6 @@
-from GOAP2.Initializer import Initializer
-from GOAP2.Task.TaskGenerator import TaskSource
-from GOAP2.TaskManager import TaskManager
+from Foundation.Initializer import Initializer
+from Foundation.Task.TaskGenerator import TaskSource
+from Foundation.TaskManager import TaskManager
 
 class ArcadeInventorySlot(Initializer):
     def __init__(self):
