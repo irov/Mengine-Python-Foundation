@@ -1,4 +1,4 @@
-from GOAP2 import TaskManager
+from Foundation.TaskManager import TaskManager
 from Foundation.Entity.BaseEntity import BaseEntity
 from Foundation.ObjectManager import ObjectManager
 from Foundation.Vector2D import Vector2D

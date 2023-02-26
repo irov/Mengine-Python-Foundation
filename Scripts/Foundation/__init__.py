@@ -37,9 +37,9 @@ def onInitialize():
 
     from LayerManager import LayerManager
 
-    LayerManager.importLayerType("GOAP2.Layer", "Layer2D")
-    LayerManager.importLayerType("GOAP2.Layer", "Layer2DParallax")
-    LayerManager.importLayerType("GOAP2.Layer", "Layer2DIsometric")
+    LayerManager.importLayerType("Foundation.Layer", "Layer2D")
+    LayerManager.importLayerType("Foundation.Layer", "Layer2DParallax")
+    LayerManager.importLayerType("Foundation.Layer", "Layer2DIsometric")
 
     from Foundation.Task.Iterator import Iterator
     Menge.addGlobalModule("Iterator", Iterator)
@@ -60,13 +60,13 @@ def onInitialize():
 
     Arrows = ["Default"]
 
-    ArrowManager.importArrows("GOAP2.Arrows", Arrows)
+    ArrowManager.importArrows("Foundation.Arrows", Arrows)
 
     from Foundation.SceneManager import SceneManager
 
     Scenes = ["Main"]
 
-    SceneManager.importScenes("GOAP2.Scenes", Scenes)
+    SceneManager.importScenes("Foundation.Scenes", Scenes)
 
     tasks = ["TaskChain", "TaskQuitApplication", "TaskFork", "TaskDummy", "TaskNoSkip", "TaskSkip", "TaskDeadLock", "TaskChainCancel", "TaskChainRun", "TaskAlias", "TaskIf", "TaskGuard", "TaskScope", "TaskScopeListener", "TaskDebugBreak"
 
@@ -172,7 +172,7 @@ def onInitialize():
         , "TaskMovie2LayerAlphaTo"]
 
     from TaskManager import TaskManager
-    TaskManager.importTasks("GOAP2.Task", tasks)
+    TaskManager.importTasks("Foundation.Task", tasks)
 
     aliases = ["AliasTextPlay", "AliasTextPlay2"
 
@@ -185,12 +185,12 @@ def onInitialize():
         , "AliasShowAdvert"]
 
     from TaskManager import TaskManager
-    TaskManager.importTasks("GOAP2.Alias", aliases)
+    TaskManager.importTasks("Foundation.Alias", aliases)
 
     policies = ["PolicyPurchaseDummy", "PolicyPurchaseGoogleBilling", "PolicyPurchaseAppleInApp", "PolicyExternalAchieveProgressAppleGameCenter", "PolicyExternalAchieveProgressGooglePlay"]
 
     from TaskManager import TaskManager
-    TaskManager.importTasks("GOAP2.Policy", policies)
+    TaskManager.importTasks("Foundation.Policy", policies)
 
     traces = ["TaskInventoryAddCountItem", "TaskInventoryRemoveItem", "TaskNodeTranslateTo", "AliasObjectAlphaTo", "AliasMovie2AlphaTo", "TaskChainCancel", "TaskManager", "TaskChain", "TaskListener", "AliasNodeTranslateTo", "TaskInventoryFindItem", "TaskInventoryFindCountItem", "InventoryCountItem", "ObjectInventory", "InventoryItem", "Inventory", "Actor", "BaseEntity", "BaseObject", "Object", "Manager", "Movie", "Movie2", "HOG", "MixinObjectTemplate", "Utils", "Task", "Policy", "Group", "SceneManager",
         "Notification", "Main", "Transition", "Item", "HOGInventory", "ArrowManager", "ObjectManager", "GroupManager", "TaskSceneLayerGroupEnable", "Button", "HintAction", "AliasTransition", "System", "Entity", "Command", "MovieButton", "Movie2Button", "Provider"]
@@ -335,64 +335,64 @@ def onInitialize():
     if Menge.getGameParamBool("NotUseDefaultEntitiesList", False) is True:
         Types = []
         from Foundation.DatabaseManager import DatabaseManager
-        records = DatabaseManager.getDatabaseRecordsFilterBy("Database", "Entities", Module="GOAP2")
+        records = DatabaseManager.getDatabaseRecordsFilterBy("Database", "Entities", Module="Foundation")
 
         for record in records:
             Types.append(record.get("Type"))
 
-    ObjectManager.importObjects("GOAP2.Object", Types)
-    EntityManager.importEntities("GOAP2.Entities", Types)
+    ObjectManager.importObjects("Foundation.Object", Types)
+    EntityManager.importEntities("Foundation.Entities", Types)
 
-    EntityManager.importEntity("GOAP2.Entities", "Landscape2D")
-    ObjectManager.importObject("GOAP2.Entities.Landscape2D", "Landscape2D")
+    EntityManager.importEntity("Foundation.Entities", "Landscape2D")
+    ObjectManager.importObject("Foundation.Entities.Landscape2D", "Landscape2D")
 
-    EntityManager.importEntity("GOAP2.Entities", "MovieButton")
-    ObjectManager.importObject("GOAP2.Entities.MovieButton", "MovieButton")
+    EntityManager.importEntity("Foundation.Entities", "MovieButton")
+    ObjectManager.importObject("Foundation.Entities.MovieButton", "MovieButton")
 
-    EntityManager.importEntity("GOAP2.Entities", "Movie2Button")
-    ObjectManager.importObject("GOAP2.Entities.Movie2Button", "Movie2Button")
+    EntityManager.importEntity("Foundation.Entities", "Movie2Button")
+    ObjectManager.importObject("Foundation.Entities.Movie2Button", "Movie2Button")
 
-    EntityManager.importEntity("GOAP2.Entities", "ProgressBar")
-    ObjectManager.importObject("GOAP2.Entities.ProgressBar", "ProgressBar")
+    EntityManager.importEntity("Foundation.Entities", "ProgressBar")
+    ObjectManager.importObject("Foundation.Entities.ProgressBar", "ProgressBar")
 
-    EntityManager.importEntity("GOAP2.Entities", "MovieCheckBox")
-    ObjectManager.importObject("GOAP2.Entities.MovieCheckBox", "MovieCheckBox")
+    EntityManager.importEntity("Foundation.Entities", "MovieCheckBox")
+    ObjectManager.importObject("Foundation.Entities.MovieCheckBox", "MovieCheckBox")
 
-    EntityManager.importEntity("GOAP2.Entities", "Movie2CheckBox")
-    ObjectManager.importObject("GOAP2.Entities.Movie2CheckBox", "Movie2CheckBox")
+    EntityManager.importEntity("Foundation.Entities", "Movie2CheckBox")
+    ObjectManager.importObject("Foundation.Entities.Movie2CheckBox", "Movie2CheckBox")
 
-    ObjectManager.importObject("GOAP2.Entities.Charger", "Charger")
-    EntityManager.importEntity("GOAP2.Entities", "Charger")
+    ObjectManager.importObject("Foundation.Entities.Charger", "Charger")
+    EntityManager.importEntity("Foundation.Entities", "Charger")
 
-    EntityManager.importEntity("GOAP2.Entities", "MovieVirtualArea")
-    ObjectManager.importObject("GOAP2.Entities.MovieVirtualArea", "MovieVirtualArea")
+    EntityManager.importEntity("Foundation.Entities", "MovieVirtualArea")
+    ObjectManager.importObject("Foundation.Entities.MovieVirtualArea", "MovieVirtualArea")
 
-    EntityManager.importEntity("GOAP2.Entities", "MovieScrollbar")
-    ObjectManager.importObject("GOAP2.Entities.MovieScrollbar", "MovieScrollbar")
+    EntityManager.importEntity("Foundation.Entities", "MovieScrollbar")
+    ObjectManager.importObject("Foundation.Entities.MovieScrollbar", "MovieScrollbar")
 
-    EntityManager.importEntity("GOAP2.Entities", "Movie2Scrollbar")
-    ObjectManager.importObject("GOAP2.Entities.Movie2Scrollbar", "Movie2Scrollbar")
+    EntityManager.importEntity("Foundation.Entities", "Movie2Scrollbar")
+    ObjectManager.importObject("Foundation.Entities.Movie2Scrollbar", "Movie2Scrollbar")
 
-    EntityManager.importEntity("GOAP2.Entities", "MovieProgressBar")
-    ObjectManager.importObject("GOAP2.Entities.MovieProgressBar", "MovieProgressBar")
+    EntityManager.importEntity("Foundation.Entities", "MovieProgressBar")
+    ObjectManager.importObject("Foundation.Entities.MovieProgressBar", "MovieProgressBar")
 
-    EntityManager.importEntity("GOAP2.Entities", "Movie2ProgressBar")
-    ObjectManager.importObject("GOAP2.Entities.Movie2ProgressBar", "Movie2ProgressBar")
+    EntityManager.importEntity("Foundation.Entities", "Movie2ProgressBar")
+    ObjectManager.importObject("Foundation.Entities.Movie2ProgressBar", "Movie2ProgressBar")
 
-    EntityManager.importEntity("GOAP2.Entities", "MovieEditBox")
-    ObjectManager.importObject("GOAP2.Entities.MovieEditBox", "MovieEditBox")
+    EntityManager.importEntity("Foundation.Entities", "MovieEditBox")
+    ObjectManager.importObject("Foundation.Entities.MovieEditBox", "MovieEditBox")
 
-    EntityManager.importEntity("GOAP2.Entities", "Movie2EditBox")
-    ObjectManager.importObject("GOAP2.Entities.Movie2EditBox", "Movie2EditBox")
+    EntityManager.importEntity("Foundation.Entities", "Movie2EditBox")
+    ObjectManager.importObject("Foundation.Entities.Movie2EditBox", "Movie2EditBox")
 
-    EntityManager.importEntity("GOAP2.Entities", "MovieTabsGroup")
-    ObjectManager.importObject("GOAP2.Entities.MovieTabsGroup", "MovieTabsGroup")
+    EntityManager.importEntity("Foundation.Entities", "MovieTabsGroup")
+    ObjectManager.importObject("Foundation.Entities.MovieTabsGroup", "MovieTabsGroup")
 
     if _DEVELOPMENT is True:
         from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
         AdvertisementProvider.setDevProvider()
 
-    Trace.msg("GOAP2.onInitialize")
+    Trace.msg("Foundation.onInitialize")
 
     from Foundation.DatabaseManager import DatabaseManager
     DatabaseManager.onInitialize()
@@ -428,7 +428,7 @@ def onInitialize():
     pass
 
 def onFinalize():
-    Trace.msg("GOAP2.onFinalize")
+    Trace.msg("Foundation.onFinalize")
 
     from Foundation.SessionManager import SessionManager
     SessionManager.onFinalize()
