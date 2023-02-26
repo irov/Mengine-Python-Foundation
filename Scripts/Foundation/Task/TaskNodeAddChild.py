@@ -13,19 +13,19 @@ class TaskNodeAddChild(Task):
         super(TaskNodeAddChild, self)._onInitialize()
 
         if _DEVELOPMENT is True:
-            if Menge.is_class(self.nodeParent) is False:
+            if Mengine.is_class(self.nodeParent) is False:
                 self.initializeFailed("Parent Node is not class")
                 pass
 
-            if Menge.is_class(self.nodeChild) is False:
+            if Mengine.is_class(self.nodeChild) is False:
                 self.initializeFailed("Child Node is not class")
                 pass
 
-            if Menge.is_wrap(self.nodeParent) is False:
+            if Mengine.is_wrap(self.nodeParent) is False:
                 self.initializeFailed("Parent Node is not wrap")
                 pass
 
-            if Menge.is_wrap(self.nodeChild) is False:
+            if Mengine.is_wrap(self.nodeChild) is False:
                 self.initializeFailed("Child Node is not wrap")
                 pass
             pass

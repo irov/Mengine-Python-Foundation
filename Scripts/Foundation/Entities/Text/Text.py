@@ -40,7 +40,7 @@ class Text(BaseEntity):
     def _onFinalize(self):
         super(Text, self)._onFinalize()
 
-        Menge.destroyNode(self.text_field)
+        Mengine.destroyNode(self.text_field)
         self.text_field = None
         pass
 

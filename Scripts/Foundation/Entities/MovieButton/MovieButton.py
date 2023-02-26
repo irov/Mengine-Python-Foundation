@@ -74,11 +74,11 @@ class MovieButton(BaseEntity):
                 return None
                 pass
 
-            if Menge.hasResource(res) is False:
+            if Mengine.hasResource(res) is False:
                 return False
                 pass
 
-            resource = Menge.getResourceReference(res)
+            resource = Mengine.getResourceReference(res)
 
             if resource is None:
                 Trace.log("Entity", 0, "MovieButton._onInitialize: not found resource %s" % (res))
@@ -348,7 +348,7 @@ class MovieButton(BaseEntity):
         movie_default = self.Movies.get(default_state_name)
         movie_state = self.Movies.get(state, movie_default)
 
-        if Menge.hasTouchpad() is True and state in touchpad_ignore:
+        if Mengine.hasTouchpad() is True and state in touchpad_ignore:
             # mobile devices don't have this states - use default or nothing
             return movie_default
 

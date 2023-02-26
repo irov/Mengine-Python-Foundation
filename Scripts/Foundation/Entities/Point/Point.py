@@ -24,7 +24,7 @@ class Point(BaseEntity):
     def _onFinalize(self):
         super(Point, self)._onFinalize()
 
-        Menge.destroyNode(self.point)
+        Mengine.destroyNode(self.point)
         self.point = None
         pass
     pass

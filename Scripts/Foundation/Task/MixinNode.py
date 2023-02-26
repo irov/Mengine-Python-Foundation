@@ -20,11 +20,11 @@ class MixinNode(Task):
             self.validateFailed("node is None")
             pass
 
-        if Menge.is_class(self.node) is False:
+        if Mengine.is_class(self.node) is False:
             self.validateFailed("node is not pybind class")
             pass
 
-        if Menge.is_wrap(self.node) is False:
+        if Mengine.is_wrap(self.node) is False:
             self.validateFailed("node is unwrap")
             pass
         pass

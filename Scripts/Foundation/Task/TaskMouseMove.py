@@ -10,7 +10,7 @@ class TaskMouseMove(Task):
     def _onRun(self):
         super(TaskMouseMove, self)._onRun()
 
-        self.onMouseMoveID = Menge.addMouseMoveHandler(self._onMouseMove)
+        self.onMouseMoveID = Mengine.addMouseMoveHandler(self._onMouseMove)
 
         return False
         pass
@@ -26,6 +26,6 @@ class TaskMouseMove(Task):
     def _onFinally(self):
         super(TaskMouseMove, self)._onFinally()
 
-        Menge.removeGlobalHandler(self.onMouseMoveID)
+        Mengine.removeGlobalHandler(self.onMouseMoveID)
         pass
     pass

@@ -7,7 +7,7 @@ class BuildModeManager(Manager):
 
     @staticmethod
     def loadParams(module, param):
-        if Menge.getGameParamUnicode("BuildModeCheckVersion") != u"2.0":
+        if Mengine.getGameParamUnicode("BuildModeCheckVersion") != u"2.0":
             return True
 
         records = DatabaseManager.getDatabaseRecords(module, param)

@@ -18,7 +18,7 @@ debug_timer = 0
 timersMap = {}
 
 def getTimestamp():
-    t = Menge.getTime()
+    t = Mengine.getTime()
 
     return "%d" % t
 
@@ -120,7 +120,7 @@ def doTimer(timerKey, *format):
     if curType != str and curType != unicode:
         timerKey = "default"
 
-    curTime = Menge.getTime()
+    curTime = Mengine.getTime()
     try:
         firstTime, lastTime = timersMap[timerKey]
         allInterval = curTime - firstTime

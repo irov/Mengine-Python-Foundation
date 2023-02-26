@@ -9,7 +9,7 @@ class TaskNodeDestroy(MixinNode, Task):
         pass
 
     def _onRun(self):
-        Menge.destroyNode(self.node)
+        Mengine.destroyNode(self.node)
         self.node = None
 
         return True

@@ -14,9 +14,9 @@ class SnapManager(object):
             pass
 
         def apply(self):
-            viewportCurent = Menge.getGameViewport()
+            viewportCurent = Mengine.getGameViewport()
 
-            ContentResolution = Menge.getContentResolution()
+            ContentResolution = Mengine.getContentResolution()
             ContentResolutionWidth = ContentResolution.getWidth()
             ContentResolutionHeight = ContentResolution.getHeight()
 
@@ -112,7 +112,7 @@ class SnapManager(object):
 
     @staticmethod
     def loadSnaps(module, param):
-        contentResolution = Menge.getContentResolution()
+        contentResolution = Mengine.getContentResolution()
         SnapManager.ContentResolution = (contentResolution.getWidth(), contentResolution.getHeight())
 
         records = DatabaseManager.getDatabaseRecords(module, param)

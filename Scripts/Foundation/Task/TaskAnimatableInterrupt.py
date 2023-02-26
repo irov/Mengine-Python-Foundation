@@ -13,7 +13,7 @@ class TaskAnimatableInterrupt(MixinEvent, Task):
     def _onValidate(self):
         super(TaskAnimatableInterrupt, self)._onValidate()
 
-        if Menge.isHomeless(self.Animatable) is True:
+        if Mengine.isHomeless(self.Animatable) is True:
             self.validateFailed("Animatable %s is Homeless" % (self.Node.getName()))
             pass
 

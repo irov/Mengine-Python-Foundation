@@ -9,7 +9,7 @@ class TaskMouseUse(Task):
         pass
 
     def _onRun(self):
-        self.GlobalHandleAdapter = Menge.addMouseButtonHandler(self.__onGlobalHandleMouseButtonEvent)
+        self.GlobalHandleAdapter = Mengine.addMouseButtonHandler(self.__onGlobalHandleMouseButtonEvent)
 
         return False
         pass
@@ -17,7 +17,7 @@ class TaskMouseUse(Task):
     def _onFinally(self):
         super(TaskMouseUse, self)._onFinally()
 
-        Menge.removeMouseButtonHandler(self.GlobalHandleAdapter)
+        Mengine.removeMouseButtonHandler(self.GlobalHandleAdapter)
         self.GlobalHandleAdapter = None
         pass
 

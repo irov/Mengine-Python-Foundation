@@ -41,7 +41,7 @@ class PrefetchResourceManager(object):
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
-                Menge.directResourceCompile(ResourceName)
+                Mengine.directResourceCompile(ResourceName)
                 pass
             pass
 
@@ -54,7 +54,7 @@ class PrefetchResourceManager(object):
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
-                Menge.directResourceRelease(ResourceName)
+                Mengine.directResourceRelease(ResourceName)
                 pass
             pass
 

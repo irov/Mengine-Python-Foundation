@@ -25,7 +25,7 @@ class Fade(BaseEntity):
 
     def _onActivate(self):
         super(Fade, self)._onActivate()
-        resolution = Menge.getContentResolution()
+        resolution = Mengine.getContentResolution()
 
         if not self.Size:
             width = resolution.getWidth()
@@ -41,7 +41,7 @@ class Fade(BaseEntity):
                 pass
             pass
 
-        surface = Menge.createSurface("SurfaceSolidColor")
+        surface = Mengine.createSurface("SurfaceSolidColor")
         surface.setName("FadeSurface_{}".format(id(self)))
         surface.setSolidColor((0.0, 0.0, 0.0, 1.0))
         surface.setSolidSize((width, height))
@@ -61,7 +61,7 @@ class Fade(BaseEntity):
         super(Fade, self)._onDeactivate()
         self.stopFade()
 
-        Menge.destroyNode(self.sprite)
+        Mengine.destroyNode(self.sprite)
         self.sprite = None
 
         self.state = Fade.FADE_DISABLE

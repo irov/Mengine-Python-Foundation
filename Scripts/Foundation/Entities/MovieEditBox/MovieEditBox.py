@@ -62,7 +62,7 @@ class MovieEditBox(BaseEntity):
         pass
 
     def __activate_slider(self, value):
-        if Menge.hasTouchpad() is False:
+        if Mengine.hasTouchpad() is False:
             return
 
         MovieSlider = self.Movies.get("Slider")
@@ -77,11 +77,11 @@ class MovieEditBox(BaseEntity):
                 with tc.addRaceTask(2) as (tc_on_down, tc_on_up):
                     tc_on_down.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MovieSlider, isDown=True)
                     tc_on_down.addFunction(self.__on_slide, True)
-                    tc_on_down.addFunction(Menge.enableGlobalHandler, self._mouse_move_handler, True)
+                    tc_on_down.addFunction(Mengine.enableGlobalHandler, self._mouse_move_handler, True)
 
                     tc_on_up.addTask("TaskMouseButtonClick", isDown=False)
                     tc_on_up.addFunction(self.__on_slide, False)
-                    tc_on_up.addFunction(Menge.enableGlobalHandler, self._mouse_move_handler, False)
+                    tc_on_up.addFunction(Mengine.enableGlobalHandler, self._mouse_move_handler, False)
                     pass
 
     def _updatePasswordChar(self, value):
@@ -213,11 +213,11 @@ class MovieEditBox(BaseEntity):
                 return None
                 pass
 
-            if Menge.hasResource(res) is False:
+            if Mengine.hasResource(res) is False:
                 return False
                 pass
 
-            resource = Menge.getResourceReference(res)
+            resource = Mengine.getResourceReference(res)
 
             if resource is None:
                 Trace.log("Entity", 0, "MovieEditBox._onInitialize: not fount resource %s" % (res))
@@ -251,8 +251,8 @@ class MovieEditBox(BaseEntity):
 
         focus_movie.getEntity().getSocket("socket").setEventListener(onHandleMouseButtonEvent=self._onMouseButtonEventFocus)
 
-        self._mouse_move_handler = Menge.addMouseMoveHandler(self.on_mouse_move)
-        Menge.enableGlobalHandler(self._mouse_move_handler, False)
+        self._mouse_move_handler = Mengine.addMouseMoveHandler(self.on_mouse_move)
+        Mengine.enableGlobalHandler(self._mouse_move_handler, False)
 
         # set vocabluary
 
@@ -379,12 +379,12 @@ class MovieEditBox(BaseEntity):
     def _onActivate(self):
         super(MovieEditBox, self)._onActivate()
 
-        self.KeyHandlerID = Menge.addKeyHandler(self.__onGlobalHandleKeyEvent)
-        self.TextHandlerID = Menge.addTextHandler(self.__onGlobalHandleTextEvent)
+        self.KeyHandlerID = Mengine.addKeyHandler(self.__onGlobalHandleKeyEvent)
+        self.TextHandlerID = Mengine.addTextHandler(self.__onGlobalHandleTextEvent)
 
         # self.updateCarriage()
 
-        Menge.showKeyboard()
+        Mengine.showKeyboard()
 
         # MovieButton part
         MovieIdle = self.Movies.get("Idle")
@@ -427,10 +427,10 @@ class MovieEditBox(BaseEntity):
         super(MovieEditBox, self)._onDeactivate()
         self.text = u""
 
-        Menge.removeGlobalHandler(self.KeyHandlerID)
-        Menge.removeGlobalHandler(self.TextHandlerID)
+        Mengine.removeGlobalHandler(self.KeyHandlerID)
+        Mengine.removeGlobalHandler(self.TextHandlerID)
 
-        Menge.hideKeyboard()
+        Mengine.hideKeyboard()
 
         if self.tc is not None:
             self.tc.cancel()
@@ -475,17 +475,17 @@ class MovieEditBox(BaseEntity):
 
         self.__activate_slider(False)
 
-        if event.code == Menge.KC_LEFT:
+        if event.code == Mengine.KC_LEFT:
             self.carriageShift(-1)
-        elif event.code == Menge.KC_RIGHT:
+        elif event.code == Mengine.KC_RIGHT:
             self.carriageShift(1)
-        elif event.code == Menge.KC_DELETE:
+        elif event.code == Mengine.KC_DELETE:
             self.deleteSymbol()
-        elif event.code == Menge.KC_HOME:
+        elif event.code == Mengine.KC_HOME:
             self.carriageHome()
-        elif event.code == Menge.KC_END:
+        elif event.code == Mengine.KC_END:
             self.carriageEnd()
-        elif event.code == Menge.KC_BACK:
+        elif event.code == Mengine.KC_BACK:
             self.backspaceSymbol()
             pass
         pass

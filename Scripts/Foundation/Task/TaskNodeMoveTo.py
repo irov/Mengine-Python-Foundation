@@ -36,7 +36,7 @@ class TaskNodeMoveTo(MixinNode, MixinTime, Task):
         positionFrom = self.node.getLocalPosition()
 
         if self.speed is not None:
-            length = Menge.length_v2_v2(positionFrom, self.positionTo)
+            length = Mengine.length_v2_v2(positionFrom, self.positionTo)
             self.time = (length / self.speed) * 1000.0
             pass
 

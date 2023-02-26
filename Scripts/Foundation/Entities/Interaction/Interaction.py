@@ -50,7 +50,7 @@ class Interaction(BaseEntity):
     def _onFinalize(self):
         super(Interaction, self)._onFinalize()
 
-        Menge.destroyNode(self.__hotspot)
+        Mengine.destroyNode(self.__hotspot)
         self.__hotspot = None
 
     def _onCreateHotSpot(self):

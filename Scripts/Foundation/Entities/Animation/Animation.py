@@ -34,7 +34,7 @@ class Animation(BaseAnimatable):
             return
             pass
         # sequenceID = "%s_%s"%(self.object.name, str(sequence))
-        # Menge.createAnimationSequence(sequenceID, sequence)
+        # Mengine.createAnimationSequence(sequenceID, sequence)
         # self.animation.setResourceAnimation(sequenceID)
         pass
 
@@ -54,7 +54,7 @@ class Animation(BaseAnimatable):
     def _onFinalize(self):
         super(Animation, self)._onFinalize()
 
-        Menge.destroyNode(self.animation)
+        Mengine.destroyNode(self.animation)
         self.animation = None
         pass
 

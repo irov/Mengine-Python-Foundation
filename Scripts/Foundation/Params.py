@@ -116,7 +116,7 @@ class Params(object):
             return None
             pass
 
-        if isinstance(value, Menge.Resource) is True:
+        if isinstance(value, Mengine.Resource) is True:
             return value
             pass
 
@@ -125,7 +125,7 @@ class Params(object):
             return None
             pass
 
-        if Menge.hasResource(value) is False:
+        if Mengine.hasResource(value) is False:
             if default is Params.NoDefault:
                 self.paramsFailed("Param '%s' is not found resource '%s'" % (key, value))
                 return None
@@ -135,7 +135,7 @@ class Params(object):
                 pass
             pass
 
-        resource = Menge.getResourceReference(value)
+        resource = Mengine.getResourceReference(value)
 
         return resource
         pass
@@ -612,14 +612,14 @@ class Params(object):
         elif isinstance(value, unicode) is True:
             return True
             pass
-        elif Menge.is_class(value) is True:
-            if isinstance(value, Menge.vec2f) is True:
+        elif Mengine.is_class(value) is True:
+            if isinstance(value, Mengine.vec2f) is True:
                 return True
                 pass
-            elif isinstance(value, Menge.vec3f) is True:
+            elif isinstance(value, Mengine.vec3f) is True:
                 return True
                 pass
-            elif isinstance(value, Menge.ConstString) is True:
+            elif isinstance(value, Mengine.ConstString) is True:
                 return True
                 pass
 

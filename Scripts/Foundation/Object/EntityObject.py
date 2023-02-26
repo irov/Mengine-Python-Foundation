@@ -154,7 +154,7 @@ class EntityObject(BaseObject):
         pass
 
     def _onGenerate(self):
-        entity = Menge.createEntity(self.entityType)
+        entity = Mengine.createEntity(self.entityType)
 
         name = self.getName()
         entity.node.setName(name)
@@ -226,12 +226,12 @@ class EntityObject(BaseObject):
         pass
 
     def __onDeactivateTestObject(self):
-        if Menge.is_class(self.entity.node) is False:
+        if Mengine.is_class(self.entity.node) is False:
             Trace.log("Object", 0, "EntityObject._onDeactivate %s but entity is not class!!" % (self.getName()))
             return
             pass
 
-        if Menge.is_wrap(self.entity.node) is False:
+        if Mengine.is_wrap(self.entity.node) is False:
             Trace.log("Object", 0, "EntityObject._onDeactivate %s but entity is unwrap!!" % (self.getName()))
             return False
             pass
@@ -240,7 +240,7 @@ class EntityObject(BaseObject):
 
         if EntityParent is None:
             pass
-        elif Menge.isHomeless(self.entity.node) is True:
+        elif Mengine.isHomeless(self.entity.node) is True:
             ObjectParent = self.getParent()
 
             if ObjectParent is not None:

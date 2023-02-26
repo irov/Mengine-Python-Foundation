@@ -24,13 +24,13 @@ class TaskPrefetchGroup(Task):
         if self.Prefetch == 0:
             pass
         elif self.Prefetch == 1:
-            Menge.incrementResources(self.GroupName)
+            Mengine.incrementResources(self.GroupName)
             pass
         elif Prefetch == 2:
             def __cb(successful, GroupName):
                 pass
 
-            Menge.prefetchResources(self.GroupName, __cb, self.GroupName)
+            Mengine.prefetchResources(self.GroupName, __cb, self.GroupName)
             pass
         return True
         pass

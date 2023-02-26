@@ -22,7 +22,7 @@ class SystemDebugNotifications(System):
 
     @staticmethod
     def isEnable():
-        return Menge.hasOption("notifications")
+        return Mengine.hasOption("notifications")
 
     # Preparation ======================================================================================================
 
@@ -116,20 +116,20 @@ class SystemDebugNotifications(System):
 
     @staticmethod
     def __addDevToDebug():
-        if Menge.isAvailablePlugin("DevToDebug") is False:
+        if Mengine.isAvailablePlugin("DevToDebug") is False:
             return
 
-        tab = Menge.getDevToDebugTab("Cheats") or Menge.addDevToDebugTab("Cheats")
+        tab = Mengine.getDevToDebugTab("Cheats") or Mengine.addDevToDebugTab("Cheats")
 
         if tab.findWidget("set_observer") is None:
-            w_observe = Menge.createDevToDebugWidgetCommandLine("set_observer")
+            w_observe = Mengine.createDevToDebugWidgetCommandLine("set_observer")
             w_observe.setTitle("Set observer")
             w_observe.setPlaceholder("Syntax: <identity>")
             w_observe.setCommandEvent(SystemDebugNotifications.__addObserver)
             tab.addWidget(w_observe)
 
         if tab.findWidget("send_notification") is None:
-            w_notify = Menge.createDevToDebugWidgetCommandLine("send_notification")
+            w_notify = Mengine.createDevToDebugWidgetCommandLine("send_notification")
             w_notify.setTitle("Send notify")
             w_notify.setPlaceholder("Syntax: <identity> [*args]")
             w_notify.setCommandEvent(SystemDebugNotifications.__sendNotify)
@@ -137,7 +137,7 @@ class SystemDebugNotifications(System):
 
     @staticmethod
     def __remDevToDebug():
-        if Menge.isAvailablePlugin("DevToDebug") is False:
+        if Mengine.isAvailablePlugin("DevToDebug") is False:
             return
 
         for observer in SystemDebugNotifications._dev_to_debug_observers:

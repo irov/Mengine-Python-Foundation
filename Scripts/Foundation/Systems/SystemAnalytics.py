@@ -67,7 +67,7 @@ class SystemAnalytics(System):
         def send(self, params):
             """ finally send event with name from `self.key` and params from `params` dict """
             SystemAnalytics._sendDebugLog(self.key, params)
-            Menge.analyticsCustomEvent(self.key, params)
+            Mengine.analyticsCustomEvent(self.key, params)
 
         def clean(self):
             if self._observer is not None:
@@ -84,7 +84,7 @@ class SystemAnalytics(System):
             amount = params["amount"]
 
             SystemAnalytics._sendDebugLog(self.key, {"name": currency_name, "amount": amount})
-            Menge.analyticsEarnVirtualCurrencyEvent(currency_name, amount)
+            Mengine.analyticsEarnVirtualCurrencyEvent(currency_name, amount)
 
     class SpentCurrencyAnalytic(AnalyticUnit):
         def send(self, params):
@@ -93,14 +93,14 @@ class SystemAnalytics(System):
             descr = params["description"]
 
             SystemAnalytics._sendDebugLog(self.key, {"name": currency_name, "amount": amount, "description": descr})
-            Menge.analyticsSpendVirtualCurrencyEvent(descr, currency_name, amount)
+            Mengine.analyticsSpendVirtualCurrencyEvent(descr, currency_name, amount)
 
     class UnlockAchievementAnalytic(AnalyticUnit):
         def send(self, params):
             achievement_id = params["achievement_id"]
 
             SystemAnalytics._sendDebugLog(self.key, {"achievement_id": achievement_id})
-            Menge.analyticsUnlockAchievementEvent(achievement_id)
+            Mengine.analyticsUnlockAchievementEvent(achievement_id)
 
     def _onInitialize(self):
         self.addDefaultAnalytics()
@@ -186,7 +186,7 @@ class SystemAnalytics(System):
 
         SystemAnalytics._sendDebugLog(prefixed_event_key, params)
 
-        Menge.analyticsCustomEvent(prefixed_event_key, params)
+        Mengine.analyticsCustomEvent(prefixed_event_key, params)
 
     def addDefaultAnalytics(self):
         """ create default analytics and run them """
@@ -208,7 +208,7 @@ class SystemAnalytics(System):
     def _sendDebugLog(event_key, params):
         if _DEVELOPMENT is False:
             return
-        if 'analytics' not in Menge.getOptionValues("debug"):
+        if 'analytics' not in Mengine.getOptionValues("debug"):
             return
         if SystemAnalytics.isEventKeyInIgnore(event_key) is True:
             return

@@ -58,20 +58,20 @@ class TaskDownloadAsset(Task):
 
     @print_request  # debug
     def _onRun(self):
-        if Menge.existFile(self.file_group, self.file_path):
+        if Mengine.existFile(self.file_group, self.file_path):
             print
             'file {} {} is existFile'.format(self.file_group, self.file_path)
             if self.rewrite is False:
                 return True
 
-            Menge.removeFile(self.file_group, self.file_path)
+            Mengine.removeFile(self.file_group, self.file_path)
             print
             'file {} {} has been removed'.format(self.file_group, self.file_path)
 
-        self.id = Menge.downloadAsset(self.url, self.login, self.password, self.file_group, self.file_path, self.time_out, self.__onDownloadAsset)
+        self.id = Mengine.downloadAsset(self.url, self.login, self.password, self.file_group, self.file_path, self.time_out, self.__onDownloadAsset)
 
         if self.id == 0:
-            self.log("Fail to do Menge.downloadAsset with parameters: "
+            self.log("Fail to do Mengine.downloadAsset with parameters: "
                      "url = {}, "
                      "login = {}, "
                      "password = {}, "

@@ -29,21 +29,21 @@ class SystemQALogger(System):
             return
         if cls.onlyConsole() is True:
             return
-        t = Menge.getDatePathTimestamp()
+        t = Mengine.getDatePathTimestamp()
         file_name = "QA_{}.log".format(t)
-        cls.__Logger = Menge.makeFileLogger(file_name)
+        cls.__Logger = Mengine.makeFileLogger(file_name)
 
     @staticmethod
     def shouldDuplicate():
         if _QUALITYASSURANCE is True:
-            option = Menge.getOptionValue("qa")
+            option = Mengine.getOptionValue("qa")
             return option == "duplicate"
         return False
 
     @staticmethod
     def onlyConsole():
         if _QUALITYASSURANCE is True:
-            option = Menge.getOptionValue("qa")
+            option = Mengine.getOptionValue("qa")
             return option == "console"
         return False
 

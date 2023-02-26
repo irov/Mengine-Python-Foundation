@@ -31,7 +31,7 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
         if self.node.isActivate() is False:
             self.log("[%s] not active - alphaTo not started" % (self.node.getName()))
             # TIP:  If your node is Arrow's child and Arrow is disable - you can get this error.
-            #       Try to do this task after onArrowActivate listened. You can get Arrow by Menge.getArrow()
+            #       Try to do this task after onArrowActivate listened. You can get Arrow by Mengine.getArrow()
             return True
 
         self.affectorId = self.node.alphaTo(self.time, self.alphaTo, self.easing, self._onAlphaTo)

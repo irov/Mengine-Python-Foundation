@@ -84,7 +84,7 @@ class DummyAdvertisement(object):
         FakeWatchDelay = params.get("Delay", 1500)
         GoldReward = params.get("GoldReward", 1)
 
-        display_failed = Menge.rand(20) < 5 if DisplayFail is "Random" else bool(DisplayFail)
+        display_failed = Mengine.rand(20) < 5 if DisplayFail is "Random" else bool(DisplayFail)
 
         with TaskManager.createTaskChain(Name="DummyShow{}Advert".format(AdType)) as source:
             source.addPrint("<DummyAdvertisement> watch advertisement, delay {}s (display failed is {})...".format(round(float(FakeWatchDelay) / 1000, 1), display_failed))
@@ -104,7 +104,7 @@ class DummyAdvertisement(object):
     @staticmethod
     def canOfferAdvert(AdType, **params):
         if AdType == "Rewarded":
-            status = Menge.rand(20) < 15
+            status = Mengine.rand(20) < 15
             return status
         return True
 

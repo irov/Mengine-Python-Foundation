@@ -34,7 +34,7 @@ class Window(BaseEntity):
 
     def _onFinalize(self):
         super(Window, self)._onFinalize()
-        Menge.destroyNode(self.window)
+        Mengine.destroyNode(self.window)
         self.window = None
         pass
     pass

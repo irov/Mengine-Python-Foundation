@@ -1,6 +1,6 @@
 class Default(object):
     def __init__(self):
-        Menge.Arrow.__init__(self)
+        Mengine.Arrow.__init__(self)
 
         self.node = None
 

@@ -32,7 +32,7 @@ class TaskMovie2SocketClick(TaskMovie2SocketBase):
                     pass
                 pass
 
-            if Menge.isMouseButtonDown(self.Button) is False:
+            if Mengine.isMouseButtonDown(self.Button) is False:
                 return True
                 pass
 
@@ -52,7 +52,7 @@ class TaskMovie2SocketClick(TaskMovie2SocketBase):
                     pass
                 pass
 
-            if Menge.isMouseButtonDown(self.Button) is True:
+            if Mengine.isMouseButtonDown(self.Button) is True:
                 return True
                 pass
 

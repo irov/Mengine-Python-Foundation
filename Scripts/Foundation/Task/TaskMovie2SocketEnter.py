@@ -50,7 +50,7 @@ class TaskMovie2SocketEnter(TaskMovie2SocketBase):
                 pass
 
             if self.isDown is not None:
-                if Menge.isMouseButtonDown(self.Button) != self.isDown:
+                if Mengine.isMouseButtonDown(self.Button) != self.isDown:
                     return False
 
             return True

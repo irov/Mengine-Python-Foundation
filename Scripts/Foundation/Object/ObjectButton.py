@@ -61,7 +61,7 @@ class ObjectButton(ObjectInteraction):
         if _DEVELOPMENT is True:
             Font = self.getFont()
             if Font is not None:
-                if Menge.hasFont(Font) is False:
+                if Mengine.hasFont(Font) is False:
                     self.initializeFailed("Font %s not found" % (Font))
 
     def setState(self, value):

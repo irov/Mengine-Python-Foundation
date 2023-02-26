@@ -7,13 +7,13 @@ class TaskArrowHide(Task):
         pass
 
     def _onRun(self):
-        arrow = Menge.getArrow()
+        arrow = Mengine.getArrow()
         arrow.localHide(self.Value)
 
         if self.Value is False:
-            Menge.setCursorMode(True)
+            Mengine.setCursorMode(True)
         elif self.Value is True:
-            Menge.setCursorMode(False)
+            Mengine.setCursorMode(False)
 
         return True
         pass

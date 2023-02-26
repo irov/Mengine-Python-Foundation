@@ -3,7 +3,7 @@ from Foundation.Entity.BaseEntity import BaseEntity
 from Notification import Notification
 
 class MovieButton(BaseEntity):
-    s_keys = dict(Esc=Menge.KC_ESCAPE, Enter=Menge.KC_RETURN)
+    s_keys = dict(Esc=Mengine.KC_ESCAPE, Enter=Mengine.KC_RETURN)
 
     @staticmethod
     def declareORM(Type):
@@ -106,11 +106,11 @@ class MovieButton(BaseEntity):
                 pass
             pass
 
-        if Menge.hasResource(resourceName) is False:
+        if Mengine.hasResource(resourceName) is False:
             return None
             pass
 
-        resource = Menge.getResourceReference(resourceName)
+        resource = Mengine.getResourceReference(resourceName)
         Movie = self.createChild("Movie")
         Movie.setName(resourceName)
         Movie.setResourceMovie(resource)
@@ -392,7 +392,7 @@ class MovieButton(BaseEntity):
             return False
             pass
 
-        if Menge.isExclusiveKeyDown(key) is False:
+        if Mengine.isExclusiveKeyDown(key) is False:
             return False
             pass
 
@@ -474,7 +474,7 @@ class MovieButton(BaseEntity):
     def __onClickWithoutPressed(self):  # ---if MoviePressed doesn't exist
         self.MovieClick.setEventListener(onAnimatableEnd=None)
 
-        if Menge.isMouseButtonDown(0) is False:
+        if Mengine.isMouseButtonDown(0) is False:
             self.__cleanListeners(self.MovieClick)
             self.__onRelease()
             return
@@ -496,7 +496,7 @@ class MovieButton(BaseEntity):
         self.setCurrentMovie(self.MoviePressed)
         self.MoviePressed.enable()
 
-        if Menge.isMouseButtonDown(0) is False:
+        if Mengine.isMouseButtonDown(0) is False:
             self.__cleanListeners(self.MoviePressed)
             self.__onRelease()
             return

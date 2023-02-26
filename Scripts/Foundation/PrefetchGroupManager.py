@@ -122,13 +122,13 @@ class PrefetchGroupManager(object):
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
-                Menge.incrementResources(GroupName)
+                Mengine.incrementResources(GroupName)
                 pass
             elif Prefetch == 2:
                 def __cb(successful, GroupName):
                     pass
 
-                Menge.prefetchResources(GroupName, __cb, GroupName)
+                Mengine.prefetchResources(GroupName, __cb, GroupName)
                 pass
             pass
         pass
@@ -143,10 +143,10 @@ class PrefetchGroupManager(object):
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
-                Menge.decrementResources(GroupName)
+                Mengine.decrementResources(GroupName)
                 pass
             elif Prefetch == 2:
-                Menge.unfetchResources(GroupName)
+                Mengine.unfetchResources(GroupName)
                 pass
             pass
         pass
@@ -157,13 +157,13 @@ class PrefetchGroupManager(object):
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
-                Menge.incrementResources(GroupName)
+                Mengine.incrementResources(GroupName)
                 pass
             elif Prefetch == 2:
                 def __cb(successful, GroupName):
                     pass
 
-                Menge.prefetchResources(GroupName, __cb, GroupName)
+                Mengine.prefetchResources(GroupName, __cb, GroupName)
                 pass
             pass
         pass
@@ -174,10 +174,10 @@ class PrefetchGroupManager(object):
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
-                Menge.decrementResources(GroupName)
+                Mengine.decrementResources(GroupName)
                 pass
             elif Prefetch == 2:
-                Menge.unfetchResources(GroupName)
+                Mengine.unfetchResources(GroupName)
                 pass
             pass
         pass

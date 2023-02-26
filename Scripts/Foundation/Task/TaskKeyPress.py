@@ -29,7 +29,7 @@ class TaskKeyPress(MixinObserver, Task):
 
     def __onKeyEvent(self, key, x, y, isDown, isRepeating):
         for adkey in self.add_keys:
-            if Menge.isKeyDown(adkey) is False:
+            if Mengine.isKeyDown(adkey) is False:
                 return False
 
         if isDown is not self.isDown:

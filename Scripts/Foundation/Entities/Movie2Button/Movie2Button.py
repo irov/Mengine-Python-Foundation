@@ -1,4 +1,3 @@
-import Menge
 import Trace
 from Event import Event
 from Functor import Functor
@@ -12,7 +11,7 @@ from Multislots import finalslots
 class Movie2Button(BaseEntity):
     __metaclass__ = finalslots("tc", "state", "custom", "Movies", "SlotsChildren", "SemaphoreBlock", "SemaphoreSelected", "EventSkipState", "EventSetState")
 
-    s_keys = dict(Esc=Menge.KC_ESCAPE, Enter=Menge.KC_RETURN, False = False)
+    s_keys = dict(Esc=Mengine.KC_ESCAPE, Enter=Mengine.KC_RETURN, False = False)
 
     @staticmethod
     def declareORM(Type):
@@ -190,10 +189,10 @@ class Movie2Button(BaseEntity):
         if self.ResourceMovie is None:
             return False
 
-        if Menge.hasResource(self.ResourceMovie) is False:
+        if Mengine.hasResource(self.ResourceMovie) is False:
             return False
 
-        resource = Menge.getResourceReference(self.ResourceMovie)
+        resource = Mengine.getResourceReference(self.ResourceMovie)
 
         if resource is None:
             Trace.log("Entity", 0, "Movie2Button._onInitialize: not found resource %s" % resource)
@@ -617,7 +616,7 @@ class Movie2Button(BaseEntity):
         movie_default = self.Movies.get(default_state_name)
         movie_state = self.Movies.get(state, movie_default)
 
-        if Menge.hasTouchpad() is True and state in touchpad_ignore:
+        if Mengine.hasTouchpad() is True and state in touchpad_ignore:
             # mobile devices don't have this states - use default or nothing
             return movie_default
 

@@ -33,11 +33,11 @@ class Movie2Scrollbar(BaseEntity):
     def _onInitialize(self, obj):
         super(Movie2Scrollbar, self)._onInitialize(obj)
 
-        if Menge.hasResource(self.ResourceMovie) is False:
+        if Mengine.hasResource(self.ResourceMovie) is False:
             Trace.log("Entity", 0, "Movie2Scrollbar._onInitialize: not found resource %s" % (self.ResourceMovie))
             return False
 
-        resource = Menge.getResourceReference(self.ResourceMovie)
+        resource = Mengine.getResourceReference(self.ResourceMovie)
 
         def __create_movie(name, composition_name, enable):
             if resource.hasComposition(composition_name) is False:
@@ -50,10 +50,10 @@ class Movie2Scrollbar(BaseEntity):
             return movie
 
         self._bar = __create_movie('Bar', self.CompositionNameBar, True)
-        # self._bar_resource = Menge.getResourceReference(self.ResourceMovieBar)
+        # self._bar_resource = Mengine.getResourceReference(self.ResourceMovieBar)
 
         self._slider = __create_movie('Slider', self.CompositionNameSlider, True)
-        # self._slider_resource = Menge.getResourceReference(self.ResourceMovieSlider)
+        # self._slider_resource = Mengine.getResourceReference(self.ResourceMovieSlider)
 
         # slot = self._bar.getMovieSlot('slider')
         # slot.addChild(self._content.getEntityNode())
@@ -148,7 +148,7 @@ class Movie2Scrollbar(BaseEntity):
         pass
 
     def _on_bar_click(self):
-        mouse_pos = Menge.getCursorPosition()
+        mouse_pos = Mengine.getCursorPosition()
         socket_pos = self._slider.getSocket('socket').getWorldPolygonCenter()
         if self.object.getIsHorizontal() is True:
             self._move(mouse_pos.x - socket_pos.x, 0.0)
@@ -156,14 +156,14 @@ class Movie2Scrollbar(BaseEntity):
             self._move(0.0, mouse_pos.y - socket_pos.y)
 
     def _onActivate(self):
-        self._mouse_handler = Menge.addMouseMoveHandler(self._on_mouse_move)
-        Menge.enableGlobalHandler(self._mouse_handler, False)
+        self._mouse_handler = Mengine.addMouseMoveHandler(self._on_mouse_move)
+        Mengine.enableGlobalHandler(self._mouse_handler, False)
 
         # self._slider_box = self._slider.getSocket('socket').getBoundingBox()
         # self._bar_box = self._bar.getSocket('socket').getBoundingBox()
 
-        self._slider_box = Menge.getHotSpotPolygonBoundingBox(self._slider.getSocket('socket'))
-        self._bar_box = Menge.getHotSpotPolygonBoundingBox(self._bar.getSocket('socket'))
+        self._slider_box = Mengine.getHotSpotPolygonBoundingBox(self._slider.getSocket('socket'))
+        self._bar_box = Mengine.getHotSpotPolygonBoundingBox(self._bar.getSocket('socket'))
 
         self._slider_size.set(self._slider_box.maximum.x - self._slider_box.minimum.x, self._slider_box.maximum.y - self._slider_box.minimum.y)
 
@@ -178,9 +178,9 @@ class Movie2Scrollbar(BaseEntity):
 
                 slider.addTask('TaskMovie2SocketClick', Movie2=self._slider, SocketName='socket', isDown=True)
                 slider.addFunction(self._on_mouse_down)
-                slider.addFunction(Menge.enableGlobalHandler, self._mouse_handler, True)
+                slider.addFunction(Mengine.enableGlobalHandler, self._mouse_handler, True)
                 slider.addTask('TaskMouseButtonClick', isDown=False)
-                slider.addFunction(Menge.enableGlobalHandler, self._mouse_handler, False)
+                slider.addFunction(Mengine.enableGlobalHandler, self._mouse_handler, False)
                 slider.addFunction(self._on_mouse_up)
 
         self.set_percentage(0)
@@ -189,7 +189,7 @@ class Movie2Scrollbar(BaseEntity):
         super(Movie2Scrollbar, self)._onDeactivate()
 
         if self._mouse_handler is not None:
-            Menge.removeGlobalHandler(self._mouse_handler)
+            Mengine.removeGlobalHandler(self._mouse_handler)
             self._mouse_handler = None
 
         if self.tc is not None:

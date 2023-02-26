@@ -24,14 +24,14 @@ class SystemAdvertising(System):
         self._current_trigger_count = 0
 
     def _onInitialize(self):
-        if Menge.hasTouchpad() is False:
+        if Mengine.hasTouchpad() is False:
             return
-        if Menge.getConfigBool('Advertising', "Interstitial", False) is False:
+        if Mengine.getConfigBool('Advertising', "Interstitial", False) is False:
             return
 
-        interstitial_params = {"transition": Menge.getConfigBool('Advertising', "ShowOnTransition", False), "mg_reset": Menge.getConfigBool('Advertising', "ShowOnResetMG", False), "chapter_done": Menge.getConfigBool('Advertising', "ShowOnChapterDone", False), "trigger": Menge.getConfigBool('Advertising', "ShowOnTrigger", False), }
+        interstitial_params = {"transition": Mengine.getConfigBool('Advertising', "ShowOnTransition", False), "mg_reset": Mengine.getConfigBool('Advertising', "ShowOnResetMG", False), "chapter_done": Mengine.getConfigBool('Advertising', "ShowOnChapterDone", False), "trigger": Mengine.getConfigBool('Advertising', "ShowOnTrigger", False), }
 
-        general_params = {"view_delay": Menge.getConfigInt('Advertising', "ViewDelayInMinutes", 10) * 60, "delay_on_start": Menge.getConfigInt('Advertising', "StartDelayInMinutes", 5) * 60, "trigger": Menge.getConfigString('Advertising', "TriggerNotificatorName", ""), "trigger_count_start": Menge.getConfigInt('Advertising', "TriggerCountStart", 0), "trigger_count_show": Menge.getConfigInt('Advertising', "TriggerCountShow", 1), }
+        general_params = {"view_delay": Mengine.getConfigInt('Advertising', "ViewDelayInMinutes", 10) * 60, "delay_on_start": Mengine.getConfigInt('Advertising', "StartDelayInMinutes", 5) * 60, "trigger": Mengine.getConfigString('Advertising', "TriggerNotificatorName", ""), "trigger_count_start": Mengine.getConfigInt('Advertising', "TriggerCountStart", 0), "trigger_count_show": Mengine.getConfigInt('Advertising', "TriggerCountShow", 1), }
 
         self._current_trigger_count = general_params["trigger_count_start"]
 
@@ -45,7 +45,7 @@ class SystemAdvertising(System):
         if self.is_enable is False:
             return True
 
-        self._first_enter_timestamp = Menge.getTime()
+        self._first_enter_timestamp = Mengine.getTime()
 
         self.__addObservers()
         return True
@@ -68,7 +68,7 @@ class SystemAdvertising(System):
     def showInterstitial(self, descr=None):
         def _cb(*args, **kwargs):
             _Log("show interstitial advert using {} [action={!r}]".format(AdvertisementProvider.getName(), descr))
-            self.updateViewedTime(Menge.getTime())
+            self.updateViewedTime(Mengine.getTime())
 
         TaskManager.runAlias("AliasShowAdvert", _cb, AdType="Interstitial")
 
@@ -104,7 +104,7 @@ class SystemAdvertising(System):
         def __addExtraAccountSettings(accountID, isGlobal):
             if isGlobal is True:
                 return
-            Menge.addCurrentAccountSetting(self.account_disable_setting_key, u'no', None)
+            Mengine.addCurrentAccountSetting(self.account_disable_setting_key, u'no', None)
 
         from Foundation.AccountManager import AccountManager
         AccountManager.addCreateAccountExtra(__addExtraAccountSettings)
@@ -115,11 +115,11 @@ class SystemAdvertising(System):
         if self.isDisabledForever() is True:
             return
 
-        Menge.changeCurrentAccountSetting(self.account_disable_setting_key, unicode(self.disable_key))
-        Menge.saveAccounts()  # then when observer triggers - we stop it (check __interstitialObserver)
+        Mengine.changeCurrentAccountSetting(self.account_disable_setting_key, unicode(self.disable_key))
+        Mengine.saveAccounts()  # then when observer triggers - we stop it (check __interstitialObserver)
 
     def isDisabledForever(self):
-        return Menge.getCurrentAccountSetting(self.account_disable_setting_key) == self.disable_key
+        return Mengine.getCurrentAccountSetting(self.account_disable_setting_key) == self.disable_key
 
     # --- observers ---
 
@@ -146,7 +146,7 @@ class SystemAdvertising(System):
         if self.isDisabledForever() is True:
             return True
 
-        if self.hasPermissionToViewAd(Menge.getTime()) is False:
+        if self.hasPermissionToViewAd(Mengine.getTime()) is False:
             return False
 
         action = kwargs.get("action")

@@ -32,7 +32,7 @@ class Video(BaseEntity):
     def _onFinalize(self):
         super(Video, self)._onFinalize()
 
-        Menge.destroyNode(self.video)
+        Mengine.destroyNode(self.video)
         self.video = None
         pass
 

@@ -33,42 +33,42 @@ class SystemGoogleServices(System):
     def _onInitialize(self):
         if self.b_plugins["GoogleGameSocial"] is True:
             # auth:
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialOnSign", self.__cbSignSuccess)
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialOnSignError", self.__cbSignError)
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialOnSignFailed", self.__cbSignFail)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialOnSign", self.__cbSignSuccess)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialOnSignError", self.__cbSignError)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialOnSignFailed", self.__cbSignFail)
 
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutSuccess", self.__cbSignOutSuccess)
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutCanceled", self.__cbSignOutCanceled)
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutFailure", self.__cbSignOutFailure)
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutComplete", self.__cbSignOutComplete)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutSuccess", self.__cbSignOutSuccess)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutCanceled", self.__cbSignOutCanceled)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutFailure", self.__cbSignOutFailure)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutComplete", self.__cbSignOutComplete)
 
             # incrementAchievement:
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementIncrementError", self.__cbAchievementIncError)
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementIncrementSuccess", self.__cbAchievementIncSuccess)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementIncrementError", self.__cbAchievementIncError)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementIncrementSuccess", self.__cbAchievementIncSuccess)
             # unlockAchievement:
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementSuccess", self.__cbAchievementUnlockSuccess)
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementError", self.__cbAchievementUnlockError)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementSuccess", self.__cbAchievementUnlockSuccess)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementError", self.__cbAchievementUnlockError)
             # showAchievements:
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialShowAchievementSuccess", self.__cbAchievementShowSuccess)
-            Menge.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialShowAchievementError", self.__cbAchievementShowError)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialShowAchievementSuccess", self.__cbAchievementShowSuccess)
+            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialShowAchievementError", self.__cbAchievementShowError)
 
             PolicyManager.setPolicy("ExternalAchieveProgress", "PolicyExternalAchieveProgressGooglePlay")
             PolicyManager.setPolicy("Authorize", "PolicyAuthGoogleService")
 
         if self.b_plugins["GooglePlayBilling"] is True:
-            Menge.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingBuyInAppSuccess", self.__cbBillingBuyInAppSuccess)
-            Menge.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingOnSkuResponse", self.__cbBillingOnSkuResponse)
-            Menge.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingOnConsume", self.__cbBillingOnConsume)
-            Menge.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingIsAcknowledge", self.__cbBillingIsAcknowledge)
-            Menge.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingAcknowledge", self.__cbBillingAcknowledge)
-            Menge.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingDeveloperError", self.__cbBillingDeveloperError)
-            Menge.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingUserCanceled", self.__cbBillingUserCanceled)
+            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingBuyInAppSuccess", self.__cbBillingBuyInAppSuccess)
+            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingOnSkuResponse", self.__cbBillingOnSkuResponse)
+            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingOnConsume", self.__cbBillingOnConsume)
+            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingIsAcknowledge", self.__cbBillingIsAcknowledge)
+            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingAcknowledge", self.__cbBillingAcknowledge)
+            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingDeveloperError", self.__cbBillingDeveloperError)
+            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingUserCanceled", self.__cbBillingUserCanceled)
 
             PolicyManager.setPolicy("Purchase", "PolicyPurchaseGoogleBilling")
 
         if self.b_plugins["GoogleInAppReviews"] is True:
-            Menge.setAndroidCallback("GoogleInAppReviews", "onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
-            Menge.setAndroidCallback("GoogleInAppReviews", "onGoogleInAppReviewsLaunchingTheReviewCompleted", self.__cbReviewsLaunchingComplete)
+            Mengine.setAndroidCallback("GoogleInAppReviews", "onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
+            Mengine.setAndroidCallback("GoogleInAppReviews", "onGoogleInAppReviewsLaunchingTheReviewCompleted", self.__cbReviewsLaunchingComplete)
 
         if self.b_plugins["GoogleGameSocial"] is True:
             self.signIn()
@@ -137,12 +137,12 @@ class SystemGoogleServices(System):
     @staticmethod
     def _signInIntent():
         _Log("[Auth] startSignIn Intent...", force=True)
-        Menge.androidMethod("GoogleGameSocial", "startSignInIntent")
+        Mengine.androidMethod("GoogleGameSocial", "startSignInIntent")
 
     @staticmethod
     def _signInSilently():
         _Log("[Auth] signIn Silently...", force=True)
-        Menge.androidMethod("GoogleGameSocial", "signInSilently")
+        Mengine.androidMethod("GoogleGameSocial", "signInSilently")
 
     @staticmethod
     def signOut():
@@ -150,7 +150,7 @@ class SystemGoogleServices(System):
             _Log("[Auth] plugin GoogleGameSocial is not active for signOut")
             return
         _Log("[Auth] signOut...", force=True)
-        Menge.androidMethod("GoogleGameSocial", "signOut")
+        Mengine.androidMethod("GoogleGameSocial", "signOut")
 
     # callbacks
 
@@ -233,7 +233,7 @@ class SystemGoogleServices(System):
             @param skus: List<String> - product ids list. Each non-str value will be ignored """
         skus = filter(lambda x: isinstance(x, str), skus)
         _Log("[Billing] setSkuList: skus={!r}".format(skus))
-        Menge.androidMethod("GooglePlayBilling", "setSkuList", skus)
+        Mengine.androidMethod("GooglePlayBilling", "setSkuList", skus)
 
     @staticmethod
     def buy(sku):
@@ -246,13 +246,13 @@ class SystemGoogleServices(System):
             return
 
         _Log("[Billing] buy: sku={!r}".format(sku))
-        Menge.androidBooleanMethod("GooglePlayBilling", "buyInApp", sku)
+        Mengine.androidBooleanMethod("GooglePlayBilling", "buyInApp", sku)
         SystemGoogleServices.__lastProductId = sku
 
     @staticmethod
     def restorePurchases():  # todo: configure callbacks
         _Log("[Billing] restore purchases...")
-        Menge.androidMethod("GooglePlayBilling", "queryPurchases")
+        Mengine.androidMethod("GooglePlayBilling", "queryPurchases")
 
     # utils
 
@@ -307,11 +307,11 @@ class SystemGoogleServices(System):
         if status is False:
             Notification.notify(Notificator.onPayFailed, prod_id)
 
-            if Menge.getConfigBool("GoogleService", "RetryPurchaseOnFail", True) is True:
+            if Mengine.getConfigBool("GoogleService", "RetryPurchaseOnFail", True) is True:
                 if TaskManager.existTaskChain("SystemGoogleServices_RetryPurchase") is True:
                     return
 
-                timeout_delay = Menge.getConfigInt("GoogleService", "RetryPurchaseTimeout", 10) * 1000.0
+                timeout_delay = Mengine.getConfigInt("GoogleService", "RetryPurchaseTimeout", 10) * 1000.0
 
                 with TaskManager.createTaskChain(Name="SystemGoogleServices_RetryPurchase") as tc:
                     with tc.addRaceTask(2) as (timeout, retry):
@@ -389,14 +389,14 @@ class SystemGoogleServices(System):
         if SystemGoogleServices.__checkAuthForAchievements("increment", achievement_id, steps) is False:
             return
         _Log("[Achievements] try incrementAchievement {!r} for {} steps".format(achievement_id, steps), force=True)
-        Menge.androidBooleanMethod("GoogleGameSocial", "incrementAchievement", achievement_id, steps)
+        Mengine.androidBooleanMethod("GoogleGameSocial", "incrementAchievement", achievement_id, steps)
 
     @staticmethod
     def unlockAchievement(achievement_id):
         if SystemGoogleServices.__checkAuthForAchievements("unlock", achievement_id) is False:
             return
         _Log("[Achievements] try unlockAchievement: {!r}".format(achievement_id), force=True)
-        Menge.androidBooleanMethod("GoogleGameSocial", "unlockAchievement", achievement_id)
+        Mengine.androidBooleanMethod("GoogleGameSocial", "unlockAchievement", achievement_id)
 
     @staticmethod
     def showAchievements():
@@ -406,7 +406,7 @@ class SystemGoogleServices(System):
             SystemGoogleServices.signIn(only_intent=True)
             return
         _Log("[Achievements] try showAchievements...", force=True)
-        Menge.androidBooleanMethod("GoogleGameSocial", "showAchievements")
+        Mengine.androidBooleanMethod("GoogleGameSocial", "showAchievements")
 
     # utils
 
@@ -457,7 +457,7 @@ class SystemGoogleServices(System):
         if SystemGoogleServices.b_plugins["GoogleInAppReviews"] is False:
             Trace.log("System", 0, "SystemGoogleServices try to rateApp, but plugin 'GoogleInAppReviews' is not active")
             return
-        Menge.androidMethod("GoogleInAppReviews", "launchTheInAppReview")
+        Mengine.androidMethod("GoogleInAppReviews", "launchTheInAppReview")
         _Log("[Reviews] rateApp...")
 
     # callbacks
@@ -476,14 +476,14 @@ class SystemGoogleServices(System):
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 
     def __addDevToDebug(self):
-        if Menge.isAvailablePlugin("DevToDebug") is False:
+        if Mengine.isAvailablePlugin("DevToDebug") is False:
             return
-        if Menge.hasDevToDebugTab("GoogleServices"):
+        if Mengine.hasDevToDebugTab("GoogleServices"):
             return
         if True not in SystemGoogleServices.b_plugins.values():
             return
 
-        tab = Menge.addDevToDebugTab("GoogleServices")
+        tab = Mengine.addDevToDebugTab("GoogleServices")
         widgets = []
 
         # achievements
@@ -491,7 +491,7 @@ class SystemGoogleServices(System):
             def _unlock_achievement(achievement_id):
                 self.unlockAchievement(achievement_id)
 
-            w_achievement_unlock = Menge.createDevToDebugWidgetCommandLine("unlock_achievement")
+            w_achievement_unlock = Mengine.createDevToDebugWidgetCommandLine("unlock_achievement")
             w_achievement_unlock.setTitle("Unlock achievement")
             w_achievement_unlock.setPlaceholder("syntax: <achievement_id>")
             w_achievement_unlock.setCommandEvent(_unlock_achievement)
@@ -506,13 +506,13 @@ class SystemGoogleServices(System):
                 steps = int(params[1]) if len(params) > 1 else 100
                 self.incrementAchievement(achievement_id, steps)
 
-            w_achievement_inc = Menge.createDevToDebugWidgetCommandLine("increment_achievement")
+            w_achievement_inc = Mengine.createDevToDebugWidgetCommandLine("increment_achievement")
             w_achievement_inc.setTitle("Increment achievement by n steps")
             w_achievement_inc.setPlaceholder("syntax: <achievement_id> <steps>")
             w_achievement_inc.setCommandEvent(_increment_achievement)
             widgets.append(w_achievement_inc)
 
-            w_show_achievements = Menge.createDevToDebugWidgetButton("show_achievements")
+            w_show_achievements = Mengine.createDevToDebugWidgetButton("show_achievements")
             w_show_achievements.setTitle("Show achievements")
             w_show_achievements.setClickEvent(self.showAchievements)
             widgets.append(w_show_achievements)
@@ -521,16 +521,16 @@ class SystemGoogleServices(System):
             def _login_status():
                 return "Current account id: {}".format(SystemGoogleServices.login_data)
 
-            w_login_status = Menge.createDevToDebugWidgetText("login_status")
+            w_login_status = Mengine.createDevToDebugWidgetText("login_status")
             w_login_status.setText(_login_status)
             widgets.append(w_login_status)
 
-            w_login = Menge.createDevToDebugWidgetButton("sign_in")
+            w_login = Mengine.createDevToDebugWidgetButton("sign_in")
             w_login.setTitle("Sign IN <--")
             w_login.setClickEvent(self.signIn)
             widgets.append(w_login)
 
-            w_logout = Menge.createDevToDebugWidgetButton("sign_out")
+            w_logout = Mengine.createDevToDebugWidgetButton("sign_out")
             w_logout.setTitle("Sign OUT -->")
             w_logout.setClickEvent(self.signOut)
             widgets.append(w_logout)
@@ -540,20 +540,20 @@ class SystemGoogleServices(System):
             def _buy(prod_id):
                 self.buy(prod_id)
 
-            w_buy = Menge.createDevToDebugWidgetCommandLine("buy_sku")
+            w_buy = Mengine.createDevToDebugWidgetCommandLine("buy_sku")
             w_buy.setTitle("Buy product")
             w_buy.setPlaceholder("syntax: <prod_id>")
             w_buy.setCommandEvent(_buy)
             widgets.append(w_buy)
 
-            w_update_products = Menge.createDevToDebugWidgetButton("update_products")
+            w_update_products = Mengine.createDevToDebugWidgetButton("update_products")
             w_update_products.setTitle("Update products (update prices and prod params)")
             w_update_products.setClickEvent(self.updateProducts)
             widgets.append(w_update_products)
 
         # rateApp
         if self.b_plugins["GoogleInAppReviews"] is True:
-            w_rate = Menge.createDevToDebugWidgetButton("rate_app")
+            w_rate = Mengine.createDevToDebugWidgetButton("rate_app")
             w_rate.setTitle("Show Rate App window")
             w_rate.setClickEvent(self.rateApp)
             widgets.append(w_rate)
@@ -562,8 +562,8 @@ class SystemGoogleServices(System):
             tab.addWidget(widget)
 
     def __remDevToDebug(self):
-        if Menge.isAvailablePlugin("DevToDebug") is False:
+        if Mengine.isAvailablePlugin("DevToDebug") is False:
             return
 
-        if Menge.hasDevToDebugTab("GoogleServices"):
-            Menge.removeDevToDebugTab("GoogleServices")
+        if Mengine.hasDevToDebugTab("GoogleServices"):
+            Mengine.removeDevToDebugTab("GoogleServices")

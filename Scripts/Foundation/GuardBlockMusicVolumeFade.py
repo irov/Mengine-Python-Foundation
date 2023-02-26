@@ -7,10 +7,10 @@ class GuardBlockMusicVolumeFade(object):
 
     def __guard(self, value):
         if value is True:
-            Menge.musicSetVolumeTag(self.Tag, self.To, 1.0)
+            Mengine.musicSetVolumeTag(self.Tag, self.To, 1.0)
             pass
         else:
-            Menge.musicSetVolumeTag(self.Tag, 1.0, self.To)
+            Mengine.musicSetVolumeTag(self.Tag, 1.0, self.To)
             pass
         pass
 

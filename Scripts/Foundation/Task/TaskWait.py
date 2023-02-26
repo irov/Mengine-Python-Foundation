@@ -26,11 +26,11 @@ class TaskWait(MixinTime, Task):
         if self.Timing is not None:
             self.id = self.Timing.timing(self.time, self.__onTiming)
         else:
-            self.id = Menge.timing(self.time, self.__onTiming)
+            self.id = Mengine.timing(self.time, self.__onTiming)
             pass
 
         if self.id == 0:
-            self.invalidTask("Menge.schedule return 0 (%f)" % (self.time))
+            self.invalidTask("Mengine.schedule return 0 (%f)" % (self.time))
 
             return True
             pass
@@ -59,7 +59,7 @@ class TaskWait(MixinTime, Task):
                 Trace.trace()
                 pass
         else:
-            if Menge.timingRemove(remove_id) is False:
+            if Mengine.timingRemove(remove_id) is False:
                 Trace.trace()
                 pass
             pass

@@ -32,7 +32,7 @@ class Sprite(BaseEntity):
         name = self.getName()
         shape.setName(name)
 
-        surface = Menge.createSurface("SurfaceImage")
+        surface = Mengine.createSurface("SurfaceImage")
         surface.setName(name)
 
         shape.setSurface(surface)
@@ -44,7 +44,7 @@ class Sprite(BaseEntity):
     def _onFinalize(self):
         super(Sprite, self)._onFinalize()
 
-        Menge.destroyNode(self.shape)
+        Mengine.destroyNode(self.shape)
         self.shape = None
         pass
 
@@ -61,7 +61,7 @@ class Sprite(BaseEntity):
             return
             pass
 
-        resource = Menge.getResourceReference(value)
+        resource = Mengine.getResourceReference(value)
 
         surface = self.shape.getSurface()
         surface.setResourceImage(resource)

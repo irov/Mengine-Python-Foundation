@@ -30,7 +30,7 @@ class Slider(BaseEntity):
     def _onFinalize(self):
         super(Slider, self)._onFinalize()
 
-        Menge.destroyNode(self.hotspot)
+        Mengine.destroyNode(self.hotspot)
         self.hotspot = None
         pass
 
@@ -39,11 +39,11 @@ class Slider(BaseEntity):
 
         self.hotspot.setEventListener(onHandleMouseButtonEvent=self._onMouseButtonEvent)
 
-        self.MouseButtonHandlerID = Menge.addMouseButtonHandler(self.__onGlobalMouseButtonEvent)
-        self.MouseMoveHandlerID = Menge.addMouseMoveHandler(self.__onGlobalMouseMove)
+        self.MouseButtonHandlerID = Mengine.addMouseButtonHandler(self.__onGlobalMouseButtonEvent)
+        self.MouseMoveHandlerID = Mengine.addMouseMoveHandler(self.__onGlobalMouseMove)
 
-        Menge.enableGlobalHandler(self.MouseButtonHandlerID, False)
-        Menge.enableGlobalHandler(self.MouseMoveHandlerID, False)
+        Mengine.enableGlobalHandler(self.MouseButtonHandlerID, False)
+        Mengine.enableGlobalHandler(self.MouseMoveHandlerID, False)
         pass
 
     def _onDeactivate(self):
@@ -51,8 +51,8 @@ class Slider(BaseEntity):
 
         self.hotspot.setEventListener(onHandleMouseButtonEvent=None)
 
-        Menge.removeGlobalHandler(self.MouseButtonHandlerID)
-        Menge.removeGlobalHandler(self.MouseMoveHandlerID)
+        Mengine.removeGlobalHandler(self.MouseButtonHandlerID)
+        Mengine.removeGlobalHandler(self.MouseMoveHandlerID)
 
         self.MouseButtonHandlerID = 0
         self.MouseMoveHandlerID = 0
@@ -83,15 +83,15 @@ class Slider(BaseEntity):
         pass
 
     def __onGlobalMouseMove(self, event):
-        arrowPos = Menge.getCursorPosition()
+        arrowPos = Mengine.getCursorPosition()
 
         newPos = (arrowPos.x - self.offset[0], arrowPos.y - self.offset[1])
-        newPos2 = Menge.projectionPointToLine(newPos, self.Slide[0], self.Slide[1])
+        newPos2 = Mengine.projectionPointToLine(newPos, self.Slide[0], self.Slide[1])
 
         self.object.setPosition((newPos2.x, newPos2.y))
 
-        maxLength = Menge.length_v2_v2(self.Slide[0], self.Slide[1])
-        slideLength = Menge.length_v2_v2(self.Slide[0], newPos2)
+        maxLength = Mengine.length_v2_v2(self.Slide[0], self.Slide[1])
+        slideLength = Mengine.length_v2_v2(self.Slide[0], newPos2)
 
         current = slideLength / maxLength
 
@@ -106,8 +106,8 @@ class Slider(BaseEntity):
             pass
 
         if event.isDown is False:
-            Menge.enableGlobalHandler(self.MouseButtonHandlerID, False)
-            Menge.enableGlobalHandler(self.MouseMoveHandlerID, False)
+            Mengine.enableGlobalHandler(self.MouseButtonHandlerID, False)
+            Mengine.enableGlobalHandler(self.MouseMoveHandlerID, False)
 
             Notification.notify(Notificator.onSliderUp, self.object)
             pass
@@ -123,12 +123,12 @@ class Slider(BaseEntity):
         if isDown is True:
             Notification.notify(Notificator.onSliderDown, self.object)
 
-            Menge.enableGlobalHandler(self.MouseButtonHandlerID, True)
-            Menge.enableGlobalHandler(self.MouseMoveHandlerID, True)
+            Mengine.enableGlobalHandler(self.MouseButtonHandlerID, True)
+            Mengine.enableGlobalHandler(self.MouseMoveHandlerID, True)
 
             sliderPos = self.object.getPosition()
 
-            arrowPos = Menge.getCursorPosition()
+            arrowPos = Mengine.getCursorPosition()
 
             self.offset = (arrowPos.x - sliderPos[0], arrowPos.y - sliderPos[1])
             pass

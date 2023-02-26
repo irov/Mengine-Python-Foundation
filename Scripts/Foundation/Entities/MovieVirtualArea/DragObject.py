@@ -69,11 +69,11 @@ class DragObject(object):
     def setup_affector(self):
         self.remove_affector()
         if self._dragging_mode is not self._modes['none']:
-            self._affector = Menge.addAffector(self._mouse_released_affector)
+            self._affector = Mengine.addAffector(self._mouse_released_affector)
 
     def remove_affector(self):
         if self._affector is not None:
-            Menge.removeAffector(self._affector)
+            Mengine.removeAffector(self._affector)
             self._affector = None
 
     def get_velocity(self):
@@ -138,7 +138,7 @@ class DragObject(object):
         self._validate_content_size()
 
     def get_bounds_viewport(self):
-        return Menge.Viewport((self._bounds['begin'].x, self._bounds['begin'].y), (self._bounds['end'].x, self._bounds['end'].y))
+        return Mengine.Viewport((self._bounds['begin'].x, self._bounds['begin'].y), (self._bounds['end'].x, self._bounds['end'].y))
 
     def get_bounds(self):
         return dict(self._bounds)
@@ -280,7 +280,7 @@ class DragObject(object):
             self._velocity.y *= (self._elasticity.limit - abs(offset.y)) / self._elasticity.limit
         self._move(self._velocity)
 
-        current_time = Menge.getTimeMs()
+        current_time = Mengine.getTimeMs()
         self._dt = current_time - self._old_time
         self._old_time = current_time
 
@@ -290,7 +290,7 @@ class DragObject(object):
         self._start_drag_position.set(x, y)
 
         self.remove_affector()
-        self._old_time = Menge.getTimeMs()
+        self._old_time = Mengine.getTimeMs()
 
     def mouse_release(self):
         if self._dt == 0.0:

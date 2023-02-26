@@ -7,7 +7,7 @@ class SystemDevToDebug(System):
         self.coin = 0
 
     def _onRun(self):
-        if Menge.isAvailablePlugin("DevToDebug") is False:
+        if Mengine.isAvailablePlugin("DevToDebug") is False:
             return True
 
         # self.createTestTab()
@@ -20,7 +20,7 @@ class SystemDevToDebug(System):
     def createTextInputTab(self):
         """ Here we will test CommandLine Widget """
 
-        tab = Menge.addDevToDebugTab("TextInputTab")
+        tab = Mengine.addDevToDebugTab("TextInputTab")
 
         # this dict storage data from CommandLine, that will be output in the text widget
         data = {"output": "no data", "version": 0}
@@ -30,7 +30,7 @@ class SystemDevToDebug(System):
         def get_output():
             return "Output [{}]: '{}'".format(data["version"], data["output"])
 
-        widget1 = Menge.createDevToDebugWidgetText("command_line_output")
+        widget1 = Mengine.createDevToDebugWidgetText("command_line_output")
         widget1.setText(get_output)
 
         # 2. create CommandLine widget
@@ -41,7 +41,7 @@ class SystemDevToDebug(System):
             data["output"] = text
             data["version"] += 1
 
-        widget2 = Menge.createDevToDebugWidgetCommandLine("command_line_input")
+        widget2 = Mengine.createDevToDebugWidgetCommandLine("command_line_input")
 
         widget2.setTitle("Command Line Title")
         widget2.setPlaceholder("input something good")
@@ -53,16 +53,16 @@ class SystemDevToDebug(System):
     def createSpamTabs(self):
         """ Here we will create 20 tabs with 50 widgets inside and see what would happen """
         for i in range(20):
-            tab = Menge.addDevToDebugTab("SpamTab_%s" % i)
+            tab = Mengine.addDevToDebugTab("SpamTab_%s" % i)
             for j in range(50):
-                widget_text = Menge.createDevToDebugWidgetText("test_%s" % j)
+                widget_text = Mengine.createDevToDebugWidgetText("test_%s" % j)
                 widget_text.setText("test const text %s %s %s" % (i, j, i * j))
                 tab.addWidget(widget_text)
 
     def createGroupedButtons(self):
         """ Here we will create text and button widgets """
 
-        tab = Menge.addDevToDebugTab("TestTab2")
+        tab = Mengine.addDevToDebugTab("TestTab2")
 
         def _cb(text):
             print(text)
@@ -71,10 +71,10 @@ class SystemDevToDebug(System):
             name = "test_%s" % i
 
             if i % 10 == 0:
-                widget = Menge.createDevToDebugWidgetText(name)
+                widget = Mengine.createDevToDebugWidgetText(name)
                 widget.setText("title_" + name)
             else:
-                widget = Menge.createDevToDebugWidgetButton(name)
+                widget = Mengine.createDevToDebugWidgetButton(name)
                 widget.setTitle("title_" + name)
                 widget.setClickEvent(_cb, "cb " + name)
 
@@ -83,14 +83,14 @@ class SystemDevToDebug(System):
     def createTestTab(self):
         """ Here we will create 1 tab and some widgets """
 
-        tab = Menge.addDevToDebugTab("TestTab")  # create tab
+        tab = Mengine.addDevToDebugTab("TestTab")  # create tab
 
-        widget_text1 = Menge.createDevToDebugWidgetText("test_1")
+        widget_text1 = Mengine.createDevToDebugWidgetText("test_1")
         widget_text1.setText("test const text")
         widget_text1.setColor((0.76, 0.2, 0.2))
         tab.addWidget(widget_text1)
 
-        widget_text2 = Menge.createDevToDebugWidgetText("test_2")
+        widget_text2 = Mengine.createDevToDebugWidgetText("test_2")
 
         def __get_coin():
             # print("__get_coin {}".format(self.coin))
@@ -100,7 +100,7 @@ class SystemDevToDebug(System):
 
         tab.addWidget(widget_text2)
 
-        widget_btn = Menge.createDevToDebugWidgetButton("test_3")
+        widget_btn = Mengine.createDevToDebugWidgetButton("test_3")
         widget_btn.setTitle("test button widget")
 
         def __add_coins():

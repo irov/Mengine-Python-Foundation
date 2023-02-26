@@ -45,7 +45,7 @@ class EditBox(BaseEntity):
     def _onFinalize(self):
         super(EditBox, self)._onFinalize()
 
-        Menge.destroyNode(self.hotspot)
+        Mengine.destroyNode(self.hotspot)
         self.hotspot = None
 
         self.Sprite_Carriage = None
@@ -120,8 +120,8 @@ class EditBox(BaseEntity):
     def _onActivate(self):
         super(EditBox, self)._onActivate()
 
-        self.KeyHandlerID = Menge.addKeyHandler(self.__onGlobalHandleKeyEvent)
-        self.TextHandlerID = Menge.addTextHandler(self.__onGlobalHandleTextEvent)
+        self.KeyHandlerID = Mengine.addKeyHandler(self.__onGlobalHandleKeyEvent)
+        self.TextHandlerID = Mengine.addTextHandler(self.__onGlobalHandleTextEvent)
 
         self.updateCarriage()
 
@@ -134,8 +134,8 @@ class EditBox(BaseEntity):
         self.Sprite_Carriage.setPosition(self.pos)
         self.text = u""
 
-        Menge.removeGlobalHandler(self.KeyHandlerID)
-        Menge.removeGlobalHandler(self.TextHandlerID)
+        Mengine.removeGlobalHandler(self.KeyHandlerID)
+        Mengine.removeGlobalHandler(self.TextHandlerID)
         pass
 
     def setValueByDefault(self, value):
@@ -178,17 +178,17 @@ class EditBox(BaseEntity):
             Notification.notify(Notificator.EditBoxKeyEvent, self.object, event.code)
             pass
 
-        if event.code == Menge.KC_LEFT:
+        if event.code == Mengine.KC_LEFT:
             self.carriageShift(-1)
-        elif event.code == Menge.KC_RIGHT:
+        elif event.code == Mengine.KC_RIGHT:
             self.carriageShift(1)
-        elif event.code == Menge.KC_DELETE:
+        elif event.code == Mengine.KC_DELETE:
             self.deleteSymbol()
-        elif event.code == Menge.KC_HOME:
+        elif event.code == Mengine.KC_HOME:
             self.carriageHome()
-        elif event.code == Menge.KC_END:
+        elif event.code == Mengine.KC_END:
             self.carriageEnd()
-        elif event.code == Menge.KC_BACK:
+        elif event.code == Mengine.KC_BACK:
             self.backspaceSymbol()
             pass
         pass
@@ -316,14 +316,14 @@ class EditBox(BaseEntity):
             tc.addFunction(self.blinkCarriage)
 
     def showKeyboard(self, state):
-        if Menge.hasTouchpad() is False:
+        if Mengine.hasTouchpad() is False:
             return
 
-        if state is True and Menge.isShowKeyboard() is False:
-            Menge.showKeyboard()
+        if state is True and Mengine.isShowKeyboard() is False:
+            Mengine.showKeyboard()
             Notification.notify(Notificator.onMobileKeyboardShow, True)
-        elif state is False and Menge.isShowKeyboard() is True:
-            Menge.hideKeyboard()
+        elif state is False and Mengine.isShowKeyboard() is True:
+            Mengine.hideKeyboard()
             Notification.notify(Notificator.onMobileKeyboardShow, False)
 
     def blinkCarriage(self):

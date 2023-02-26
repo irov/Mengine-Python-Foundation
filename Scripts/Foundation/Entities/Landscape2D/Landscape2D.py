@@ -34,7 +34,7 @@ class Landscape2D(BaseEntity):
     def _onFinalize(self):
         super(Landscape2D, self)._onFinalize()
 
-        Menge.destroyNode(self.landscape2d)
+        Mengine.destroyNode(self.landscape2d)
         self.landscape2d = None
         pass
 

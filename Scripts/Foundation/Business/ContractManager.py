@@ -9,7 +9,7 @@ class ContractManager(object):
 
     @staticmethod
     def onInitialize():
-        ContractManager.s_scheduler = Menge.createScheduler("ContractManager")
+        ContractManager.s_scheduler = Mengine.createScheduler("ContractManager")
 
         return True
         pass
@@ -17,7 +17,7 @@ class ContractManager(object):
     @staticmethod
     def onFinalize():
         if ContractManager.s_scheduler is not None:
-            Menge.destroyScheduler(ContractManager.s_scheduler)
+            Mengine.destroyScheduler(ContractManager.s_scheduler)
             ContractManager.s_scheduler = None
         pass
 

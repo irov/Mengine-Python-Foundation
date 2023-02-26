@@ -17,7 +17,7 @@ class TaskNodeSocketBase(Task):
             self.validateFailed("Socket is None")
             pass
 
-        if Menge.isHomeless(self.Socket) is True:
+        if Mengine.isHomeless(self.Socket) is True:
             self.validateFailed("Socket %s is Homeless" % (self.Socket.getName()))
             pass
         pass

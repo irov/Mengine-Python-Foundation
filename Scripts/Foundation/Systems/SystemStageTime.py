@@ -27,7 +27,7 @@ class SystemStageTime(System):
         pass
 
     def _onSceneInit(self, sceneName):
-        self.on_init_time = Menge.getTimeMs()
+        self.on_init_time = Mengine.getTimeMs()
         self.on_init_scene_name = sceneName
 
         return False
@@ -35,7 +35,7 @@ class SystemStageTime(System):
 
     def _onSceneLeave(self, sceneName):
         if sceneName == self.on_init_scene_name:
-            self.last_passed_time = Menge.getTimeMs() - self.on_init_time
+            self.last_passed_time = Mengine.getTimeMs() - self.on_init_time
             self.last_passed_scene_name = sceneName
 
             self.sendAnalytics(self.last_passed_scene_name, self.last_passed_time)
@@ -45,7 +45,7 @@ class SystemStageTime(System):
         pass
 
     def sendAnalytics(self, stage_name, stage_time):
-        data = {'clientID': Menge.getAccountUID(Menge.getCurrentAccountName()), 'category': 'Timing', 'action': 'Stage_Time', 'client_definition': {GoogleAnalytics.TimeDimension: stage_name, GoogleAnalytics.TimeMetric: stage_time, }}
+        data = {'clientID': Mengine.getAccountUID(Mengine.getCurrentAccountName()), 'category': 'Timing', 'action': 'Stage_Time', 'client_definition': {GoogleAnalytics.TimeDimension: stage_name, GoogleAnalytics.TimeMetric: stage_time, }}
 
         GoogleAnalytics.send_analytics(data)
         pass

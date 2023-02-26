@@ -7,44 +7,44 @@ class AccountManager(object):
 
     @staticmethod
     def onCreateDefaultAccount():
-        DefaultAccount = Menge.createAccount()
+        DefaultAccount = Mengine.createAccount()
 
-        Menge.selectAccount(DefaultAccount)
-        Menge.setDefaultAccount(DefaultAccount)
+        Mengine.selectAccount(DefaultAccount)
+        Mengine.setDefaultAccount(DefaultAccount)
 
-        Menge.changeCurrentAccountSettingBool("Default", True)
-        Menge.changeCurrentAccountSetting("Name", u"Default")
+        Mengine.changeCurrentAccountSettingBool("Default", True)
+        Mengine.changeCurrentAccountSetting("Name", u"Default")
 
         DefaultMusicVolume = DefaultManager.getDefaultFloat("DefaultMusicVolume", "0.5")
-        Menge.changeCurrentAccountSetting("MusicVolume", unicode(DefaultMusicVolume))
+        Mengine.changeCurrentAccountSetting("MusicVolume", unicode(DefaultMusicVolume))
 
         DefaultSoundVolume = DefaultManager.getDefaultFloat("DefaultSoundVolume", "0.5")
-        Menge.changeCurrentAccountSetting("SoundVolume", unicode(DefaultSoundVolume))
+        Mengine.changeCurrentAccountSetting("SoundVolume", unicode(DefaultSoundVolume))
 
         DefaultVoiceVolume = DefaultManager.getDefaultFloat("DefaultVoiceVolume", "0.5")
-        Menge.changeCurrentAccountSetting("VoiceVolume", unicode(DefaultVoiceVolume))
+        Mengine.changeCurrentAccountSetting("VoiceVolume", unicode(DefaultVoiceVolume))
 
         DefaultAccountFullscreen = DefaultManager.getDefaultBool("DefaultAccountFullscreen", False)
-        Menge.changeCurrentAccountSetting("Fullscreen", unicode(DefaultAccountFullscreen))
+        Mengine.changeCurrentAccountSetting("Fullscreen", unicode(DefaultAccountFullscreen))
         #
         DefaultAccountCursor = DefaultManager.getDefaultBool("DefaultAccountCursor", False)
-        Menge.changeCurrentAccountSetting("Cursor", unicode(DefaultAccountCursor))
+        Mengine.changeCurrentAccountSetting("Cursor", unicode(DefaultAccountCursor))
         #
         DefaultAccountMute = DefaultManager.getDefaultBool("DefaultAccountMute", False)
-        Menge.changeCurrentAccountSetting("Mute", unicode(DefaultAccountMute))
+        Mengine.changeCurrentAccountSetting("Mute", unicode(DefaultAccountMute))
 
         return DefaultAccount
         pass
 
     @staticmethod
     def onCreateGlobalAccount():
-        GlobalAccount = Menge.createGlobalAccount()
-        Menge.setGlobalAccount(GlobalAccount)
+        GlobalAccount = Mengine.createGlobalAccount()
+        Mengine.setGlobalAccount(GlobalAccount)
 
-        Menge.addGlobalSetting("Name", u"Global", None)
-        Menge.addGlobalSetting("GameVersion", u"1", None)
-        Menge.addGlobalSetting("VersionFiles", u'', None)
-        Menge.addGlobalSetting("VersionDate", u'', None)
+        Mengine.addGlobalSetting("Name", u"Global", None)
+        Mengine.addGlobalSetting("GameVersion", u"1", None)
+        Mengine.addGlobalSetting("VersionFiles", u'', None)
+        Mengine.addGlobalSetting("VersionDate", u'', None)
 
         return GlobalAccount
         pass
@@ -140,31 +140,31 @@ class AccountManager(object):
 
     @staticmethod
     def getGameVersion():
-        return Menge.getGlobalSetting('GameVersion')
+        return Mengine.getGlobalSetting('GameVersion')
         pass
 
     @staticmethod
     def setGameVersion(version):
-        Menge.changeGlobalSetting('GameVersion', version)
+        Mengine.changeGlobalSetting('GameVersion', version)
         pass
 
     @staticmethod
     def getVersionFiles():
-        return Menge.getGlobalSettingStrings('VersionFiles')
+        return Mengine.getGlobalSettingStrings('VersionFiles')
         pass
 
     @staticmethod
     def setVersionFiles(version):
-        Menge.changeGlobalSettingStrings('VersionFiles', version)
+        Mengine.changeGlobalSettingStrings('VersionFiles', version)
         pass
 
     @staticmethod
     def getVersionDate():
-        return Menge.getGlobalSetting('VersionDate')
+        return Mengine.getGlobalSetting('VersionDate')
         pass
 
     @staticmethod
     def setVersionDate(value):
-        Menge.changeGlobalSetting('VersionDate', value)
+        Mengine.changeGlobalSetting('VersionDate', value)
         pass
     pass

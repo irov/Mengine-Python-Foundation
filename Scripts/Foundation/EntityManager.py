@@ -25,10 +25,10 @@ class EntityManager(object):
         module = "%s.%s" % (module, name)
 
         if override is True:
-            if Menge.hasEntityPrototypeFinder(name) is True:
-                Menge.removeEntityPrototypeFinder(name)
+            if Mengine.hasEntityPrototypeFinder(name) is True:
+                Mengine.removeEntityPrototypeFinder(name)
 
-        if Menge.addEntityPrototypeFinder(name, EntityManager.__importEntityType) is False:
+        if Mengine.addEntityPrototypeFinder(name, EntityManager.__importEntityType) is False:
             if name in EntityManager.s_type:
                 module2, type2 = EntityManager.s_type[name]
 

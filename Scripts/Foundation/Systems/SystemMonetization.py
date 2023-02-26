@@ -27,7 +27,7 @@ class SystemMonetization(System):
                 return False
 
             # send possible reasons for developers
-            if send_debug_log is True and Menge.getConfigBool("Monetization", "Enable", False) is True:
+            if send_debug_log is True and Mengine.getConfigBool("Monetization", "Enable", False) is True:
                 _Log("Monetization is enabled in Config, but it doesn't work. Possible reasons:"
                      "\n - you tries to enable it on PC, but `OnlyMobile` is True (set it to False)"
                      "\n - game is not CE, but `OnlyCE` is True (set it to False)", err=True)
@@ -58,7 +58,7 @@ class SystemMonetization(System):
         return True
 
     def _onStop(self):
-        if Menge.hasTouchpad() is False:
+        if Mengine.hasTouchpad() is False:
             return True
 
         for component in SystemMonetization.components.values():
@@ -224,7 +224,7 @@ class SystemMonetization(System):
 
         icon = GameStore.generateObjectUnique("Movie2_Coin", "Movie2_Coin_{}".format(getCurrentPublisher()), Enable=True)
         icon.setTextAliasEnvironment("DialogWindowIcon")
-        Menge.setTextAlias("DialogWindowIcon", "$AliasCoinUsePrice", "ID_EMPTY")
+        Mengine.setTextAlias("DialogWindowIcon", "$AliasCoinUsePrice", "ID_EMPTY")
 
         text_args = dict(icon_value=[gold])
 
@@ -411,7 +411,7 @@ class SystemMonetization(System):
     @staticmethod
     def __getTodayDate():
         """ :return: 'YEAR/MONTH/DAY' """
-        time = Menge.getLocalDateStruct()
+        time = Mengine.getLocalDateStruct()
         today_date = "{}/{}/{}".format(time.year, time.month, time.day)
         return today_date
 
@@ -627,7 +627,7 @@ class SystemMonetization(System):
         SystemMonetization.__initStorage()
 
         if _DEVELOPMENT is True:
-            default_currency_code = Menge.getConfigString("Monetization", "DebugCurrencyCode", "USD")
+            default_currency_code = Mengine.getConfigString("Monetization", "DebugCurrencyCode", "USD")
             if default_currency_code.lower() != "none":
                 MonetizationManager.setCurrentCurrencyCode(default_currency_code)
 
@@ -700,7 +700,7 @@ class SystemMonetization(System):
 
     @staticmethod
     def saveData(*keys):
-        """ Apply Menge.saveAccounts
+        """ Apply Mengine.saveAccounts
             :param keys: str keys, they must be in storage.
                 if 0 keys: saves all values from storage
         """
@@ -709,7 +709,7 @@ class SystemMonetization(System):
             _Log("Saver: save all data on device...")
             for key, value in SystemMonetization.storage.items():
                 save = value.getSave()
-                Menge.changeCurrentAccountSetting(key, unicode(save))
+                Mengine.changeCurrentAccountSetting(key, unicode(save))
 
         else:
             for key in keys:
@@ -718,9 +718,9 @@ class SystemMonetization(System):
                     continue
                 _Log("Saver: save {!r} on device...".format(key))
                 save = SystemMonetization.storage[key].getSave()
-                Menge.changeCurrentAccountSetting(key, unicode(save))
+                Mengine.changeCurrentAccountSetting(key, unicode(save))
 
-        Menge.saveAccounts()
+        Mengine.saveAccounts()
         _Log("Saver: save complete...")
 
     @staticmethod
@@ -733,7 +733,7 @@ class SystemMonetization(System):
 
         for key in SystemMonetization.storage.keys():
             fn = observers.get(key)
-            Menge.addCurrentAccountSetting(key, u'None', fn)
+            Mengine.addCurrentAccountSetting(key, u'None', fn)
 
         # calls only on Create Account
 
@@ -746,7 +746,7 @@ class SystemMonetization(System):
         _Log("restore storage from USER saves...")
 
         for key in SystemMonetization.storage.keys():
-            value_save = str(Menge.getCurrentAccountSetting(key))
+            value_save = str(Mengine.getCurrentAccountSetting(key))
             if value_save == "None":
                 SystemMonetization.saveData(key)
             else:
@@ -775,23 +775,23 @@ class SystemMonetization(System):
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 
     def __addDevToDebug(self):
-        if Menge.isAvailablePlugin("DevToDebug") is False:
+        if Mengine.isAvailablePlugin("DevToDebug") is False:
             return
         if self.__isActive() is False:
             return
-        if Menge.hasDevToDebugTab("Monetization") is True:
+        if Mengine.hasDevToDebugTab("Monetization") is True:
             return
 
-        tab = Menge.addDevToDebugTab("Monetization")
+        tab = Mengine.addDevToDebugTab("Monetization")
 
         # buttons
 
-        w_show_ad = Menge.createDevToDebugWidgetButton("show_ad")
+        w_show_ad = Mengine.createDevToDebugWidgetButton("show_ad")
         w_show_ad.setTitle("Show ad with current provider")
         w_show_ad.setClickEvent(self.showAd)
         tab.addWidget(w_show_ad)
 
-        w_upd_ads = Menge.createDevToDebugWidgetButton("update_ads")
+        w_upd_ads = Mengine.createDevToDebugWidgetButton("update_ads")
         w_upd_ads.setTitle("Update available ads")
         w_upd_ads.setClickEvent(self.updateAvailableAds)
         tab.addWidget(w_upd_ads)
@@ -802,7 +802,7 @@ class SystemMonetization(System):
             gold = int(text)
             self.addGold(gold)
 
-        w_add = Menge.createDevToDebugWidgetCommandLine("add_gold")
+        w_add = Mengine.createDevToDebugWidgetCommandLine("add_gold")
         w_add.setTitle("Add gold")
         w_add.setPlaceholder("Input here positive integer")
         w_add.setCommandEvent(_addGold)
@@ -812,7 +812,7 @@ class SystemMonetization(System):
             gold = int(text)
             self.withdrawGold(gold)
 
-        w_withdraw = Menge.createDevToDebugWidgetCommandLine("withdraw_gold")
+        w_withdraw = Mengine.createDevToDebugWidgetCommandLine("withdraw_gold")
         w_withdraw.setTitle("Withdraw gold")
         w_withdraw.setPlaceholder("Input here positive integer")
         w_withdraw.setCommandEvent(_withdrawGold)
@@ -822,7 +822,7 @@ class SystemMonetization(System):
             gold = int(text)
             self.setGold(gold)
 
-        w_set = Menge.createDevToDebugWidgetCommandLine("set_gold")
+        w_set = Mengine.createDevToDebugWidgetCommandLine("set_gold")
         w_set.setTitle("Set gold")
         w_set.setPlaceholder("Input here positive integer")
         w_set.setCommandEvent(_setGold)
@@ -831,7 +831,7 @@ class SystemMonetization(System):
         def _sendReward(product_id):
             self.sendReward(prod_id=product_id)
 
-        w_send_reward = Menge.createDevToDebugWidgetCommandLine("send_reward")
+        w_send_reward = Mengine.createDevToDebugWidgetCommandLine("send_reward")
         w_send_reward.setTitle("Send reward from product")
         w_send_reward.setPlaceholder("Syntax: <product_id>")
         w_send_reward.setCommandEvent(_sendReward)
@@ -846,13 +846,13 @@ class SystemMonetization(System):
             descr = None if len(params) < 2 else params[1]
             self.payGold(gold, descr)
 
-        w_pay_gold = Menge.createDevToDebugWidgetCommandLine("pay_gold")
+        w_pay_gold = Mengine.createDevToDebugWidgetCommandLine("pay_gold")
         w_pay_gold.setTitle("Pay gold")
         w_pay_gold.setPlaceholder("Syntax: <gold_num> [descr]")
         w_pay_gold.setCommandEvent(_payGold)
         tab.addWidget(w_pay_gold)
 
-        w_pay = Menge.createDevToDebugWidgetCommandLine("pay")
+        w_pay = Mengine.createDevToDebugWidgetCommandLine("pay")
         w_pay.setTitle("Payment with `{}`".format(PolicyManager.getPolicy("Purchase", "PolicyPurchaseDummy")))
         w_pay.setPlaceholder("Syntax: <product_id>")
         w_pay.setCommandEvent(self.pay)
@@ -866,7 +866,7 @@ class SystemMonetization(System):
             _Log("[DevToDebug] run SpecialPromotion {}".format(special_prod_id))
             SpecialPromotion.run(special_prod_id)
 
-        w_special_promo = Menge.createDevToDebugWidgetCommandLine("special_promo")
+        w_special_promo = Mengine.createDevToDebugWidgetCommandLine("special_promo")
         w_special_promo.setTitle("Show special promotion")
         w_special_promo.setPlaceholder("Syntax: <product_id>")
         w_special_promo.setCommandEvent(_showSpecialPromo)
@@ -879,7 +879,7 @@ class SystemMonetization(System):
             title += "".join(["\n* {}: `{}`".format(key, val) for key, val in MonetizationManager.getGeneralSettings().items()])
             return title
 
-        w_settings_descr = Menge.createDevToDebugWidgetText("monetization_settings_descr")
+        w_settings_descr = Mengine.createDevToDebugWidgetText("monetization_settings_descr")
         w_settings_descr.setText(_getSettingsWidgetTitle)
         tab.addWidget(w_settings_descr)
 
@@ -898,15 +898,15 @@ class SystemMonetization(System):
             _Log("[DevToDebug] changed setting {!r} from {!r} to {!r}".format(setting, all_settings[setting], value))
             all_settings[setting] = value
 
-        w_settings = Menge.createDevToDebugWidgetCommandLine("change_settings")
+        w_settings = Mengine.createDevToDebugWidgetCommandLine("change_settings")
         w_settings.setTitle("Change settings (from list above)")
         w_settings.setPlaceholder("Syntax: <setting_name> <new_value>")
         w_settings.setCommandEvent(_updateSetting)
         tab.addWidget(w_settings)
 
     def __remDevToDebug(self):
-        if Menge.isAvailablePlugin("DevToDebug") is False:
+        if Mengine.isAvailablePlugin("DevToDebug") is False:
             return
 
-        if Menge.hasDevToDebugTab("Monetization") is True:
-            Menge.removeDevToDebugTab("Monetization")
+        if Mengine.hasDevToDebugTab("Monetization") is True:
+            Mengine.removeDevToDebugTab("Monetization")

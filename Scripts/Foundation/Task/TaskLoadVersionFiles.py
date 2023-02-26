@@ -16,7 +16,7 @@ class TaskLoadVersionFiles(Task):
             self.complete()
             pass
 
-        http = Menge.getConfigString('LoadTE', 'url', 'http://62.80.178.35:8888/files/getcur?type={}')
-        Menge.getMessage(http.format(self.type), cb)
+        http = Mengine.getConfigString('LoadTE', 'url', 'http://62.80.178.35:8888/files/getcur?type={}')
+        Mengine.getMessage(http.format(self.type), cb)
         return False
         pass

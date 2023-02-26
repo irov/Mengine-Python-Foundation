@@ -51,7 +51,7 @@ class TaskNodeSocketLeave(TaskNodeSocketBase):
     def _onFinally(self):
         super(TaskNodeSocketLeave, self)._onFinally()
 
-        if Menge.isHomeless(self.Socket) is True:
+        if Mengine.isHomeless(self.Socket) is True:
             return
 
         self.Socket.setEventListener(onHandleMouseLeave=None)

@@ -26,7 +26,7 @@ class TaskFacebookAuthentication(Task):
             tc.addFunction(Facebook.auth_user, self.data)
             with tc.addRepeatTask() as (tc_repeat, tc_until):
                 tc_repeat.addDelay(100)
-                tc_repeat.addFunction(Menge.getMessage, 'http://localhost:8888/get_token?ip={}'.format(Facebook.client_ip), cb)
+                tc_repeat.addFunction(Mengine.getMessage, 'http://localhost:8888/get_token?ip={}'.format(Facebook.client_ip), cb)
                 with tc_until.addRaceTask(2) as (tc_normal, tc_cancel):
                     tc_normal.addSemaphore(self.IPSemaphore, From=False)
                     tc_cancel.addListener(Notificator.onFacebookAuthEscape)
@@ -43,5 +43,5 @@ class TaskFacebookAuthentication(Task):
             self.IPSemaphore.setValue(True)
             pass
 
-        Menge.getMessage('http://localhost:8888/ip', cb)
+        Mengine.getMessage('http://localhost:8888/ip', cb)
         pass

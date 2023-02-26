@@ -18,7 +18,7 @@ class TaskVoicePlay(Task):
 
     def _onRun(self):
         if self.Wait is True:
-            self.playId = Menge.voicePlay(self.VoiceID, self.Loop, self._onVoiceEnd)
+            self.playId = Mengine.voicePlay(self.VoiceID, self.Loop, self._onVoiceEnd)
 
             if self.playId == 0:
                 return True
@@ -26,7 +26,7 @@ class TaskVoicePlay(Task):
 
             return False
         else:
-            self.playId = Menge.voicePlay(self.VoiceID, self.Loop, None)
+            self.playId = Mengine.voicePlay(self.VoiceID, self.Loop, None)
 
             if self.playId == 0:
                 return True
@@ -61,7 +61,7 @@ class TaskVoicePlay(Task):
             stopId = self.playId
 
             self.playId = None
-            Menge.voiceStop(stopId)
+            Mengine.voiceStop(stopId)
             pass
         pass
     pass

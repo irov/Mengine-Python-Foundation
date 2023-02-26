@@ -4,7 +4,7 @@ class TaskExit(Task):
     Skiped = True
 
     def _onRun(self):
-        Menge.quitApplication()
+        Mengine.quitApplication()
 
         return True
         pass

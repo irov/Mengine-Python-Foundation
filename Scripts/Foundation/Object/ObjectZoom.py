@@ -38,7 +38,7 @@ class ObjectZoom(Object):
                     self.initializeFailed("'%s' invalid initialize, incorrect param HintPoint" % (self.getName()))
 
                 Polygon = self.getPolygon()
-                if Menge.isPointInsidePolygon(HintPoint, Polygon) is False:
+                if Mengine.isPointInsidePolygon(HintPoint, Polygon) is False:
                     self.initializeFailed("'%s' invalid initialize, HintPoint %s must be inside polygon %s" % (self.getName(), HintPoint, Polygon))
 
     def calcWorldHintPoint(self):

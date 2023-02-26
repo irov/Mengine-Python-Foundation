@@ -227,7 +227,7 @@ class Movie(BaseAnimatable):
             eventation.removeEvents()
             pass
 
-        Menge.destroyNode(self.movie)
+        Mengine.destroyNode(self.movie)
         self.movie = None
         pass
 

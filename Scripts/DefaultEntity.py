@@ -6,7 +6,7 @@ from DefaultNode import DefaultNode
 # Description:
 # - 
 # ------------------------------------------------------------------------------
-class DefaultEntity(Menge.Entity, DefaultNode):
+class DefaultEntity(Mengine.Entity, DefaultNode):
     # ----------------------------------------------------------------------------
     # Method: __init__
     # Description:

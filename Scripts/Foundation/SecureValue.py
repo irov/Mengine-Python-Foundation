@@ -8,8 +8,8 @@ class SecureValue(object):
     def __makeSecureValue(self, value):
         if isinstance(value, int) is False:
             Trace.log("Manager", 0, "SecureValue {!r}: you can use only int for create: value={!r} {}".format(self.id, value, type(value)))
-            return Menge.makeSecureUnsignedValue(0)
-        return Menge.makeSecureUnsignedValue(value)
+            return Mengine.makeSecureUnsignedValue(0)
+        return Mengine.makeSecureUnsignedValue(value)
 
     def getValue(self):
         integrity_check, value = self.value.getUnprotectedValue()

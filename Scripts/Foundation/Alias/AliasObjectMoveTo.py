@@ -17,7 +17,7 @@ class AliasObjectMoveTo(MixinTime, MixinObject, TaskAlias):
         super(AliasObjectMoveTo, self)._onInitialize()
         position_from = self.Object.getParam("Position")
         if self.speed is not None:
-            length = Menge.length_v2_v2(position_from, self.positionTo)
+            length = Mengine.length_v2_v2(position_from, self.positionTo)
             self.time = length / self.speed
 
         if self.point is not None:

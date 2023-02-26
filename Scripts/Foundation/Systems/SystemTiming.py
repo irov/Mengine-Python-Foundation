@@ -43,10 +43,10 @@ class SystemTiming(System):
             pass
 
         self.textNode.removeFromParent()
-        Menge.destroyNode(self.textNode)
+        Mengine.destroyNode(self.textNode)
         self.textNode = None
 
-        if Menge.scheduleRemove(self._scheduleId) is False:
+        if Mengine.scheduleRemove(self._scheduleId) is False:
             Trace.trace()
             pass
 
@@ -60,7 +60,7 @@ class SystemTiming(System):
         pass
 
     def __attachSchedule(self, reloadTime):
-        self._scheduleId = Menge.schedule(reloadTime, self.__disableTextNode, self.cb_timing)
+        self._scheduleId = Mengine.schedule(reloadTime, self.__disableTextNode, self.cb_timing)
         pass
 
     def isOnSchedule(self):
@@ -77,7 +77,7 @@ class SystemTiming(System):
             pass
 
         self.textNode.removeFromParent()
-        Menge.destroyNode(self.textNode)
+        Mengine.destroyNode(self.textNode)
         self.textNode = None
 
         self._scheduleId = SystemTiming.SCHEDULE_NOT_INIT

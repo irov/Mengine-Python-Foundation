@@ -23,7 +23,7 @@ class TaskNodeBezier2Follow(MixinNode, Task):
                 self.initializeFailed("Time and speed is None.")
             positionFrom = self.node.getWorldPosition()
             positionTo = self.Follow.getWorldPosition()
-            length = Menge.length_v2_v2(positionFrom, positionTo)
+            length = Mengine.length_v2_v2(positionFrom, positionTo)
             self.Time = length / self.speed
             pass
         pass

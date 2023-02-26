@@ -80,7 +80,7 @@ class BaseEntity(Actor, Initializer):
         pass
 
     def getCameraPosition(self, Camera):
-        return Menge.getCameraPosition(Camera, self.node)
+        return Mengine.getCameraPosition(Camera, self.node)
         pass
 
     @staticmethod
@@ -131,12 +131,12 @@ class BaseEntity(Actor, Initializer):
         super(BaseEntity, self)._onFinalize()
 
         if _DEVELOPMENT is True:
-            if Menge.is_class(self.node) is False:
+            if Mengine.is_class(self.node) is False:
                 Trace.log("BaseEntity", 0, "Entity %s:%s _onFinalize self is not class" % (self.object.getType(), self.object.getName()))
                 return
                 pass
 
-            if Menge.is_wrap(self.node) is False:
+            if Mengine.is_wrap(self.node) is False:
                 Trace.log("BaseEntity", 0, "Entity %s:%s _onFinalize self is unwrap" % (self.object.getType(), self.object.getName()))
                 return
                 pass
@@ -155,7 +155,7 @@ class BaseEntity(Actor, Initializer):
         pass
 
     def onRemoveNode(self):
-        Menge.destroyEntity(self.node)
+        Mengine.destroyEntity(self.node)
         self.node = None
         pass
 

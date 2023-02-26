@@ -34,7 +34,7 @@ class TaskNodeBezier2To(MixinNode, Task):
         positionFrom = self.node.getLocalPosition()
 
         if self.time is None:
-            length = Menge.length_v2_v2(positionFrom, self.positionTo)
+            length = Mengine.length_v2_v2(positionFrom, self.positionTo)
             self.time = length / self.speed
             pass
 

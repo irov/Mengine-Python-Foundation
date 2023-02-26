@@ -17,10 +17,10 @@ class GoogleAnalytics(Manager):
     TimeMetric = ''
     @staticmethod
     def _onInitialize(*args):
-        GoogleAnalytics.version = Menge.getConfigString('GoogleAnalytics', 'Version', '1')
-        GoogleAnalytics.tid = Menge.getConfigString('GoogleAnalytics', 'Tid', 'UA-98225798-1')
-        GoogleAnalytics.TimeDimension = Menge.getConfigString('GoogleAnalytics', 'TimeDimension', 'dimension1')
-        GoogleAnalytics.TimeMetric = Menge.getConfigString('GoogleAnalytics', 'TimeMetric', 'metric1')
+        GoogleAnalytics.version = Mengine.getConfigString('GoogleAnalytics', 'Version', '1')
+        GoogleAnalytics.tid = Mengine.getConfigString('GoogleAnalytics', 'Tid', 'UA-98225798-1')
+        GoogleAnalytics.TimeDimension = Mengine.getConfigString('GoogleAnalytics', 'TimeDimension', 'dimension1')
+        GoogleAnalytics.TimeMetric = Mengine.getConfigString('GoogleAnalytics', 'TimeMetric', 'metric1')
         pass
 
     @staticmethod
@@ -73,7 +73,7 @@ class GoogleAnalytics(Manager):
         # debug
         # print "send_analytics:", url_collect, new_dict, msg
 
-        Menge.getMessage(msg, cb)
+        Mengine.getMessage(msg, cb)
         pass
 
     def change_params(self, **data):

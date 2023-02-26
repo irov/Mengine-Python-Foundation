@@ -6,7 +6,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def onInitialize():
-        DatabaseManager.s_cache_enable = Menge.getConfigBool("Python", "DatabaseCache", False)
+        DatabaseManager.s_cache_enable = Mengine.getConfigBool("Python", "DatabaseCache", False)
         pass
 
     @staticmethod

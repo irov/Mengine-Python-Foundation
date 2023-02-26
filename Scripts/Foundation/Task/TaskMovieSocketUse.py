@@ -15,7 +15,7 @@ class TaskMovieSocketUse(MixinMovie, MixinObserver, Task):
         super(TaskMovieSocketUse, self)._onInitialize()
         if _DEVELOPMENT is True:
             ResourceMovie = self.Movie.getResourceMovie()
-            hasSocket = Menge.hasMovieSocket(ResourceMovie, self.SocketName)
+            hasSocket = Mengine.hasMovieSocket(ResourceMovie, self.SocketName)
             if hasSocket is False:
                 return False
                 pass

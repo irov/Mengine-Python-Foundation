@@ -31,8 +31,8 @@ class Shift(BaseEntity):
             ResourceName = ShiftData['ResourceName']
             Position = ShiftData['Position']
 
-            Resource = Menge.getResourceReference(ResourceName)
-            shift = Menge.createSprite(ShiftName, Resource)
+            Resource = Mengine.getResourceReference(ResourceName)
+            shift = Mengine.createSprite(ShiftName, Resource)
             shift.setLocalPosition(Position)
             shift.disable()
 
@@ -47,7 +47,7 @@ class Shift(BaseEntity):
         super(Shift, self)._onFinalize()
 
         for shift in self.shifts:
-            Menge.destroyNode(shift)
+            Mengine.destroyNode(shift)
             pass
 
         self.shifts = []

@@ -16,7 +16,7 @@ class TaskGetVersion(Task):
             self.complete()
             pass
 
-        http = Menge.getConfigString('LoadTE', 'GetVersion', 'http://62.80.178.35:8888/version?type={}')
-        Menge.getMessage(http.format(self.type), cb)
+        http = Mengine.getConfigString('LoadTE', 'GetVersion', 'http://62.80.178.35:8888/version?type={}')
+        Mengine.getMessage(http.format(self.type), cb)
         return False
         pass

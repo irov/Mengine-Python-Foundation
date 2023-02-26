@@ -37,7 +37,7 @@ class ProgressBar(BaseEntity):
     def _onInitialize(self, obj):
         super(ProgressBar, self)._onInitialize(obj)
 
-        resource = Menge.getResourceReference(self.ResourceMovieProgress)
+        resource = Mengine.getResourceReference(self.ResourceMovieProgress)
 
         movie = self.createChild("Movie")
 

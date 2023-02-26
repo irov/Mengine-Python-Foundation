@@ -20,14 +20,14 @@ class TaskVirtualAreaScroll(Task):
     def __update_x(self, new_value, virtual_area):
         virtual_area.set_percentage(x=new_value)
         if new_value == self.finish_value.x:
-            Menge.destroyValueFollower(self.progress_value_follower_x)
+            Mengine.destroyValueFollower(self.progress_value_follower_x)
             if self.wait is True:
                 self.complete()
 
     def __update_y(self, new_value, virtual_area):
         virtual_area.set_percentage(y=new_value)
         if new_value == self.finish_value.y:
-            Menge.destroyValueFollower(self.progress_value_follower_y)
+            Mengine.destroyValueFollower(self.progress_value_follower_y)
             if self.wait is True:
                 self.complete()
 
@@ -49,18 +49,18 @@ class TaskVirtualAreaScroll(Task):
             if self.finish_value[dim] is None:
                 finish_value[dim] = current_percent_value[dim]
 
-        self.current_value = Menge.vec2f(self.current_value[0], self.current_value[1])
-        self.finish_value = Menge.vec2f(finish_value[0], finish_value[1])
+        self.current_value = Mengine.vec2f(self.current_value[0], self.current_value[1])
+        self.finish_value = Mengine.vec2f(finish_value[0], finish_value[1])
 
         if self.speed is None:
-            value_offset = Menge.length_v2_v2(self.current_value, self.finish_value)
+            value_offset = Mengine.length_v2_v2(self.current_value, self.finish_value)
             self.speed = float(value_offset) / float(self.time)
 
         if self.current_value.x != self.finish_value.x:
-            self.progress_value_follower_x = Menge.createValueFollowerLinear(self.current_value.x, self.speed, self.__update_x, self.virtual_area)
+            self.progress_value_follower_x = Mengine.createValueFollowerLinear(self.current_value.x, self.speed, self.__update_x, self.virtual_area)
 
         if self.current_value.y != self.finish_value.y:
-            self.progress_value_follower_y = Menge.createValueFollowerLinear(self.current_value.y, self.speed, self.__update_y, self.virtual_area)  # print "----- y =", self.current_value.y, "speed =", self.speed
+            self.progress_value_follower_y = Mengine.createValueFollowerLinear(self.current_value.y, self.speed, self.__update_y, self.virtual_area)  # print "----- y =", self.current_value.y, "speed =", self.speed
 
         if all([self.current_value.x == self.finish_value.x, self.current_value.y == self.finish_value.y]):
             return True

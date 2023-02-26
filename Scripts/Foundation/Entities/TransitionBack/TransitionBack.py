@@ -61,7 +61,7 @@ class TransitionBack(BaseEntity):
             return
 
         # do not use transition back in mobile version (there will be navigation buttons)
-        if Menge.hasTouchpad():
+        if Mengine.hasTouchpad():
             self.movie_transition_back.setEnable(False)
             transitionBack = self.object.getObject("Transition_Back")
             if transitionBack:

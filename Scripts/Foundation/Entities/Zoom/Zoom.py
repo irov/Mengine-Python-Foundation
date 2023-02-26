@@ -47,7 +47,7 @@ class Zoom(BaseEntity):
     def _onFinalize(self):
         super(Zoom, self)._onFinalize()
 
-        Menge.destroyNode(self.hotspot)
+        Mengine.destroyNode(self.hotspot)
         self.hotspot = None
         pass
 
@@ -137,7 +137,7 @@ class Zoom(BaseEntity):
                         tc.addNotify(Notificator.onZoomUse, self.object)
                     tc.addNotify(Notificator.onZoomClick, self.object)
 
-        if Menge.hasTouchpad() is True:
+        if Mengine.hasTouchpad() is True:
             _TouchpadImplementation()
         else:
             _DefaultImplementation()

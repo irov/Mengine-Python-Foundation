@@ -70,7 +70,7 @@ class CurrencyManager(object):
                 return cur_currency
             return None
 
-        if Menge.existText(symbol_text_id) is False:
+        if Mengine.existText(symbol_text_id) is False:
             if _DEVELOPMENT is True:
                 Trace.log("Manager", 1, "textId {} not found for currency {}".format(symbol_text_id, cur_currency))
             if code_if_none is True:
@@ -80,7 +80,7 @@ class CurrencyManager(object):
         if only_text_id is True:
             return symbol_text_id
 
-        symbol = Menge.getTextFromID(symbol_text_id)
+        symbol = Mengine.getTextFromID(symbol_text_id)
         return symbol
 
 class MonetizationManager(Manager, CurrencyManager):
@@ -454,14 +454,14 @@ class MonetizationManager(Manager, CurrencyManager):
 
     @staticmethod
     def isMonetizationEnable():
-        if Menge.getConfigBool("Monetization", "Enable", False) is False:
+        if Mengine.getConfigBool("Monetization", "Enable", False) is False:
             return False
 
-        if Menge.getConfigBool("Monetization", "OnlyMobile", True) is True:
-            if Menge.hasTouchpad() is False:
+        if Mengine.getConfigBool("Monetization", "OnlyMobile", True) is True:
+            if Mengine.hasTouchpad() is False:
                 return False
 
-        if Menge.getConfigBool("Monetization", "OnlyCE", True) is True:
+        if Mengine.getConfigBool("Monetization", "OnlyCE", True) is True:
             if isCollectorEdition() is False:
                 return False
 

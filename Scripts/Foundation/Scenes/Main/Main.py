@@ -4,13 +4,13 @@ from Notification import Notification
 
 class Main(object):
     def __init__(self):
-        self.node = None  # Menge.Scene - main scene
+        self.node = None  # Mengine.Scene - main scene
 
         self.sceneDescriptions = None
         self.groupOrder = []
         self.sceneName = None
-        self.slots = {}  # { scene_name: Menge.Layer2D }
-        self.main_layer = None  # Menge.Layer2D ("GameArea")
+        self.slots = {}  # { scene_name: Mengine.Layer2D }
+        self.main_layer = None  # Mengine.Layer2D ("GameArea")
 
     def getName(self):
         return self.sceneName
@@ -91,7 +91,7 @@ class Main(object):
                 layer.addChild(groupScene)
                 pass
             elif layerType == "Arrow":
-                Menge.setArrowLayer(layer)
+                Mengine.setArrowLayer(layer)
                 pass
             elif layerType == "Zoom":
                 groupNames = description.get("Groups")
@@ -295,7 +295,7 @@ class Main(object):
 
         for slot in self.slots.itervalues():
             slot.removeChildren()
-            Menge.destroyNode(slot)
+            Mengine.destroyNode(slot)
             pass
 
         self.slots = {}

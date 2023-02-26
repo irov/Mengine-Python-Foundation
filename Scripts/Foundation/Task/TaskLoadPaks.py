@@ -16,7 +16,7 @@ class TaskLoadPaks(Task):
             self.complete()
             pass
 
-        http = Menge.getConfigString('LoadTE', 'loadPak', 'http://62.80.178.35:8888/files/get?id={}')
-        Menge.getMessage(http.format(self.id), cb)
+        http = Mengine.getConfigString('LoadTE', 'loadPak', 'http://62.80.178.35:8888/files/get?id={}')
+        Mengine.getMessage(http.format(self.id), cb)
         return False
         pass

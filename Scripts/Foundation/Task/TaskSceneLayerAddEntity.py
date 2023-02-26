@@ -41,7 +41,7 @@ class TaskSceneLayerAddEntity(MixinObject, Task):
         ObjectEntity = self.Object.getEntity()
 
         if self.AdaptScreen is True:
-            Camera = Menge.getRenderCamera2D()
+            Camera = Mengine.getRenderCamera2D()
             ScreenPosition = ObjectEntity.getCameraPosition(Camera)
             self.Object.setPosition((ScreenPosition.x, ScreenPosition.y))
             pass

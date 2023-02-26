@@ -15,7 +15,7 @@ class SystemGDPR(System):
         def __addExtraAccountSettings(accountID, isGlobal):
             if isGlobal is True:
                 return
-            Menge.addCurrentAccountSetting(GDPR_ACCOUNT_KEY, u'False', None)
+            Mengine.addCurrentAccountSetting(GDPR_ACCOUNT_KEY, u'False', None)
 
         AccountManager.addCreateAccountExtra(__addExtraAccountSettings)
 
@@ -25,7 +25,7 @@ class SystemGDPR(System):
         if SystemGDPR.is_default_provider is False:
             return
 
-        SystemGDPR.privacy_policy_link = Menge.getGameParamUnicode("PrivacyPolicyLink") or None
+        SystemGDPR.privacy_policy_link = Mengine.getGameParamUnicode("PrivacyPolicyLink") or None
         if SystemGDPR.privacy_policy_link is None:
             self.initializeFailed("SystemGDPR needs PrivacyPolicyLink in Configs.json in section 'Params'")
 
@@ -37,13 +37,13 @@ class SystemGDPR(System):
 
     @staticmethod
     def isUserAgreeWithGDPR():
-        agree = Menge.getCurrentAccountSettingBool(GDPR_ACCOUNT_KEY)
+        agree = Mengine.getCurrentAccountSettingBool(GDPR_ACCOUNT_KEY)
         return agree
 
     @staticmethod
     def _setUserAgreeWithGDPR(state):
-        Menge.changeCurrentAccountSettingBool(GDPR_ACCOUNT_KEY, state)
-        Menge.saveAccounts()
+        Mengine.changeCurrentAccountSettingBool(GDPR_ACCOUNT_KEY, state)
+        Mengine.saveAccounts()
 
     def _onRun(self):
         if SystemGDPR.is_default_provider is False:
@@ -108,6 +108,6 @@ class SystemGDPR(System):
     def _scopeLinkHandler(self, source, event_button_click):
         with source.addRepeatTask() as (repeat, until):
             repeat.addTask("TaskMovie2SocketClick", GroupName=self.gdpr_group_name, Movie2Name="Movie2_Window", SocketName="link")
-            repeat.addFunction(Menge.openUrlInDefaultBrowser, self.privacy_policy_link)
+            repeat.addFunction(Mengine.openUrlInDefaultBrowser, self.privacy_policy_link)
 
             until.addEvent(event_button_click)

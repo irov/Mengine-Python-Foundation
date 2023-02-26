@@ -30,7 +30,7 @@ def setCenterAlign(node, set, nodeType="Sprite"):
         direction = -1
     x += size.x / 2 * direction
     y += size.y / 2 * direction
-    node.setLocalPosition(Menge.vec2f(x, y))
+    node.setLocalPosition(Mengine.vec2f(x, y))
     node.setCenterAlign(set)
     pass
 
@@ -52,7 +52,7 @@ def setupHotspot(hotspot, points):
 # -
 # ----------------------------------------------------------------------------
 def tanf(value):
-    return Menge.sinf(value) / Menge.cosf(value)
+    return Mengine.sinf(value) / Mengine.cosf(value)
     pass
 
 # ----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ def sign(value):
 # -
 # ----------------------------------------------------------------------------
 def calculateDistance(x1, y1, x2, y2):
-    return Menge.sqrtf((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
+    return Mengine.sqrtf((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
     pass
 
 # ----------------------------------------------------------------------------
@@ -93,7 +93,7 @@ def playSound(node, resource=None, rangeVal=None, stop=True):
     if resource != None:
         number = ""
         if rangeVal != None:
-            number += str(Menge.randint(rangeVal[0], rangeVal[1] + 1))
+            number += str(Mengine.randint(rangeVal[0], rangeVal[1] + 1))
         node.setResourceSound(resource + number)
         pass
 
@@ -115,12 +115,12 @@ def playSoundPool(pool, resource=None, rangeVal=None, stop=True):
 # -
 # ----------------------------------------------------------------------------
 def rotateVec2f(vec, angle):
-    cosa = Menge.cosf(angle)
-    sina = Menge.sinf(angle)
+    cosa = Mengine.cosf(angle)
+    sina = Mengine.sinf(angle)
     x, y = getVec2f(vec)
     dx = x * cosa - y * sina
     dy = x * sina + y * cosa
-    return Menge.vec2f(dx, dy)
+    return Mengine.vec2f(dx, dy)
     pass
 
 # ----------------------------------------------------------------------------
@@ -132,8 +132,8 @@ def getVectorsAngle(vec1, vec2, param=0):
     x1, y1 = getVec2f(vec1)
     x2, y2 = getVec2f(vec2)
 
-    length1 = Menge.sqrtf(x1 * x1 + y1 * y1)
-    length2 = Menge.sqrtf(x2 * x2 + y2 * y2)
+    length1 = Mengine.sqrtf(x1 * x1 + y1 * y1)
+    length2 = Mengine.sqrtf(x2 * x2 + y2 * y2)
     dotProduct = x1 * x2 + y1 * y2
     vecProduct = x1 * y2 - y1 * x2
 
@@ -148,7 +148,7 @@ def getVectorsAngle(vec1, vec2, param=0):
     if sin < -1: sin = -1
 
     if param in [0, 3]:
-        angle = Menge.acosf(cos)
+        angle = Mengine.acosf(cos)
         if sin < 0 and param == 0: angle *= -1
         return angle
     elif param == 1:
@@ -180,7 +180,7 @@ def normVector(*vector):
     y = float(y) / length
 
     if isVec2f == True:
-        return Menge.vec2f(x, y)
+        return Mengine.vec2f(x, y)
     else:
         return x, y
 
@@ -207,7 +207,7 @@ def convertTime(time, flag=0):
 
 # ----------------------------------------------------------------------------
 def getTimeInMinutes():
-    return Menge.getTimeInSeconds() / 60.0
+    return Mengine.getTimeInSeconds() / 60.0
 
 # ----------------------------------------------------------------------------
 # Method: setRightAlign
@@ -215,9 +215,9 @@ def getTimeInMinutes():
 # -
 # ----------------------------------------------------------------------------
 def setRightAlign(text):
-    length = Menge.getVec2fX(text.getLength())
+    length = Mengine.getVec2fX(text.getLength())
     posX, posY = getVec2f(text.getLocalPosition())
-    text.setLocalPosition(Menge.vec2f(posX - length, posY))
+    text.setLocalPosition(Mengine.vec2f(posX - length, posY))
     pass
 
 # ----------------------------------------------------------------------------
@@ -268,10 +268,10 @@ def getSizeHotSpot(size, center=False, left=0, top=0, right=0, bottom=0):
     width, height = getVec2f(size)
 
     points = []
-    points.append(Menge.vec2f(0 - width / 2 * center - left, 0 - height / 2 * center - top))
-    points.append(Menge.vec2f(width - width / 2 * center + right, 0 - height / 2 * center - top))
-    points.append(Menge.vec2f(width - width / 2 * center + right, height - height / 2 * center + bottom))
-    points.append(Menge.vec2f(0 - width / 2 * center - left, height - height / 2 * center + bottom))
+    points.append(Mengine.vec2f(0 - width / 2 * center - left, 0 - height / 2 * center - top))
+    points.append(Mengine.vec2f(width - width / 2 * center + right, 0 - height / 2 * center - top))
+    points.append(Mengine.vec2f(width - width / 2 * center + right, height - height / 2 * center + bottom))
+    points.append(Mengine.vec2f(0 - width / 2 * center - left, height - height / 2 * center + bottom))
 
     return points
     pass
@@ -294,7 +294,7 @@ def clearActiveTasksArray():
 blocketScenes = {}
 
 def blockGame():
-    scene = Menge.getCurrentScene()
+    scene = Mengine.getCurrentScene()
     blocketScenes[scene] = scene.getBlockInput()
     scene.blockInput(True)
     for subscene in scene.subScenes.values():
@@ -309,7 +309,7 @@ def blockGame():
 # -
 # ----------------------------------------------------------------------------
 def unblockGame():
-    scene = Menge.getCurrentScene()
+    scene = Mengine.getCurrentScene()
     scene.blockInput(blocketScenes[scene])
     for subscene in scene.subScenes.values():
         subscene.blockInput(blocketScenes[subscene])
@@ -325,7 +325,7 @@ def setWorldPosition(Node, *position):
     position = getLocalPosFromWorld(Node, *position)
 
     if len(position) == 2:
-        position = Menge.vec2f(*position)
+        position = Mengine.vec2f(*position)
         pass
 
     Node.setLocalPosition(position)
@@ -346,7 +346,7 @@ def getLocalPosFromWorld(Node, *position):
     newLocalX = newWorldX - dispX
     newLocalY = newWorldY - dispY
     if len(position) == 1:
-        return Menge.vec2f(newLocalX, newLocalY)
+        return Mengine.vec2f(newLocalX, newLocalY)
     else:
         return newLocalX, newLocalY
     pass
@@ -365,7 +365,7 @@ def adjustSize(currentSize, neededSize, onlyMinus=False):
     scale = min(percentX, percentY)
     if onlyMinus == True and scale > 1: scale = 1
 
-    return Menge.vec2f(scale, scale)
+    return Mengine.vec2f(scale, scale)
     pass
 
 # ----------------------------------------------------------------------------
@@ -375,14 +375,14 @@ def shuffle(x, acc=1000):
 
     for i in reversed(xrange(1, len(x))):
         # pick an element in x[:i+1] with which to exchange x[i]
-        j = int(float(Menge.randint(0, acc)) / acc * (i + 1))
+        j = int(float(Mengine.randint(0, acc)) / acc * (i + 1))
         x[i], x[j] = x[j], x[i]
     pass
 
 # ----------------------------------------------------------------------------
 def choice(seq, acc=1000):
     """Choose a random element from a non-empty sequence."""
-    return seq[int(float(Menge.randint(0, acc)) / acc * len(seq))]  # raises IndexError if seq is empty
+    return seq[int(float(Mengine.randint(0, acc)) / acc * len(seq))]  # raises IndexError if seq is empty
 
 # ----------------------------------------------------------------------------
 class Rectangle(object):

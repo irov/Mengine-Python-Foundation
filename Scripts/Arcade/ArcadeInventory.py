@@ -31,12 +31,12 @@ class ArcadeInventorySlot(Initializer):
     def _onFinalize(self):
         super(ArcadeInventorySlot, self)._onFinalize()
         if self.socket_node is not None:
-            Menge.destroyNode(self.socket_node)
+            Mengine.destroyNode(self.socket_node)
             self.socket_node = None
             pass
 
         if self.item_node is not None:
-            Menge.destroyNode(self.item_node)
+            Mengine.destroyNode(self.item_node)
             self.item_node = None
             pass
         pass
@@ -119,7 +119,7 @@ class ArcadeInventoryItem(Initializer):
     def _onInitialize(self, slot):
         super(ArcadeInventoryItem, self)._onInitialize(slot)
 
-        node = Menge.createNode("Interender")
+        node = Mengine.createNode("Interender")
         node.enable()
 
         if slot is not None:
@@ -133,7 +133,7 @@ class ArcadeInventoryItem(Initializer):
     def _onFinalize(self):
         super(ArcadeInventoryItem, self)._onFinalize()
         if self.node is not None:
-            Menge.destroyNode(self.node)
+            Mengine.destroyNode(self.node)
             pass
 
         self.node = None

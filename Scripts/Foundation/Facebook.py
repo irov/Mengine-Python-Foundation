@@ -15,9 +15,9 @@ class Facebook(Manager):
     @staticmethod
     def _onInitialize(*args):
         # if _PLUGINS.get("Facebook", False) is True:
-        #     Menge.androidMethod("Facebook", "initialize")
-        Facebook.clientId = Menge.getConfigString('Facebook', 'clientId', '1045626982203573')
-        Facebook.redirectUri = Menge.getConfigString('Facebook', 'redirectUri', 'http://localhost:8888/token')
+        #     Mengine.androidMethod("Facebook", "initialize")
+        Facebook.clientId = Mengine.getConfigString('Facebook', 'clientId', '1045626982203573')
+        Facebook.redirectUri = Mengine.getConfigString('Facebook', 'redirectUri', 'http://localhost:8888/token')
         pass
 
     @staticmethod
@@ -42,8 +42,8 @@ class Facebook(Manager):
 
         def cb(num, data, status, code, bool):
             pass
-        data['message'] += "\n(Test msg from Menge)"
-        Menge.postMessage(post_url, data, cb)
+        data['message'] += "\n(Test msg from Mengine)"
+        Mengine.postMessage(post_url, data, cb)
         pass
 
     @staticmethod
@@ -55,7 +55,7 @@ class Facebook(Manager):
 
         data['access_token'] = Facebook.token
         get_url = 'https://graph.facebook.com/v2.9/me'
-        Menge.getMessage(Facebook.bad_convert(get_url, data), cb)
+        Mengine.getMessage(Facebook.bad_convert(get_url, data), cb)
         pass
 
     @staticmethod
@@ -65,7 +65,7 @@ class Facebook(Manager):
         auth_url = 'https://www.facebook.com/v2.9/dialog/oauth'
         print
         unicode(Facebook.bad_convert(auth_url, data), "utf-8")
-        Menge.openUrlInDefaultBrowser(unicode(Facebook.bad_convert(auth_url, data), "utf-8"))
+        Mengine.openUrlInDefaultBrowser(unicode(Facebook.bad_convert(auth_url, data), "utf-8"))
         pass
 
     @staticmethod

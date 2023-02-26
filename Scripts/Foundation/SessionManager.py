@@ -20,11 +20,11 @@ class SessionManager(object):
         SessionManager.s_onUnselectAccountObserver = Notification.addObserver(Notificator.onUnselectAccount, SessionManager.__onUnselectAccount)
         SessionManager.s_onDeleteProfileObserver = Notification.addObserver(Notificator.onDeleteAccount, SessionManager.__onDeleteProfile)
 
-        if Menge.hasCurrentAccount() is False:
+        if Mengine.hasCurrentAccount() is False:
             return
             pass
 
-        currentAccountName = Menge.getCurrentAccountName()
+        currentAccountName = Mengine.getCurrentAccountName()
         SessionManager.__onSelectAccount(currentAccountName)
         pass
 
@@ -60,16 +60,16 @@ class SessionManager(object):
 
     @staticmethod
     def loadSession():
-        hasSaveStage = Menge.getCurrentAccountSettingBool("Save")
+        hasSaveStage = Mengine.getCurrentAccountSettingBool("Save")
         if hasSaveStage is False:
             return
             pass
 
         pickleTypes = SaveManager.getPickleTypes()
 
-        AccountID = Menge.getCurrentAccountName()
+        AccountID = Mengine.getCurrentAccountName()
 
-        load_session = Menge.loadAccountPickleFile(AccountID, u"session.dat", pickleTypes)
+        load_session = Mengine.loadAccountPickleFile(AccountID, u"session.dat", pickleTypes)
 
         if load_session is None:
             Trace.log("Manager", 0, "SessionManager.loadSession pickle_account 'session.dat' is None")
@@ -113,16 +113,16 @@ class SessionManager(object):
 
         pickleTypes = SaveManager.getPickleTypes()
 
-        AccountID = Menge.getCurrentAccountName()
+        AccountID = Mengine.getCurrentAccountName()
 
-        if Menge.writeAccountPickleFile(AccountID, u"session.dat", save_session, pickleTypes) is False:
+        if Mengine.writeAccountPickleFile(AccountID, u"session.dat", save_session, pickleTypes) is False:
             Trace.log("Manager", 0, "SessionManager.removeSession write 'session.dat'")
 
             return False
             pass
 
-        Menge.changeCurrentAccountSetting("SessionSave", unicode(True))
-        Menge.changeCurrentAccountSetting("Save", unicode(True))
+        Mengine.changeCurrentAccountSetting("SessionSave", unicode(True))
+        Mengine.changeCurrentAccountSetting("Save", unicode(True))
 
         GroupManager.reloadGroups()
         SessionManager.s_selectAccount = None
@@ -155,19 +155,19 @@ class SessionManager(object):
 
         save_session, save_types = SessionManager.getSaveData()
 
-        AccountID = Menge.getCurrentAccountName()
+        AccountID = Mengine.getCurrentAccountName()
 
-        if Menge.writeAccountPickleFile(AccountID, u"session.dat", save_session, save_types) is False:
+        if Mengine.writeAccountPickleFile(AccountID, u"session.dat", save_session, save_types) is False:
             Trace.log("Manager", 0, "SessionManager.saveSession can't write 'session.dat'")
             return False
             pass
 
         SessionManager.s_invalidLoad = False
 
-        Menge.changeCurrentAccountSetting("SessionSave", unicode(True))
-        Menge.changeCurrentAccountSetting("Save", unicode(True))
+        Mengine.changeCurrentAccountSetting("SessionSave", unicode(True))
+        Mengine.changeCurrentAccountSetting("Save", unicode(True))
 
-        Menge.saveAccounts()
+        Mengine.saveAccounts()
 
         return True
         pass
@@ -193,7 +193,7 @@ class SessionManager(object):
 
     @staticmethod
     def selectAccount(accountID, isLoad):
-        Default = Menge.getCurrentAccountSettingBool("Default")
+        Default = Mengine.getCurrentAccountSettingBool("Default")
 
         if Default is True:
             return False
@@ -216,8 +216,8 @@ class SessionManager(object):
         SessionManager.s_selectAccount = accountID
 
         if isLoad is True:
-            if Menge.hasCurrentAccountSetting("SessionSave") is True:
-                SessionSave = Menge.getCurrentAccountSettingBool("SessionSave")
+            if Mengine.hasCurrentAccountSetting("SessionSave") is True:
+                SessionSave = Mengine.getCurrentAccountSettingBool("SessionSave")
                 if SessionSave is True:
                     SessionManager.loadSession()
                     pass

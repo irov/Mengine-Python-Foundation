@@ -3,7 +3,7 @@ from Foundation.Entity.BaseEntity import BaseEntity
 from Notification import Notification
 
 class CheckBox(BaseEntity):
-    s_keys = dict(Esc=Menge.KC_ESCAPE, Enter=Menge.KC_RETURN)
+    s_keys = dict(Esc=Mengine.KC_ESCAPE, Enter=Mengine.KC_RETURN)
 
     @staticmethod
     def declareORM(Type):
@@ -28,18 +28,18 @@ class CheckBox(BaseEntity):
         self.hotspot.enable()
 
         if self.KeyTag is not None:
-            self.KeyHandlerID = Menge.addKeyHandler(self.__onKeyEvent)
+            self.KeyHandlerID = Mengine.addKeyHandler(self.__onKeyEvent)
             pass
         pass
 
     def _onFinalize(self):
         super(CheckBox, self)._onFinalize()
 
-        Menge.destroyNode(self.hotspot)
+        Mengine.destroyNode(self.hotspot)
         self.hotspot = None
 
         if self.KeyTag is not None:
-            Menge.removeGlobalHandler(self.KeyHandlerID)
+            Mengine.removeGlobalHandler(self.KeyHandlerID)
             pass
         pass
 

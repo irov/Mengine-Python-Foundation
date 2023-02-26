@@ -4,8 +4,8 @@ from Foundation.Manager import Manager
 from Foundation.SystemManager import SystemManager
 
 def checkBuildMode(Name, Survey, CE, BuildModeTags):
-    BuildModeVersion = Menge.getGameParamUnicode("BuildModeCheckVersion")
-    BuildMode = Menge.getGameParamUnicode("BuildMode")
+    BuildModeVersion = Mengine.getGameParamUnicode("BuildModeCheckVersion")
+    BuildMode = Mengine.getGameParamUnicode("BuildMode")
 
     def printBuildMode(Mode, Name):
         if _DEVELOPMENT is True:
@@ -28,8 +28,8 @@ def checkBuildMode(Name, Survey, CE, BuildModeTags):
 
     # Old version of builds resources separations for Survey & CollectorEdition
     else:
-        survey_build = Menge.getGameParamBool("Survey", False)
-        ce_build = Menge.getGameParamBool("CollectorEdition", False)
+        survey_build = Mengine.getGameParamBool("Survey", False)
+        ce_build = Mengine.getGameParamBool("CollectorEdition", False)
 
         # For Survey
         if survey_build is True and Survey == 0:
@@ -49,11 +49,11 @@ def checkPlatform(platform):
 
     # option: -touchpad
     if platform == "MOBILE" or _DEVELOPMENT and platform in ["ANDROID", "IOS"]:
-        return Menge.hasTouchpad() is True
+        return Mengine.hasTouchpad() is True
     elif platform == "PC":
-        return Menge.hasTouchpad() is False
+        return Mengine.hasTouchpad() is False
 
-    if Menge.hasPlatformTag(platform) is True:
+    if Mengine.hasPlatformTag(platform) is True:
         return True
 
     return False

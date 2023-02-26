@@ -8,8 +8,8 @@ class SecureStringValue(object):
     def __makeSecureValue(self, value):
         if isinstance(value, str) is False:
             Trace.log("Manager", 0, "SecureStringValue {!r}: you can use only str for create: value={!r} {}".format(self.id, value, type(value)))
-            return Menge.makeSecureStringValue("NULL")
-        return Menge.makeSecureStringValue(value)
+            return Mengine.makeSecureStringValue("NULL")
+        return Mengine.makeSecureStringValue(value)
 
     def getValue(self):
         integrity_check, value = self.value.getUnprotectedValue()

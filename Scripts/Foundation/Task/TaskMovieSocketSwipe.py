@@ -49,7 +49,7 @@ class TaskMovieSocketSwipe(TaskAlias, MixinMovie):
             self.validateFailed("Movie %s is not Active" % (self.Movie.getName()))
             pass
 
-        if Menge.isHomeless(EntityNode) is True:
+        if Mengine.isHomeless(EntityNode) is True:
             self.invalidTask("Movie %s is Homeless" % (self.Movie.getName()))
             pass
 
@@ -99,15 +99,15 @@ class TaskMovieSocketSwipe(TaskAlias, MixinMovie):
             if cb is None:
                 __removeHandlers()
             else:
-                self.MoveAdapter = Menge.addMouseMoveHandler(__mouseMove)
-                self.ButtonAdapter = Menge.addMouseButtonHandler(__mouseClick, isSkip, cb)
+                self.MoveAdapter = Mengine.addMouseMoveHandler(__mouseMove)
+                self.ButtonAdapter = Mengine.addMouseButtonHandler(__mouseClick, isSkip, cb)
             pass
 
         def __removeHandlers():
             if self.MoveAdapter is not None:
-                Menge.removeGlobalHandler(self.MoveAdapter)
+                Mengine.removeGlobalHandler(self.MoveAdapter)
             if self.ButtonAdapter is not None:
-                Menge.removeGlobalHandler(self.ButtonAdapter)
+                Mengine.removeGlobalHandler(self.ButtonAdapter)
             self.MoveAdapter = None
             self.ButtonAdapter = None
             self.current_distance = 0.0

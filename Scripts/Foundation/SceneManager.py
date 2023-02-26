@@ -102,7 +102,7 @@ class SceneManager(object):
 
         SceneManager.s_scenesType[name] = (Type, module)
 
-        if Menge.addScenePrototypeFinder(name, SceneManager.getSceneType) is False:
+        if Mengine.addScenePrototypeFinder(name, SceneManager.getSceneType) is False:
             Trace.log("Manager", 0, "SceneManager.importScene invalid scene %s module %s" % (name, module))
 
             return None
@@ -629,7 +629,7 @@ class SceneManager(object):
             Group = GroupManager.getGroup(groupName)
             if isinstance(GroupManager.getGroup(groupName), GroupManager.EmptyGroup):
                 continue
-            Menge.cacheResources(Group.name)
+            Mengine.cacheResources(Group.name)
 
             cache_groups_resource.append(Group)
             pass
@@ -731,9 +731,9 @@ class SceneManager(object):
         if _DEVELOPMENT is True:
             Trace.msg("<SceneManager> change scene to '%s'" % sceneName)
 
-        if Menge.createCurrentScene("Main", sceneName, immediately, True, SceneManager._onChangeScene, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb) is False:
+        if Mengine.createCurrentScene("Main", sceneName, immediately, True, SceneManager._onChangeScene, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb) is False:
             for Group in cache_resources_groups:
-                Menge.uncacheResources(Group.name)
+                Mengine.uncacheResources(Group.name)
                 pass
 
             for Group in cache_active_groups:
@@ -746,7 +746,7 @@ class SceneManager(object):
     def _onChangeScene(scene, isActive, isError, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb):
         if isError is True:
             for Group in cache_resources_groups:
-                Menge.uncacheResources(Group.name)
+                Mengine.uncacheResources(Group.name)
                 pass
 
             for Group in cache_active_groups:
@@ -784,7 +784,7 @@ class SceneManager(object):
             pass
 
         for Group in cache_resources_groups:
-            Menge.uncacheResources(Group.name)
+            Mengine.uncacheResources(Group.name)
             pass
 
         for Group in cache_active_groups:
@@ -811,7 +811,7 @@ class SceneManager(object):
         SceneManager.s_changeSceneName = None
         SceneManager.s_changeScene = False
 
-        Menge.removeCurrentScene(False, cb)
+        Mengine.removeCurrentScene(False, cb)
         pass
 
     @staticmethod

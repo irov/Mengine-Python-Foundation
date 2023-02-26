@@ -32,12 +32,12 @@ class MovieVirtualArea(BaseEntity):
         super(MovieVirtualArea, self)._onInitialize(obj)
 
         def create_movie(name, resource_name, enable):
-            if Menge.hasResource(resource_name) is False:
+            if Mengine.hasResource(resource_name) is False:
                 # Trace.log()
                 Trace.log("Entity", 0, '************************** no movies')
                 return
 
-            resource = Menge.getResourceReference(resource_name)
+            resource = Mengine.getResourceReference(resource_name)
 
             movie = ObjectManager.createObjectUnique('Movie', name, self.object, ResourceMovie=resource)
             self.addChild(movie.getEntityNode())
@@ -49,7 +49,7 @@ class MovieVirtualArea(BaseEntity):
         self._content = create_movie('Content', self.ResourceMovieContent, True)
         self._frame = create_movie('Frame', self.ResourceMovieFrame, True)
 
-        self._content_resource = Menge.getResourceReference(self.ResourceMovieContent)
+        self._content_resource = Mengine.getResourceReference(self.ResourceMovieContent)
         return True
 
     def _onActivate(self):
@@ -75,7 +75,7 @@ class MovieVirtualArea(BaseEntity):
             snapping.add_snapper(child.getWorldPosition().y - anchor)
 
         with TaskManager.createTaskChain(Repeat=True) as tc:
-            tc.addTask('TaskKeyPress', Keys=(Menge.KC_P,))
+            tc.addTask('TaskKeyPress', Keys=(Mengine.KC_P,))
 
             def _print():
                 with Utils.DebugPrinter('Iteration'):

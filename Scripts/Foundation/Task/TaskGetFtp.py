@@ -15,7 +15,7 @@ class TaskGetFtp(Task):
             self.complete()
             pass
 
-        http = Menge.getConfigString('LoadTE', 'GetFTP', 'http://62.80.178.35:8888/ftp')
-        Menge.getMessage(http, cb)
+        http = Mengine.getConfigString('LoadTE', 'GetFTP', 'http://62.80.178.35:8888/ftp')
+        Mengine.getMessage(http, cb)
         return False
         pass

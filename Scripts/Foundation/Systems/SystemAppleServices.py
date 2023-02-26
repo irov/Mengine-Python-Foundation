@@ -44,7 +44,7 @@ class SystemAppleServices(System):
     @staticmethod
     def setGameCenterConnectProvider():
         if SystemAppleServices.b_plugins["GameCenter"] is True:
-            b_status = Menge.appleGameCenterSetProvider({"onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate, "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronizate})
+            b_status = Mengine.appleGameCenterSetProvider({"onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate, "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronizate})
             SystemAppleServices.b_provider = True
             _Log("GAME CENTER: set provider - {}".format("wait response!" if b_status else "not initialized"))
         else:
@@ -54,7 +54,7 @@ class SystemAppleServices(System):
     def removeGameCenterConnectProvider():
         if SystemAppleServices.b_plugins["GameCenter"] is True:
             if SystemAppleServices.b_provider is True:
-                Menge.appleGameCenterRemoveProvider()
+                Mengine.appleGameCenterRemoveProvider()
                 SystemAppleServices.b_provider = False
                 _Log("GAME CENTER: removed provider")
             else:
@@ -67,7 +67,7 @@ class SystemAppleServices(System):
         status = lambda b: "wait response" if b else "request sent failed"
 
         if SystemAppleServices.b_plugins["GameCenter"] is True:
-            b_result = Menge.appleGameCenterConnect()  # check is request to GameCenter was sent
+            b_result = Mengine.appleGameCenterConnect()  # check is request to GameCenter was sent
             # if True, cb provider will return bool that means player connected or not
 
             PolicyManager.setPolicy("ExternalAchieveProgress", "PolicyExternalAchieveProgressAppleGameCenter")
@@ -123,7 +123,7 @@ class SystemAppleServices(System):
         _Log("GAME CENTER: SEND ACHIEVEMENT {!r} (complete {}%%)...".format(achievement_name, percent_complete), force=True)
         if SystemAppleServices.b_plugins["GameCenter"] is False:
             return
-        Menge.appleGameCenterReportAchievement(achievement_name, percent_complete, SystemAppleServices.__cbGameCenterAchievementReporter, achievement_name, percent_complete)
+        Mengine.appleGameCenterReportAchievement(achievement_name, percent_complete, SystemAppleServices.__cbGameCenterAchievementReporter, achievement_name, percent_complete)
 
     @staticmethod
     def checkGameCenterAchievement(achievement_name):
@@ -131,7 +131,7 @@ class SystemAppleServices(System):
         if SystemAppleServices.b_plugins["GameCenter"] is False:
             return True
 
-        b_check = Menge.appleGameCenterCheckAchievement(achievement_name)
+        b_check = Mengine.appleGameCenterCheckAchievement(achievement_name)
         _Log("GAME CENTER: CHECK ACHIEVEMENT {!r} RESULT: {}".format(achievement_name, b_check), force=True)
         return b_check
 
@@ -147,7 +147,7 @@ class SystemAppleServices(System):
     @staticmethod
     def appTrackingAuthorization():
         if SystemAppleServices.b_plugins["Tracking"] is True:
-            Menge.appleAppTrackingAuthorization(SystemAppleServices.__cbAppTrackingAuth)
+            Mengine.appleAppTrackingAuthorization(SystemAppleServices.__cbAppTrackingAuth)
             _Log("Apple app tracking authorization...")
             return True
         return False
@@ -159,7 +159,7 @@ class SystemAppleServices(System):
         if SystemAppleServices.b_plugins["Review"] is False:
             Trace.log("System", 0, "SystemAppleServices try to rateApp, but plugin 'AppleStoreReview' is not active")
             return
-        Menge.appleStoreReviewLaunchTheInAppReview()
+        Mengine.appleStoreReviewLaunchTheInAppReview()
         Notification.notify(Notificator.onAppRated)
         _Log("[Reviews] rateApp...", force=True)
 
@@ -170,12 +170,12 @@ class SystemAppleServices(System):
         """ returns True if user could do purchases (not a child) or False, if not """
         if SystemAppleServices.b_plugins["InAppPurchase"] is False:
             return False
-        return Menge.appleStoreInAppPurchaseCanMakePayments()
+        return Mengine.appleStoreInAppPurchaseCanMakePayments()
 
     @staticmethod
     def setInAppPurchaseProvider():
         """ setup payment callbacks """
-        Menge.appleStoreInAppPurchaseSetPaymentTransactionProvider(
+        Mengine.appleStoreInAppPurchaseSetPaymentTransactionProvider(
             {"onProductResponse": SystemAppleServices._cbProductResponse, "onProductFinish": SystemAppleServices._cbProductFinish, "onProductFail": SystemAppleServices._cbProductFail, "onPaymentUpdatedTransactionPurchasing": SystemAppleServices._cbPaymentPurchasing, "onPaymentUpdatedTransactionPurchased": SystemAppleServices._cbPaymentPurchased, "onPaymentUpdatedTransactionFailed": SystemAppleServices._cbPaymentFailed, "onPaymentUpdatedTransactionRestored": SystemAppleServices._cbPaymentRestored,
                 "onPaymentUpdatedTransactionDeferred": SystemAppleServices._cbPaymentDeferred})
 
@@ -184,7 +184,7 @@ class SystemAppleServices(System):
         """ finish callbacks """
         if SystemAppleServices.b_plugins["InAppPurchase"] is False:
             return
-        Menge.appleStoreInAppPurchaseRemovePaymentTransactionProvider()
+        Mengine.appleStoreInAppPurchaseRemovePaymentTransactionProvider()
 
     @staticmethod
     def updateProducts():
@@ -193,12 +193,12 @@ class SystemAppleServices(System):
 
     @staticmethod
     def _requestProducts(products_ids):
-        Menge.appleStoreInAppPurchaseRequestProducts(products_ids)
+        Mengine.appleStoreInAppPurchaseRequestProducts(products_ids)
 
     @staticmethod
     def restorePurchases():
         """ returns list of purchased products via cb _cbPaymentRestored """
-        Menge.appleStoreInAppPurchaseRestoreCompletedTransactions()
+        Mengine.appleStoreInAppPurchaseRestoreCompletedTransactions()
 
     @staticmethod
     def pay(product_id):
@@ -213,7 +213,7 @@ class SystemAppleServices(System):
             Trace.log("System", 0, "Product with id {} not found in responded products!!!".format(product_id))
             return
 
-        Menge.appleStoreInAppPurchasePurchaseProduct(product)
+        Mengine.appleStoreInAppPurchasePurchaseProduct(product)
 
     # callbacks
 
@@ -277,14 +277,14 @@ class SystemAppleServices(System):
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 
     def __addDevToDebug(self):
-        if Menge.isAvailablePlugin("DevToDebug") is False:
+        if Mengine.isAvailablePlugin("DevToDebug") is False:
             return
-        if Menge.hasDevToDebugTab("AppleServices"):
+        if Mengine.hasDevToDebugTab("AppleServices"):
             return
         if any([self.b_plugins["GameCenter"], self.b_plugins["Review"]]) is False:
             return
 
-        tab = Menge.addDevToDebugTab("AppleServices")
+        tab = Mengine.addDevToDebugTab("AppleServices")
         widgets = []
 
         # achievements
@@ -298,7 +298,7 @@ class SystemAppleServices(System):
                 percent_complete = int(params[1]) if len(params) > 1 else 100
                 self.sendAchievementToGameCenter(achievement_name, percent_complete)
 
-            w_achievement = Menge.createDevToDebugWidgetCommandLine("send_achievement")
+            w_achievement = Mengine.createDevToDebugWidgetCommandLine("send_achievement")
             w_achievement.setTitle("Send achievement to GameCenter")
             w_achievement.setPlaceholder("syntax: <achievement_id> [0-100]")
             w_achievement.setCommandEvent(_send_achievement)
@@ -306,7 +306,7 @@ class SystemAppleServices(System):
 
         # rateApp
         if self.b_plugins["Review"] is True:
-            w_rate = Menge.createDevToDebugWidgetButton("rate_app")
+            w_rate = Mengine.createDevToDebugWidgetButton("rate_app")
             w_rate.setTitle("Show Rate App window")
             w_rate.setClickEvent(self.rateApp)
             widgets.append(w_rate)
@@ -315,8 +315,8 @@ class SystemAppleServices(System):
             tab.addWidget(widget)
 
     def __remDevToDebug(self):
-        if Menge.isAvailablePlugin("DevToDebug") is False:
+        if Mengine.isAvailablePlugin("DevToDebug") is False:
             return
 
-        if Menge.hasDevToDebugTab("AppleServices"):
-            Menge.removeDevToDebugTab("AppleServices")
+        if Mengine.hasDevToDebugTab("AppleServices"):
+            Mengine.removeDevToDebugTab("AppleServices")

@@ -5,7 +5,7 @@ class SystemAutoLanguage(System):
     def __init__(self):
         super(SystemAutoLanguage, self).__init__()
         self.disabled = False
-        if _DEVELOPMENT is True and Menge.hasOption("locale"):
+        if _DEVELOPMENT is True and Mengine.hasOption("locale"):
             self.disabled = True
 
     def _onSave(self):
@@ -30,7 +30,7 @@ class SystemAutoLanguage(System):
     @staticmethod
     def getFullDeviceLang():
         """ Returns current device full language code like 'en-US' """
-        lang = Menge.getDeviceLanguage()
+        lang = Mengine.getDeviceLanguage()
         return lang
 
     @staticmethod
@@ -43,20 +43,20 @@ class SystemAutoLanguage(System):
     def setGameLangAsDevice(self):
         locale = self.getDeviceLangCode()
 
-        if Menge.getLocale() == locale:
+        if Mengine.getLocale() == locale:
             # already set to this locale
             return
 
-        if Menge.hasLocale(locale) is False:
+        if Mengine.hasLocale(locale) is False:
             Trace.log("System", 2, "Can't set locale to {} - not exists in game".format(locale))
             return
 
         # set locale can only work when current scene is None
-        if Menge.getCurrentScene() is None:
-            Menge.setLocale(locale)
+        if Mengine.getCurrentScene() is None:
+            Mengine.setLocale(locale)
         else:
             def cbOnSceneRestartChangeLocale(scene, isActive, isError):
                 if scene is None:
-                    Menge.setLocale(locale)
+                    Mengine.setLocale(locale)
 
-            Menge.restartCurrentScene(True, cbOnSceneRestartChangeLocale)
+            Mengine.restartCurrentScene(True, cbOnSceneRestartChangeLocale)

@@ -101,10 +101,10 @@ class Group(ChildObject):
     def _onInitialize(self):
         super(Group, self)._onInitialize()
 
-        self.scene = Menge.createScene(self.name, None)
+        self.scene = Mengine.createScene(self.name, None)
 
         if self.scene is None:
-            self.initializeFailed("invalid create Menge.Scene %s" % (self.name))
+            self.initializeFailed("invalid create Mengine.Scene %s" % (self.name))
             pass
 
         layerParams = self.getLayerParams()
@@ -131,7 +131,7 @@ class Group(ChildObject):
 
         for layer in self.layers.itervalues():
             layer.removeChildren()
-            Menge.destroyNode(layer)
+            Mengine.destroyNode(layer)
             pass
 
         self.layers = {}
@@ -144,7 +144,7 @@ class Group(ChildObject):
 
         self.scene.removeChildren()
 
-        Menge.destroyNode(self.scene)
+        Mengine.destroyNode(self.scene)
         self.scene = None
         pass
 

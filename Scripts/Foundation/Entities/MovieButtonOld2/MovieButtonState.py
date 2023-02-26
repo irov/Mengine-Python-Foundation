@@ -1,5 +1,5 @@
 class MovieButtonState(object):
-    s_keys = dict(Esc=Menge.KC_ESCAPE, Enter=Menge.KC_RETURN)
+    s_keys = dict(Esc=Mengine.KC_ESCAPE, Enter=Mengine.KC_RETURN)
 
     def __init__(self):
         super(MovieButtonState, self).__init__()
@@ -30,13 +30,13 @@ class MovieButtonState(object):
                 pass
             pass
 
-        if Menge.hasResource(resourceName) is False:
+        if Mengine.hasResource(resourceName) is False:
             Trace.log("Entity", 0, "MovieButton %s in group %s not initialized!!! Doesn't exist resource %s (maybe not correct composition name in aep)" % (self.buttonEntity.object.getName(), self.buttonEntity.object.getGroupName(), resourceName,))
             return None
             pass
 
-        resource = Menge.getResourceReference(resourceName)
-        Movie = Menge.createNode("Movie")
+        resource = Mengine.getResourceReference(resourceName)
+        Movie = Mengine.createNode("Movie")
         Movie.setName(resourceName)
         Movie.setResourceMovie(resource)
 
@@ -187,7 +187,7 @@ class MovieButtonState(object):
             return False
             pass
 
-        if Menge.isExclusiveKeyDown(key) is False:
+        if Mengine.isExclusiveKeyDown(key) is False:
             return False
             pass
 

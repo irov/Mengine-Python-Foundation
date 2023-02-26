@@ -5,7 +5,7 @@ from Foundation.ObjectManager import ObjectManager
 def createImageHotspot(image, name):
     imageResource = image.getResourceImage()
 
-    imageHotspot = Menge.createNode("HotSpotImage")
+    imageHotspot = Mengine.createNode("HotSpotImage")
     imageHotspot.setResourceImage(imageResource)
     imageHotspot.setAlphaTest(0.1)
 
@@ -136,7 +136,7 @@ def RgbToHsv360(rgb):
 def createBBSpriteHotspot(name, sprite):
     imageSize = sprite.getSurfaceSize()
 
-    BBHotspot = Menge.createNode("HotSpotPolygon")
+    BBHotspot = Mengine.createNode("HotSpotPolygon")
 
     polygon = []
     polygon.append((0.0, 0.0))
@@ -160,7 +160,7 @@ def chance_element(population, chance_provider, chance_range=100.0):
     for element in population:
         chance = chance_provider(element)
 
-        bones = Menge.randf(chance_range)
+        bones = Mengine.randf(chance_range)
 
         if chance >= bones:
             elements.append(element)
@@ -190,7 +190,7 @@ def weight_element(population, chance_provider, chance_range=100.0):
 
             chance = chance_provider(element)
 
-            bones = Menge.randf(chance_range)
+            bones = Mengine.randf(chance_range)
 
             if chance >= bones:
                 elements.append(element)
@@ -225,7 +225,7 @@ def weight_elements(population, k, chance_provider, chance_range=100.0):
 
             chance = chance_provider(element)
 
-            bones = Menge.randf(chance_range)
+            bones = Mengine.randf(chance_range)
 
             if chance >= bones:
                 elements.append(element)
@@ -257,7 +257,7 @@ def rand_list(population, randomizer=None):
     rand_population = population[:]
     for index in range(rand_count):
         if randomizer is None:
-            rand_index = Menge.rand(rand_count)
+            rand_index = Mengine.rand(rand_count)
         else:
             rand_index = randomizer.getRandom(rand_count)
         rand_population[index], rand_population[rand_index] = rand_population[rand_index], rand_population[index]
@@ -276,7 +276,7 @@ def rand_element(population, randomizer=None):
         pass
 
     if randomizer is None:
-        rand_index = Menge.rand(rand_count)
+        rand_index = Mengine.rand(rand_count)
     else:
         rand_index = randomizer.getRandom(rand_count)
 
@@ -309,7 +309,7 @@ def rand_sample_list(population, k, randomizer=None):
     rand_population = population[:]
     for index in range(rand_count):
         if randomizer is None:
-            rand_index = Menge.rand(rand_count)
+            rand_index = Mengine.rand(rand_count)
         else:
             rand_index = randomizer.getRandom(rand_count)
         rand_population[index], rand_population[rand_index] = rand_population[rand_index], rand_population[index]
@@ -335,7 +335,7 @@ def rand_sample_list2(population, k):
 
     rand_population = population[:]
     for index in range(rand_count):
-        rand_index = Menge.rand(rand_count)
+        rand_index = Mengine.rand(rand_count)
         rand_population[index], rand_population[rand_index] = rand_population[rand_index], rand_population[index]
         pass
 
@@ -349,15 +349,15 @@ def rand_circle_element(Radius, Count, ElementRadius, TestCount=25):
     elements = []
     for count_index in xrange(int(Count)):
         for test_index in xrange(int(TestCount)):
-            Position = Menge.radius_randf(Radius)
+            Position = Mengine.radius_randf(Radius)
 
             def __test(elements, Position):
-                if Menge.sqrlength_v2_v2((0.0, 0.0), Position) > (Radius - ElementRadius) * (Radius - ElementRadius):
+                if Mengine.sqrlength_v2_v2((0.0, 0.0), Position) > (Radius - ElementRadius) * (Radius - ElementRadius):
                     return False
                     pass
 
                 for element in elements:
-                    if Menge.sqrlength_v2_v2(element, Position) < ElementRadius * ElementRadius:
+                    if Mengine.sqrlength_v2_v2(element, Position) < ElementRadius * ElementRadius:
                         return False
                         pass
                     pass
@@ -416,7 +416,7 @@ def hasResourceMovie(GroupName, MovieName):
 
     ResourceMovieName = "Movie%s_%s" % (GroupName, MovieName)
 
-    if Menge.hasResource(ResourceMovieName) is False:
+    if Mengine.hasResource(ResourceMovieName) is False:
         return False
         pass
 
@@ -426,13 +426,13 @@ def hasResourceMovie(GroupName, MovieName):
 def getMovieDuration(GroupName, MovieName):
     ResourceMovieName = "Movie%s_%s" % (GroupName, MovieName)
 
-    if Menge.hasResource(ResourceMovieName) is False:
+    if Mengine.hasResource(ResourceMovieName) is False:
         Trace.log("Entity", 0, "Utils.getMovieDuration not found resource %s" % (ResourceMovieName))
 
         return None
         pass
 
-    ResourceMovie = Menge.getResourceReference(ResourceMovieName)
+    ResourceMovie = Mengine.getResourceReference(ResourceMovieName)
 
     duration = ResourceMovie.getDuration()
 
@@ -442,13 +442,13 @@ def getMovieDuration(GroupName, MovieName):
 def getMovieLayerIn(GroupName, MovieName, LayerName):
     ResourceMovieName = "Movie%s_%s" % (GroupName, MovieName)
 
-    if Menge.hasResource(ResourceMovieName) is False:
+    if Mengine.hasResource(ResourceMovieName) is False:
         Trace.log("Entity", 0, "Utils.getMovieDuration not found resource %s" % (ResourceMovieName))
 
         return None
         pass
 
-    ResourceMovie = Menge.getResourceReference(ResourceMovieName)
+    ResourceMovie = Mengine.getResourceReference(ResourceMovieName)
 
     In = ResourceMovie.getLayerIn(LayerName)
 
@@ -466,7 +466,7 @@ def makeResourceMovie(GroupName, MovieName, Important=False):
 
     ResourceMovieName = "Movie%s_%s" % (GroupName, MovieName)
 
-    if Menge.hasResource(ResourceMovieName) is False:
+    if Mengine.hasResource(ResourceMovieName) is False:
         if Important is True:
             Trace.log("Entity", 0, "Utils.makeResourceMovie not found resource %s" % (ResourceMovieName))
             pass
@@ -474,7 +474,7 @@ def makeResourceMovie(GroupName, MovieName, Important=False):
         return None
         pass
 
-    ResourceMovie = Menge.getResourceReference(ResourceMovieName)
+    ResourceMovie = Mengine.getResourceReference(ResourceMovieName)
 
     return ResourceMovie
     pass
@@ -490,7 +490,7 @@ def makeResourceMovie2(GroupName, Important=False):
 
     ResourceMovieName = "Movie2_%s" % (GroupName)
 
-    if Menge.hasResource(ResourceMovieName) is False:
+    if Mengine.hasResource(ResourceMovieName) is False:
         if Important is True:
             Trace.log("Entity", 0, "Utils.makeResourceMovie2 not found resource %s" % (ResourceMovieName))
             pass
@@ -498,7 +498,7 @@ def makeResourceMovie2(GroupName, Important=False):
         return None
         pass
 
-    ResourceMovie = Menge.getResourceReference(ResourceMovieName)
+    ResourceMovie = Mengine.getResourceReference(ResourceMovieName)
 
     return ResourceMovie
     pass
@@ -600,7 +600,7 @@ def makeMovieNode(GroupName, MovieName, Position=None, Enable=True, AutoPlay=Tru
         return None
         pass
 
-    Movie = Menge.createNode("Movie")
+    Movie = Mengine.createNode("Movie")
 
     if Name is None:
         Name = MovieName
@@ -643,7 +643,7 @@ def makeMovie2Node(GroupName, MovieName, Position=None, Enable=True, AutoPlay=Tr
         return None
         pass
 
-    Movie = Menge.createNode("Movie2")
+    Movie = Mengine.createNode("Movie2")
 
     if Name is None:
         Name = MovieName
@@ -683,8 +683,8 @@ def makeMovie2Node(GroupName, MovieName, Position=None, Enable=True, AutoPlay=Tr
     pass
 
 def makeSpineNode(ResourceName, InitialAnimationName=None, InitialState=None, Position=None, Loop=False, Enable=True, Play=False):
-    Spine = Menge.createNode("Spine")
-    ResourceSpine = Menge.getResourceReference(ResourceName)
+    Spine = Mengine.createNode("Spine")
+    ResourceSpine = Mengine.getResourceReference(ResourceName)
     Spine.setResourceSpine(ResourceSpine)
 
     if Position:
@@ -736,7 +736,7 @@ def getMovieSocketPolygonWM(GroupName, MovieName, SocketName, Position):
     Socket = MovieNode.getSocket(SocketName)
 
     if Socket is None:
-        Menge.destroyNode(MovieNode)
+        Mengine.destroyNode(MovieNode)
 
         return None
         pass
@@ -745,7 +745,7 @@ def getMovieSocketPolygonWM(GroupName, MovieName, SocketName, Position):
 
     Polygon = Socket.getWorldPolygon()
 
-    Menge.destroyNode(MovieNode)
+    Mengine.destroyNode(MovieNode)
 
     return Polygon
     pass
@@ -914,7 +914,7 @@ def id_maker(count):
             last = ids[-1]
             ids = rand_list(ids)
             if ids[0] == last:
-                rand_index = Menge.range_rand(1, count)
+                rand_index = Mengine.range_rand(1, count)
                 ids[0], ids[rand_index] = ids[rand_index], ids[0]
                 pass
             pass
@@ -1003,7 +1003,7 @@ class DebugPrinter(object):
 
 def make_text_node(name, text_id, font=None, v_align=None, h_align=None, *args):
     # create node
-    text_field = Menge.createNode('TextField')
+    text_field = Mengine.createNode('TextField')
     text_field.setName(name)
     # setup aligning
     if v_align is not None:
@@ -1042,7 +1042,7 @@ def getCurrentPlatformParams():
     # todo: return to 'platform' when crushes disappear
     option = "platforma"
 
-    platforms = {"Android": _ANDROID is True or Menge.getOptionValue(option) == "android", "IOS": _IOS is True or Menge.getOptionValue(option) == "ios", "PC": Menge.hasTouchpad() is False and Menge.hasOption(option) is False, "MAC": _MACOS is True or Menge.getOptionValue(option) == "mac"}
+    platforms = {"Android": _ANDROID is True or Mengine.getOptionValue(option) == "android", "IOS": _IOS is True or Mengine.getOptionValue(option) == "ios", "PC": Mengine.hasTouchpad() is False and Mengine.hasOption(option) is False, "MAC": _MACOS is True or Mengine.getOptionValue(option) == "mac"}
     if True not in platforms.values():
         Trace.msg_err("!!!! Utils.getCurrentPlatformParams: remove -touchpad or add -{}:android|ios".format(option))
         Trace.msg_err("!!!! Utils.getCurrentPlatformParams: set Platform to PC until you fix the conflict")
@@ -1058,7 +1058,7 @@ def getCurrentPlatform():
 
 def getCurrentPublisher():
     """ :returns: publisher name from Config or -pub param """
-    publisher = Menge.getOptionValue("pub") or Menge.getGameParamUnicode("Publisher") or None
+    publisher = Mengine.getOptionValue("pub") or Mengine.getGameParamUnicode("Publisher") or None
     return publisher
 
 def getCurrentBusinessModel():
@@ -1071,14 +1071,14 @@ def getCurrentBusinessModel():
             return None
         return val
 
-    business_model = _fit(Menge.getConfigString("Monetization", "Model", "undefined"))
-    test_model = _fit(Menge.getOptionValue("monetization"))
+    business_model = _fit(Mengine.getConfigString("Monetization", "Model", "undefined"))
+    test_model = _fit(Mengine.getOptionValue("monetization"))
 
     return test_model or business_model or possible_models[0]
 
 def getCurrentBuildMode():
     """ :returns: build mode name from Configs.json or -buildmode param """
-    buildmode = Menge.getOptionValue("buildmode") or Menge.getGameParamUnicode("BuildMode") or None
+    buildmode = Mengine.getOptionValue("buildmode") or Mengine.getGameParamUnicode("BuildMode") or None
     return buildmode
 
 class SimpleLogger(object):
@@ -1116,24 +1116,24 @@ class SimpleLogger(object):
             Trace.msg(f_message)
 
 def isCollectorEdition():
-    if Menge.getGameParamUnicode("BuildModeCheckVersion") == u"2.0":
+    if Mengine.getGameParamUnicode("BuildModeCheckVersion") == u"2.0":
         from Foundation.BuildModeManager import BuildModeManager
 
-        current_build_mode = Menge.getGameParamUnicode("BuildMode")
+        current_build_mode = Mengine.getGameParamUnicode("BuildMode")
         resources_tags = BuildModeManager.getBuildResourceConfig(current_build_mode)
         return "CE" in resources_tags
     else:
-        return Menge.getGameParamBool("CollectorEdition", False)
+        return Mengine.getGameParamBool("CollectorEdition", False)
 
 def isSurvey():
-    if Menge.getGameParamUnicode("BuildModeCheckVersion") == u"2.0":
+    if Mengine.getGameParamUnicode("BuildModeCheckVersion") == u"2.0":
         from Foundation.BuildModeManager import BuildModeManager
 
-        current_build_mode = Menge.getGameParamUnicode("BuildMode")
+        current_build_mode = Mengine.getGameParamUnicode("BuildMode")
         resources_tags = BuildModeManager.getBuildResourceConfig(current_build_mode)
         return "Survey" in resources_tags
     else:
-        return Menge.getGameParamBool("Survey", False)
+        return Mengine.getGameParamBool("Survey", False)
 
 def setEnableLayer(state, layer_name, parent_obj):
     disable_layers = parent_obj.getParam("DisableLayers")
@@ -1156,9 +1156,9 @@ def calcTime(time_in_sec):
 
 def benchmark(func):
     def wrapper(*args, **kwargs):
-        start = Menge.getTimeMs()
+        start = Mengine.getTimeMs()
         return_value = func(*args, **kwargs)
-        end = Menge.getTimeMs()
+        end = Mengine.getTimeMs()
         Trace.msg('[*] Runtime: {} ms.'.format(end - start))
         return return_value
     return wrapper

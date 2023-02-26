@@ -45,11 +45,11 @@ class AnimatorEasing(Initializer):
             self._run()
 
     def _run(self):
-        self._schedule_id = Menge.schedule(self.time_out, self.__on_schedule)
+        self._schedule_id = Mengine.schedule(self.time_out, self.__on_schedule)
 
     def _stop(self):
         if self._schedule_id:
-            Menge.scheduleRemove(self._schedule_id)
+            Mengine.scheduleRemove(self._schedule_id)
             self._schedule_id = None
 
         self._is_stop = True

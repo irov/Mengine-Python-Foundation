@@ -1,9 +1,9 @@
 from Notification import Notification
 
-Interaction = Menge.importEntity("Interaction")
+Interaction = Mengine.importEntity("Interaction")
 
 class Button(Interaction):
-    s_keys = dict(Esc=Menge.KC_ESCAPE, Enter=Menge.KC_RETURN)
+    s_keys = dict(Esc=Mengine.KC_ESCAPE, Enter=Mengine.KC_RETURN)
 
     @staticmethod
     def declareORM(Type):
@@ -51,8 +51,8 @@ class Button(Interaction):
         for button in buttons:
             Name = button["Name"]
             ResourceName = button["Resource"]
-            Resource = Menge.getResourceReference(ResourceName)
-            sprite = Menge.createSprite(Name, Resource)
+            Resource = Mengine.getResourceReference(ResourceName)
+            sprite = Mengine.createSprite(Name, Resource)
 
             Position = button["Position"]
             sprite.setLocalPosition(Position)
@@ -73,11 +73,11 @@ class Button(Interaction):
     def _onFinalize(self):
         super(Button, self)._onFinalize()
 
-        Menge.destroyNode(self.text)
+        Mengine.destroyNode(self.text)
         self.text = None
 
         for state in self.states.itervalues():
-            Menge.destroyNode(state)
+            Mengine.destroyNode(state)
             pass
 
         self.states = {}
@@ -91,7 +91,7 @@ class Button(Interaction):
             return self.BlockKey
             pass
 
-        if Menge.isExclusiveKeyDown(key) is False:
+        if Mengine.isExclusiveKeyDown(key) is False:
             return self.BlockKey
             pass
 
@@ -202,13 +202,13 @@ class Button(Interaction):
 
         self.text.enable()
 
-        self.MouseButtonHandlerID = Menge.addMouseButtonHandler(self.__onGlobalHandleMouseButtonEvent)
+        self.MouseButtonHandlerID = Mengine.addMouseButtonHandler(self.__onGlobalHandleMouseButtonEvent)
         pass
 
     def _onDeactivate(self):
         super(Button, self)._onDeactivate()
 
-        Menge.removeGlobalHandler(self.MouseButtonHandlerID)
+        Mengine.removeGlobalHandler(self.MouseButtonHandlerID)
         self.MouseButtonHandlerID = None
         pass
 

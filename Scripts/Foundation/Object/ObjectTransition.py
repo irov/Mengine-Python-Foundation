@@ -30,7 +30,7 @@ class ObjectTransition(DemonObject):
                     self.initializeFailed("'%s' invalid initialize, incorrect param HintPoint '%s'" % (self.getName(), HintPoint))
 
                 Polygon = self.getPolygon()
-                if Menge.isPointInsidePolygon(HintPoint, Polygon) is False:
+                if Mengine.isPointInsidePolygon(HintPoint, Polygon) is False:
                     self.initializeFailed("[%s] '%s' invalid initialize, HintPoint %s must be inside polygon %s" % (self.getParent().getName(), self.getName(), HintPoint, Polygon))
 
     def calcWorldHintPoint(self):

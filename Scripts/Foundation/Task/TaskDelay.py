@@ -32,7 +32,7 @@ class TaskDelay(MixinTime, Task):
         if self.Scheduler is not None:
             self.id = self.Scheduler.schedule(self.time, self.__onDelay)
         else:
-            self.id = Menge.schedule(self.time, self.__onDelay)
+            self.id = Mengine.schedule(self.time, self.__onDelay)
             pass
 
         if self.id == 0:
@@ -64,7 +64,7 @@ class TaskDelay(MixinTime, Task):
                 pass
             pass
         else:
-            if Menge.scheduleRemove(remove_id) is False:
+            if Mengine.scheduleRemove(remove_id) is False:
                 Trace.trace()
                 pass
             pass

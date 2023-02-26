@@ -81,7 +81,7 @@ class SaxParser(object):
 
 def parse(category, path):
     p = SaxParser()
-    Menge.parseXml(category, path, p)
+    Mengine.parseXml(category, path, p)
 
     root = p.getRoot()
     return root

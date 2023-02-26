@@ -137,11 +137,11 @@ class MovieProgressBar(BaseEntity):
                 return None
                 pass
 
-            if Menge.hasResource(res) is False:
+            if Mengine.hasResource(res) is False:
                 return False
                 pass
 
-            resource = Menge.getResourceReference(res)
+            resource = Mengine.getResourceReference(res)
 
             if resource is None:
                 Trace.log("Entity", 0, "MovieProgressBar._onInitialize: not found resource %s" % (res))
@@ -171,7 +171,7 @@ class MovieProgressBar(BaseEntity):
             idle.setEnable(True)
         self.Movies['Progress'].setEnable(True)
 
-        self.scheduler = Menge.createScheduler("MovieProgressBar")
+        self.scheduler = Mengine.createScheduler("MovieProgressBar")
         return True
 
     def increase_smoothly_value(self, source, value, time, func=None, smooth_delta=50.0):
@@ -206,7 +206,7 @@ class MovieProgressBar(BaseEntity):
         self.Movies = {}
 
         if self.scheduler is not None:
-            Menge.destroyScheduler(self.scheduler)
+            Mengine.destroyScheduler(self.scheduler)
             self.scheduler = None
         pass
 

@@ -49,7 +49,7 @@ class Transition(BaseEntity):
     def _onFinalize(self):
         super(Transition, self)._onFinalize()
 
-        Menge.destroyNode(self.hotspot)
+        Mengine.destroyNode(self.hotspot)
         self.hotspot = None
         pass
 

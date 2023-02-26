@@ -247,18 +247,18 @@ class SaveManager(object):
 
             save_value = SaveObjectRef((groupName, object_path))
             pass
-        elif Menge.is_class(value) is True:
-            if isinstance(value, Menge.vec2f) is True:
+        elif Mengine.is_class(value) is True:
+            if isinstance(value, Mengine.vec2f) is True:
                 save_value = (value.x, value.y)
                 pass
-            elif isinstance(value, Menge.vec3f) is True:
+            elif isinstance(value, Mengine.vec3f) is True:
                 save_value = (value.x, value.y, value.z)
                 pass
-            elif isinstance(value, Menge.ConstString) is True:
+            elif isinstance(value, Mengine.ConstString) is True:
                 save_value = SaveConstString(value)
                 pass
             else:
-                raise Exception("isinstance('%s', Menge.pybind_base_type) is True" % (value))
+                raise Exception("isinstance('%s', Mengine.pybind_base_type) is True" % (value))
                 pass
             pass
         elif isinstance(value, (unicode, str, float, long, int, bool)) is True or value is None:

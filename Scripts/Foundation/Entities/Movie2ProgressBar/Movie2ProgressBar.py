@@ -152,11 +152,11 @@ class Movie2ProgressBar(BaseEntity):
             return False
             pass
 
-        if Menge.hasResource(self.ResourceMovie) is False:
+        if Mengine.hasResource(self.ResourceMovie) is False:
             return False
             pass
 
-        resource = Menge.getResourceReference(self.ResourceMovie)
+        resource = Mengine.getResourceReference(self.ResourceMovie)
 
         if resource is None:
             Trace.log("Entity", 0, "Movie2ProgressBar._onInitialize: not found resource %s" % (resource))

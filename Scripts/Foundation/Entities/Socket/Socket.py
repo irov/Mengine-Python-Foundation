@@ -1,6 +1,6 @@
 from Notification import Notification
 
-Interaction = Menge.importEntity("Interaction")
+Interaction = Mengine.importEntity("Interaction")
 
 class Socket(Interaction):
     @staticmethod

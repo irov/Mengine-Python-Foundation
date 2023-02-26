@@ -24,7 +24,7 @@ class TaskSoundEffect(Task):
             pass
 
         if _DEVELOPMENT is True:
-            if Menge.hasSound(self.SoundName) is False:
+            if Mengine.hasSound(self.SoundName) is False:
                 self.initializeFailed("TaskSoundEffect invalid sound %s" % (self.SoundName))
                 pass
             pass
@@ -40,7 +40,7 @@ class TaskSoundEffect(Task):
 
     def _onRun(self):
         if self.Wait is True:
-            self.playId = Menge.soundPlay(self.SoundName, False, self._onSoundEnd)
+            self.playId = Mengine.soundPlay(self.SoundName, False, self._onSoundEnd)
 
             if self.playId is None:
                 return True
@@ -48,7 +48,7 @@ class TaskSoundEffect(Task):
 
             return False
         else:
-            self.playId = Menge.soundPlay(self.SoundName, False, None)
+            self.playId = Mengine.soundPlay(self.SoundName, False, None)
 
             if self.playId is None:
                 return True
@@ -77,6 +77,6 @@ class TaskSoundEffect(Task):
         stopId = self.playId
         self.playId = None
 
-        Menge.soundStop(stopId)
+        Mengine.soundStop(stopId)
         pass
     pass

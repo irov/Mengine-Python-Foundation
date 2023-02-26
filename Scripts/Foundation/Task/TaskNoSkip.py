@@ -17,7 +17,7 @@ class TaskNoSkip(Task):
         pass
 
     def _onSkipBlock(self):
-        self.id = Menge.schedule(0.0, self._onDelay)
+        self.id = Mengine.schedule(0.0, self._onDelay)
 
         return False
         pass
@@ -39,6 +39,6 @@ class TaskNoSkip(Task):
 
         id = self.id
         self.id = 0
-        Menge.scheduleRemove(id)
+        Mengine.scheduleRemove(id)
         pass
     pass

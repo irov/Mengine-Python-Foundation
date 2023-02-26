@@ -9,7 +9,7 @@ class TaskCursorSetPosition(Task):
         pass
 
     def _onRun(self):
-        Menge.pushMouseMove(0, self.position)
+        Mengine.pushMouseMove(0, self.position)
         return True
         pass
 

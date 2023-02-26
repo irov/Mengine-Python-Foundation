@@ -39,7 +39,7 @@ class ArrowManager(object):
 
         ArrowManager.s_arrowType[name] = (Type, module)
 
-        if Menge.addArrowPrototypeFinder(name, ArrowManager.getArrowType) is False:
+        if Mengine.addArrowPrototypeFinder(name, ArrowManager.getArrowType) is False:
             Trace.log("Manager", 0, "ArrowManager.importArrow invalid arrow %s module %s" % (name, module))
 
             return None
@@ -99,7 +99,7 @@ class ArrowManager(object):
 
     @staticmethod
     def getArrow():
-        arrow = Menge.getArrow()
+        arrow = Mengine.getArrow()
 
         return arrow
         pass

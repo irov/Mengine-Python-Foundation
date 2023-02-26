@@ -78,7 +78,7 @@ class Movie2(BaseAnimatable):
         eventation = self.movie.getEventation()
         eventation.removeEvents()
 
-        Menge.destroyNode(self.movie)
+        Mengine.destroyNode(self.movie)
         self.movie = None
         pass
 

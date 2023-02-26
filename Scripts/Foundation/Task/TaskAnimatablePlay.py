@@ -24,7 +24,7 @@ class TaskAnimatablePlay(MixinEvent, Task):
     def _onValidate(self):
         super(TaskAnimatablePlay, self)._onValidate()
 
-        if Menge.isHomeless(self.Animatable) is True:
+        if Mengine.isHomeless(self.Animatable) is True:
             self.validateFailed("Animatable %s is Homeless" % (self.Animatable.getName()))
             pass
 
@@ -151,7 +151,7 @@ class TaskAnimatablePlay(MixinEvent, Task):
             pass
 
         if self.Destroy is True:
-            Menge.destroyNode(self.Animatable)
+            Mengine.destroyNode(self.Animatable)
             self.Animatable = None
             pass
         pass

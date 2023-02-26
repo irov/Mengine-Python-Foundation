@@ -66,7 +66,7 @@ class Movie2EditBox(BaseEntity):
         pass
 
     def __activate_slider(self, value):
-        if Menge.hasTouchpad() is False:
+        if Mengine.hasTouchpad() is False:
             return
 
         MovieSlider = self.Movies.get("Slider")
@@ -81,11 +81,11 @@ class Movie2EditBox(BaseEntity):
                 with tc.addRaceTask(2) as (tc_on_down, tc_on_up):
                     tc_on_down.addTask("TaskMovie2SocketClick", SocketName="socket", Movie2=MovieSlider, isDown=True)
                     tc_on_down.addFunction(self.__on_slide, True)
-                    tc_on_down.addFunction(Menge.enableGlobalHandler, self._mouse_move_handler, True)
+                    tc_on_down.addFunction(Mengine.enableGlobalHandler, self._mouse_move_handler, True)
 
                     tc_on_up.addTask("TaskMouseButtonClick", isDown=False)
                     tc_on_up.addFunction(self.__on_slide, False)
-                    tc_on_up.addFunction(Menge.enableGlobalHandler, self._mouse_move_handler, False)
+                    tc_on_up.addFunction(Mengine.enableGlobalHandler, self._mouse_move_handler, False)
                     pass
 
     def _updatePasswordChar(self, value):
@@ -210,11 +210,11 @@ class Movie2EditBox(BaseEntity):
             return False
             pass
 
-        if Menge.hasResource(self.ResourceMovie) is False:
+        if Mengine.hasResource(self.ResourceMovie) is False:
             return False
             pass
 
-        resource = Menge.getResourceReference(self.ResourceMovie)
+        resource = Mengine.getResourceReference(self.ResourceMovie)
 
         if resource is None:
             Trace.log("Entity", 0, "Movie2EditBox._onInitialize: not found resource %s" % (resource))
@@ -254,8 +254,8 @@ class Movie2EditBox(BaseEntity):
 
         focus_movie.getEntity().getSocket("socket").setEventListener(onHandleMouseButtonEvent=self.__onMouseButtonEventFocus)
 
-        self._mouse_move_handler = Menge.addMouseMoveHandler(self.on_mouse_move)
-        Menge.enableGlobalHandler(self._mouse_move_handler, False)
+        self._mouse_move_handler = Mengine.addMouseMoveHandler(self.on_mouse_move)
+        Mengine.enableGlobalHandler(self._mouse_move_handler, False)
 
         text_field = focus_movie.getEntity().getMovieText(self.object.getText_ID())
         self.startPos = text_field.getLocalPosition()
@@ -366,10 +366,10 @@ class Movie2EditBox(BaseEntity):
     def _onActivate(self):
         super(Movie2EditBox, self)._onActivate()
 
-        self.KeyHandlerID = Menge.addKeyHandler(self.__onGlobalHandleKeyEvent)
-        self.TextHandlerID = Menge.addTextHandler(self.__onGlobalHandleTextEvent)
+        self.KeyHandlerID = Mengine.addKeyHandler(self.__onGlobalHandleKeyEvent)
+        self.TextHandlerID = Mengine.addTextHandler(self.__onGlobalHandleTextEvent)
 
-        Menge.showKeyboard()
+        Mengine.showKeyboard()
 
         # MovieButton part
         MovieIdle = self.Movies.get("Idle")
@@ -400,10 +400,10 @@ class Movie2EditBox(BaseEntity):
         super(Movie2EditBox, self)._onDeactivate()
         self.text = u""
 
-        Menge.removeGlobalHandler(self.KeyHandlerID)
-        Menge.removeGlobalHandler(self.TextHandlerID)
+        Mengine.removeGlobalHandler(self.KeyHandlerID)
+        Mengine.removeGlobalHandler(self.TextHandlerID)
 
-        Menge.hideKeyboard()
+        Mengine.hideKeyboard()
 
         if self.tc is not None:
             self.tc.cancel()
@@ -437,19 +437,19 @@ class Movie2EditBox(BaseEntity):
 
         self.__activate_slider(False)
 
-        if event.code == Menge.KC_LEFT:
+        if event.code == Mengine.KC_LEFT:
             self.carriageShift(-1)
-        elif event.code == Menge.KC_RIGHT:
+        elif event.code == Mengine.KC_RIGHT:
             self.carriageShift(1)
-        elif event.code == Menge.KC_DELETE:
+        elif event.code == Mengine.KC_DELETE:
             self.deleteSymbol()
-        elif event.code == Menge.KC_HOME:
+        elif event.code == Mengine.KC_HOME:
             self.carriageHome()
-        elif event.code == Menge.KC_END:
+        elif event.code == Mengine.KC_END:
             self.carriageEnd()
-        elif event.code == Menge.KC_BACK:
+        elif event.code == Mengine.KC_BACK:
             self.backspaceSymbol()
-        elif event.code == Menge.KC_RETURN:
+        elif event.code == Mengine.KC_RETURN:
             self.enter()
 
     def __onGlobalHandleTextEvent(self, event):
@@ -540,7 +540,7 @@ class Movie2EditBox(BaseEntity):
 
         carriage_pos = (carriage_offset_from_left_border, self.Movies.get("Carriage").getEntityNode().getLocalPosition()[1])
 
-        offset = Menge.vec2f(self.text_move_distance / 2, 0)
+        offset = Mengine.vec2f(self.text_move_distance / 2, 0)
         carriage_pos += offset
 
         self.Movies.get("Carriage").getEntityNode().setLocalPosition(carriage_pos)
@@ -575,13 +575,13 @@ class Movie2EditBox(BaseEntity):
     def get_text_width(self, text_value):
         # todo: this is dirty hack
         # todo: find out how to get text width in pixels if we now TextID and its arguments if needed
-        temp_text_field = Menge.createNode("TextField")
+        temp_text_field = Mengine.createNode("TextField")
         temp_text_field.setTextID(self.object.getText_ID())
 
         temp_text_field.setTextFormatArgs(text_value)
         length = temp_text_field.getTextSize().x
 
-        Menge.destroyNode(temp_text_field)
+        Mengine.destroyNode(temp_text_field)
         temp_text_field = None
 
         return length

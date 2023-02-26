@@ -10,7 +10,7 @@ class TaskCursorClickEmulate(Task):
         pass
 
     def _onRun(self):
-        Menge.pushMouseButtonEvent(0, self.position, 0, self.value)
+        Mengine.pushMouseButtonEvent(0, self.position, 0, self.value)
 
         return True
         pass

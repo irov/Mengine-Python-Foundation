@@ -56,11 +56,11 @@ class Charger(BaseEntity):
                 return None
                 pass
 
-            if Menge.hasResource(res) is False:
+            if Mengine.hasResource(res) is False:
                 return False
                 pass
 
-            resource = Menge.getResourceReference(res)
+            resource = Mengine.getResourceReference(res)
 
             if resource is None:
                 Trace.log("Entity", 0, "Charger._onInitialize: not fount resource %s" % (res))

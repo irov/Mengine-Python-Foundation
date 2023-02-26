@@ -67,7 +67,7 @@ class Manager(object):
 
             Trace.log("Manager", 0, "Manager.__onSessionLoad %s invalid load" % (cls))
 
-            Menge.changeCurrentAccountSetting("InvalidLoad", u"True")
+            Mengine.changeCurrentAccountSetting("InvalidLoad", u"True")
 
         return False
         pass

@@ -25,7 +25,7 @@ class ObjectLandscape2D(Object):
         BackParts = params.get("BackParts")
 
         for part in BackParts:
-            resource = Menge.getResourceReference(part)
+            resource = Mengine.getResourceReference(part)
 
             if resource is None:
                 Trace.log("Object", 0, "ObjectLandscape2D._onParams: back parts %s invalid get" % (part))

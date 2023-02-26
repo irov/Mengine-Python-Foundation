@@ -24,10 +24,10 @@ class TaskUnfetchGroup(Task):
         if self.Prefetch == 0:
             pass
         elif self.Prefetch == 1:
-            Menge.decrementResources(self.GroupName)
+            Mengine.decrementResources(self.GroupName)
             pass
         elif self.Prefetch == 2:
-            Menge.unfetchResources(self.GroupName)
+            Mengine.unfetchResources(self.GroupName)
             pass
         return True
         pass

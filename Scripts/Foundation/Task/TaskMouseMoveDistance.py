@@ -12,12 +12,12 @@ class TaskMouseMoveDistance(Task):
         pass
 
     def _onRun(self):
-        # arrow = Menge.getArrow()
+        # arrow = Mengine.getArrow()
         arrow = ArrowManager.getArrow()
         arrowPosition = arrow.node.getLocalPosition()
         self.oldXY = (arrowPosition.x, arrowPosition.y)
 
-        self.onMouseMoveID = Menge.addMouseMoveHandler(self._onMouseMove)
+        self.onMouseMoveID = Mengine.addMouseMoveHandler(self._onMouseMove)
 
         return False
         pass
@@ -32,7 +32,7 @@ class TaskMouseMoveDistance(Task):
             return
             pass
 
-        Menge.removeGlobalHandler(self.onMouseMoveID)
+        Mengine.removeGlobalHandler(self.onMouseMoveID)
 
         self.complete()
         return

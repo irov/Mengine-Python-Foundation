@@ -1,39 +1,39 @@
 def onInitialize():
     from Multislots import baseslots
     from Multislots import finalslots
-    Menge.addGlobalModule("baseslots", baseslots)
-    Menge.addGlobalModule("finalslots", finalslots)
+    Mengine.addGlobalModule("baseslots", baseslots)
+    Mengine.addGlobalModule("finalslots", finalslots)
 
     import traceback
-    Menge.addGlobalModule("traceback", traceback)
+    Mengine.addGlobalModule("traceback", traceback)
 
     from Holder import Holder
-    Menge.addGlobalModule("Holder", Holder)
+    Mengine.addGlobalModule("Holder", Holder)
 
     from Event import Event
-    Menge.addGlobalModule("Event", Event)
+    Mengine.addGlobalModule("Event", Event)
 
     from Functor import Functor, FunctorStore
-    Menge.addGlobalModule("Functor", Functor)
-    Menge.addGlobalModule("FunctorStore", FunctorStore)
+    Mengine.addGlobalModule("Functor", Functor)
+    Mengine.addGlobalModule("FunctorStore", FunctorStore)
 
     import Utils
-    Menge.addGlobalModule("Utils", Utils)
+    Mengine.addGlobalModule("Utils", Utils)
 
     # import Enum
-    # Menge.addGlobalModule("Enum", Enum.make_enum)
+    # Mengine.addGlobalModule("Enum", Enum.make_enum)
 
     from Enum import Enum
-    Menge.addGlobalModule("Enum", Enum)
+    Mengine.addGlobalModule("Enum", Enum)
 
     import Trace
-    Menge.addGlobalModule("Trace", Trace)
+    Mengine.addGlobalModule("Trace", Trace)
 
     import Keys
-    Menge.addGlobalModule("Keys", Keys)
+    Mengine.addGlobalModule("Keys", Keys)
 
     from Notification import Notification
-    Menge.addGlobalModule("Notification", Notification)
+    Mengine.addGlobalModule("Notification", Notification)
 
     from LayerManager import LayerManager
 
@@ -42,19 +42,19 @@ def onInitialize():
     LayerManager.importLayerType("Foundation.Layer", "Layer2DIsometric")
 
     from Foundation.Task.Iterator import Iterator
-    Menge.addGlobalModule("Iterator", Iterator)
+    Mengine.addGlobalModule("Iterator", Iterator)
 
     from Foundation.Task.Semaphore import Semaphore
-    Menge.addGlobalModule("Semaphore", Semaphore)
+    Mengine.addGlobalModule("Semaphore", Semaphore)
 
     from Foundation.Task.Refcount import Refcount
-    Menge.addGlobalModule("Refcount", Refcount)
+    Mengine.addGlobalModule("Refcount", Refcount)
 
     from GoogleAnalytics import GoogleAnalytics
-    Menge.addGlobalModule("GoogleAnalytics", GoogleAnalytics)
+    Mengine.addGlobalModule("GoogleAnalytics", GoogleAnalytics)
 
     from Facebook import Facebook
-    Menge.addGlobalModule("Facebook", Facebook)
+    Mengine.addGlobalModule("Facebook", Facebook)
 
     from Foundation.ArrowManager import ArrowManager
 
@@ -201,7 +201,7 @@ def onInitialize():
     from Foundation.Notificator import Notificator
     import Trace
 
-    Menge.addGlobalModule("Notificator", Notificator)
+    Mengine.addGlobalModule("Notificator", Notificator)
 
     notifiers = [#    Notificator.onSave
         "onResume", "onCommandLayerEnable", "onSetCurrentChapter"
@@ -332,7 +332,7 @@ def onInitialize():
 
     Types = ["Animation", "Interaction", "Button", "CheckBox", "EditBox", "Fade", "Group", "Movie", "Movie2", "Point", "Puff", "Shift", "Slider", "Socket", "Sprite", "Switch", "States", "Text", "Transition", "TransitionBack", "Video", "Window", "Zoom", "Viewport"]
 
-    if Menge.getGameParamBool("NotUseDefaultEntitiesList", False) is True:
+    if Mengine.getGameParamBool("NotUseDefaultEntitiesList", False) is True:
         Types = []
         from Foundation.DatabaseManager import DatabaseManager
         records = DatabaseManager.getDatabaseRecordsFilterBy("Database", "Entities", Module="Foundation")

@@ -10,7 +10,7 @@ from Notification import Notification
 
 sys.setrecursionlimit(500)
 
-exception_array = {Menge.KC_TAB, Menge.KC_OEM_4, Menge.KC_OEM_6, Menge.KC_F1, Menge.KC_F2, Menge.KC_F3, Menge.KC_F4, Menge.KC_F5, Menge.KC_F6, Menge.KC_F7, Menge.KC_F, Menge.KC_F9, Menge.KC_F10, Menge.KC_F11, Menge.KC_F12}
+exception_array = {Mengine.KC_TAB, Mengine.KC_OEM_4, Mengine.KC_OEM_6, Mengine.KC_F1, Mengine.KC_F2, Mengine.KC_F3, Mengine.KC_F4, Mengine.KC_F5, Mengine.KC_F6, Mengine.KC_F7, Mengine.KC_F, Mengine.KC_F9, Mengine.KC_F10, Mengine.KC_F11, Mengine.KC_F12}
 
 def onPreparation(isDebug):
     return True
@@ -77,9 +77,9 @@ def onInitialize(*args):
         return False
         pass
 
-    arrow = Menge.getArrow()
+    arrow = Mengine.getArrow()
 
-    if Menge.hasTouchpad() is True:
+    if Mengine.hasTouchpad() is True:
         DefaultArrowRadius = DefaultManager.getDefaultFloat("DefaultMobileArrowRadius", 15.0)
     else:
         DefaultArrowRadius = DefaultManager.getDefaultFloat("DefaultArrowRadius", 10.0)
@@ -88,12 +88,12 @@ def onInitialize(*args):
 
     # setup build version text for production user
     build_alias_id, build_text_id = "$AliasBuildVersion", "ID_TEXT_BUILD_VERSION"
-    if Menge.existText(build_text_id) is True:
-        Menge.setTextAlias("", build_alias_id, build_text_id)
-        if Menge.getGameParamBool("ShowBuildVersion", True) is True:
-            Menge.setTextAliasArguments("", build_alias_id, _BUILD_VERSION)
+    if Mengine.existText(build_text_id) is True:
+        Mengine.setTextAlias("", build_alias_id, build_text_id)
+        if Mengine.getGameParamBool("ShowBuildVersion", True) is True:
+            Mengine.setTextAliasArguments("", build_alias_id, _BUILD_VERSION)
         else:
-            Menge.setTextAliasArguments("", build_alias_id, "")
+            Mengine.setTextAliasArguments("", build_alias_id, "")
 
     return True
 
@@ -110,18 +110,18 @@ def onAccountFinalize():
     Notification.notify(Notificator.onAccountFinalize)
 
 def onFinalize():
-    param = Menge.getGameParamUnicode("SurveyUrl")
-    SurveyLink = Menge.getGameParamBool("SurveyLink", False)
+    param = Mengine.getGameParamUnicode("SurveyUrl")
+    SurveyLink = Mengine.getGameParamBool("SurveyLink", False)
 
     def isSurvey():
         """ copy from Foundation.Utils (cause crash if we import this method) """
-        if Menge.getGameParamUnicode("BuildModeCheckVersion") == u"2.0":
-            return Menge.getGameParamUnicode("BuildMode") == u"Survey"
+        if Mengine.getGameParamUnicode("BuildModeCheckVersion") == u"2.0":
+            return Mengine.getGameParamUnicode("BuildMode") == u"Survey"
         else:
-            return Menge.getGameParamBool("Survey", False)
+            return Mengine.getGameParamBool("Survey", False)
 
     if SurveyLink is True and isSurvey() is True:
-        Menge.openUrlInDefaultBrowser(param)
+        Mengine.openUrlInDefaultBrowser(param)
 
     Notification.notify(Notificator.onFinalize)
 
@@ -131,7 +131,7 @@ def onDestroy():
     pass
 
 def onHandleKeyEvent(event):
-    if not Menge.hasOption('cheats'):
+    if not Mengine.hasOption('cheats'):
         return False
 
     if GameManager.isBlockKeyboard() is True:
@@ -163,13 +163,13 @@ def onTimeFactor(factor):
     Notification.notify(Notificator.onTimingFactor, factor)
 
 def onFullscreen(fullscreen):
-    if Menge.hasCurrentAccountSetting("Fullscreen") is True:
-        Menge.changeCurrentAccountSetting("Fullscreen", unicode(fullscreen))
+    if Mengine.hasCurrentAccountSetting("Fullscreen") is True:
+        Mengine.changeCurrentAccountSetting("Fullscreen", unicode(fullscreen))
     Notification.notify(Notificator.onFullscreen, fullscreen)
 
 def onFixedContentResolution(widescreen):
-    if Menge.hasCurrentAccountSetting("Widescreen") is True:
-        Menge.changeCurrentAccountSetting("Widescreen", unicode(widescreen))
+    if Mengine.hasCurrentAccountSetting("Widescreen") is True:
+        Mengine.changeCurrentAccountSetting("Widescreen", unicode(widescreen))
     Notification.notify(Notificator.onFixedContentResolution, widescreen)
 
 def onCursorMode(mode):

@@ -57,7 +57,7 @@ class VirtualArea(Initializer):
         self._target.on_position_changed(self._set_position)
         self._target.set_content_size(*content_size)
 
-        self._root = Menge.createNode('Interender')
+        self._root = Mengine.createNode('Interender')
         self._root.setName("VirtualAreaRoot")
 
         self._camera = self._root.createChild('RenderCameraOrthogonal')
@@ -91,15 +91,15 @@ class VirtualArea(Initializer):
                 self._mouse_press_handler = None
 
         if self._mouse_move_handler is not None:
-            Menge.removeGlobalHandler(self._mouse_move_handler)
+            Mengine.removeGlobalHandler(self._mouse_move_handler)
             self._mouse_move_handler = None
 
         if self._mouse_release_handler is not None:
-            Menge.removeGlobalHandler(self._mouse_release_handler)
+            Mengine.removeGlobalHandler(self._mouse_release_handler)
             self._mouse_release_handler = None
 
         if self._mouse_leave_handler is not None:
-            Menge.removeGlobalHandler(self._mouse_leave_handler)
+            Mengine.removeGlobalHandler(self._mouse_leave_handler)
             self._mouse_leave_handler = None
 
         self._socket = None
@@ -110,7 +110,7 @@ class VirtualArea(Initializer):
             root_render.setRenderCamera(None)
 
             self._root.removeFromParent()
-            Menge.destroyNode(self._root)
+            Mengine.destroyNode(self._root)
             self._root = None
 
         self._camera = None
@@ -206,7 +206,7 @@ class VirtualArea(Initializer):
         """
         Method for creating virtual area scene subtree.
         All nodes attached to this tree will be draggable and rendered inside viewport.
-        :param node: Menge.Node or its subclass
+        :param node: Mengine.Node or its subclass
         :param use_as_anchor:
         :return: None
         """
@@ -245,17 +245,17 @@ class VirtualArea(Initializer):
 
     def freeze(self, value):
         self._frozen = value
-        Menge.enableGlobalHandler(self._mouse_move_handler, False)
-        Menge.enableGlobalHandler(self._mouse_release_handler, False)
-        Menge.enableGlobalHandler(self._mouse_leave_handler, False)
+        Mengine.enableGlobalHandler(self._mouse_move_handler, False)
+        Mengine.enableGlobalHandler(self._mouse_release_handler, False)
+        Mengine.enableGlobalHandler(self._mouse_leave_handler, False)
 
     def setup_viewport(self, left, top=None, right=None, bottom=None):
         """
         Sets up the size of rendering viewport of virtual area.
-        If first parameter is instance of Menge.Node and other parameters is omitted -
+        If first parameter is instance of Mengine.Node and other parameters is omitted -
         this method takes size of its bounding box by the 'getBoundingBox' method.
-        :param left: can be the next types - (number, Menge.Node, Menge.Viewport).
-            If this param is instance of Menge.Viewport and others omitted
+        :param left: can be the next types - (number, Mengine.Node, Mengine.Viewport).
+            If this param is instance of Mengine.Viewport and others omitted
             then just sets up virtual area viewport by this one.
         :param top: number
         :param right: number
@@ -269,18 +269,18 @@ class VirtualArea(Initializer):
             self._camera.setOrthogonalViewport(vp)
             self._camera.setFixedOrthogonalViewport(True)
 
-        if isinstance(left, Menge.Node):
-            box = Menge.getHotSpotPolygonBoundingBox(left)
-            __set(Menge.Viewport(box.minimum, box.maximum))
+        if isinstance(left, Mengine.Node):
+            box = Mengine.getHotSpotPolygonBoundingBox(left)
+            __set(Mengine.Viewport(box.minimum, box.maximum))
 
-        elif isinstance(left, Menge.Viewport):
+        elif isinstance(left, Mengine.Viewport):
             __set(left)
 
         elif all((top is not None, right is not None, bottom is not None)):
-            __set(Menge.Viewport((left, top), (right, bottom)))
+            __set(Mengine.Viewport((left, top), (right, bottom)))
 
         else:
-            raise TypeError("Wrong type {}, should be number, Menge.Node or Menge.Viewport".format(type(left)))
+            raise TypeError("Wrong type {}, should be number, Mengine.Node or Mengine.Viewport".format(type(left)))
 
     def init_handlers(self, hotspot):
         """
@@ -294,9 +294,9 @@ class VirtualArea(Initializer):
             if is_down:
                 self.on_touch(touch_id)
                 self._target.mouse_press(x, y)
-                Menge.enableGlobalHandler(self._mouse_move_handler, not self._frozen)
-                Menge.enableGlobalHandler(self._mouse_release_handler, not self._frozen)
-                Menge.enableGlobalHandler(self._mouse_leave_handler, not self._frozen)
+                Mengine.enableGlobalHandler(self._mouse_move_handler, not self._frozen)
+                Mengine.enableGlobalHandler(self._mouse_release_handler, not self._frozen)
+                Mengine.enableGlobalHandler(self._mouse_leave_handler, not self._frozen)
 
             return handle
 
@@ -319,11 +319,11 @@ class VirtualArea(Initializer):
             touch0 = self._touch_ids[0]
             touch1 = self._touch_ids[1]
 
-            touch0_cur_pos = Menge.vec2f(touch0.x, touch0.y)
-            touch1_cur_pos = Menge.vec2f(touch1.x, touch1.y)
+            touch0_cur_pos = Mengine.vec2f(touch0.x, touch0.y)
+            touch1_cur_pos = Mengine.vec2f(touch1.x, touch1.y)
 
-            touch0_prev_pos = touch0_cur_pos + Menge.vec2f(touch0.dx, touch0.dy)
-            touch1_prev_pos = touch1_cur_pos + Menge.vec2f(touch1.dx, touch1.dy)
+            touch0_prev_pos = touch0_cur_pos + Mengine.vec2f(touch0.dx, touch0.dy)
+            touch1_prev_pos = touch1_cur_pos + Mengine.vec2f(touch1.dx, touch1.dy)
 
             def magnitude(vec1, vec2):
                 vec = (vec1 - vec2)
@@ -365,12 +365,12 @@ class VirtualArea(Initializer):
             self.on_drag_end()
             pass
 
-        self._mouse_move_handler = Menge.addMouseMoveHandler(mouse_move)
-        self._mouse_release_handler = Menge.addMouseButtonHandler(mouse_release)
-        self._mouse_leave_handler = Menge.addMouseLeaveHandler(mouse_leave)
-        Menge.enableGlobalHandler(self._mouse_move_handler, False)
-        Menge.enableGlobalHandler(self._mouse_release_handler, False)
-        Menge.enableGlobalHandler(self._mouse_leave_handler, False)
+        self._mouse_move_handler = Mengine.addMouseMoveHandler(mouse_move)
+        self._mouse_release_handler = Mengine.addMouseButtonHandler(mouse_release)
+        self._mouse_leave_handler = Mengine.addMouseLeaveHandler(mouse_leave)
+        Mengine.enableGlobalHandler(self._mouse_move_handler, False)
+        Mengine.enableGlobalHandler(self._mouse_release_handler, False)
+        Mengine.enableGlobalHandler(self._mouse_leave_handler, False)
 
         self._socket = hotspot
         if self._enable_scale:
@@ -400,8 +400,8 @@ class VirtualArea(Initializer):
             self._touch_ids.pop(event.touchId)
 
         self._is_dragging = False
-        Menge.enableGlobalHandler(self._mouse_move_handler, False)
-        Menge.enableGlobalHandler(self._mouse_release_handler, False)
-        Menge.enableGlobalHandler(self._mouse_leave_handler, False)
+        Mengine.enableGlobalHandler(self._mouse_move_handler, False)
+        Mengine.enableGlobalHandler(self._mouse_release_handler, False)
+        Mengine.enableGlobalHandler(self._mouse_leave_handler, False)
         self._target.mouse_release()
         self._target.setup_affector()

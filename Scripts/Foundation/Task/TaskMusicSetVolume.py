@@ -14,7 +14,7 @@ class TaskMusicSetVolume(Task):
         pass
 
     def _onRun(self):
-        Menge.musicSetVolumeTag(self.Tag, self.To, self.From)
+        Mengine.musicSetVolumeTag(self.Tag, self.To, self.From)
 
         return True
         pass
