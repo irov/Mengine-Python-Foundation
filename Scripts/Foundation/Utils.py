@@ -885,16 +885,9 @@ def id_maker(count):
     2. chunk consists of unique elements from 0 to count-1
     3. returns None-sequence if input is shit
 
-    случайные числа от 0 до count-1 такие, что если взять кусок сначала размером с count и следующий,
-    то на стыке будут разные элементы, а внутри куска все элементы будут уникальными.
-    Вернет бесконечный None если на входе говно
-
     example:
     input: count=5
     output: 5 different numbers, with last number for example, 3; then 5 another numbers, but first of them is not 3
-
-    например: если count=5 на выходе будет сначала пять любых чисел, последнее например 3, дальше опять любые числа,
-    но начинаться с 3 не будет
 
     usage:
     ids = Utils.id_maker(4)
