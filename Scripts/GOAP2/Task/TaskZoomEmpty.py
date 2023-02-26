@@ -1,0 +1,25 @@
+from GOAP2.Task.MixinObserver import MixinObserver
+from GOAP2.Task.Task import Task
+from GOAP3.ZoomManager import ZoomManager
+
+class TaskZoomEmpty(MixinObserver, Task):
+    Skiped = False
+
+    def _onCheck(self):
+        if ZoomManager.isZoomEmpty() is True:
+            return False
+            pass
+
+        return True
+        pass
+
+    def _onRun(self):
+        self.addObserver(Notificator.onZoomEmpty, self._onZoomEmptyFilter)
+
+        return False
+        pass
+
+    def _onZoomEmptyFilter(self):
+        return True
+        pass
+    pass
