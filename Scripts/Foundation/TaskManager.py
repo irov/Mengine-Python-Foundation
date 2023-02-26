@@ -52,17 +52,19 @@ class TaskManager(object):
 
     @staticmethod
     def __importTaskDomain(module, name):
+        Name = "%s" % (name)
+        FromName = module
+        ModuleName = "%s.%s" % (FromName, Name)
+
         try:
-            Name = "%s" % (name)
-            FromName = module
-            ModuleName = "%s.%s" % (FromName, Name)
             Module = __import__(ModuleName, fromlist=[FromName])
-            Type = getattr(Module, Name)
-        except ImportError as ie:
-            Trace.log("Manager", 0, "TaskManager.__importTaskDomain %s:%s import error %s" % (module, name, ie))
+        except ImportError as ex:
+            Trace.log("Manager", 0, "TaskManager.__importTaskDomain %s:%s import error %s" % (module, name, ex))
 
             return None
             pass
+
+        Type = getattr(Module, Name)
 
         return Type
         pass

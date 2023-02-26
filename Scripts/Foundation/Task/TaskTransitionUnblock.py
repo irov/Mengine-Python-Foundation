@@ -1,6 +1,6 @@
 from Foundation.Task.MixinObserver import MixinObserver
 from Foundation.Task.Task import Task
-from GOAP3.TransitionManager import TransitionManager
+from HOPA.TransitionManager import TransitionManager
 
 class TaskTransitionUnblock(MixinObserver, Task):
     Skiped = False

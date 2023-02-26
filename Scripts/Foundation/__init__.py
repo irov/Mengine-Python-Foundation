@@ -68,38 +68,120 @@ def onInitialize():
 
     SceneManager.importScenes("Foundation.Scenes", Scenes)
 
-    tasks = ["TaskChain", "TaskQuitApplication", "TaskFork", "TaskDummy", "TaskNoSkip", "TaskSkip", "TaskDeadLock", "TaskChainCancel", "TaskChainRun", "TaskAlias", "TaskIf", "TaskGuard", "TaskScope", "TaskScopeListener", "TaskDebugBreak"
 
-        , "TaskDelay", "TaskPipe", "TaskWait", "TaskNotify", "TaskListener", "TaskEvent", "TaskScopeEvent", "TaskFilter", "TaskFunction", "TaskSkipFunction", "TaskCallback", "TaskIterator"
+    tasks = [
+        "TaskChain"
+        , "TaskQuitApplication"
+        , "TaskFork"
+        , "TaskDummy"
+        , "TaskNoSkip"
+        , "TaskSkip"
+        , "TaskDeadLock"
+        , "TaskChainCancel"
+        , "TaskChainRun"
+        , "TaskAlias"
+        , "TaskIf"
+        , "TaskGuard"
+        , "TaskScope"
+        , "TaskScopeListener"
+        , "TaskDebugBreak"
 
-        , "TaskGameBlock", "TaskGameUnblock"
+        , "TaskDelay"
+        , "TaskPipe"
+        , "TaskWait"
+        , "TaskNotify"
+        , "TaskListener"
+        , "TaskEvent"
+        , "TaskScopeEvent"
+        , "TaskFilter"
+        , "TaskFunction"
+        , "TaskSkipFunction"
+        , "TaskCallback"
+        , "TaskIterator"
 
-        , "TaskPrint", "TaskPrintTrace", "TaskTrace"
+        , "TaskGameBlock"
+        , "TaskGameUnblock"
 
-        , "TaskStateMutex", "TaskStateChange"
+        , "TaskPrint"
+        , "TaskPrintTrace"
+        , "TaskTrace"
 
-        , "TaskParallelNeck", "TaskRaceNeck", "TaskSwitch", "TaskScopeSwitch", "TaskRepeat", "TaskFor"
+        , "TaskStateMutex"
+        , "TaskStateChange"
 
-        , "TaskScenePreparation", "TaskSceneInit", "TaskSceneEnter", "TaskSceneLeave", "TaskSceneLayerGroupEnable", "TaskSceneLayerAddEntity", "TaskSceneEntering", "TaskSceneLeaving", "TaskRemoveCurrentScene", "TaskSceneActivate", "TaskGameScenesBlock", "TaskGameSceneEnter"
+        , "TaskParallelNeck"
+        , "TaskRaceNeck"
+        , "TaskSwitch"
+        , "TaskScopeSwitch"
+        , "TaskRepeat"
+        , "TaskFor"
 
-        , "TaskStageInit", "TaskStageSave", "TaskStageResume"
+        , "TaskScenePreparation"
+        , "TaskSceneInit"
+        , "TaskSceneEnter"
+        , "TaskSceneLeave"
+        , "TaskSceneLayerGroupEnable"
+        , "TaskSceneLayerAddEntity"
+        , "TaskSceneEntering"
+        , "TaskSceneLeaving"
+        , "TaskRemoveCurrentScene"
+        , "TaskSceneActivate"
+        , "TaskGameScenesBlock"
+        , "TaskGameSceneEnter"
 
-        , "TaskFadeIn", "TaskFadeOut", "TaskFadeSetStateFadeInComplete"
+        , "TaskFadeIn"
+        , "TaskFadeOut"
+        , "TaskFadeSetStateFadeInComplete"
 
-        , "TaskSetParam", "TaskAppendParam", "TaskDelParam", "TaskChangeParam"
+        , "TaskSetParam"
+        , "TaskAppendParam"
+        , "TaskDelParam"
+        , "TaskChangeParam"
 
-        , "TaskRunSystem", "TaskStopSystem", "TaskStageRun"
+        , "TaskRunSystem"
+        , "TaskStopSystem"
 
-        , "TaskMouseButtonClick", "TaskMouseButtonClickEnd", "TaskMouseUse", "TaskMouseMoveDistance", "TaskMouseMove"
+        , "TaskMouseButtonClick"
+        , "TaskMouseButtonClickEnd"
+        , "TaskMouseUse"
+        , "TaskMouseMoveDistance"
+        , "TaskMouseMove"
 
-        , "TaskRemoveArrowAttach", "TaskArrowAttach2", "TaskArrowHide", "TaskArrowModeChange"
+        , "TaskRemoveArrowAttach"
+        , "TaskArrowAttach2"
+        , "TaskArrowHide"
+        , "TaskArrowModeChange"
 
-        , "TaskEnable", "TaskInteractive", "TaskBlockInteractive"
+        , "TaskEnable"
+        , "TaskInteractive"
+        , "TaskBlockInteractive"
 
         , "TaskMusicSetVolume"
 
-        , "TaskNodeAlphaTo", "TaskNodeColorTo", "TaskNodeScaleTo", "TaskNodeRotateTo", "TaskNodeMoveTo", "TaskNodeAccelerateTo", "TaskNodeBezier2To", "TaskNodeBezier2Follow", "TaskNodeBezier3To", "TaskNodeParabolaTo", "TaskNodeVelocityTo", "TaskNodeFollowTo", "TaskNodeFollowToWorld", "TaskNodeLocalHide", "TaskNodeEnable", "TaskNodeFlip", "TaskNodeEnable", "TaskNodeEnableGlobalMouseEvent", "TaskNodeAddChild", "TaskNodeSetPosition", "TaskNodeSetOrigin", "TaskNodePercentVisibilityTo", "TaskNodeDestroy",
-        "TaskNodeRemoveFromParent"
+        , "TaskNodeAlphaTo"
+        , "TaskNodeColorTo"
+        , "TaskNodeScaleTo"
+        , "TaskNodeRotateTo"
+        , "TaskNodeMoveTo"
+        , "TaskNodeAccelerateTo"
+        , "TaskNodeBezier2To"
+        , "TaskNodeBezier2Follow"
+        , "TaskNodeBezier3To"
+        , "TaskNodeParabolaTo"
+        , "TaskNodeVelocityTo"
+        , "TaskNodeFollowTo"
+        , "TaskNodeFollowToWorld"
+        , "TaskNodeLocalHide"
+        , "TaskNodeEnable"
+        , "TaskNodeFlip"
+        , "TaskNodeEnable"
+        , "TaskNodeEnableGlobalMouseEvent"
+        , "TaskNodeAddChild"
+        , "TaskNodeSetPosition"
+        , "TaskNodeSetOrigin"
+        , "TaskNodePercentVisibilityTo"
+        , "TaskNodeDestroy"
+        , "TaskNodeRemoveFromParent"
 
         , "TaskNodeMovieEvent"
 
@@ -107,93 +189,254 @@ def onInitialize():
 
         , "TaskSurfaceAnimationPlay"
 
-        , "TaskAnimatablePlay", "TaskAnimatableStop", "TaskAnimatablePause", "TaskAnimatableEnd", "TaskAnimatableInterrupt", "TaskAnimatableRewind"
+        , "TaskAnimatablePlay"
+        , "TaskAnimatableStop"
+        , "TaskAnimatablePause"
+        , "TaskAnimatableEnd"
+        , "TaskAnimatableInterrupt"
+        , "TaskAnimatableRewind"
 
-        , "TaskObjectAnimatablePlay", "TaskObjectAnimatableStop", "TaskObjectAnimatablePause", "TaskObjectAnimatableEnd", "TaskObjectAnimatableInterrupt"
+        , "TaskObjectAnimatablePlay"
+        , "TaskObjectAnimatableStop"
+        , "TaskObjectAnimatablePause"
+        , "TaskObjectAnimatableEnd"
+        , "TaskObjectAnimatableInterrupt"
 
         , "TaskObjectPlay"
 
-        , "TaskMovieSlotAddChild", "TaskMovieSlotAddObject", "TaskMovieStop", "TaskMoviePlay", "TaskSubMoviePlay", "TaskSubMovie2Play", "TaskMoviePause", "TaskMovieEnd", "TaskMovieLastFrame", "TaskMovieSocketClick", "TaskMovieSocketEnter", "TaskMovieSocketLeave", "TaskMovieSocketMove", "TaskMovieSocketEnable", "TaskMovieRewind", "TaskMovieInterrupt"
+        , "TaskMovieSlotAddChild"
+        , "TaskMovieSlotAddObject"
+        , "TaskMovieStop"
+        , "TaskMoviePlay"
+        , "TaskSubMoviePlay"
+        , "TaskSubMovie2Play"
+        , "TaskMoviePause"
+        , "TaskMovieEnd"
+        , "TaskMovieLastFrame"
+        , "TaskMovieSocketClick"
+        , "TaskMovieSocketEnter"
+        , "TaskMovieSocketLeave"
+        , "TaskMovieSocketMove"
+        , "TaskMovieSocketEnable"
+        , "TaskMovieRewind"
+        , "TaskMovieInterrupt"
 
-        , "TaskMovie2Stop", "TaskMovie2Play", "TaskMovie2Pause", "TaskMovie2End", "TaskMovie2Rewind", "TaskMovie2Interrupt", "TaskMovie2SocketClick", "TaskMovie2SocketEnter", "TaskMovie2SocketLeave", "TaskMovie2SocketMove"
+        , "TaskMovie2Stop"
+        , "TaskMovie2Play"
+        , "TaskMovie2Pause"
+        , "TaskMovie2End"
+        , "TaskMovie2Rewind"
+        , "TaskMovie2Interrupt"
+        , "TaskMovie2SocketClick"
+        , "TaskMovie2SocketEnter"
+        , "TaskMovie2SocketLeave"
+        , "TaskMovie2SocketMove"
 
-        , "TaskNodeSocketClick", "TaskNodeSocketEnter", "TaskNodeSocketLeave", "TaskNodeSocketMove"
+        , "TaskNodeSocketClick"
+        , "TaskNodeSocketEnter"
+        , "TaskNodeSocketLeave"
+        , "TaskNodeSocketMove"
 
-        , "TaskAnimationPlay", "TaskAnimationStop", "TaskAnimationSetFrame", "TaskAnimationSetSequence", "TaskAnimationEnd"
+        , "TaskAnimationPlay"
+        , "TaskAnimationStop"
+        , "TaskAnimationSetFrame"
+        , "TaskAnimationSetSequence"
+        , "TaskAnimationEnd"
 
-        , "TaskVideoPlay", "TaskVideoStop", "TaskVideoEnd"
+        , "TaskVideoPlay"
+        , "TaskVideoStop"
+        , "TaskVideoEnd"
 
-        , "TaskSoundEffect", "TaskVoicePlay"
+        , "TaskSoundEffect"
+        , "TaskVoicePlay"
 
-        , "TaskShift", "TaskShiftNext", "TaskPuffShowElement", "TaskCheckBox", "TaskCheckBoxBlockState"
+        , "TaskShift"
+        , "TaskShiftNext"
+        , "TaskPuffShowElement"
+        , "TaskCheckBox"
+        , "TaskCheckBoxBlockState"
 
-        , "TaskMovieCheckBox", "TaskMovie2CheckBox"
+        , "TaskMovieCheckBox"
+        , "TaskMovie2CheckBox"
 
         , "TaskInteraction"
 
-        , "TaskTransition", "TaskTransitionClick", "TaskTransitionEnter", "TaskTransitionLeave", "TaskTransitionBlock", "TaskTransitionUnblock"
+        , "TaskTransition"
+        , "TaskTransitionClick"
+        , "TaskTransitionEnter"
+        , "TaskTransitionLeave"
+        , "TaskTransitionBlock"
+        , "TaskTransitionUnblock"
 
-        , "TaskSocketClick", "TaskSocketClickUp", "TaskSocketClickEndUp", "TaskSocketEnter", "TaskSocketLeave"
+        , "TaskSocketClick"
+        , "TaskSocketClickUp"
+        , "TaskSocketClickEndUp"
+        , "TaskSocketEnter"
+        , "TaskSocketLeave"
 
-        , "TaskSocketUse"  # click socket with any object, don't remove attach
+        , "TaskSocketUse"# click socket with any object, don't remove attach
 
-        , "TaskButtonClick", "TaskButtonClickEndUp", "TaskButtonEnter", "TaskButtonLeave", "TaskButtonBlockState", "TaskButtonSetState", "TaskButtonChangeState", "TaskButtonUse", "TaskButtonBlockKeys", "TaskButtonSwitchMode"
+        , "TaskButtonClick"
+        , "TaskButtonClickEndUp"
+        , "TaskButtonEnter"
+        , "TaskButtonLeave"
+        , "TaskButtonBlockState"
+        , "TaskButtonSetState"
+        , "TaskButtonChangeState"
+        , "TaskButtonUse"
+        , "TaskButtonBlockKeys"
+        , "TaskButtonSwitchMode"
 
-        , "TaskObjectSetPosition", "TaskObjectSetAlpha", "TaskObjectSetScale"
+        , "TaskObjectSetPosition"
+        , "TaskObjectSetAlpha"
+        , "TaskObjectSetScale"
 
-        , "TaskObjectReturn", "TaskObjectActivate", "TaskObjectDeactivate", "TaskObjectDestroy"
+        , "TaskObjectReturn"
+        , "TaskObjectActivate"
+        , "TaskObjectDeactivate"
+        , "TaskObjectDestroy"
 
-        , "TaskZoomOpen", "TaskZoomInit", "TaskZoomEnter", "TaskZoomLeave", "TaskZoomEmpty", "TaskZoomLeave", "TaskZoomClose", "TaskZoomClick", "TaskZoomInterrupt"
-
-        , "TaskTextSetTextID", "TaskObjectTextSetMaxVisibleChar"
+        , "TaskTextSetTextID"
+        , "TaskObjectTextSetMaxVisibleChar"
 
         , "TaskTrigger"
 
-        , "TaskStates", "TaskKeyPress"
+        , "TaskStates"
+        , "TaskKeyPress"
 
         , "TaskGameSceneInit"
 
-        , "TaskCursorClickEmulate", "TaskCursorSetPosition"
+        , "TaskCursorClickEmulate"
+        , "TaskCursorSetPosition"
 
-        , "TaskScenePlusInit", "TaskScenePlusEnter"
+        , "TaskMovieButtonClick"
+        , "TaskMovieButtonClickEnd"
+        , "TaskMovieButtonPressed"
+        , "TaskMovieButtonEnter"
+        , "TaskMovieButtonLeave"
+        , "TaskMovieButtonUse"
 
-        , "TaskMovieButtonClick", "TaskMovieButtonClickEnd", "TaskMovieButtonPressed", "TaskMovieButtonEnter", "TaskMovieButtonLeave", "TaskMovieButtonUse"
+        , "TaskMovie2ButtonClick"
+        , "TaskMovie2ButtonEnter"
+        , "TaskMovie2ButtonLeave"
 
-        , "TaskMovie2ButtonClick", "TaskMovie2ButtonEnter", "TaskMovie2ButtonLeave"
-
-        , "TaskSemaphore", 'TaskSemaphoreIncrement', "TaskRefcount"
+        , "TaskSemaphore"
+        , 'TaskSemaphoreIncrement'
+        , "TaskRefcount"
 
         , "TaskMovieSocketSwipe"
 
-        , "TaskPrefetchGroup", "TaskUnfetchGroup", "TaskSendAnalytics", "TaskSendAnalyticsScreenView", 'TaskFacebookPostMessage', 'TaskFacebookGetData', 'TaskFacebookAuthentication', 'TaskDownloadAsset', 'TaskMountPak', 'TaskSpinnerCheck', 'TaskLoadVersionFiles', 'TaskGetVersion', 'TaskGetFtp', 'TaskLoadPaks', 'TaskNodeLoopedRotate'
+        , "TaskPrefetchGroup"
+        , "TaskUnfetchGroup"
+        , "TaskSendAnalytics"
+        , "TaskSendAnalyticsScreenView"
+        , 'TaskFacebookPostMessage'
+        , 'TaskFacebookGetData'
+        , 'TaskFacebookAuthentication'
+        , 'TaskDownloadAsset'
+        , 'TaskMountPak'
+        , 'TaskSpinnerCheck'
+        , 'TaskLoadVersionFiles'
+        , 'TaskGetVersion'
+        , 'TaskGetFtp'
+        , 'TaskLoadPaks'
+        , 'TaskNodeLoopedRotate'
 
-        , "TaskHeaderData", "TaskHeaderDataPlayfab", "TaskVirtualAreaScroll"
+        , "TaskHeaderData"
+        , "TaskHeaderDataPlayfab"
+        , "TaskVirtualAreaScroll"
 
-        , "TaskMovie2LayerAlphaTo"]
+        , "TaskMovie2LayerAlphaTo"
+        ]
 
     from TaskManager import TaskManager
     TaskManager.importTasks("Foundation.Task", tasks)
 
-    aliases = ["AliasTextPlay", "AliasTextPlay2"
+    aliases = [
+        "AliasTextPlay"
+        , "AliasTextPlay2"
 
-        , "AliasObjectMoveTo", "AliasObjectScaleTo", "AliasObjectAlphaTo", "AliasMovie2AlphaTo", "AliasObjectRotateTo", "AliasObjectPercentVisibilityTo", "AliasObjectBezier2To", "AliasObjectBezier2Follow"
+        , "AliasObjectMoveTo"
+        , "AliasObjectScaleTo"
+        , "AliasObjectAlphaTo"
+        , "AliasMovie2AlphaTo"
+        , "AliasObjectRotateTo"
+        , "AliasObjectPercentVisibilityTo"
+        , "AliasObjectBezier2To"
+        , "AliasObjectBezier2Follow"
 
         , "AliasNodeTranslateTo"
 
-        , "AliasMakeMovieAndPlayOnce", "AliasMakeTriggerAndWait"
+        , "AliasMakeMovieAndPlayOnce"
+        , "AliasMakeTriggerAndWait"
 
-        , "AliasShowAdvert"]
+        , "AliasShowAdvert"
+        ]
 
     from TaskManager import TaskManager
     TaskManager.importTasks("Foundation.Alias", aliases)
 
-    policies = ["PolicyPurchaseDummy", "PolicyPurchaseGoogleBilling", "PolicyPurchaseAppleInApp", "PolicyExternalAchieveProgressAppleGameCenter", "PolicyExternalAchieveProgressGooglePlay"]
+    policies = [
+        "PolicyPurchaseDummy"
+        , "PolicyPurchaseGoogleBilling"
+        , "PolicyPurchaseAppleInApp"
+        , "PolicyExternalAchieveProgressAppleGameCenter"
+        , "PolicyExternalAchieveProgressGooglePlay"
+    ]
 
     from TaskManager import TaskManager
     TaskManager.importTasks("Foundation.Policy", policies)
 
-    traces = ["TaskInventoryAddCountItem", "TaskInventoryRemoveItem", "TaskNodeTranslateTo", "AliasObjectAlphaTo", "AliasMovie2AlphaTo", "TaskChainCancel", "TaskManager", "TaskChain", "TaskListener", "AliasNodeTranslateTo", "TaskInventoryFindItem", "TaskInventoryFindCountItem", "InventoryCountItem", "ObjectInventory", "InventoryItem", "Inventory", "Actor", "BaseEntity", "BaseObject", "Object", "Manager", "Movie", "Movie2", "HOG", "MixinObjectTemplate", "Utils", "Task", "Policy", "Group", "SceneManager",
-        "Notification", "Main", "Transition", "Item", "HOGInventory", "ArrowManager", "ObjectManager", "GroupManager", "TaskSceneLayerGroupEnable", "Button", "HintAction", "AliasTransition", "System", "Entity", "Command", "MovieButton", "Movie2Button", "Provider"]
+
+    traces = [
+        "TaskInventoryAddCountItem"
+        , "TaskInventoryRemoveItem"
+        , "TaskNodeTranslateTo"
+        , "AliasObjectAlphaTo"
+        , "AliasMovie2AlphaTo"
+        , "TaskChainCancel"
+        , "TaskManager"
+        , "TaskChain"
+        , "TaskListener"
+        , "AliasNodeTranslateTo"
+        , "TaskInventoryFindItem"
+        , "TaskInventoryFindCountItem"
+        , "InventoryCountItem"
+        , "ObjectInventory"
+        , "InventoryItem"
+        , "Inventory"
+        , "Actor"
+        , "BaseEntity"
+        , "BaseObject"
+        , "Object"
+        , "Manager"
+        , "Movie"
+        , "Movie2"
+        , "HOG"
+        , "MixinObjectTemplate"
+        , "Utils"
+        , "Task"
+        , "Policy"
+        , "Group"
+        , "SceneManager"
+        , "Notification"
+        , "Main"
+        , "Item"
+        , "HOGInventory"
+        , "ArrowManager"
+        , "ObjectManager"
+        , "GroupManager"
+        , "TaskSceneLayerGroupEnable"
+        , "Button"
+        , "HintAction"
+        , "AliasTransition"
+        , "System"
+        , "Entity"
+        , "Command"
+        , "MovieButton"
+        , "Movie2Button"
+        , "Provider"
+        ]
 
     from TraceManager import TraceManager
     TraceManager.addTraces(traces)
@@ -201,125 +444,352 @@ def onInitialize():
     from Foundation.Notificator import Notificator
     Mengine.addGlobalModule("Notificator", Notificator)
 
-    notifiers = [  # Notificator.onSave
-        "onResume", "onCommandLayerEnable", "onSetCurrentChapter"
 
-        , "onSelectAccount", "onUnselectAccount", "onCreateDefaultAccount", "onLoadAccounts", "onLoadSession", "onDeleteAccount"
+    notifiers = [
+        #    Notificator.onSave
+        "onResume"
+        , "onCommandLayerEnable"
+        , "onSetCurrentChapter"
+
+        , "onSelectAccount"
+        , "onUnselectAccount"
+        , "onCreateDefaultAccount"
+        , "onLoadAccounts"
+        , "onLoadSession"
+        , "onDeleteAccount"
 
         , "onCustomCursor"
 
-        , "onTaskRun", "onTaskComplete"
+        , "onTaskRun"
+        , "onTaskComplete"
 
-        , "onScenePreparation", "onSceneInit", "onSceneRestartBegin", "onSceneRestartEnd", "onSceneEnter", "onSceneLeave", "onSceneRemoved", "onSceneChange"
+        , "onScenePreparation"
+        , "onSceneInit"
+        , "onSceneRestartBegin"
+        , "onSceneRestartEnd"
+        , "onSceneEnter"
+        , "onSceneLeave"
+        , "onSceneRemoved"
+        , "onSceneChange"
 
-        , "onSceneActivate", "onSceneDeactivate"
+        , "onSceneActivate"
+        , "onSceneDeactivate"
 
-        , "onInteractionMouseLeave", "onInteractionMouseEnter", "onInteractionClickBegin", "onInteractionClick", "onInteractionClickUpBegin", "onInteractionClickUp", "onInteractionClickEnd", "onInteractionClickEndUp"
+        , "onInteractionMouseLeave"
+        , "onInteractionMouseEnter"
+        , "onInteractionClickBegin"
+        , "onInteractionClick"
+        , "onInteractionClickUpBegin"
+        , "onInteractionClickUp"
+        , "onInteractionClickEnd"
+        , "onInteractionClickEndUp"
 
         , "InventoryItemTaken"
 
-        , "onItemClickBegin", "onItemClick", "onItemClickEnd", "onItemMouseEnter", "onItemMouseLeave"
+        , "onItemClickBegin"
+        , "onItemClick"
+        , "onItemClickEnd"
+        , "onItemMouseEnter"
+        , "onItemMouseLeave"
 
-        , "onSocketClickBegin", "onSocketClick", "onSocketSoundClick", "onSocketClickUpBegin", "onSocketClickUp", "onSocketClickEnd", "onSocketClickEndUp", "onSocketMouseEnter", "onSocketSoundEnter", "onSocketMouseLeave"
+        , "onSocketClickBegin"
+        , "onSocketClick"
+        , "onSocketSoundClick"
+        , "onSocketClickUpBegin"
+        , "onSocketClickUp"
+        , "onSocketClickEnd"
+        , "onSocketClickEndUp"
+        , "onSocketMouseEnter"
+        , "onSocketSoundEnter"
+        , "onSocketMouseLeave"
 
-        , "onTransition", "onTransitionClickBegin", "onTransitionClick", "onTransitionChangeScene", "onTransitionHOGMouseEnter", "onTransitionHOGMouseLeave", "onTransitionUpMouseEnter", "onTransitionUpMouseLeave", "onTransitionBackMouseEnter", "onTransitionBackMouseLeave", "onTransitionLeftMouseEnter", "onTransitionUpLeftMouseEnter", "onTransitionUpLeftMouseLeave", "onTransitionLeftMouseLeave", "onTransitionRightMouseEnter", "onTransitionUpRightMouseEnter", "onTransitionRightMouseLeave",
-        "onTransitionUpRightMouseLeave", "onTransitionPuzzleMouseEnter", "onTransitionPuzzleMouseLeave", "onTransitionMouseEnter", "onTransitionMouseLeave", "onTransitionBegin", "onTransitionEnd", "onTransitionUseBegin", "onTransitionUse", "onTransitionBlock", "onTransitionEnable"
+        , "onTransition"
+        , "onTransitionClickBegin"
+        , "onTransitionClick"
+        , "onTransitionChangeScene"
+        , "onTransitionHOGMouseEnter"
+        , "onTransitionHOGMouseLeave"
+        , "onTransitionUpMouseEnter"
+        , "onTransitionUpMouseLeave"
+        , "onTransitionBackMouseEnter"
+        , "onTransitionBackMouseLeave"
+        , "onTransitionLeftMouseEnter"
+        , "onTransitionUpLeftMouseEnter"
+        , "onTransitionUpLeftMouseLeave"
+        , "onTransitionLeftMouseLeave"
+        , "onTransitionRightMouseEnter"
+        , "onTransitionUpRightMouseEnter"
+        , "onTransitionRightMouseLeave"
+        , "onTransitionUpRightMouseLeave"
+        , "onTransitionPuzzleMouseEnter"
+        , "onTransitionPuzzleMouseLeave"
+        , "onTransitionMouseEnter"
+        , "onTransitionMouseLeave"
+        , "onTransitionBegin"
+        , "onTransitionEnd"
+        , "onTransitionUseBegin"
+        , "onTransitionUse"
+        , "onTransitionBlock"
+        , "onTransitionEnable"
 
-        , "onGameBlock", "onBlockKeyBoard"
+        , "onGameBlock"
+        , "onBlockKeyBoard"
 
-        , "onZoomInit", "onZoomEnter", "onZoomLeave", "onZoomEmpty", "onZoomClose", "onZoomForceClose", "onZoomForceOpen", "onZoomMouseEnter", "onZoomMouseLeave", "onZoomOpen", "onZoomClickBegin", "onZoomClick", "onZoomClickEnd", "onZoomUseBegin", "onZoomUse", "onZoomUseEnd", "onZoomBlockClose", "onZoomEnable"
+        , "onZoomInit"
+        , "onZoomEnter"
+        , "onZoomLeave"
+        , "onZoomEmpty"
+        , "onZoomClose"
+        , "onZoomForceClose"
+        , "onZoomForceOpen"
+        , "onZoomMouseEnter"
+        , "onZoomMouseLeave"
+        , "onZoomOpen"
+        , "onZoomClickBegin"
+        , "onZoomClick"
+        , "onZoomClickEnd"
+        , "onZoomUseBegin"
+        , "onZoomUse"
+        , "onZoomUseEnd"
+        , "onZoomBlockClose"
+        , "onZoomEnable"
 
-        , "onButtonMouseLeave", "onButtonMouseEnter", "onButtonClickBegin", "onButtonClick", "onButtonClickUp", "onButtonClickEnd", "onButtonClickEndUp", "onButtonSoundClick", "onButtonSoundEnter", "onButtonSwitchOn", "onButtonSwitchOff"
+        , "onButtonMouseLeave"
+        , "onButtonMouseEnter"
+        , "onButtonClickBegin"
+        , "onButtonClick"
+        , "onButtonClickUp"
+        , "onButtonClickEnd"
+        , "onButtonClickEndUp"
+        , "onButtonSoundClick"
+        , "onButtonSoundEnter"
+        , "onButtonSwitchOn"
+        , "onButtonSwitchOff"
 
-        , "onMovieButtonPush", "onMovieButtonRelease", "onMovieButtonClick", "onMovieButtonClickEnd", "onMovieButtonPressed", "onMovieButtonMouseEnter", "onMovieButtonMouseLeave"
+        , "onMovieButtonPush"
+        , "onMovieButtonRelease"
+        , "onMovieButtonClick"
+        , "onMovieButtonClickEnd"
+        , "onMovieButtonPressed"
+        , "onMovieButtonMouseEnter"
+        , "onMovieButtonMouseLeave"
 
-        , "onMovie2ButtonMouseEnter", "onMovie2ButtonMouseLeave", "onMovie2ButtonPush", "onMovie2ButtonPressed", "onMovie2ButtonRelease", "onMovie2ButtonClick", "onMovie2ButtonClickEnd"
+        , "onMovie2ButtonMouseEnter"
+        , "onMovie2ButtonMouseLeave"
+        , "onMovie2ButtonPush"
+        , "onMovie2ButtonPressed"
+        , "onMovie2ButtonRelease"
+        , "onMovie2ButtonClick"
+        , "onMovie2ButtonClickEnd"
 
-        , "onArrowPreparation", "onArrowActivate", "onArrowDeactivate", "onArrowAttach", "onArrowDeattach"
+        , "onArrowPreparation"
+        , "onArrowActivate"
+        , "onArrowDeactivate"
+        , "onArrowAttach"
+        , "onArrowDeattach"
 
-        , "onLayerGroupPreparation", "onLayerGroupEnableBegin", "onLayerGroupEnable", "onLayerGroupRelease", "onLayerGroupDisable"
+        , "onLayerGroupPreparation"
+        , "onLayerGroupEnableBegin"
+        , "onLayerGroupEnable"
+        , "onLayerGroupRelease"
+        , "onLayerGroupDisable"
 
-        , "TaskAliasRun", "TaskAliasEnd"
+        , "TaskAliasRun"
+        , "TaskAliasEnd"
 
-        , "onStageInit", "onStageLoad", "onStageSave", "onStageRun", "onStageResume", "onStageInvalidLoad"
+        , "onStageInit"
+        , "onStageLoad"
+        , "onStageSave"
+        , "onStageRun"
+        , "onStageResume"
+        , "onStageInvalidLoad"
 
         , "onCompleteStage"
 
-        , "onStateChange", "onSlider", "onCheckBox", "onMovieCheckBox", "onMovie2CheckBox"
+        , "onStateChange"
+        , "onSlider"
+        , "onCheckBox"
+        , "onMovieCheckBox"
+        , "onMovie2CheckBox"
 
-        , "onAnimatableEnd", "onAnimationEnd", "onVideoEnd"
+        , "onAnimatableEnd"
+        , "onAnimationEnd"
+        , "onVideoEnd"
 
-        , "onParagraphRun", "onParagraphComplete"
+        , "onParagraphRun"
+        , "onParagraphComplete"
 
-        , "onObjectEnable", "onObjectDisable"
+        , "onObjectEnable"
+        , "onObjectDisable"
 
         , "onTimingFactor"
 
-        , "onKeyEvent", "onKeyEventEnd", "onKeyEvent2", "onKeyEvent2End", "onTextEvent"
+        , "onKeyEvent"
+        , "onKeyEventEnd"
+        , "onKeyEvent2"
+        , "onKeyEvent2End"
+        , "onTextEvent"
 
-        , "onRun", "onInterruption", "onStop", "onAccountFinalize", "onFinalize", "onFocus", "onAppMouseEnter", "onAppMouseLeave", "onInitializeRenderResources", "onFinalizeRenderResources", "onRenderViewportChange", "onGameViewportChange"
+        , "onRun"
+        , "onInterruption"
+        , "onStop"
+        , "onAccountFinalize"
+        , "onFinalize"
+        , "onFocus"
+        , "onAppMouseEnter"
+        , "onAppMouseLeave"
+        , "onInitializeRenderResources"
+        , "onFinalizeRenderResources"
+        , "onRenderViewportChange"
+        , "onGameViewportChange"
 
-        , "onZoomBlockOpen", "onTransitionBlockOpen"
+        , "onZoomBlockOpen"
+        , "onTransitionBlockOpen"
 
-        , "onSliderUp", "onSliderDown"
+        , "onSliderUp"
+        , "onSliderDown"
 
         , "onButtonEnter"
 
-        , "onSwitchChainsClick", "onCursorMode"
+        , "onSwitchChainsClick"
+        , "onCursorMode"
 
-        , "onFullscreen", "onMute", "onMusicVolume", "onSoundVolume", "onVoiceVolume"
+        , "onFullscreen"
+        , "onMute"
+        , "onMusicVolume"
+        , "onSoundVolume"
+        , "onVoiceVolume"
 
-        , "EditBoxEmpty", "EditBoxChange", "EditBoxFocus", "EditBoxUnhold", "EditBoxKeyEvent", "onFixedContentResolution", "onFixedDisplayResolution"
+        , "EditBoxEmpty"
+        , "EditBoxChange"
+        , "EditBoxFocus"
+        , "EditBoxUnhold"
+        , "EditBoxKeyEvent"
+        , "onFixedContentResolution"
+        , "onFixedDisplayResolution"
 
-        , "onMouseMove", "onMouseButtonEventBegin", "onMouseButtonEvent", "onMouseButtonEvent2", "onMouseButtonEventEnd"
+        , "onMouseMove"
+        , "onMouseButtonEventBegin"
+        , "onMouseButtonEvent"
+        , "onMouseButtonEvent2"
+        , "onMouseButtonEventEnd"
 
-        , "onChargerRun", "onChargerRelease", "onChargerCharge", "onChargerSkip", "onChargerReload"
+        , "onChargerRun"
+        , "onChargerRelease"
+        , "onChargerCharge"
+        , "onChargerSkip"
+        , "onChargerReload"
 
         , "onNodeSocketClickSuccessful"
 
-        , "onMovieSocketEnter", "onMovieSocketLeave", "onMovieSocketClick", "onMovieSocketClickSuccessful", "onMovieSocketMove", "onMovieLoop"
+        , "onMovieSocketEnter"
+        , "onMovieSocketLeave"
+        , "onMovieSocketClick"
+        , "onMovieSocketClickSuccessful"
+        , "onMovieSocketMove"
+        , "onMovieLoop"
 
-        , "onSessionNew", "onSessionSave", "onSessionLoad", "onSessionLoadComplete", "onSessionLoadInvalid", "onSessionRemove", "onSessionRemoveComplete"
+        , "onSessionNew"
+        , "onSessionSave"
+        , "onSessionLoad"
+        , "onSessionLoadComplete"
+        , "onSessionLoadInvalid"
+        , "onSessionRemove"
+        , "onSessionRemoveComplete"
 
         , "onProgressBarUpdate"
 
-        , "onMovieEditBoxFocus", "MovieEditBoxKeyEvent"
+        , "onMovieEditBoxFocus"
+        , "MovieEditBoxKeyEvent"
 
-        , "MovieEditBoxEmpty", "MovieEditBoxChange"
+        , "MovieEditBoxEmpty"
+        , "MovieEditBoxChange"
 
-        , "onMovie2EditBoxFocus", "onMovie2EditBoxFocusLost", "onMovie2EditBoxKeyEvent"
+        , "onMovie2EditBoxFocus"
+        , "onMovie2EditBoxFocusLost"
+        , "onMovie2EditBoxKeyEvent"
 
-        , "onMovie2EditBoxEmpty", "onMovie2EditBoxChange"
+        , "onMovie2EditBoxEmpty"
+        , "onMovie2EditBoxChange"
 
-        , 'PlanetEnter', 'PlanetLeave', 'PlanetDefeat', 'MonsterFight', 'MonsterDead', 'TestConsoleOpen', 'DungeonPlotTwistTextId', 'WarpGateTextId', 'onTabGroupSelect'
+        , 'PlanetEnter'
+        , 'PlanetLeave'
+        , 'PlanetDefeat'
+        , 'MonsterFight'
+        , 'MonsterDead'
+        , 'TestConsoleOpen'
+        , 'DungeonPlotTwistTextId'
+        , 'WarpGateTextId'
+        , 'onTabGroupSelect'
 
-        , 'onCombatSpinnerChange', 'onCombatSpinnerDamageTarget', 'onCombatSpinnerAddAbility', 'onCombatSpinnerEndState'
+        , 'onCombatSpinnerChange'
+        , 'onCombatSpinnerDamageTarget'
+        , 'onCombatSpinnerAddAbility'
+        , 'onCombatSpinnerEndState'
 
-        , 'onCombatSpinnerEventDamageTarget', 'onFacebookAuthEscape', 'onLoadedVersionFiles', 'onSpinnerStop', 'onCreateGlobalAccount', 'onLoadingVersionMessage'
+        , 'onCombatSpinnerEventDamageTarget'
+        , 'onFacebookAuthEscape'
+        , 'onLoadedVersionFiles'
+        , 'onSpinnerStop'
+        , 'onCreateGlobalAccount'
+        , 'onLoadingVersionMessage'
 
         , 'onStageTimePassed'
 
-        , 'onPrefetchGroupsTaggedBegin', 'onPrefetchGroupsTaggedComplete', 'onPrefetchGroupsTaggedFinished', 'onHintActionItemCollectEnd', 'onInventoryRise'
+        , 'onPrefetchGroupsTaggedBegin'
+        , 'onPrefetchGroupsTaggedComplete'
+        , 'onPrefetchGroupsTaggedFinished'
+        , 'onHintActionItemCollectEnd'
+        , 'onInventoryRise'
 
         , 'onTaskGuardUpdate'
 
-        , 'onMobileKeyboardShow', 'onEditboxSetActive'
+        , 'onMobileKeyboardShow'
+        , 'onEditboxSetActive'
 
         , 'onAttachedArrow'
 
-        , 'onEnableSceneLayerGroup', 'onDisableSceneLayerGroup', 'onGameSceneChange'
+        , 'onEnableSceneLayerGroup'
+        , 'onDisableSceneLayerGroup'
+        , 'onGameSceneChange'
 
-        , 'onAdvertLoadSuccess', 'onAdvertLoadFail', 'onAdvertDisplayed', 'onAdvertDisplayFailed', 'onAdvertCompleted', 'onAdvertClicked', 'onAdvertRewarded', 'onAdvertHidden'
+        , 'onAdvertLoadSuccess'
+        , 'onAdvertLoadFail'
+        , 'onAdvertDisplayed'
+        , 'onAdvertDisplayFailed'
+        , 'onAdvertCompleted'
+        , 'onAdvertClicked'
+        , 'onAdvertRewarded'
+        , 'onAdvertHidden'
 
-        , "oniOSApplicationDidEnterBackground", "oniOSApplicationDidBecomeActive", "oniOSApplicationWillEnterForeground", "oniOSApplicationWillResignActive", "oniOSApplicationWillTerminate"
+        , "oniOSApplicationDidEnterBackground"
+        , "oniOSApplicationDidBecomeActive"
+        , "oniOSApplicationWillEnterForeground"
+        , "oniOSApplicationWillResignActive"
+        , "oniOSApplicationWillTerminate"
 
-        , "onAndroidActivityResumed", "onAndroidActivityPaused", "onAndroidActivityStarted", "onAndroidActivityStopped", "onAndroidActivityDestroyed", "onAndroidActivityCreated", "onAndroidActivitySaveInstanceState"
+        , "onAndroidActivityResumed"
+        , "onAndroidActivityPaused"
+        , "onAndroidActivityStarted"
+        , "onAndroidActivityStopped"
+        , "onAndroidActivityDestroyed"
+        , "onAndroidActivityCreated"
+        , "onAndroidActivitySaveInstanceState"
 
-        , "onAvailableAdsEnded", "onAvailableAdsNew"
+        , "onAvailableAdsEnded"
+        , "onAvailableAdsNew"
 
-        , "onUpdateGoldBalance", "onUpdateEnergyBalance", "onGameStoreNotEnoughGold", "onGameStorePayGoldSuccess", "onGameStorePayGoldFailed", "onGameStoreSentRewards"
+        , "onUpdateGoldBalance"
+        , "onUpdateEnergyBalance"
+        , "onGameStoreNotEnoughGold"
+        , "onGameStorePayGoldSuccess"
+        , "onGameStorePayGoldFailed"
+        , "onGameStoreSentRewards"
 
-        , "onPaySuccess", "onPayFailed", "onProductsUpdate", "onProductsUpdateDone"
+        , "onPaySuccess"
+        , "onPayFailed"
+        , "onProductsUpdate"
+        , "onProductsUpdateDone"
 
     ]
 
@@ -328,7 +798,29 @@ def onInitialize():
     from ObjectManager import ObjectManager
     from EntityManager import EntityManager
 
-    Types = ["Animation", "Interaction", "Button", "CheckBox", "EditBox", "Fade", "Group", "Movie", "Movie2", "Point", "Puff", "Shift", "Slider", "Socket", "Sprite", "Switch", "States", "Text", "Transition", "TransitionBack", "Video", "Window", "Zoom", "Viewport"]
+    Types = [
+        "Animation"
+        , "Interaction"
+        , "Button"
+        , "CheckBox"
+        , "EditBox"
+        , "Fade"
+        , "Group"
+        , "Movie"
+        , "Movie2"
+        , "Point"
+        , "Puff"
+        , "Shift"
+        , "Slider"
+        , "Socket"
+        , "Sprite"
+        , "Switch"
+        , "States"
+        , "Text"
+        , "Video"
+        , "Window"
+        , "Viewport"
+        ]
 
     if Mengine.getGameParamBool("NotUseDefaultEntitiesList", False) is True:
         Types = []

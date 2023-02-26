@@ -107,6 +107,9 @@ class Bootstrapper(object):
                     if result is False:
                         Trace.log("Manager", 0, "Bootstrapper.loadManagers manager %s invalid load param %s" % (Name, Param))
                         return False
+                    pass
+                pass
+            pass
 
         return True
 

@@ -2,6 +2,16 @@ from Foundation.PolicyManager import PolicyManager
 from Foundation.Task.TaskBase import TaskBase
 from Foundation.TaskManager import TaskManager
 
+class TaskGeneratorException(Exception):
+    def __init__(self, value, *args):
+        self.value = value % (args)
+        pass
+
+    def __str__(self):
+        return str(self.value)
+        pass
+    pass
+
 class TaskSourceTg(object):
     __slots__ = "tg"
 
@@ -275,9 +285,9 @@ class TaskForDesc(TaskDescBase):
     __slots__ = "source", "iterator", "count"
 
     def __init__(self, source, iterator, count):
-        TaskDescBase.__init__(self) \
- \
-            self.source = source
+        TaskDescBase.__init__(self)
+
+        self.source = source
         self.iterator = iterator
         self.count = count
         pass
@@ -353,6 +363,10 @@ class TaskSource(object):
         self.checkComplete()
 
         taskType = TaskManager.getTaskType(typeName)
+
+        if taskType is None:
+            raise TaskGeneratorException("invalid generate source [__addDesc] not found task '%s' with params: %s", typeName, params)
+            pass
 
         self.__addDescType(taskType, params)
         pass
@@ -574,6 +588,10 @@ class TaskSource(object):
         self.checkComplete()
 
         taskType = TaskManager.getTaskType(typeName)
+
+        if taskType is None:
+            raise TaskGeneratorException("invalid generate source [addTryTask] not found task '%s' with params: %s", typeName, params)
+            pass
 
         desc = TaskTryDesc([], [], taskType, params)
 

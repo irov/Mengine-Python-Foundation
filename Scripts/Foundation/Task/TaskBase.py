@@ -1,5 +1,6 @@
 from Foundation.Initializer import Initializer
 from Foundation.TaskManager import TaskManager
+from Foundation.Task.Task import TaskException
 
 class TaskBase(Initializer):
     __metaclass__ = finalslots("taskType", "taskGroup", "taskParams", "taskSkiped", "chain", "task", "nexts", "prevs", "state", "caller", "skiped", "error")
@@ -208,7 +209,7 @@ class TaskBase(Initializer):
     def __onTaskRun(self, task):
         try:
             isComplete = task._onRun()
-        except Exception as ex:
+        except TaskException as ex:
             traceback.print_exc()
 
             self._onTaskRunFailed(ex)
