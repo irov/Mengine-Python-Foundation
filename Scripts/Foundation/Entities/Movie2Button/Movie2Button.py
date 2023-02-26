@@ -1,4 +1,3 @@
-import Trace
 from Event import Event
 from Foundation.Entity.BaseEntity import BaseEntity
 from Foundation.Notificator import Notificator

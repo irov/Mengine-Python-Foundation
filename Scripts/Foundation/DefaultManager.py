@@ -1,5 +1,4 @@
 import Keys
-import Trace
 
 from DatabaseManager import DatabaseManager
 

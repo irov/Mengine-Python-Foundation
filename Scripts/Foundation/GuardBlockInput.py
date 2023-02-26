@@ -1,4 +1,3 @@
-import Trace
 from Foundation.GameManager import GameManager
 from Foundation.GroupManager import GroupManager
 

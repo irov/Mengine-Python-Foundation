@@ -1,4 +1,3 @@
-import Trace
 from Foundation.Object.BaseObject import BaseObject
 
 class ObjectManager(object):

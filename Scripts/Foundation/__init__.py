@@ -199,8 +199,6 @@ def onInitialize():
     TraceManager.addTraces(traces)
 
     from Foundation.Notificator import Notificator
-    import Trace
-
     Mengine.addGlobalModule("Notificator", Notificator)
 
     notifiers = [  # Notificator.onSave

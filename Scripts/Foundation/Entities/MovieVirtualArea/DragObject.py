@@ -1,4 +1,3 @@
-import Trace
 from Foundation.Entities.MovieVirtualArea.ElasticityEffect import ElasticityEffect
 from Foundation.Entities.MovieVirtualArea.FrictionEffect import FrictionEffect
 from Foundation.Entities.MovieVirtualArea.SnappingEffect import SnappingEffect
