@@ -42,10 +42,8 @@ class GoogleAnalytics(Manager):
         # check min count of parameters
         for param in ['cid', 't']:
             if param not in new_dict.keys():
-                print
-                'Not all parameters are present'
-                print
-                new_dict
+                print('Not all parameters are present')
+                print(new_dict)
                 return
         # set default param
         new_dict['v'] = GoogleAnalytics.version
@@ -94,7 +92,6 @@ class GoogleAnalytics(Manager):
                 post_url += key + '=' + str(value) + '&'
             pass
         post_url = post_url[:-1]
-        print
-        'Look at my URL \n', post_url, '\n is It Cool?'
+        print('Look at my URL \n', post_url, '\n is It Cool?')
         return post_url
     pass

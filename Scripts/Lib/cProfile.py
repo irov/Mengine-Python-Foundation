@@ -58,10 +58,8 @@ def runctx(statement, globals, locals, filename=None, sort=-1):
 
 # Backwards compatibility.
 def help():
-    print
-    "Documentation for the profile/cProfile modules can be found "
-    print
-    "in the Python Library Reference, section 'The Python Profiler'."
+    print("Documentation for the profile/cProfile modules can be found ")
+    print("in the Python Library Reference, section 'The Python Profiler'.")
 
 # ____________________________________________________________
 

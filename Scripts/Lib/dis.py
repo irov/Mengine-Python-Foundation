@@ -53,7 +53,8 @@ def distb(tb=None):
             tb = sys.last_traceback
         except AttributeError:
             raise RuntimeError, "no last traceback to disassemble"
-        while tb.tb_next: tb = tb.tb_next
+        while tb.tb_next:
+            tb = tb.tb_next
     disassemble(tb.tb_frame.f_code, tb.tb_lasti)
 
 def disassemble(co, lasti=-1):
@@ -77,10 +78,12 @@ def disassemble(co, lasti=-1):
             print
             '   ',
 
-        if i == lasti: print
+        if i == lasti:
+            print
         '-->', else: print
         '   ',
-        if i in labels: print
+        if i in labels:
+            print
         '>>', else: print
         '  ',
         print
@@ -125,10 +128,12 @@ def disassemble_string(code, lasti=-1, varnames=None, names=None, constants=None
     while i < n:
         c = code[i]
         op = ord(c)
-        if i == lasti: print
+        if i == lasti:
+            print
         '-->', else: print
         '   ',
-        if i in labels: print
+        if i in labels:
+            print
         '>>', else: print
         '  ',
         print

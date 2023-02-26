@@ -55,8 +55,7 @@ class SystemTiming(System):
 
     def cb_timing(self, *args):
         for elem in args:
-            print
-            elem,
+            print(elem, )
         pass
 
     def __attachSchedule(self, reloadTime):

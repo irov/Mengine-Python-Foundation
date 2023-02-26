@@ -29,7 +29,7 @@ _SUCCESS_CODES = set([SUCCESS, FAILURE])
 _ASSERT_CODES = set([ASSERT, ASSERT_NOT])
 
 # Sets of lowercase characters which have the same uppercase.
-_equivalences = (# LATIN SMALL LETTER I, LATIN SMALL LETTER DOTLESS I
+_equivalences = (  # LATIN SMALL LETTER I, LATIN SMALL LETTER DOTLESS I
     (0x69, 0x131),  # iı
         # LATIN SMALL LETTER S, LATIN SMALL LETTER LONG S
     (0x73, 0x17f),  # sſ

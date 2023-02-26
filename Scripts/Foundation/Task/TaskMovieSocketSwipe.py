@@ -64,15 +64,19 @@ class TaskMovieSocketSwipe(TaskAlias, MixinMovie):
                 self.dxy = (x - self.startXY[0], y - self.startXY[1])
                 if fabs(self.dxy[1]) - fabs(self.dxy[0]) > 0:  # up or down
                     if -0.27 <= float(self.dxy[0] / self.dxy[1]) <= 0.27:
-                        if self.dxy[1] > 0: self.dir = "Down"
-                        else: self.dir = "Up"
+                        if self.dxy[1] > 0:
+                            self.dir = "Down"
+                        else:
+                            self.dir = "Up"
                         pass
                     pass
 
                 if fabs(self.dxy[1]) - fabs(self.dxy[0]) < 0:  # left or right
                     if -0.27 <= float(self.dxy[1] / self.dxy[0]) <= 0.27:
-                        if self.dxy[0] > 0: self.dir = "Right"
-                        else: self.dir = "Left"
+                        if self.dxy[0] > 0:
+                            self.dir = "Right"
+                        else:
+                            self.dir = "Left"
                         pass
                     pass
                 pass

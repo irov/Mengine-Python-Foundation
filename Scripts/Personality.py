@@ -66,12 +66,10 @@ def onInitialize(*args):
     TraceManager.setLevel("Scenario", 0)
     TraceManager.setLevel("MacroCommand", 0)
 
-    print
-    "==========================================="
-    print
-    "----------------RUN SYSTEMS----------------"
-    print
-    "==========================================="
+    print("===========================================")
+    print("----------------RUN SYSTEMS----------------")
+    print("===========================================")
+
     if Bootstrapper.loadSystems("Database", "Systems") is False:
         return False
         pass

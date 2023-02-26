@@ -7,7 +7,8 @@ class enum_metaclass(type):
     def __call__(self, key):
         for k in self.__dict__:
             v = self.__dict__[k]
-            if v == key: return k
+            if v == key:
+                return k
             pass
 
         return None

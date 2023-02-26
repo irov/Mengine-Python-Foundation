@@ -61,8 +61,7 @@ class RPGManager(object):
             exec
             c in Sandbox
         except Exception as ex:
-            print
-            "ex: function %s error: %s" % (name, ex)
+            print("ex: function %s error: %s" % (name, ex))
 
             raise ex
             pass
@@ -308,8 +307,5 @@ unit2.addAttribute("MagicBlock", [(0.0, 0.0)])
 
 a = rpg.calcFormulaAttributeOther("Damage", unit1, unit2)
 
-print
-a
-
-print
-"done"
+print(a)
+print("done")

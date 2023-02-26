@@ -4,21 +4,10 @@ import traceback
 from TraceManager import TraceManager
 
 def msg(text, *args):
-    if _PYTHON_VERSION < 300:
-        try:
-            print
-            text % args
-        except Exception as ex:
-            print
-            text, args, ex
-            pass
-        pass
-    else:
-        try:
-            print(text % args)
-        except Exception as ex:
-            print(text, args, ex)
-            pass
+    try:
+        print(text % args)
+    except Exception as ex:
+        print(text, args, ex)
         pass
     pass
 
@@ -41,13 +30,7 @@ def msg_err(text, *args):
 
 def log(type, level, text, *args):
     if TraceManager.existIn(type) is False:
-        if _PYTHON_VERSION < 300:
-            print
-            "trace log no type %s" % (type)
-            pass
-        else:
-            print("trace log no type %s" % (type))
-            pass
+        print("trace log no type %s" % (type))
 
         return
         pass

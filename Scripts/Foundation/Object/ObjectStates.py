@@ -39,8 +39,7 @@ class ObjectStates(DemonObject):
     def getCurrentStateObject(self):
         CurrentState = self.getParam("CurrentState")
         if CurrentState is None:
-            print
-            "ObjectStates.getCurrentState %s not current state" % (self.getName())
+            print("ObjectStates.getCurrentState %s not current state" % (self.getName()))
             return None
             pass
 

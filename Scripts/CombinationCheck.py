@@ -10,7 +10,8 @@ class CombinationCheck():
         pass
 
     def checkCombination(self, key):
-        if self.done == True: return
+        if self.done == True:
+            return
 
         if key == self.combination[self.combIndex]:
             if self.combIndex == (len(self.combination) - 1):

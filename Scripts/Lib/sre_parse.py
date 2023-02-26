@@ -33,8 +33,8 @@ CATEGORIES = {r"\A": (AT, AT_BEGINNING_STRING),  # start of string
     r"\b": (AT, AT_BOUNDARY), r"\B": (AT, AT_NON_BOUNDARY), r"\d": (IN, [(CATEGORY, CATEGORY_DIGIT)]), r"\D": (IN, [(CATEGORY, CATEGORY_NOT_DIGIT)]), r"\s": (IN, [(CATEGORY, CATEGORY_SPACE)]), r"\S": (IN, [(CATEGORY, CATEGORY_NOT_SPACE)]), r"\w": (IN, [(CATEGORY, CATEGORY_WORD)]), r"\W": (IN, [(CATEGORY, CATEGORY_NOT_WORD)]), r"\Z": (AT, AT_END_STRING),  # end of string
 }
 
-FLAGS = {# standard flags
-    "i": SRE_FLAG_IGNORECASE, "L": SRE_FLAG_LOCALE, "m": SRE_FLAG_MULTILINE, "s": SRE_FLAG_DOTALL, "x": SRE_FLAG_VERBOSE, # extensions
+FLAGS = {  # standard flags
+    "i": SRE_FLAG_IGNORECASE, "L": SRE_FLAG_LOCALE, "m": SRE_FLAG_MULTILINE, "s": SRE_FLAG_DOTALL, "x": SRE_FLAG_VERBOSE,  # extensions
     "t": SRE_FLAG_TEMPLATE, "u": SRE_FLAG_UNICODE, }
 
 class Pattern:
@@ -73,46 +73,40 @@ class SubPattern:
     def dump(self, level=0):
         seqtypes = (tuple, list)
         for op, av in self.data:
-            print
-            level * "  " + op,
+            print(level * "  " + op, )
             if op == IN:
                 # member sublanguage
-                print
+                print()
                 for op, a in av:
                     print(level + 1) * "  " + op, a
             elif op == BRANCH:
-                print
+                print()
                 for i, a in enumerate(av[1]):
                     if i:
-                        print
-                        level * "  " + "or"
+                        print(level * "  " + "or")
                     a.dump(level + 1)
             elif op == GROUPREF_EXISTS:
                 condgroup, item_yes, item_no = av
-                print
-                condgroup
+                print(condgroup)
                 item_yes.dump(level + 1)
                 if item_no:
-                    print
-                    level * "  " + "else"
+                    print(level * "  " + "else")
                     item_no.dump(level + 1)
             elif isinstance(av, seqtypes):
                 nl = 0
                 for a in av:
                     if isinstance(a, SubPattern):
                         if not nl:
-                            print
+                            print()
                         a.dump(level + 1)
                         nl = 1
                     else:
-                        print
-                        a,
+                        print(a, )
                         nl = 0
                 if not nl:
-                    print
+                    print()
             else:
-                print
-                av
+                print(av)
     def __repr__(self):
         return repr(self.data)
     def __len__(self):

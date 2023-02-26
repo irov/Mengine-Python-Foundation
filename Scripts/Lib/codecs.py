@@ -7,8 +7,9 @@ Written by Marc-Andre Lemburg (mal@lemburg.com).
 
 """  # "
 
-import __builtin__
 import sys
+
+import __builtin__
 
 ### Registry and builtin stateless codec functions
 

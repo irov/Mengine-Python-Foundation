@@ -54,8 +54,7 @@ class SystemManager(Manager):
             pass
 
         if _DEVELOPMENT is True:
-            print
-            "SystemManager.createSystem [%s]" % (type)
+            print("SystemManager.createSystem [%s]" % (type))
             pass
 
         systemType = SystemManager.systemTypes[type]
@@ -86,8 +85,7 @@ class SystemManager(Manager):
         SystemManager.systems[name] = sys
 
         if _DEVELOPMENT is True:
-            print
-            "SystemManager.runSystem [%s]" % (type)
+            print("SystemManager.runSystem [%s]" % (type))
             pass
 
         if sys.run() is False:
@@ -129,8 +127,7 @@ class SystemManager(Manager):
         sys.stop()
 
         if _DEVELOPMENT is True:
-            print
-            "SystemManager.stopSystem [%s]" % (sys.getType())
+            print("SystemManager.stopSystem [%s]" % (sys.getType()))
             pass
 
         return True

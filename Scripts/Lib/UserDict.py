@@ -23,23 +23,28 @@ class UserDict:
             self.update(dict)
         if len(kwargs):
             self.update(kwargs)
-    def __repr__(self): return repr(self.data)
+    def __repr__(self):
+        return repr(self.data)
     def __cmp__(self, dict):
         if isinstance(dict, UserDict):
             return cmp(self.data, dict.data)
         else:
             return cmp(self.data, dict)
     __hash__ = None  # Avoid Py3k warning
-    def __len__(self): return len(self.data)
+    def __len__(self):
+        return len(self.data)
     def __getitem__(self, key):
         if key in self.data:
             return self.data[key]
         if hasattr(self.__class__, "__missing__"):
             return self.__class__.__missing__(self, key)
         raise KeyError(key)
-    def __setitem__(self, key, item): self.data[key] = item
-    def __delitem__(self, key): del self.data[key]
-    def clear(self): self.data.clear()
+    def __setitem__(self, key, item):
+        self.data[key] = item
+    def __delitem__(self, key):
+        del self.data[key]
+    def clear(self):
+        self.data.clear()
     def copy(self):
         if self.__class__ is UserDict:
             return UserDict(self.data.copy())
@@ -52,13 +57,20 @@ class UserDict:
             self.data = data
         c.update(self)
         return c
-    def keys(self): return self.data.keys()
-    def items(self): return self.data.items()
-    def iteritems(self): return self.data.iteritems()
-    def iterkeys(self): return self.data.iterkeys()
-    def itervalues(self): return self.data.itervalues()
-    def values(self): return self.data.values()
-    def has_key(self, key): return key in self.data
+    def keys(self):
+        return self.data.keys()
+    def items(self):
+        return self.data.items()
+    def iteritems(self):
+        return self.data.iteritems()
+    def iterkeys(self):
+        return self.data.iterkeys()
+    def itervalues(self):
+        return self.data.itervalues()
+    def values(self):
+        return self.data.values()
+    def has_key(self, key):
+        return key in self.data
     def update(*args, **kwargs):
         if not args:
             raise TypeError("descriptor 'update' of 'UserDict' object "

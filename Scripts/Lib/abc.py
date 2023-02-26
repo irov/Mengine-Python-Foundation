@@ -8,7 +8,8 @@ import types
 from _weakrefset import WeakSet
 
 # Instance of old-style class
-class _C: pass
+class _C:
+    pass
 
 _InstanceType = type(_C())
 

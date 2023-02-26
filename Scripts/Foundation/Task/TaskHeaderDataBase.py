@@ -22,10 +22,9 @@ class TaskHeaderDataBase(Task):
 
     def __onHeaderData(self, requestId, status, error, response, code, successful):
         if _DEVELOPMENT is True:
-            print
-            """ [TaskHeaderData:_onHeaderData]
+            print(""" [TaskHeaderData:_onHeaderData]
                    self.requestId = '{}' | requestId = '{}' | status = '{}' | error = '{}' | code = '{}' | successful = '{}'
-                   response = '{}'""".format(self.requestId, requestId, status, error, code, successful, response)
+                   response = '{}'""".format(self.requestId, requestId, status, error, code, successful, response))
 
         if self.requestId != requestId:
             return

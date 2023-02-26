@@ -1,11 +1,11 @@
 import Trace
 from Event import Event
-from Functor import Functor
 from Foundation.Entity.BaseEntity import BaseEntity
 from Foundation.Notificator import Notificator
 from Foundation.ObjectManager import ObjectManager
 from Foundation.Task.Semaphore import Semaphore
 from Foundation.TaskManager import TaskManager
+from Functor import Functor
 from Multislots import finalslots
 
 class Movie2Button(BaseEntity):
@@ -661,8 +661,7 @@ class Movie2Button(BaseEntity):
                 source_skip.addScope(self.scopeDisableAllMovies)
 
     def __debug_print(self, v):
-        print
-        'TC CURRENT_STATE', v, self.state
+        print('TC CURRENT_STATE', v, self.state)
 
     def _onDeactivate(self):
         super(Movie2Button, self)._onDeactivate()

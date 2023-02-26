@@ -36,8 +36,7 @@ class SystemDevToDebug(System):
         # 2. create CommandLine widget
 
         def get_input(text):
-            print
-            "receive new text from CommandLine: '{}'".format(text)
+            print("receive new text from CommandLine: '{}'".format(text))
             data["output"] = text
             data["version"] += 1
 

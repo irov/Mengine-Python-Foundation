@@ -13,8 +13,7 @@ def print_request(func):
                                "[password] = {}, " \
                                "[file_group] = {}, " \
                                "[file_path] = {}, ".format(self.id, self.url, self.login, self.password, self.file_group, self.file_path)
-            print
-            curl_request_msg
+            print(curl_request_msg)
         return result
     return wrapper
 
@@ -28,8 +27,7 @@ def print_response(response_handler):
                                 "[code] = {}, " \
                                 "[successful] = {}, " \
                                 "[response] = {}".format(id, status, error, code, successful, response)
-            print
-            curl_response_msg
+            print(curl_response_msg)
         response_handler(self, id, status, error, response, code, successful)
     return wrapper
 
@@ -57,14 +55,12 @@ class TaskDownloadAsset(Task):
     @print_request  # debug
     def _onRun(self):
         if Mengine.existFile(self.file_group, self.file_path):
-            print
-            'file {} {} is existFile'.format(self.file_group, self.file_path)
+            print('file {} {} is existFile'.format(self.file_group, self.file_path))
             if self.rewrite is False:
                 return True
 
             Mengine.removeFile(self.file_group, self.file_path)
-            print
-            'file {} {} has been removed'.format(self.file_group, self.file_path)
+            print('file {} {} has been removed'.format(self.file_group, self.file_path))
 
         self.id = Mengine.downloadAsset(self.url, self.login, self.password, self.file_group, self.file_path, self.time_out, self.__onDownloadAsset)
 

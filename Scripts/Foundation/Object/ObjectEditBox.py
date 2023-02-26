@@ -23,7 +23,7 @@ class ObjectEditBox(DemonObject):
         self.initParam("Value", params, u"")
         self.initParam("Focus", params, True)
         self.initParam("PasswordChar", params, None)
-        self.initParam("BlackList", params, ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', '}', '{', '[', ']', ':', ';', '\'', '\"', '\\', '|', '/', '>', '<', ',', '.', '?'# , '1'
+        self.initParam("BlackList", params, ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', '}', '{', '[', ']', ':', ';', '\'', '\"', '\\', '|', '/', '>', '<', ',', '.', '?'  # , '1'
             # , '2'
             # , '3'
             # , '4'

@@ -26,7 +26,7 @@ class TraceManager(object):
     @staticmethod
     def addTrace(name):
         if name in TraceManager.s_traceConfig:
-            print "TraceManager.addType-> TypeName - '%s' already exist in TraceManager.s_traceConfig" % (name)
+            print("TraceManager.addType-> TypeName - '%s' already exist in TraceManager.s_traceConfig" % (name))
             return
             pass
 
@@ -36,8 +36,7 @@ class TraceManager(object):
     @staticmethod
     def getLevel(name):
         if name not in TraceManager.s_traceConfig:
-            print
-            "TraceManager.getLevel-> TypeName - '%s' not in TraceManager.s_traceConfig" % (name)
+            print("TraceManager.getLevel-> TypeName - '%s' not in TraceManager.s_traceConfig" % (name))
             return
             pass
 
@@ -47,14 +46,12 @@ class TraceManager(object):
     @staticmethod
     def setLevel(name, levelValue):
         if name not in TraceManager.s_traceConfig:
-            print
-            "TraceManager.setLevel-> TypeName - '%s' not in TraceManager.s_traceConfig" % (name)
+            print("TraceManager.setLevel-> TypeName - '%s' not in TraceManager.s_traceConfig" % (name))
             return
             pass
 
         if levelValue not in TraceManager.s_levelRange:
-            print
-            "TraceManager.setLevel-> LevelValue - '%s' not in TraceManager.s_levelRange" % (levelValue)
+            print("TraceManager.setLevel-> LevelValue - '%s' not in TraceManager.s_levelRange" % (levelValue))
             return
             pass
 

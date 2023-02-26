@@ -39,7 +39,8 @@ TupleType = tuple
 ListType = list
 DictType = DictionaryType = dict
 
-def _f(): pass
+def _f():
+    pass
 
 FunctionType = type(_f)
 LambdaType = type(lambda: None)  # Same as FunctionType

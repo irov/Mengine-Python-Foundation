@@ -203,7 +203,7 @@ def onInitialize():
 
     Mengine.addGlobalModule("Notificator", Notificator)
 
-    notifiers = [#    Notificator.onSave
+    notifiers = [  # Notificator.onSave
         "onResume", "onCommandLayerEnable", "onSetCurrentChapter"
 
         , "onSelectAccount", "onUnselectAccount", "onCreateDefaultAccount", "onLoadAccounts", "onLoadSession", "onDeleteAccount"

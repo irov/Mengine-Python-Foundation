@@ -13,8 +13,7 @@ def print_request(func):
                                "[url] = {}, " \
                                "[headers] = {}, " \
                                "[data] = {}".format(self.id, self.url, self.headers, self.data)
-            print
-            curl_request_msg
+            print(curl_request_msg)
         return result
     return wrapper
 
@@ -29,8 +28,7 @@ def print_response(response_handler):
                                 "[code] = {}, " \
                                 "[successful] = {}, " \
                                 "[response] = {}".format(id, status, error, code, successful, response)
-            print
-            curl_response_msg
+            print(curl_response_msg)
         response_handler(self, id, status, error, response, code, successful)
     return wrapper
 

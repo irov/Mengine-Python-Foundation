@@ -726,7 +726,7 @@ class SystemMonetization(System):
         if isGlobal is True:
             return
 
-        observers = {# add here key from storage and function that will be called if setting would be changed
+        observers = {  # add here key from storage and function that will be called if setting would be changed
             "gold": SystemMonetization._onChangeGold}
 
         for key in SystemMonetization.storage.keys():

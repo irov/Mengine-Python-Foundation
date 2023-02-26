@@ -11,7 +11,8 @@ SCREEN_HEIGHT = 768
 
 def setCenterAlign(node, set, nodeType="Sprite"):
     centerAlign = node.getCenterAlign()
-    if centerAlign == set: return
+    if centerAlign == set:
+        return
 
     if nodeType == "Sprite":
         size = node.getSurfaceSize()
@@ -56,7 +57,8 @@ def testHotSpots(point, hotspots):
     pass
 
 def playSound(node, resource=None, rangeVal=None, stop=True):
-    if stop == False and node.isPlaying() == True: return False
+    if stop == False and node.isPlaying() == True:
+        return False
 
     if resource != None:
         number = ""
@@ -97,14 +99,19 @@ def getVectorsAngle(vec1, vec2, param=0):
     cos = float(dotProduct) / (length1 * length2)
     sin = float(vecProduct) / (length1 * length2)
 
-    if cos > 1: cos = 1
-    if cos < -1: cos = -1
-    if sin > 1: sin = 1
-    if sin < -1: sin = -1
+    if cos > 1:
+        cos = 1
+    if cos < -1:
+        cos = -1
+    if sin > 1:
+        sin = 1
+    if sin < -1:
+        sin = -1
 
     if param in [0, 3]:
         angle = Mengine.acosf(cos)
-        if sin < 0 and param == 0: angle *= -1
+        if sin < 0 and param == 0:
+            angle *= -1
         return angle
     elif param == 1:
         return cos
@@ -123,7 +130,8 @@ def normVector(*vector):
         x, y = vector
         isVec2f = False
         pass
-    else: return None
+    else:
+        return None
 
     length = calculateDistance(0, 0, x, y)
     x = float(x) / length
@@ -171,7 +179,8 @@ def getClassName(object):
 def include(list1, list2):
     tempList1 = list1[:]
     for item in list2:
-        if item not in tempList1: return False
+        if item not in tempList1:
+            return False
         tempList1.remove(item)
         pass
 
@@ -256,7 +265,8 @@ def adjustSize(currentSize, neededSize, onlyMinus=False):
     percentY = float(neededSizeY) / currentSizeY
 
     scale = min(percentX, percentY)
-    if onlyMinus == True and scale > 1: scale = 1
+    if onlyMinus == True and scale > 1:
+        scale = 1
 
     return Mengine.vec2f(scale, scale)
     pass

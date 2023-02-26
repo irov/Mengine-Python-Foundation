@@ -277,7 +277,7 @@ class TaskForDesc(TaskDescBase):
     def __init__(self, source, iterator, count):
         TaskDescBase.__init__(self) \
  \
-        self.source = source
+            self.source = source
         self.iterator = iterator
         self.count = count
         pass

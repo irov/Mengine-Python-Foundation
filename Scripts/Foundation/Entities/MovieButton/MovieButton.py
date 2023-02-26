@@ -373,16 +373,17 @@ class MovieButton(BaseEntity):
 
         with self.tc as source_repeat:
             Scopes = dict()
-            Scopes["Idle"]=Functor(self.__stateIdle, MovieIdle)
-            Scopes["Enter"]=Functor(self.__stateEnter, MovieEnter)
-            Scopes["Over"]=Functor(self.__stateOver, MovieOver)
-            Scopes["Leave"]=Functor(self.__stateLeave, MovieLeave)
-            Scopes["Click"]=Functor(self.__stateClick, MovieClick)
-            Scopes["Push"]=Functor(self.__statePush, MoviePush)
-            Scopes["Pressed"]=Functor(self.__statePressed, MoviePressed)
-            Scopes["Release"]=Functor(self.__stateRelease, MovieRelease)
-            Scopes["Release_Play"]=Functor(self.__stateReleasePlay, MovieRelease)
-            Scopes["Block="]Functor(self.__stateBlock, MovieBlock)
+            Scopes["Idle"] = Functor(self.__stateIdle, MovieIdle)
+            Scopes["Enter"] = Functor(self.__stateEnter, MovieEnter)
+            Scopes["Over"] = Functor(self.__stateOver, MovieOver)
+            Scopes["Leave"] = Functor(self.__stateLeave, MovieLeave)
+            Scopes["Click"] = Functor(self.__stateClick, MovieClick)
+            Scopes["Push"] = Functor(self.__statePush, MoviePush)
+            Scopes["Pressed"] = Functor(self.__statePressed, MoviePressed)
+            Scopes["Release"] = Functor(self.__stateRelease, MovieRelease)
+            Scopes["Release_Play"] = Functor(self.__stateReleasePlay, MovieRelease)
+            Scopes["Block="]
+            Functor(self.__stateBlock, MovieBlock)
 
             def __states(isSkip, cb):
                 cb(isSkip, self.state)

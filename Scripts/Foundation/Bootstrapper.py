@@ -95,8 +95,7 @@ class Bootstrapper(object):
                     return False
 
                 if _DEVELOPMENT is True:
-                    print
-                    "Manager.loadParams %s %s" % (Name, Param)
+                    print("Manager.loadParams %s %s" % (Name, Param))
 
                 if Param is not None:
                     result = Manager.loadParams(Database, Param)
@@ -164,8 +163,7 @@ class Bootstrapper(object):
                 continue
 
             if _DEVELOPMENT is True:
-                print
-                "load system %s global (%s) development (%s) platform (%s)" % (Name, Global, Development, Platform)
+                print("load system %s global (%s) development (%s) platform (%s)" % (Name, Global, Development, Platform))
 
             if SystemManager.importSystem(Module, Name) is None:
                 Trace.log("Manager", 0, "Bootstrapper.loadSystems system %s invalid import %s:%s" % (Name, Module, Name))

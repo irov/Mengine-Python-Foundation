@@ -901,7 +901,8 @@ def id_maker(count):
     rand_id = ids.next()
     """
     if count == 1:
-        while True: yield 0
+        while True:
+            yield 0
     elif count > 1:
         ids = rand_list(range(count))
         while True:
@@ -917,7 +918,8 @@ def id_maker(count):
             pass
         pass
     else:
-        while True: yield None
+        while True:
+            yield None
     pass
 
 def importType(module, type):
@@ -963,40 +965,31 @@ def importType(module, type):
     pass
 
 def debug_print(msg, object):
-    print
-    '-' * 30 + '] %s' % msg
-    print
-    'Value =', object
-    print
-    'type(Value) =', type(object)
+    print('-' * 30 + '] %s' % msg)
+    print('Value =', object)
+    print('type(Value) =', type(object))
     try:
-        print
-        'Value.__name__', object.__name__
+        print('Value.__name__', object.__name__)
     except AttributeError:
         pass
 
 def debug_dir(object):
-    print
-    '-' * 30 + '] dir(%s)' % str(object)
+    print('-' * 30 + '] dir(%s)' % str(object))
 
     for name in dir(object):
-        print
-        name
+        print(name)
 
-    print
-    '-' * 30 + '] End of dir'
+    print('-' * 30 + '] End of dir')
 
 class DebugPrinter(object):
     def __init__(self, msg='-' * 10):
         self.msg = msg
 
     def __enter__(self):
-        print
-        '-' * 10 + self.msg + '-' * 10 + ']Deeeeebug Begin'
+        print('-' * 10 + self.msg + '-' * 10 + ']Deeeeebug Begin')
 
     def __exit__(self, *args):
-        print
-        '-' * 10 + self.msg + '-' * 10 + ']Deeeeebug End'
+        print('-' * 10 + self.msg + '-' * 10 + ']Deeeeebug End')
 
 def make_text_node(name, text_id, font=None, v_align=None, h_align=None, *args):
     # create node

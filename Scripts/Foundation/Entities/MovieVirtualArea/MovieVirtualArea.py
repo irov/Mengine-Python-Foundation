@@ -1,6 +1,6 @@
-from Foundation.TaskManager import TaskManager
 from Foundation.Entity.BaseEntity import BaseEntity
 from Foundation.ObjectManager import ObjectManager
+from Foundation.TaskManager import TaskManager
 from Foundation.Vector2D import Vector2D
 
 from VirtualArea import VirtualArea

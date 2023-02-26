@@ -12,10 +12,8 @@ class GameManager(object):
             GameManager.s_block_keyboard -= 1
             pass
         if GameManager.s_block_keyboard < 0:
-            print
-            "Wtf" * 1000
-            print
-            "GameManager.s_block_keyboard is negative", GameManager.s_block_keyboard
+            print("Wtf" * 1000)
+            print("GameManager.s_block_keyboard is negative", GameManager.s_block_keyboard)
 
         block = GameManager.s_block_keyboard != 0
 

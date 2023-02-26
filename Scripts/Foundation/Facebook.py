@@ -25,13 +25,11 @@ class Facebook(Manager):
     @staticmethod
     def send_post_message(data):
         if data['message'] is None:
-            print
-            'Not all arguments are presented'
+            print('Not all arguments are presented')
             return
 
         if Facebook.token is None:
-            print
-            'Authorize before posting'
+            print('Authorize before posting')
             return
 
         data = Facebook.removeNone(data)
@@ -47,8 +45,7 @@ class Facebook(Manager):
     @staticmethod
     def get_users_data(data, cb):
         if Facebook.token is None:
-            print
-            'Authorize before posting'
+            print('Authorize before posting')
             return
 
         data['access_token'] = Facebook.token
@@ -61,9 +58,9 @@ class Facebook(Manager):
         data['client_id'] = Facebook.clientId
         data['redirect_uri'] = Facebook.redirectUri + '?ip=' + Facebook.client_ip
         auth_url = 'https://www.facebook.com/v2.9/dialog/oauth'
-        print
-        unicode(Facebook.bad_convert(auth_url, data), "utf-8")
-        Mengine.openUrlInDefaultBrowser(unicode(Facebook.bad_convert(auth_url, data), "utf-8"))
+        unicode_url = unicode(Facebook.bad_convert(auth_url, data), "utf-8")
+        print(unicode_url)
+        Mengine.openUrlInDefaultBrowser(unicode_url)
         pass
 
     @staticmethod
