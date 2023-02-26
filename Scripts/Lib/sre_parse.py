@@ -27,15 +27,41 @@ ASCIILETTERS = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 WHITESPACE = set(" \t\n\r\v\f")
 
-ESCAPES = {r"\a": (LITERAL, ord("\a")), r"\b": (LITERAL, ord("\b")), r"\f": (LITERAL, ord("\f")), r"\n": (LITERAL, ord("\n")), r"\r": (LITERAL, ord("\r")), r"\t": (LITERAL, ord("\t")), r"\v": (LITERAL, ord("\v")), r"\\": (LITERAL, ord("\\"))}
-
-CATEGORIES = {r"\A": (AT, AT_BEGINNING_STRING),  # start of string
-    r"\b": (AT, AT_BOUNDARY), r"\B": (AT, AT_NON_BOUNDARY), r"\d": (IN, [(CATEGORY, CATEGORY_DIGIT)]), r"\D": (IN, [(CATEGORY, CATEGORY_NOT_DIGIT)]), r"\s": (IN, [(CATEGORY, CATEGORY_SPACE)]), r"\S": (IN, [(CATEGORY, CATEGORY_NOT_SPACE)]), r"\w": (IN, [(CATEGORY, CATEGORY_WORD)]), r"\W": (IN, [(CATEGORY, CATEGORY_NOT_WORD)]), r"\Z": (AT, AT_END_STRING),  # end of string
+ESCAPES = {
+    r"\a": (LITERAL, ord("\a")),
+    r"\b": (LITERAL, ord("\b")),
+    r"\f": (LITERAL, ord("\f")),
+    r"\n": (LITERAL, ord("\n")),
+    r"\r": (LITERAL, ord("\r")),
+    r"\t": (LITERAL, ord("\t")),
+    r"\v": (LITERAL, ord("\v")),
+    r"\\": (LITERAL, ord("\\"))
 }
 
-FLAGS = {  # standard flags
-    "i": SRE_FLAG_IGNORECASE, "L": SRE_FLAG_LOCALE, "m": SRE_FLAG_MULTILINE, "s": SRE_FLAG_DOTALL, "x": SRE_FLAG_VERBOSE,  # extensions
-    "t": SRE_FLAG_TEMPLATE, "u": SRE_FLAG_UNICODE, }
+CATEGORIES = {
+    r"\A": (AT, AT_BEGINNING_STRING), # start of string
+    r"\b": (AT, AT_BOUNDARY),
+    r"\B": (AT, AT_NON_BOUNDARY),
+    r"\d": (IN, [(CATEGORY, CATEGORY_DIGIT)]),
+    r"\D": (IN, [(CATEGORY, CATEGORY_NOT_DIGIT)]),
+    r"\s": (IN, [(CATEGORY, CATEGORY_SPACE)]),
+    r"\S": (IN, [(CATEGORY, CATEGORY_NOT_SPACE)]),
+    r"\w": (IN, [(CATEGORY, CATEGORY_WORD)]),
+    r"\W": (IN, [(CATEGORY, CATEGORY_NOT_WORD)]),
+    r"\Z": (AT, AT_END_STRING), # end of string
+}
+
+FLAGS = {
+    # standard flags
+    "i": SRE_FLAG_IGNORECASE,
+    "L": SRE_FLAG_LOCALE,
+    "m": SRE_FLAG_MULTILINE,
+    "s": SRE_FLAG_DOTALL,
+    "x": SRE_FLAG_VERBOSE,
+    # extensions
+    "t": SRE_FLAG_TEMPLATE,
+    "u": SRE_FLAG_UNICODE,
+}
 
 class Pattern:
     # master pattern object.  keeps track of global attributes
@@ -53,7 +79,7 @@ class Pattern:
             ogid = self.groupdict.get(name, None)
             if ogid is not None:
                 raise error, ("redefinition of group name %s as group %d; "
-                              "was group %d" % (repr(name), gid, ogid))
+                              "was group %d" % (repr(name), gid,  ogid))
             self.groupdict[name] = gid
         self.open.append(gid)
         return gid
@@ -73,40 +99,40 @@ class SubPattern:
     def dump(self, level=0):
         seqtypes = (tuple, list)
         for op, av in self.data:
-            print(level * "  " + op, )
+            print level*"  " + op,
             if op == IN:
                 # member sublanguage
-                print()
+                print
                 for op, a in av:
-                    print(level + 1) * "  " + op, a
+                    print (level+1)*"  " + op, a
             elif op == BRANCH:
-                print()
+                print
                 for i, a in enumerate(av[1]):
                     if i:
-                        print(level * "  " + "or")
-                    a.dump(level + 1)
+                        print level*"  " + "or"
+                    a.dump(level+1)
             elif op == GROUPREF_EXISTS:
                 condgroup, item_yes, item_no = av
-                print(condgroup)
-                item_yes.dump(level + 1)
+                print condgroup
+                item_yes.dump(level+1)
                 if item_no:
-                    print(level * "  " + "else")
-                    item_no.dump(level + 1)
+                    print level*"  " + "else"
+                    item_no.dump(level+1)
             elif isinstance(av, seqtypes):
                 nl = 0
                 for a in av:
                     if isinstance(a, SubPattern):
                         if not nl:
-                            print()
-                        a.dump(level + 1)
+                            print
+                        a.dump(level+1)
                         nl = 1
                     else:
-                        print(a, )
+                        print a,
                         nl = 0
                 if not nl:
-                    print()
+                    print
             else:
-                print(av)
+                print av
     def __repr__(self):
         return repr(self.data)
     def __len__(self):
@@ -239,9 +265,11 @@ def _class_escape(source, escape, nested):
                 import warnings
                 if c in 'Uu':
                     warnings.warn('bad escape %s; Unicode escapes are '
-                                  'supported only since Python 3.3' % escape, FutureWarning, stacklevel=nested + 6)
+                                  'supported only since Python 3.3' % escape,
+                                  FutureWarning, stacklevel=nested + 6)
                 else:
-                    warnings.warnpy3k('bad escape %s' % escape, DeprecationWarning, stacklevel=nested + 6)
+                    warnings.warnpy3k('bad escape %s' % escape,
+                                      DeprecationWarning, stacklevel=nested + 6)
             return LITERAL, ord(escape[1])
     except ValueError:
         pass
@@ -273,7 +301,8 @@ def _escape(source, escape, state, nested):
             # octal escape *or* decimal group reference (sigh)
             if source.next in DIGITS:
                 escape = escape + source.get()
-                if (escape[1] in OCTDIGITS and escape[2] in OCTDIGITS and source.next in OCTDIGITS):
+                if (escape[1] in OCTDIGITS and escape[2] in OCTDIGITS and
+                    source.next in OCTDIGITS):
                     # got three octal digits; this is an octal escape
                     escape = escape + source.get()
                     return LITERAL, int(escape[1:], 8) & 0xff
@@ -285,7 +314,8 @@ def _escape(source, escape, state, nested):
                 if state.lookbehind:
                     import warnings
                     warnings.warn('group references in lookbehind '
-                                  'assertions are not supported', RuntimeWarning, stacklevel=nested + 6)
+                                  'assertions are not supported',
+                                  RuntimeWarning, stacklevel=nested + 6)
                 return GROUPREF, group
             raise ValueError
         if len(escape) == 2:
@@ -293,9 +323,11 @@ def _escape(source, escape, state, nested):
                 import warnings
                 if c in 'Uu':
                     warnings.warn('bad escape %s; Unicode escapes are '
-                                  'supported only since Python 3.3' % escape, FutureWarning, stacklevel=nested + 6)
+                                  'supported only since Python 3.3' % escape,
+                                  FutureWarning, stacklevel=nested + 6)
                 else:
-                    warnings.warnpy3k('bad escape %s' % escape, DeprecationWarning, stacklevel=nested + 6)
+                    warnings.warnpy3k('bad escape %s' % escape,
+                                      DeprecationWarning, stacklevel=nested + 6)
             return LITERAL, ord(escape[1])
     except ValueError:
         pass
@@ -340,7 +372,7 @@ def _parse_sub(source, state, nested):
             for item in items:
                 del item[0]
             subpatternappend(prefix)
-            continue  # check next one
+            continue # check next one
         break
 
     # check if the branch can be replaced by a character set
@@ -394,11 +426,12 @@ def _parse(source, state, nested):
     REPEATCODES = _REPEATCODES
 
     while 1:
+
         if source.next in PATTERNENDERS:
-            break  # end of subpattern
+            break # end of subpattern
         this = sourceget()
         if this is None:
-            break  # end of pattern
+            break # end of pattern
 
         if state.flags & SRE_FLAG_VERBOSE:
             # skip whitespace and comments
@@ -418,8 +451,8 @@ def _parse(source, state, nested):
             # character set
             set = []
             setappend = set.append
-            ##          if sourcematch(":"):
-            ##              pass # handle character classes
+##          if sourcematch(":"):
+##              pass # handle character classes
             if sourcematch("^"):
                 setappend((NEGATE, None))
             # check remaining characters
@@ -463,10 +496,10 @@ def _parse(source, state, nested):
                     setappend(code1)
 
             # XXX: <fl> should move set optimization to compiler!
-            if _len(set) == 1 and set[0][0] is LITERAL:
-                subpatternappend(set[0])  # optimization
-            elif _len(set) == 2 and set[0][0] is NEGATE and set[1][0] is LITERAL:
-                subpatternappend((NOT_LITERAL, set[1][1]))  # optimization
+            if _len(set)==1 and set[0][0] is LITERAL:
+                subpatternappend(set[0]) # optimization
+            elif _len(set)==2 and set[0][0] is NEGATE and set[1][0] is LITERAL:
+                subpatternappend((NOT_LITERAL, set[1][1])) # optimization
             else:
                 # XXX: <fl> should add charmap optimization here
                 subpatternappend((IN, set))
@@ -550,7 +583,8 @@ def _parse(source, state, nested):
                         if not name:
                             raise error("missing group name")
                         if not isname(name):
-                            raise error("bad character in group name %r" % name)
+                            raise error("bad character in group name %r" %
+                                        name)
                     elif sourcematch("="):
                         # named backreference
                         name = ""
@@ -573,7 +607,8 @@ def _parse(source, state, nested):
                         if state.lookbehind:
                             import warnings
                             warnings.warn('group references in lookbehind '
-                                          'assertions are not supported', RuntimeWarning, stacklevel=nested + 6)
+                                          'assertions are not supported',
+                                          RuntimeWarning, stacklevel=nested + 6)
                         subpatternappend((GROUPREF, gid))
                         continue
                     else:
@@ -600,7 +635,7 @@ def _parse(source, state, nested):
                     if char == "<":
                         if source.next not in LOOKBEHINDASSERTCHARS:
                             raise error, "syntax error"
-                        dir = -1  # lookbehind
+                        dir = -1 # lookbehind
                         char = sourceget()
                         state.lookbehind += 1
                     p = _parse_sub(source, state, nested + 1)
@@ -639,7 +674,8 @@ def _parse(source, state, nested):
                     if state.lookbehind:
                         import warnings
                         warnings.warn('group references in lookbehind '
-                                      'assertions are not supported', RuntimeWarning, stacklevel=nested + 6)
+                                      'assertions are not supported',
+                                      RuntimeWarning, stacklevel=nested + 6)
                 else:
                     # flags
                     if not source.next in FLAGS:
@@ -697,9 +733,12 @@ def parse(str, flags=0, pattern=None):
     pattern.str = str
 
     p = _parse_sub(source, pattern, 0)
-    if (sys.py3kwarning and (p.pattern.flags & SRE_FLAG_LOCALE) and (p.pattern.flags & SRE_FLAG_UNICODE)):
+    if (sys.py3kwarning and
+        (p.pattern.flags & SRE_FLAG_LOCALE) and
+        (p.pattern.flags & SRE_FLAG_UNICODE)):
         import warnings
-        warnings.warnpy3k("LOCALE and UNICODE flags are incompatible", DeprecationWarning, stacklevel=5)
+        warnings.warnpy3k("LOCALE and UNICODE flags are incompatible",
+                          DeprecationWarning, stacklevel=5)
 
     tail = source.get()
     if tail == ")":
@@ -737,7 +776,7 @@ def parse_template(source, pattern):
     while 1:
         this = sget()
         if this is None:
-            break  # end of replacement string
+            break # end of replacement string
         if this and this[0] == "\\":
             # group
             c = this[1:2]
@@ -776,7 +815,8 @@ def parse_template(source, pattern):
                 isoctal = False
                 if s.next in DIGITS:
                     this = this + sget()
-                    if (c in OCTDIGITS and this[2] in OCTDIGITS and s.next in OCTDIGITS):
+                    if (c in OCTDIGITS and this[2] in OCTDIGITS and
+                        s.next in OCTDIGITS):
                         this = this + sget()
                         isoctal = True
                         literal(makechar(int(this[1:], 8) & 0xff))
@@ -788,7 +828,8 @@ def parse_template(source, pattern):
                 except KeyError:
                     if sys.py3kwarning and c in ASCIILETTERS:
                         import warnings
-                        warnings.warnpy3k('bad escape %s' % this, DeprecationWarning, stacklevel=4)
+                        warnings.warnpy3k('bad escape %s' % this,
+                                          DeprecationWarning, stacklevel=4)
                 literal(this)
         else:
             literal(this)
@@ -799,7 +840,8 @@ def parse_template(source, pattern):
     literals = [None] * len(p)
     for c, s in p:
         if c is MARK:
-            groupsappend((i, s))  # literal[i] is already None
+            groupsappend((i, s))
+            # literal[i] is already None
         else:
             literals[i] = s
         i = i + 1

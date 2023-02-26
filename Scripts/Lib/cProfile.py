@@ -58,8 +58,8 @@ def runctx(statement, globals, locals, filename=None, sort=-1):
 
 # Backwards compatibility.
 def help():
-    print("Documentation for the profile/cProfile modules can be found ")
-    print("in the Python Library Reference, section 'The Python Profiler'.")
+    print "Documentation for the profile/cProfile modules can be found "
+    print "in the Python Library Reference, section 'The Python Profiler'."
 
 # ____________________________________________________________
 
@@ -98,10 +98,10 @@ class Profile(_lsprof.Profiler):
         # call information
         for entry in entries:
             func = label(entry.code)
-            nc = entry.callcount  # ncalls column of pstats (before '/')
-            cc = nc - entry.reccallcount  # ncalls column of pstats (after '/')
-            tt = entry.inlinetime  # tottime column of pstats
-            ct = entry.totaltime  # cumtime column of pstats
+            nc = entry.callcount         # ncalls column of pstats (before '/')
+            cc = nc - entry.reccallcount # ncalls column of pstats (after '/')
+            tt = entry.inlinetime        # tottime column of pstats
+            ct = entry.totaltime         # cumtime column of pstats
             callers = {}
             callersdicts[id(entry.code)] = callers
             self.stats[func] = cc, nc, tt, ct, callers
@@ -137,8 +137,7 @@ class Profile(_lsprof.Profiler):
     def runctx(self, cmd, globals, locals):
         self.enable()
         try:
-            exec
-            cmd in globals, locals
+            exec cmd in globals, locals
         finally:
             self.disable()
         return self
@@ -155,7 +154,7 @@ class Profile(_lsprof.Profiler):
 
 def label(code):
     if isinstance(code, str):
-        return ('~', 0, code)  # built-in functions ('~' sorts at the end)
+        return ('~', 0, code)    # built-in functions ('~' sorts at the end)
     else:
         return (code.co_filename, code.co_firstlineno, code.co_name)
 

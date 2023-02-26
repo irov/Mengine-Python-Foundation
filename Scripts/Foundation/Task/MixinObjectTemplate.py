@@ -95,8 +95,7 @@ def MixinObjectTemplate(TypeElement, AliasElement=None):
     code = compile(MixinCodeElement, MixinType, "exec")
 
     MixinClass = dict(MixinGroup=MixinGroup, GroupManager=GroupManager, Initializer=Initializer)
-    exec
-    code in MixinClass
+    exec(code, MixinClass)
 
     return MixinClass[MixinType]
     pass

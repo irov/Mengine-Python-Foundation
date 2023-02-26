@@ -1,10 +1,10 @@
 """Implementation of JSONDecoder
 """
 import re
-import struct
 import sys
-from json import scanner
+import struct
 
+from json import scanner
 try:
     from _json import scanstring as c_scanstring
 except ImportError:
@@ -21,6 +21,7 @@ def _floatconstants():
 
 NaN, PosInf, NegInf = _floatconstants()
 
+
 def linecol(doc, pos):
     lineno = doc.count('\n', 0, pos) + 1
     if lineno == 1:
@@ -29,20 +30,33 @@ def linecol(doc, pos):
         colno = pos - doc.rindex('\n', 0, pos)
     return lineno, colno
 
+
 def errmsg(msg, doc, pos, end=None):
     # Note that this function is called from _json
     lineno, colno = linecol(doc, pos)
     if end is None:
         fmt = '{0}: line {1} column {2} (char {3})'
-        return fmt.format(msg, lineno, colno, pos)  # fmt = '%s: line %d column %d (char %d)'  # return fmt % (msg, lineno, colno, pos)
+        return fmt.format(msg, lineno, colno, pos)
+        #fmt = '%s: line %d column %d (char %d)'
+        #return fmt % (msg, lineno, colno, pos)
     endlineno, endcolno = linecol(doc, end)
     fmt = '{0}: line {1} column {2} - line {3} column {4} (char {5} - {6})'
-    return fmt.format(msg, lineno, colno, endlineno, endcolno, pos, end)  # fmt = '%s: line %d column %d - line %d column %d (char %d - %d)'  # return fmt % (msg, lineno, colno, endlineno, endcolno, pos, end)
+    return fmt.format(msg, lineno, colno, endlineno, endcolno, pos, end)
+    #fmt = '%s: line %d column %d - line %d column %d (char %d - %d)'
+    #return fmt % (msg, lineno, colno, endlineno, endcolno, pos, end)
 
-_CONSTANTS = {'-Infinity': NegInf, 'Infinity': PosInf, 'NaN': NaN, }
+
+_CONSTANTS = {
+    '-Infinity': NegInf,
+    'Infinity': PosInf,
+    'NaN': NaN,
+}
 
 STRINGCHUNK = re.compile(r'(.*?)(["\\\x00-\x1f])', FLAGS)
-BACKSLASH = {'"': u'"', '\\': u'\\', '/': u'/', 'b': u'\b', 'f': u'\f', 'n': u'\n', 'r': u'\r', 't': u'\t', }
+BACKSLASH = {
+    '"': u'"', '\\': u'\\', '/': u'/',
+    'b': u'\b', 'f': u'\f', 'n': u'\n', 'r': u'\r', 't': u'\t',
+}
 
 DEFAULT_ENCODING = "utf-8"
 
@@ -56,7 +70,8 @@ def _decode_uXXXX(s, pos):
     msg = "Invalid \\uXXXX escape"
     raise ValueError(errmsg(msg, s, pos))
 
-def py_scanstring(s, end, encoding=None, strict=True, _b=BACKSLASH, _m=STRINGCHUNK.match):
+def py_scanstring(s, end, encoding=None, strict=True,
+        _b=BACKSLASH, _m=STRINGCHUNK.match):
     """Scan the string s for a JSON string. End is the index of the
     character in s after the quote that started the JSON string.
     Unescapes all valid JSON string escape sequences and raises ValueError
@@ -73,7 +88,8 @@ def py_scanstring(s, end, encoding=None, strict=True, _b=BACKSLASH, _m=STRINGCHU
     while 1:
         chunk = _m(s, end)
         if chunk is None:
-            raise ValueError(errmsg("Unterminated string starting at", s, begin))
+            raise ValueError(
+                errmsg("Unterminated string starting at", s, begin))
         end = chunk.end()
         content, terminator = chunk.groups()
         # Content is contains zero or more unescaped string characters
@@ -87,7 +103,7 @@ def py_scanstring(s, end, encoding=None, strict=True, _b=BACKSLASH, _m=STRINGCHU
             break
         elif terminator != '\\':
             if strict:
-                # msg = "Invalid control character %r at" % (terminator,)
+                #msg = "Invalid control character %r at" % (terminator,)
                 msg = "Invalid control character {0!r} at".format(terminator)
                 raise ValueError(errmsg(msg, s, end))
             else:
@@ -96,7 +112,8 @@ def py_scanstring(s, end, encoding=None, strict=True, _b=BACKSLASH, _m=STRINGCHU
         try:
             esc = s[end]
         except IndexError:
-            raise ValueError(errmsg("Unterminated string starting at", s, begin))
+            raise ValueError(
+                errmsg("Unterminated string starting at", s, begin))
         # If not a unicode escape sequence, must be in the lookup table
         if esc != 'u':
             try:
@@ -110,7 +127,8 @@ def py_scanstring(s, end, encoding=None, strict=True, _b=BACKSLASH, _m=STRINGCHU
             uni = _decode_uXXXX(s, end)
             end += 5
             # Check for surrogate pair on UCS-4 systems
-            if sys.maxunicode > 65535 and 0xd800 <= uni <= 0xdbff and s[end:end + 2] == '\\u':
+            if sys.maxunicode > 65535 and \
+               0xd800 <= uni <= 0xdbff and s[end:end + 2] == '\\u':
                 uni2 = _decode_uXXXX(s, end + 1)
                 if 0xdc00 <= uni2 <= 0xdfff:
                     uni = 0x10000 + (((uni - 0xd800) << 10) | (uni2 - 0xdc00))
@@ -120,13 +138,15 @@ def py_scanstring(s, end, encoding=None, strict=True, _b=BACKSLASH, _m=STRINGCHU
         _append(char)
     return u''.join(chunks), end
 
+
 # Use speedup if available
 scanstring = c_scanstring or py_scanstring
 
 WHITESPACE = re.compile(r'[ \t\n\r]*', FLAGS)
 WHITESPACE_STR = ' \t\n\r'
 
-def JSONObject(s_and_end, encoding, strict, scan_once, object_hook, object_pairs_hook, _w=WHITESPACE.match, _ws=WHITESPACE_STR):
+def JSONObject(s_and_end, encoding, strict, scan_once, object_hook,
+               object_pairs_hook, _w=WHITESPACE.match, _ws=WHITESPACE_STR):
     s, end = s_and_end
     pairs = []
     pairs_append = pairs.append
@@ -148,7 +168,8 @@ def JSONObject(s_and_end, encoding, strict, scan_once, object_hook, object_pairs
                 pairs = object_hook(pairs)
             return pairs, end + 1
         elif nextchar != '"':
-            raise ValueError(errmsg("Expecting property name enclosed in double quotes", s, end))
+            raise ValueError(errmsg(
+                "Expecting property name enclosed in double quotes", s, end))
     end += 1
     while True:
         key, end = scanstring(s, end, encoding, strict)
@@ -202,7 +223,8 @@ def JSONObject(s_and_end, encoding, strict, scan_once, object_hook, object_pairs
 
         end += 1
         if nextchar != '"':
-            raise ValueError(errmsg("Expecting property name enclosed in double quotes", s, end - 1))
+            raise ValueError(errmsg(
+                "Expecting property name enclosed in double quotes", s, end - 1))
     if object_pairs_hook is not None:
         result = object_pairs_hook(pairs)
         return result, end
@@ -277,7 +299,9 @@ class JSONDecoder(object):
 
     """
 
-    def __init__(self, encoding=None, object_hook=None, parse_float=None, parse_int=None, parse_constant=None, strict=True, object_pairs_hook=None):
+    def __init__(self, encoding=None, object_hook=None, parse_float=None,
+            parse_int=None, parse_constant=None, strict=True,
+            object_pairs_hook=None):
         """``encoding`` determines the encoding used to interpret any ``str``
         objects decoded by this instance (utf-8 by default).  It has no
         effect when decoding ``unicode`` objects.

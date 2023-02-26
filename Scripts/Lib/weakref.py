@@ -9,14 +9,29 @@ http://www.python.org/dev/peps/pep-0205/
 # they are called this instead of "ref" to avoid name collisions with
 # the module-global ref() function imported from _weakref.
 
-from _weakref import (getweakrefcount, getweakrefs, ref, proxy, CallableProxyType, ProxyType, ReferenceType, _remove_dead_weakref)
-
 import UserDict
+
+from _weakref import (
+     getweakrefcount,
+     getweakrefs,
+     ref,
+     proxy,
+     CallableProxyType,
+     ProxyType,
+     ReferenceType,
+     _remove_dead_weakref)
+
 from _weakrefset import WeakSet, _IterationGuard
+
+from exceptions import ReferenceError
+
 
 ProxyTypes = (ProxyType, CallableProxyType)
 
-__all__ = ["ref", "proxy", "getweakrefcount", "getweakrefs", "WeakKeyDictionary", "ReferenceError", "ReferenceType", "ProxyType", "CallableProxyType", "ProxyTypes", "WeakValueDictionary", 'WeakSet']
+__all__ = ["ref", "proxy", "getweakrefcount", "getweakrefs",
+           "WeakKeyDictionary", "ReferenceError", "ReferenceType", "ProxyType",
+           "CallableProxyType", "ProxyTypes", "WeakValueDictionary", 'WeakSet']
+
 
 class WeakValueDictionary(UserDict.UserDict):
     """Mapping class that references values weakly.
@@ -279,6 +294,7 @@ class WeakValueDictionary(UserDict.UserDict):
                 L.append(o)
         return L
 
+
 class KeyedRef(ref):
     """Specialized reference that includes a key corresponding to the value.
 
@@ -297,7 +313,8 @@ class KeyedRef(ref):
         return self
 
     def __init__(self, ob, callback, key):
-        super(KeyedRef, self).__init__(ob, callback)
+        super(KeyedRef,  self).__init__(ob, callback)
+
 
 class WeakKeyDictionary(UserDict.UserDict):
     """ Mapping class that references keys weakly.
@@ -371,7 +388,7 @@ class WeakKeyDictionary(UserDict.UserDict):
         return new
 
     def get(self, key, default=None):
-        return self.data.get(ref(key), default)
+        return self.data.get(ref(key),default)
 
     def has_key(self, key):
         try:
@@ -461,7 +478,7 @@ class WeakKeyDictionary(UserDict.UserDict):
         return self.data.pop(ref(key), *args)
 
     def setdefault(self, key, default=None):
-        return self.data.setdefault(ref(key, self._remove), default)
+        return self.data.setdefault(ref(key, self._remove),default)
 
     def update(self, dict=None, **kwargs):
         d = self.data

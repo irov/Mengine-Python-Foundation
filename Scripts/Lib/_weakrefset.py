@@ -6,6 +6,7 @@ from _weakref import ref
 
 __all__ = ['WeakSet']
 
+
 class _IterationGuard(object):
     # This context manager registers itself in the current iterators of the
     # weak container, such as to delay all removals until the context manager
@@ -29,6 +30,7 @@ class _IterationGuard(object):
             s.remove(self)
             if not s:
                 w._commit_removals()
+
 
 class WeakSet(object):
     def __init__(self, data=None):
@@ -73,7 +75,8 @@ class WeakSet(object):
         return wr in self.data
 
     def __reduce__(self):
-        return (self.__class__, (list(self),), getattr(self, '__dict__', None))
+        return (self.__class__, (list(self),),
+                getattr(self, '__dict__', None))
 
     __hash__ = None
 

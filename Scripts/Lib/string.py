@@ -55,9 +55,9 @@ def capwords(s, sep=None):
     """
     return (sep or ' ').join(x.capitalize() for x in s.split(sep))
 
+
 # Construct a translation string
 _idmapL = None
-
 def maketrans(fromstr, tostr):
     """maketrans(frm, to) -> string
 
@@ -76,6 +76,8 @@ def maketrans(fromstr, tostr):
     for i in range(len(fromstr)):
         L[fromstr[i]] = tostr[i]
     return ''.join(L)
+
+
 
 ####################################################################
 import re as _re
@@ -96,6 +98,7 @@ class _multimap:
         except KeyError:
             return self._secondary[key]
 
+
 class _TemplateMetaclass(type):
     pattern = r"""
     %(delim)s(?:
@@ -111,8 +114,12 @@ class _TemplateMetaclass(type):
         if 'pattern' in dct:
             pattern = cls.pattern
         else:
-            pattern = _TemplateMetaclass.pattern % {'delim': _re.escape(cls.delimiter), 'id': cls.idpattern, }
+            pattern = _TemplateMetaclass.pattern % {
+                'delim' : _re.escape(cls.delimiter),
+                'id'    : cls.idpattern,
+                }
         cls.pattern = _re.compile(pattern, _re.IGNORECASE | _re.VERBOSE)
+
 
 class Template:
     """A string class for supporting $-substitutions."""
@@ -135,7 +142,8 @@ class Template:
         else:
             colno = i - len(''.join(lines[:-1]))
             lineno = len(lines)
-        raise ValueError('Invalid placeholder in string: line %d, col %d' % (lineno, colno))
+        raise ValueError('Invalid placeholder in string: line %d, col %d' %
+                         (lineno, colno))
 
     def substitute(*args, **kws):
         if not args:
@@ -163,7 +171,8 @@ class Template:
                 return self.delimiter
             if mo.group('invalid') is not None:
                 self._invalid(mo)
-            raise ValueError('Unrecognized named group in pattern', self.pattern)
+            raise ValueError('Unrecognized named group in pattern',
+                             self.pattern)
         return self.pattern.sub(convert, self.template)
 
     def safe_substitute(*args, **kws):
@@ -193,8 +202,11 @@ class Template:
                 return self.delimiter
             if mo.group('invalid') is not None:
                 return mo.group()
-            raise ValueError('Unrecognized named group in pattern', self.pattern)
+            raise ValueError('Unrecognized named group in pattern',
+                             self.pattern)
         return self.pattern.sub(convert, self.template)
+
+
 
 ####################################################################
 # NOTE: Everything below here is deprecated.  Use string methods instead.
@@ -266,6 +278,7 @@ def rstrip(s, chars=None):
     """
     return s.rstrip(chars)
 
+
 # Split a string into a list of space/tab-separated words
 def split(s, sep=None, maxsplit=-1):
     """split(s [,sep [,maxsplit]]) -> list of strings
@@ -279,7 +292,6 @@ def split(s, sep=None, maxsplit=-1):
 
     """
     return s.split(sep, maxsplit)
-
 splitfields = split
 
 # Split a string into a list of space/tab-separated words
@@ -295,7 +307,7 @@ def rsplit(s, sep=None, maxsplit=-1):
     return s.rsplit(sep, maxsplit)
 
 # Join fields with optional separator
-def join(words, sep=' '):
+def join(words, sep = ' '):
     """join(list [,sep]) -> string
 
     Return a string composed of the words in list, with
@@ -306,7 +318,6 @@ def join(words, sep=' '):
 
     """
     return sep.join(words)
-
 joinfields = join
 
 # Find substring, raise exception if not found
@@ -378,8 +389,9 @@ def atof(s):
     """
     return _float(s)
 
+
 # Convert string to integer
-def atoi(s, base=10):
+def atoi(s , base=10):
     """atoi(s [,base]) -> int
 
     Return the integer represented by the string s in the given
@@ -391,6 +403,7 @@ def atoi(s, base=10):
 
     """
     return _int(s, base)
+
 
 # Convert string to long integer
 def atol(s, base=10):
@@ -406,6 +419,7 @@ def atol(s, base=10):
 
     """
     return _long(s, base)
+
 
 # Left-justify a string
 def ljust(s, width, *args):
@@ -506,6 +520,7 @@ def replace(s, old, new, maxreplace=-1):
     """
     return s.replace(old, new, maxreplace)
 
+
 # Try importing optional built-in module "strop" -- if it exists,
 # it redefines some string operations that are 100-1000 times faster.
 # It also defines values for whitespace, lowercase and uppercase
@@ -513,10 +528,9 @@ def replace(s, old, new, maxreplace=-1):
 
 try:
     from strop import maketrans, lowercase, uppercase, whitespace
-
     letters = lowercase + uppercase
 except ImportError:
-    pass  # Use the original versions
+    pass                                          # Use the original versions
 
 ########################################################################
 # the Formatter class
@@ -535,7 +549,7 @@ class Formatter(object):
                             "needs an argument")
         self, args = args[0], args[1:]  # allow the "self" keyword be passed
         try:
-            format_string, args = args[0], args[1:]  # allow the "format_string" keyword be passed
+            format_string, args = args[0], args[1:] # allow the "format_string" keyword be passed
         except IndexError:
             if 'format_string' in kwargs:
                 format_string = kwargs.pop('format_string')
@@ -554,7 +568,9 @@ class Formatter(object):
         if recursion_depth < 0:
             raise ValueError('Max string recursion exceeded')
         result = []
-        for literal_text, field_name, format_spec, conversion in self.parse(format_string):
+        for literal_text, field_name, format_spec, conversion in \
+                self.parse(format_string):
+
             # output the literal text
             if literal_text:
                 result.append(literal_text)
@@ -573,12 +589,14 @@ class Formatter(object):
                 obj = self.convert_field(obj, conversion)
 
                 # expand the format spec, if needed
-                format_spec = self._vformat(format_spec, args, kwargs, used_args, recursion_depth - 1)
+                format_spec = self._vformat(format_spec, args, kwargs,
+                                            used_args, recursion_depth-1)
 
                 # format the object and append to the result
                 result.append(self.format_field(obj, format_spec))
 
         return ''.join(result)
+
 
     def get_value(self, key, args, kwargs):
         if isinstance(key, (int, long)):
@@ -586,11 +604,14 @@ class Formatter(object):
         else:
             return kwargs[key]
 
+
     def check_unused_args(self, used_args, args, kwargs):
         pass
 
+
     def format_field(self, value, format_spec):
         return format(value, format_spec)
+
 
     def convert_field(self, value, conversion):
         # do any conversion on the resulting object
@@ -602,6 +623,7 @@ class Formatter(object):
             return repr(value)
         raise ValueError("Unknown conversion specifier {0!s}".format(conversion))
 
+
     # returns an iterable that contains tuples of the form:
     # (literal_text, field_name, format_spec, conversion)
     # literal_text can be zero length
@@ -611,6 +633,7 @@ class Formatter(object):
     #  with format_spec and conversion and then used
     def parse(self, format_string):
         return format_string._formatter_parser()
+
 
     # given a field_name, find the object it references.
     #  field_name:   the field being looked up, e.g. "0.name"

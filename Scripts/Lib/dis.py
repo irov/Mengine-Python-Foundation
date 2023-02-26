@@ -1,15 +1,17 @@
 """Disassembler of Python byte code into mnemonics."""
 
 import sys
+import types
+
 from opcode import *
 from opcode import __all__ as _opcodes_all
 
-import types
-
-__all__ = ["dis", "disassemble", "distb", "disco", "findlinestarts", "findlabels"] + _opcodes_all
+__all__ = ["dis", "disassemble", "distb", "disco",
+           "findlinestarts", "findlabels"] + _opcodes_all
 del _opcodes_all
 
-_have_code = (types.MethodType, types.FunctionType, types.CodeType, types.ClassType, type)
+_have_code = (types.MethodType, types.FunctionType, types.CodeType,
+              types.ClassType, type)
 
 def dis(x=None):
     """Disassemble classes, methods, functions, or code.
@@ -31,20 +33,20 @@ def dis(x=None):
         items.sort()
         for name, x1 in items:
             if isinstance(x1, _have_code):
-                print
-                "Disassembly of %s:" % name
+                print "Disassembly of %s:" % name
                 try:
                     dis(x1)
                 except TypeError, msg:
-                    print
-                    "Sorry:", msg
+                    print "Sorry:", msg
                 print
     elif hasattr(x, 'co_code'):
         disassemble(x)
     elif isinstance(x, str):
         disassemble_string(x)
     else:
-        raise TypeError, "don't know how to disassemble %s objects" % type(x).__name__
+        raise TypeError, \
+              "don't know how to disassemble %s objects" % \
+              type(x).__name__
 
 def distb(tb=None):
     """Disassemble a traceback (default: last traceback)."""
@@ -53,8 +55,7 @@ def distb(tb=None):
             tb = sys.last_traceback
         except AttributeError:
             raise RuntimeError, "no last traceback to disassemble"
-        while tb.tb_next:
-            tb = tb.tb_next
+        while tb.tb_next: tb = tb.tb_next
     disassemble(tb.tb_frame.f_code, tb.tb_lasti)
 
 def disassemble(co, lasti=-1):
@@ -72,110 +73,81 @@ def disassemble(co, lasti=-1):
         if i in linestarts:
             if i > 0:
                 print
-            print
-            "%3d" % linestarts[i],
+            print "%3d" % linestarts[i],
         else:
-            print
-            '   ',
+            print '   ',
 
-        if i == lasti:
-            print
-        '-->', else: print
-        '   ',
-        if i in labels:
-            print
-        '>>', else: print
-        '  ',
-        print
-        repr(i).rjust(4),
-        print
-        opname[op].ljust(20),
-        i = i + 1
+        if i == lasti: print '-->',
+        else: print '   ',
+        if i in labels: print '>>',
+        else: print '  ',
+        print repr(i).rjust(4),
+        print opname[op].ljust(20),
+        i = i+1
         if op >= HAVE_ARGUMENT:
-            oparg = ord(code[i]) + ord(code[i + 1]) * 256 + extended_arg
+            oparg = ord(code[i]) + ord(code[i+1])*256 + extended_arg
             extended_arg = 0
-            i = i + 2
+            i = i+2
             if op == EXTENDED_ARG:
-                extended_arg = oparg * 65536L
-            print
-            repr(oparg).rjust(5),
+                extended_arg = oparg*65536L
+            print repr(oparg).rjust(5),
             if op in hasconst:
-                print
-                '(' + repr(co.co_consts[oparg]) + ')',
+                print '(' + repr(co.co_consts[oparg]) + ')',
             elif op in hasname:
-                print
-                '(' + co.co_names[oparg] + ')',
+                print '(' + co.co_names[oparg] + ')',
             elif op in hasjrel:
-                print
-                '(to ' + repr(i + oparg) + ')',
+                print '(to ' + repr(i + oparg) + ')',
             elif op in haslocal:
-                print
-                '(' + co.co_varnames[oparg] + ')',
+                print '(' + co.co_varnames[oparg] + ')',
             elif op in hascompare:
-                print
-                '(' + cmp_op[oparg] + ')',
+                print '(' + cmp_op[oparg] + ')',
             elif op in hasfree:
                 if free is None:
                     free = co.co_cellvars + co.co_freevars
-                print
-                '(' + free[oparg] + ')',
+                print '(' + free[oparg] + ')',
         print
 
-def disassemble_string(code, lasti=-1, varnames=None, names=None, constants=None):
+def disassemble_string(code, lasti=-1, varnames=None, names=None,
+                       constants=None):
     labels = findlabels(code)
     n = len(code)
     i = 0
     while i < n:
         c = code[i]
         op = ord(c)
-        if i == lasti:
-            print
-        '-->', else: print
-        '   ',
-        if i in labels:
-            print
-        '>>', else: print
-        '  ',
-        print
-        repr(i).rjust(4),
-        print
-        opname[op].ljust(15),
-        i = i + 1
+        if i == lasti: print '-->',
+        else: print '   ',
+        if i in labels: print '>>',
+        else: print '  ',
+        print repr(i).rjust(4),
+        print opname[op].ljust(15),
+        i = i+1
         if op >= HAVE_ARGUMENT:
-            oparg = ord(code[i]) + ord(code[i + 1]) * 256
-            i = i + 2
-            print
-            repr(oparg).rjust(5),
+            oparg = ord(code[i]) + ord(code[i+1])*256
+            i = i+2
+            print repr(oparg).rjust(5),
             if op in hasconst:
                 if constants:
-                    print
-                    '(' + repr(constants[oparg]) + ')',
+                    print '(' + repr(constants[oparg]) + ')',
                 else:
-                    print
-                    '(%d)' % oparg,
+                    print '(%d)'%oparg,
             elif op in hasname:
                 if names is not None:
-                    print
-                    '(' + names[oparg] + ')',
+                    print '(' + names[oparg] + ')',
                 else:
-                    print
-                    '(%d)' % oparg,
+                    print '(%d)'%oparg,
             elif op in hasjrel:
-                print
-                '(to ' + repr(i + oparg) + ')',
+                print '(to ' + repr(i + oparg) + ')',
             elif op in haslocal:
                 if varnames:
-                    print
-                    '(' + varnames[oparg] + ')',
+                    print '(' + varnames[oparg] + ')',
                 else:
-                    print
-                    '(%d)' % oparg,
+                    print '(%d)' % oparg,
             elif op in hascompare:
-                print
-                '(' + cmp_op[oparg] + ')',
+                print '(' + cmp_op[oparg] + ')',
         print
 
-disco = disassemble  # XXX For backwards compatibility
+disco = disassemble                     # XXX For backwards compatibility
 
 def findlabels(code):
     """Detect all offsets in a byte code which are jump targets.
@@ -189,13 +161,13 @@ def findlabels(code):
     while i < n:
         c = code[i]
         op = ord(c)
-        i = i + 1
+        i = i+1
         if op >= HAVE_ARGUMENT:
-            oparg = ord(code[i]) + ord(code[i + 1]) * 256
-            i = i + 2
+            oparg = ord(code[i]) + ord(code[i+1])*256
+            i = i+2
             label = -1
             if op in hasjrel:
-                label = i + oparg
+                label = i+oparg
             elif op in hasjabs:
                 label = oparg
             if label >= 0:

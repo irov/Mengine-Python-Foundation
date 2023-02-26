@@ -31,4 +31,12 @@ class StreamReader(codecs.StreamReader):
 ### encodings module API
 
 def getregentry():
-    return codecs.CodecInfo(name='utf-8', encode=encode, decode=decode, incrementalencoder=IncrementalEncoder, incrementaldecoder=IncrementalDecoder, streamreader=StreamReader, streamwriter=StreamWriter, )
+    return codecs.CodecInfo(
+        name='utf-8',
+        encode=encode,
+        decode=decode,
+        incrementalencoder=IncrementalEncoder,
+        incrementaldecoder=IncrementalDecoder,
+        streamreader=StreamReader,
+        streamwriter=StreamWriter,
+    )

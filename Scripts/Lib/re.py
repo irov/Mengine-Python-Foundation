@@ -102,31 +102,32 @@ This module also defines an exception 'error'.
 """
 
 import sys
-
 import sre_compile
 import sre_parse
-
 try:
     import _locale
 except ImportError:
     _locale = None
 
 # public symbols
-__all__ = ["match", "search", "sub", "subn", "split", "findall", "compile", "purge", "template", "escape", "I", "L", "M", "S", "X", "U", "IGNORECASE", "LOCALE", "MULTILINE", "DOTALL", "VERBOSE", "UNICODE", "error"]
+__all__ = [ "match", "search", "sub", "subn", "split", "findall",
+    "compile", "purge", "template", "escape", "I", "L", "M", "S", "X",
+    "U", "IGNORECASE", "LOCALE", "MULTILINE", "DOTALL", "VERBOSE",
+    "UNICODE", "error" ]
 
 __version__ = "2.2.1"
 
 # flags
-I = IGNORECASE = sre_compile.SRE_FLAG_IGNORECASE  # ignore case
-L = LOCALE = sre_compile.SRE_FLAG_LOCALE  # assume current 8-bit locale
-U = UNICODE = sre_compile.SRE_FLAG_UNICODE  # assume unicode locale
-M = MULTILINE = sre_compile.SRE_FLAG_MULTILINE  # make anchors look for newline
-S = DOTALL = sre_compile.SRE_FLAG_DOTALL  # make dot match newline
-X = VERBOSE = sre_compile.SRE_FLAG_VERBOSE  # ignore whitespace and comments
+I = IGNORECASE = sre_compile.SRE_FLAG_IGNORECASE # ignore case
+L = LOCALE = sre_compile.SRE_FLAG_LOCALE # assume current 8-bit locale
+U = UNICODE = sre_compile.SRE_FLAG_UNICODE # assume unicode locale
+M = MULTILINE = sre_compile.SRE_FLAG_MULTILINE # make anchors look for newline
+S = DOTALL = sre_compile.SRE_FLAG_DOTALL # make dot match newline
+X = VERBOSE = sre_compile.SRE_FLAG_VERBOSE # ignore whitespace and comments
 
 # sre extensions (experimental, don't rely on these)
-T = TEMPLATE = sre_compile.SRE_FLAG_TEMPLATE  # disable backtracking
-DEBUG = sre_compile.SRE_FLAG_DEBUG  # dump pattern after compilation
+T = TEMPLATE = sre_compile.SRE_FLAG_TEMPLATE # disable backtracking
+DEBUG = sre_compile.SRE_FLAG_DEBUG # dump pattern after compilation
 
 # sre exception
 error = sre_compile.error
@@ -181,7 +182,6 @@ def findall(pattern, string, flags=0):
 
 if sys.hexversion >= 0x02020000:
     __all__.append("finditer")
-
     def finditer(pattern, string, flags=0):
         """Return an iterator over all non-overlapping matches in the
         string.  For each match, the iterator returns a match object.
@@ -200,9 +200,10 @@ def purge():
 
 def template(pattern, flags=0):
     "Compile a template pattern, returning a pattern object"
-    return _compile(pattern, flags | T)
+    return _compile(pattern, flags|T)
 
-_alphanum = frozenset("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+_alphanum = frozenset(
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 def escape(pattern):
     "Escape all non-alphanumeric characters in pattern."
@@ -247,7 +248,7 @@ def _compile(*key):
     try:
         p = sre_compile.compile(pattern, flags)
     except error, v:
-        raise error, v  # invalid expression
+        raise error, v # invalid expression
     if not bypass_cache:
         if len(_cache) >= _MAXCACHE:
             _cache.clear()
@@ -269,7 +270,7 @@ def _compile_repl(*key):
     try:
         p = sre_parse.parse_template(repl, pattern)
     except error, v:
-        raise error, v  # invalid expression
+        raise error, v # invalid expression
     if len(_cache_repl) >= _MAXCACHE:
         _cache_repl.clear()
     _cache_repl[key] = p
@@ -311,8 +312,10 @@ class Scanner:
         s = sre_parse.Pattern()
         s.flags = flags
         for phrase, action in lexicon:
-            p.append(sre_parse.SubPattern(s, [(SUBPATTERN, (len(p) + 1, sre_parse.parse(phrase, flags))), ]))
-        s.groups = len(p) + 1
+            p.append(sre_parse.SubPattern(s, [
+                (SUBPATTERN, (len(p)+1, sre_parse.parse(phrase, flags))),
+                ]))
+        s.groups = len(p)+1
         p = sre_parse.SubPattern(s, [(BRANCH, (None, p))])
         self.scanner = sre_compile.compile(p)
     def scan(self, string):
@@ -327,7 +330,7 @@ class Scanner:
             j = m.end()
             if i == j:
                 break
-            action = self.lexicon[m.lastindex - 1][1]
+            action = self.lexicon[m.lastindex-1][1]
             if hasattr(action, '__call__'):
                 self.match = m
                 action = action(self, m.group())

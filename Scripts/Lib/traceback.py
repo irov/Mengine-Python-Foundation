@@ -1,13 +1,16 @@
 """Extract, format and print information about Python stack traces."""
 
 import sys
-
 import types
 
-__all__ = ['extract_stack', 'extract_tb', 'format_exception', 'format_exception_only', 'format_list', 'format_stack', 'format_tb', 'print_exc', 'format_exc', 'print_exception', 'print_last', 'print_stack', 'print_tb', 'tb_lineno']
+__all__ = ['extract_stack', 'extract_tb', 'format_exception',
+           'format_exception_only', 'format_list', 'format_stack',
+           'format_tb', 'print_exc', 'format_exc', 'print_exception',
+           'print_last', 'print_stack', 'print_tb', 'tb_lineno']
 
 def _print(file, str='', terminator='\n'):
-    file.write(str + terminator)
+    file.write(str+terminator)
+
 
 def print_list(extracted_list, file=None):
     """Print the list of tuples as returned by extract_tb() or
@@ -15,7 +18,8 @@ def print_list(extracted_list, file=None):
     if file is None:
         file = sys.stderr
     for filename, lineno, name, line in extracted_list:
-        _print(file, '  File "%s", line %d, in %s' % (filename, lineno, name))
+        _print(file,
+               '  File "%s", line %d, in %s' % (filename,lineno,name))
         if line:
             _print(file, '    %s' % line.strip())
 
@@ -31,11 +35,12 @@ def format_list(extracted_list):
     """
     list = []
     for filename, lineno, name, line in extracted_list:
-        item = '  File "%s", line %d, in %s\n' % (filename, lineno, name)
+        item = '  File "%s", line %d, in %s\n' % (filename,lineno,name)
         if line:
             item = item + '    %s\n' % line.strip()
         list.append(item)
     return list
+
 
 def print_tb(tb, limit=None, file=None):
     """Print up to 'limit' stack trace entries from the traceback 'tb'.
@@ -57,15 +62,16 @@ def print_tb(tb, limit=None, file=None):
         co = f.f_code
         filename = co.co_filename
         name = co.co_name
-        _print(file, '  File "%s", line %d, in %s' % (filename, lineno, name))
+        _print(file,
+               '  File "%s", line %d, in %s' % (filename,lineno,name))
         tb = tb.tb_next
-        n = n + 1
+        n = n+1
 
-def format_tb(tb, limit=None):
+def format_tb(tb, limit = None):
     """A shorthand for 'format_list(extract_tb(tb, limit))'."""
     return format_list(extract_tb(tb, limit))
 
-def extract_tb(tb, limit=None):
+def extract_tb(tb, limit = None):
     """Return list of up to limit pre-processed entries from traceback.
 
     This is useful for alternate formatting of stack traces.  If
@@ -89,8 +95,9 @@ def extract_tb(tb, limit=None):
         name = co.co_name
         list.append((filename, lineno, name, None))
         tb = tb.tb_next
-        n = n + 1
+        n = n+1
     return list
+
 
 def print_exception(etype, value, tb, limit=None, file=None):
     """Print exception up to 'limit' stack trace entries from 'tb' to 'file'.
@@ -112,7 +119,7 @@ def print_exception(etype, value, tb, limit=None, file=None):
     for line in lines:
         _print(file, line, '')
 
-def format_exception(etype, value, tb, limit=None):
+def format_exception(etype, value, tb, limit = None):
     """Format a stack trace and the exception information.
 
     The arguments have the same meaning as the corresponding arguments
@@ -152,7 +159,9 @@ def format_exception_only(etype, value):
     #
     # Clear these out first because issubtype(string1, SyntaxError)
     # would raise another exception and mask the original problem.
-    if (isinstance(etype, BaseException) or isinstance(etype, types.InstanceType) or etype is None or type(etype) is str):
+    if (isinstance(etype, BaseException) or
+        isinstance(etype, types.InstanceType) or
+        etype is None or type(etype) is str):
         return [_format_final_exc_line(etype, value)]
 
     stype = etype.__name__
@@ -204,6 +213,7 @@ def _some_str(value):
         pass
     return '<unprintable %s object>' % type(value).__name__
 
+
 def print_exc(limit=None, file=None):
     """Shorthand for 'print_exception(sys.exc_type, sys.exc_value, sys.exc_traceback, limit, file)'.
     (In fact, it uses sys.exc_info() to retrieve the same information
@@ -216,6 +226,7 @@ def print_exc(limit=None, file=None):
     finally:
         etype = value = tb = None
 
+
 def format_exc(limit=None):
     """Like print_exc() but return a string."""
     try:
@@ -224,6 +235,7 @@ def format_exc(limit=None):
     finally:
         etype = value = tb = None
 
+
 def print_last(limit=None, file=None):
     """This is a shorthand for 'print_exception(sys.last_type,
     sys.last_value, sys.last_traceback, limit, file)'."""
@@ -231,7 +243,9 @@ def print_last(limit=None, file=None):
         raise ValueError("no last exception")
     if file is None:
         file = sys.stderr
-    print_exception(sys.last_type, sys.last_value, sys.last_traceback, limit, file)
+    print_exception(sys.last_type, sys.last_value, sys.last_traceback,
+                    limit, file)
+
 
 def print_stack(f=None, limit=None, file=None):
     """Print a stack trace from its invocation point.
@@ -265,14 +279,16 @@ def string_stack(f=None, limit=None):
         str += repr(s)
         pass
     return str
-
+    
 def top_stack_function(f=None):
     f_back = None
     try:
         raise ZeroDivisionError
     except ZeroDivisionError:
-        f = sys.exc_info()[2].tb_frame.f_back  # while f is not None and f.f_back is not None:  #    f = f.f_back
-
+        f = sys.exc_info()[2].tb_frame.f_back
+        #while f is not None and f.f_back is not None:
+        #    f = f.f_back
+        
     if f is None:
         return ("None", 0)
 
@@ -280,7 +296,7 @@ def top_stack_function(f=None):
     return (co.co_filename, f.f_lineno)
     pass
 
-def extract_stack(f=None, limit=None):
+def extract_stack(f=None, limit = None):
     """Extract the raw traceback from the current stack frame.
 
     The return value has the same format as for extract_tb().  The
@@ -306,7 +322,7 @@ def extract_stack(f=None, limit=None):
         name = co.co_name
         list.append((filename, lineno, name, None))
         f = f.f_back
-        n = n + 1
+        n = n+1
     list.reverse()
     return list
 

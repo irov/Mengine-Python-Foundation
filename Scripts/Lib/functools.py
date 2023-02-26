@@ -7,15 +7,17 @@
 #   Copyright (C) 2006 Python Software Foundation.
 # See C source code for _functools credits/copyright
 
-from _functools import partial
+from _functools import partial, reduce
 
 # update_wrapper() and wraps() are tools to help write
 # wrapper functions that can handle naive introspection
 
 WRAPPER_ASSIGNMENTS = ('__module__', '__name__', '__doc__')
 WRAPPER_UPDATES = ('__dict__',)
-
-def update_wrapper(wrapper, wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
+def update_wrapper(wrapper,
+                   wrapped,
+                   assigned = WRAPPER_ASSIGNMENTS,
+                   updated = WRAPPER_UPDATES):
     """Update a wrapper function to look like the wrapped function
 
        wrapper is the function to be updated
@@ -34,7 +36,9 @@ def update_wrapper(wrapper, wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPP
     # Return the wrapper so this can be used as a decorator via partial()
     return wrapper
 
-def wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
+def wraps(wrapped,
+          assigned = WRAPPER_ASSIGNMENTS,
+          updated = WRAPPER_UPDATES):
     """Decorator factory to apply update_wrapper() to a wrapper function
 
        Returns a decorator that invokes update_wrapper() with the decorated
@@ -43,17 +47,34 @@ def wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
        This is a convenience function to simplify applying partial() to
        update_wrapper().
     """
-    return partial(update_wrapper, wrapped=wrapped, assigned=assigned, updated=updated)
+    return partial(update_wrapper, wrapped=wrapped,
+                   assigned=assigned, updated=updated)
 
 def total_ordering(cls):
     """Class decorator that fills in missing ordering methods"""
-    convert = {'__lt__': [('__gt__', lambda self, other: not (self < other or self == other)), ('__le__', lambda self, other: self < other or self == other), ('__ne__', lambda self, other: not self == other), ('__ge__', lambda self, other: not self < other)], '__le__': [('__ge__', lambda self, other: not self <= other or self == other), ('__lt__', lambda self, other: self <= other and not self == other), ('__ne__', lambda self, other: not self == other), ('__gt__', lambda self, other: not self <= other)],
-        '__gt__': [('__lt__', lambda self, other: not (self > other or self == other)), ('__ge__', lambda self, other: self > other or self == other), ('__ne__', lambda self, other: not self == other), ('__le__', lambda self, other: not self > other)], '__ge__': [('__le__', lambda self, other: (not self >= other) or self == other), ('__gt__', lambda self, other: self >= other and not self == other), ('__ne__', lambda self, other: not self == other), ('__lt__', lambda self, other: not self >= other)]}
+    convert = {
+        '__lt__': [('__gt__', lambda self, other: not (self < other or self == other)),
+                   ('__le__', lambda self, other: self < other or self == other),
+                   ('__ne__', lambda self, other: not self == other),
+                   ('__ge__', lambda self, other: not self < other)],
+        '__le__': [('__ge__', lambda self, other: not self <= other or self == other),
+                   ('__lt__', lambda self, other: self <= other and not self == other),
+                   ('__ne__', lambda self, other: not self == other),
+                   ('__gt__', lambda self, other: not self <= other)],
+        '__gt__': [('__lt__', lambda self, other: not (self > other or self == other)),
+                   ('__ge__', lambda self, other: self > other or self == other),
+                   ('__ne__', lambda self, other: not self == other),
+                   ('__le__', lambda self, other: not self > other)],
+        '__ge__': [('__le__', lambda self, other: (not self >= other) or self == other),
+                   ('__gt__', lambda self, other: self >= other and not self == other),
+                   ('__ne__', lambda self, other: not self == other),
+                   ('__lt__', lambda self, other: not self >= other)]
+    }
     defined_methods = set(dir(cls))
     roots = defined_methods & set(convert)
     if not roots:
         raise ValueError('must define at least one ordering operation: < > <= >=')
-    root = max(roots)  # prefer __lt__ to __le__ to __gt__ to __ge__
+    root = max(roots)       # prefer __lt__ to __le__ to __gt__ to __ge__
     for opname, opfunc in convert[root]:
         if opname not in defined_methods:
             opfunc.__name__ = opname
@@ -63,7 +84,6 @@ def total_ordering(cls):
 
 def cmp_to_key(mycmp):
     """Convert a cmp= function into a key= function"""
-
     class K(object):
         __slots__ = ['obj']
         def __init__(self, obj, *args):
@@ -82,5 +102,4 @@ def cmp_to_key(mycmp):
             return mycmp(self.obj, other.obj) != 0
         def __hash__(self):
             raise TypeError('hash not implemented')
-
     return K
