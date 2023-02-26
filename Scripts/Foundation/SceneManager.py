@@ -165,8 +165,6 @@ class SceneManager(object):
         prevSceneName = params["SceneManager"].get("PreviousSceneName", None)
         currentSceneName = params["SceneManager"]["CurrentSceneName"]
 
-        # with TaskManager.createTaskChain() as tc:
-        #     tc.addTask("TaskTransition", SceneName=gameSceneName)
         SceneManager.setCurrentGameSceneName(gameSceneName)
         SceneManager.s_prevSceneName = prevSceneName
 
@@ -1169,7 +1167,6 @@ class SceneManager(object):
             if sceneZooms and zoomGroupName in sceneZooms:
                 return sceneName
 
-    # ====================================for special scenes=================================
     @staticmethod
     def loadSpecialScenes(module, name):
         records = DatabaseManager.getDatabaseRecords(module, name)

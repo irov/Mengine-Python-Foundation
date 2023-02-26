@@ -226,34 +226,3 @@ class DefaultManager(object):
     def removeDefault(name):
         del DefaultManager.s_defaults[name]
         pass
-
-    '''---- test methods -----------------------------------------------------------------------------------------------
-
-    @staticmethod
-    def test_getDefaultKeyTuple():
-        def __test(name, test_values):
-            print "-----------------------------------"
-            results = []
-            for i, values in enumerate(test_values):
-                xlsx, default, expected_result = values
-                DefaultManager.addDefault(name, xlsx)
-                output = DefaultManager.getDefaultKeyTuple(name, default=default, divider=", ")
-                test_result = (output != []) == expected_result
-                results.append(test_result)
-                print "  [{}/{}] - {} | {!r}".format(i + 1, len(test_values), test_result, values)
-            print "  test passed: {}/{}".format(len([x for x in results if x is True]), len(results))
-            DefaultManager.removeDefault(name)
-            print "-----------------------------------"
-
-        test_name = "getDefaultKeyTupleTest"
-        # test_values = [(user_input, default_value, output is not []), ...]
-        test_values = [("VK_Q, VK_E", "VK_1, VK_2", True),  # correct with default
-                       ("VK_Q, VK_E", None, True),  # correct without default
-                       ("VK_Q, E", "VK_1, VK_2", True),  # invalid user input and valid default
-                       ("VK_Q, E", "1, 2", False),  # invalid user input and invalid default
-                       (None, "VK_1, VK_2", True),  # use default
-                       (None, None, False),  # no values
-                       (None, "1, 2", False)  # no user input and default wrong
-                       ]
-        __test(test_name, test_values)
-    '''

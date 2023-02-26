@@ -222,15 +222,9 @@ class Main(object):
         pass
 
     def onActivate(self):
-        # onPreparation
         self.onPreparationGroups()
-
-        # onActivate
         self.onActivateGroups()
-
-        # onEnable
         self.onEnableGroups()
-
         self.onRunGroups()
 
         Notification.notify(Notificator.onSceneActivate, self.sceneName)

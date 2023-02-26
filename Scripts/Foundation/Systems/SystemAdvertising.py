@@ -53,8 +53,6 @@ class SystemAdvertising(System):
     def _onFinalize(self):
         SystemAdvertising.is_enable = False
 
-    # ==================================================================================================================
-
     @classmethod
     def isInterstitialParamEnable(cls, key):
         if cls.is_enable is False:
@@ -71,8 +69,6 @@ class SystemAdvertising(System):
             self.updateViewedTime(Mengine.getTime())
 
         TaskManager.runAlias("AliasShowAdvert", _cb, AdType="Interstitial")
-
-    # --- delay methods ---
 
     def hasPermissionToViewAd(self, timestamp):
         if self._start_delay_done is False:
@@ -98,8 +94,6 @@ class SystemAdvertising(System):
             _Log("updateViewedTime to {} ({} seconds from last view)".format(timestamp, _seconds_passed))
         self._last_view_timestamp = timestamp
 
-    # --- disable methods ---
-
     def __initDisableAccountParam(self):
         def __addExtraAccountSettings(accountID, isGlobal):
             if isGlobal is True:
@@ -120,8 +114,6 @@ class SystemAdvertising(System):
 
     def isDisabledForever(self):
         return Mengine.getCurrentAccountSetting(self.account_disable_setting_key) == self.disable_key
-
-    # --- observers ---
 
     def __addObservers(self):
         def _setObserver(action, notificator):

@@ -101,14 +101,6 @@ class PrefetchGroupManager(object):
         UnfetchGroups.difference(UnionGroups)
         PrefetchGroups.difference(UnionGroups)
 
-        # for GroupName in UnfetchGroups:
-        #     PrefetchGroupManager.unfetchGroup(GroupName)
-        #     pass
-        #
-        # for GroupName in PrefetchGroups:
-        #     PrefetchGroupManager.prefetchGroup(GroupName)
-        #     pass
-
         return UnfetchGroups, PrefetchGroups
         pass
 

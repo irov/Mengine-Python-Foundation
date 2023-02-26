@@ -24,8 +24,6 @@ class SystemDebugNotifications(System):
     def isEnable():
         return Mengine.hasOption("notifications")
 
-    # Preparation ======================================================================================================
-
     def __addObservers(self):
         """ add observers from DebugNotifications.xlsx """
         records = DebugNotificationsManager.getAllData()
@@ -76,8 +74,6 @@ class SystemDebugNotifications(System):
         notificator = Notificator.getIdentity(identity)
         if notificator is not None:
             self.addObserver(notificator, fn)
-
-    # --- DevToDebug ---------------------------------------------------------------------------------------------------
 
     @staticmethod
     def __sendNotify(text):

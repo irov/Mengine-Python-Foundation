@@ -26,8 +26,7 @@ class TraceManager(object):
     @staticmethod
     def addTrace(name):
         if name in TraceManager.s_traceConfig:
-            print
-            "TraceManager.addType-> TypeName - '%s' already exist in TraceManager.s_traceConfig" % (name)
+            print "TraceManager.addType-> TypeName - '%s' already exist in TraceManager.s_traceConfig" % (name)
             return
             pass
 

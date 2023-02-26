@@ -113,8 +113,6 @@ class SystemAnalytics(System):
         SystemAnalytics.__static_extra_params_methods = []
         SystemAnalytics.__ignore_log_events = []
 
-    # //////
-
     @staticmethod
     def addExtraAnalyticParams(static_method):
         test_params = static_method()

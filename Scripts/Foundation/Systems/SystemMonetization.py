@@ -69,8 +69,6 @@ class SystemMonetization(System):
 
         return True
 
-    # --- Policy -------------------------------------------------------------------------------------------------------
-
     @staticmethod
     def _setupPolicies():
         """ Setups policies for other modules """

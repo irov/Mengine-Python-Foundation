@@ -1,8 +1,3 @@
-# coding=utf-8
-
-# ----------------------------------------------------------------------------
-# CONSTANTS
-# ----------------------------------------------------------------------------
 M_PI = 3.1415926535897932384626433832795
 M_PI2 = 1.5707963267948966192313216916398
 M_PI4 = 0.78539816339744830961566084581988
@@ -14,7 +9,6 @@ M_PI8 = 0.39269908169872415480783042290994
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
 
-# ----------------------------------------------------------------------------
 def setCenterAlign(node, set, nodeType="Sprite"):
     centerAlign = node.getCenterAlign()
     if centerAlign == set: return
@@ -34,11 +28,6 @@ def setCenterAlign(node, set, nodeType="Sprite"):
     node.setCenterAlign(set)
     pass
 
-# ----------------------------------------------------------------------------
-# Metod: setupHotspot
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def setupHotspot(hotspot, points):
     hotspot.clearPoints()
     for point in points:
@@ -46,35 +35,19 @@ def setupHotspot(hotspot, points):
         pass
     pass
 
-# ----------------------------------------------------------------------------
-# Metod: tanf
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def tanf(value):
     return Mengine.sinf(value) / Mengine.cosf(value)
     pass
 
-# ----------------------------------------------------------------------------
 def sign(value):
     if value >= 0:
         return 1
     return -1
 
-# ----------------------------------------------------------------------------
-# Metod: calculateDistance
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def calculateDistance(x1, y1, x2, y2):
     return Mengine.sqrtf((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
     pass
 
-# ----------------------------------------------------------------------------
-# Metod: testHotSpot
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def testHotSpots(point, hotspots):
     for hotspot in hotspots:
         if point.testHotSpot(hotspot):
@@ -82,11 +55,6 @@ def testHotSpots(point, hotspots):
     return False
     pass
 
-# ----------------------------------------------------------------------------
-# Metod: setSoundResource
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def playSound(node, resource=None, rangeVal=None, stop=True):
     if stop == False and node.isPlaying() == True: return False
 
@@ -102,18 +70,12 @@ def playSound(node, resource=None, rangeVal=None, stop=True):
     node.play()
     return True
 
-# ----------------------------------------------------------------------------
 def playSoundPool(pool, resource=None, rangeVal=None, stop=True):
     for node in pool:
         if playSound(node, resource, rangeVal, stop) == True:
             break
     pass
 
-# ----------------------------------------------------------------------------
-# Metod: rotateVec2f
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def rotateVec2f(vec, angle):
     cosa = Mengine.cosf(angle)
     sina = Mengine.sinf(angle)
@@ -123,11 +85,6 @@ def rotateVec2f(vec, angle):
     return Mengine.vec2f(dx, dy)
     pass
 
-# ----------------------------------------------------------------------------
-# Method: getVectorsAngle
-# Description:
-# - param: 0 - вернуть угол, 1 - вернуть косинус, 2 - вурнуть синус, 3 - модуль угла
-# ----------------------------------------------------------------------------
 def getVectorsAngle(vec1, vec2, param=0):
     x1, y1 = getVec2f(vec1)
     x2, y2 = getVec2f(vec2)
@@ -136,8 +93,6 @@ def getVectorsAngle(vec1, vec2, param=0):
     length2 = Mengine.sqrtf(x2 * x2 + y2 * y2)
     dotProduct = x1 * x2 + y1 * y2
     vecProduct = x1 * y2 - y1 * x2
-
-    # print x1, y1, x2, y2
 
     cos = float(dotProduct) / (length1 * length2)
     sin = float(vecProduct) / (length1 * length2)
@@ -159,11 +114,6 @@ def getVectorsAngle(vec1, vec2, param=0):
     return None
     pass
 
-# ----------------------------------------------------------------------------
-# Method: normVector
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def normVector(*vector):
     if len(vector) == 1:
         x, y = getVec2f(vector[0])
@@ -186,11 +136,6 @@ def normVector(*vector):
 
     pass
 
-# ----------------------------------------------------------------------------
-# Method: convertTime
-# Description:
-# - flag: 0 - дописывать ноль перед одним порядком
-# ----------------------------------------------------------------------------
 def convertTime(time, flag=0):
     parsTime = ""
     minutes = int(time / 60)
@@ -205,45 +150,24 @@ def convertTime(time, flag=0):
     return parsTime
     pass
 
-# ----------------------------------------------------------------------------
 def getTimeInMinutes():
     return Mengine.getTimeInSeconds() / 60.0
 
-# ----------------------------------------------------------------------------
-# Method: setRightAlign
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def setRightAlign(text):
     length = Mengine.getVec2fX(text.getLength())
     posX, posY = getVec2f(text.getLocalPosition())
     text.setLocalPosition(Mengine.vec2f(posX - length, posY))
     pass
 
-# ----------------------------------------------------------------------------
-# Method: getType
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def getType(object):
     return type(object).__name__
 
     pass
 
-# ----------------------------------------------------------------------------
-# Method: getClassName
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def getClassName(object):
     return object.__class__.__name__
     pass
 
-# ----------------------------------------------------------------------------
-# Method: include
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def include(list1, list2):
     tempList1 = list1[:]
     for item in list2:
@@ -254,11 +178,6 @@ def include(list1, list2):
     return True
     pass
 
-# ----------------------------------------------------------------------------
-# Method: getSizeHotSpot
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def getSizeHotSpot(size, center=False, left=0, top=0, right=0, bottom=0):
     if center == True:
         center = 1
@@ -276,21 +195,11 @@ def getSizeHotSpot(size, center=False, left=0, top=0, right=0, bottom=0):
     return points
     pass
 
-# ----------------------------------------------------------------------------
-# Method: clearActiveTasksArray
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def clearActiveTasksArray():
     global activatedTasks
     activatedTasks = []
     pass
 
-# ----------------------------------------------------------------------------
-# Method:
-# Description:
-# -
-# ----------------------------------------------------------------------------
 blocketScenes = {}
 
 def blockGame():
@@ -303,11 +212,6 @@ def blockGame():
         pass
     pass
 
-# ----------------------------------------------------------------------------
-# Method:
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def unblockGame():
     scene = Mengine.getCurrentScene()
     scene.blockInput(blocketScenes[scene])
@@ -316,11 +220,6 @@ def unblockGame():
         pass
     pass
 
-# ----------------------------------------------------------------------------
-# Method:
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def setWorldPosition(Node, *position):
     position = getLocalPosFromWorld(Node, *position)
 
@@ -331,7 +230,6 @@ def setWorldPosition(Node, *position):
     Node.setLocalPosition(position)
     pass
 
-# ----------------------------------------------------------------------------
 def getLocalPosFromWorld(Node, *position):
     if len(position) == 1:
         newWorldX, newWorldY = getVec2f(position)
@@ -351,11 +249,6 @@ def getLocalPosFromWorld(Node, *position):
         return newLocalX, newLocalY
     pass
 
-# ----------------------------------------------------------------------------
-# Method:
-# Description:
-# -
-# ----------------------------------------------------------------------------
 def adjustSize(currentSize, neededSize, onlyMinus=False):
     currentSizeX, currentSizeY = getVec2f(currentSize)
     neededSizeX, neededSizeY = getVec2f(neededSize)
@@ -368,23 +261,15 @@ def adjustSize(currentSize, neededSize, onlyMinus=False):
     return Mengine.vec2f(scale, scale)
     pass
 
-# ----------------------------------------------------------------------------
 def shuffle(x, acc=1000):
-    # спизжено с модуля random
-    # acc - точность
-
     for i in reversed(xrange(1, len(x))):
-        # pick an element in x[:i+1] with which to exchange x[i]
         j = int(float(Mengine.randint(0, acc)) / acc * (i + 1))
         x[i], x[j] = x[j], x[i]
     pass
 
-# ----------------------------------------------------------------------------
 def choice(seq, acc=1000):
-    """Choose a random element from a non-empty sequence."""
-    return seq[int(float(Mengine.randint(0, acc)) / acc * len(seq))]  # raises IndexError if seq is empty
+    return seq[int(float(Mengine.randint(0, acc)) / acc * len(seq))]
 
-# ----------------------------------------------------------------------------
 class Rectangle(object):
     def __init__(self, x1, y1, x2, y2):
         self._x1 = x1
@@ -432,22 +317,18 @@ class Rectangle(object):
 
     p_Y2 = property(getY2, setY2)
 
-# ----------------------------------------------------------------------------
 def subtractRectangle(inRectangles, rect):
     outRectangles = []
     for inRectangle in inRectangles:
-        # if substract rectangle out of inRectangle
         if rect.p_X2 < inRectangle.p_X1 or rect.p_X1 > inRectangle.p_X2 or rect.p_Y2 < inRectangle.p_Y1 or rect.p_Y1 > inRectangle.p_Y2:
             outRectangles.append(inRectangle)
             pass
-        # if substract rectangle fully in rectangle
         elif rect.p_X1 > inRectangle.p_X1 and rect.p_X2 < inRectangle.p_X2 and rect.p_Y1 > inRectangle.p_Y1 and rect.p_Y2 < inRectangle.p_Y2:
             outRectangles.append(Rectangle(inRectangle.p_X1, inRectangle.p_Y1, rect.p_X2, rect.p_Y1))
             outRectangles.append(Rectangle(rect.p_X2, inRectangle.p_Y1, inRectangle.p_X2, rect.p_Y2))
             outRectangles.append(Rectangle(rect.p_X1, rect.p_Y2, inRectangle.p_X2, inRectangle.p_Y2))
             outRectangles.append(Rectangle(inRectangle.p_X1, rect.p_Y1, rect.p_X1, inRectangle.p_Y2))
             pass
-        # if substract rectangle penetrates on one edge
         elif rect.p_Y1 > inRectangle.p_Y1 and rect.p_Y2 < inRectangle.p_Y2:
             if rect.p_X2 > inRectangle.p_X1 and rect.p_X2 < inRectangle.p_X2:
                 outRectangles.append(Rectangle(inRectangle.p_X1, inRectangle.p_Y1, inRectangle.p_X2, rect.p_Y1))
@@ -480,7 +361,6 @@ def subtractRectangle(inRectangles, rect):
                 outRectangles.append(Rectangle(rect.p_X2, inRectangle.p_Y1, inRectangle.p_X2, inRectangle.p_Y2))
                 pass
             pass
-        # if substract rectangle penetrates on two edges
         elif rect.p_X2 > inRectangle.p_X1 and rect.p_X2 < inRectangle.p_X2 and rect.p_Y2 > inRectangle.p_Y1 and rect.p_Y2 < inRectangle.p_Y2 and rect.p_X1 < inRectangle.p_X1 and rect.p_Y1 < inRectangle.p_Y1:
             outRectangles.append(Rectangle(rect.p_X2, inRectangle.p_Y1, inRectangle.p_X2, inRectangle.p_Y2))
             outRectangles.append(Rectangle(inRectangle.p_X1, rect.p_Y2, rect.p_X2, inRectangle.p_Y2))
@@ -497,7 +377,6 @@ def subtractRectangle(inRectangles, rect):
             outRectangles.append(Rectangle(inRectangle.p_X1, inRectangle.p_Y1, rect.p_X1, inRectangle.p_Y2))
             outRectangles.append(Rectangle(rect.p_X1, inRectangle.p_Y1, inRectangle.p_X2, rect.p_Y1))
             pass
-        # if substract rectangle penetrates on tree edges
         elif rect.p_Y1 < inRectangle.p_Y1 and rect.p_Y2 > inRectangle.p_Y2:
             if rect.p_X2 > inRectangle.p_X1 and rect.p_X2 < inRectangle.p_X2:
                 outRectangles.append(Rectangle(rect.p_X2, inRectangle.p_Y1, inRectangle.p_X2, inRectangle.p_Y2))

@@ -432,8 +432,6 @@ class MonetizationManager(Manager, CurrencyManager):
 
         return False
 
-    # -----------------
-
     @staticmethod
     def importComponents(module, names):
         from Foundation.Utils import importType
@@ -449,8 +447,6 @@ class MonetizationManager(Manager, CurrencyManager):
     @staticmethod
     def getComponentsType():
         return MonetizationManager.s_components
-
-    # -----------------
 
     @staticmethod
     def isMonetizationEnable():

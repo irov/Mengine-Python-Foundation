@@ -33,8 +33,6 @@ def print_response(response_handler):
         response_handler(self, id, status, error, response, code, successful)
     return wrapper
 
-# -------------------------------------------------------------------------
-
 Task
 
 class TaskDownloadAsset(Task):

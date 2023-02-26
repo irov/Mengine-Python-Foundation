@@ -1,14 +1,4 @@
-# ------------------------------------------------------------------------------
-# Class: Scene
-# Description:
-# - 
-# ------------------------------------------------------------------------------
 class CombinationCheck():
-    # ----------------------------------------------------------------------------
-    # Method: __init__
-    # Description:
-    # -
-    # ----------------------------------------------------------------------------
     def __init__(self, combination, callback, *cbparams):
         self.combination = combination
         self.callback = callback
@@ -19,11 +9,6 @@ class CombinationCheck():
         self.done = False
         pass
 
-    # ----------------------------------------------------------------------------
-    # Method: checkCombination
-    # Description:
-    # -
-    # ----------------------------------------------------------------------------
     def checkCombination(self, key):
         if self.done == True: return
 

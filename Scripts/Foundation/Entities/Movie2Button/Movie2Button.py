@@ -58,8 +58,6 @@ class Movie2Button(BaseEntity):
         self.EventSkipState = Event("SkipState")
         self.EventSetState = Event("SetState")
 
-    # --- slot handling ------------------------------------------------------------------------------------------------
-
     def hasSlot(self, slot_name):
         for movie in self.Movies.values():
             if movie is None:
@@ -131,8 +129,6 @@ class Movie2Button(BaseEntity):
             for node in node_list:
                 slot.addChild(node)
         return True
-
-    # ------------------------------------------------------------------------------------------------ slot handling ---
 
     def getCompositionBounds(self):
         current_movie = self.getCurrentMovie()

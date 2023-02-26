@@ -82,7 +82,6 @@ def HsvToRgb360(hsv):
         b = q
         pass
 
-    # 0 - 1
     return [r, g, b]
     pass
 
@@ -651,8 +650,6 @@ def makeMovie2Node(GroupName, MovieName, Position=None, Enable=True, AutoPlay=Tr
 
     Movie.setName(Name)
 
-    # Movie.setResourceMovie(ResourceMovie)
-
     Movie.setResourceMovie2(ResourceMovie)
     Movie.setCompositionName(MovieName)
 
@@ -1034,8 +1031,6 @@ def make_text_node(name, text_id, font=None, v_align=None, h_align=None, *args):
         text_field.setTextFormatArgs(*args)
     else:
         text_field.setTextFormatArgs(args)
-
-# GAME VERSION
 
 def getCurrentPlatformParams():
     """ :returns: dict where keys are 'Android', 'IOS', 'PC' and values is bool """

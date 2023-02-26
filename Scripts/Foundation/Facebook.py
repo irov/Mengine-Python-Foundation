@@ -14,8 +14,6 @@ class Facebook(Manager):
 
     @staticmethod
     def _onInitialize(*args):
-        # if _PLUGINS.get("Facebook", False) is True:
-        #     Mengine.androidMethod("Facebook", "initialize")
         Facebook.clientId = Mengine.getConfigString('Facebook', 'clientId', '1045626982203573')
         Facebook.redirectUri = Mengine.getConfigString('Facebook', 'redirectUri', 'http://localhost:8888/token')
         pass

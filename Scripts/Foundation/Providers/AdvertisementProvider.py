@@ -40,8 +40,6 @@ class AdvertisementProvider(object):
         AdvertisementProvider.s_name = None
         AdvertisementProvider.s_methods = {}
 
-    # -------- Interface ---------------------------------------------------------------------------------------------------
-
     @staticmethod
     def showAdvert(AdType, **params):
         """ type: Rewarded|Interstitial """

@@ -117,7 +117,7 @@ class Graph(object):
             currentNode = stepNode
             pass
 
-        return way[::-1]  # revert path
+        return way[::-1]
         pass
 
     def __nextStep(self, wayMap, nodeFrom):
@@ -177,38 +177,4 @@ class Graph(object):
 
         return wayMap
         pass
-    pass  #
-#
-# g = Graph()
-#
-# n1 = g.createNode(1)
-# n2 = g.createNode(2)
-# n3 = g.createNode(3)
-# n4 = g.createNode(4)
-# n5 = g.createNode(5)
-# n6 = g.createNode(6)
-# n7 = g.createNode(7)
-# n8 = g.createNode(8)
-#
-# g.linkNode(n1, n2)
-# g.linkNode(n2, n3)
-# g.linkNode(n3, n4)
-# g.linkNode(n3, n5)
-# g.linkNode(n5, n1)
-# g.linkNode(n5, n6)
-# g.linkNode(n6, n1)
-# g.linkNode(n4, n7)
-# g.linkNode(n7, n1)
-# g.linkNode(n3, n8)
-#
-# al = g.sortSpiral(n2)
-#
-# way = g.findWay(n6, n4)
-#
-# def print_nodes(message, nodes):
-#    node_values = [node.value for node in nodes]
-#    print("%s %s"%(message, node_values))
-#    pass
-#
-# print_nodes("spiral", al)
-# print_nodes("way", way)
+    pass

@@ -37,11 +37,6 @@ class Default(object):
         self.node.disable()
         pass
 
-    # ----------------------------------------------------------------------------
-    # Method: onLoader
-    # Description:
-    # -
-    # ----------------------------------------------------------------------------
     def onCreate(self, node):
         self.node = node
 

@@ -4,8 +4,6 @@ from Foundation.TaskManager import TaskManager
 from Notification import Notification
 
 class Movie2EditBox(BaseEntity):
-    # __metaclass__ = finalslots("tc", "state", "Movies", "SemaphoreBlock", "max")
-
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)

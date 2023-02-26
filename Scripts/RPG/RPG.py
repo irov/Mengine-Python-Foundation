@@ -313,12 +313,3 @@ a
 
 print
 "done"
-
-# r.addBuff("MaxHealth", BaseBuff(500.0))
-# r.addBuff("MaxHealth", BaseBuff(500.0))
-
-# RPG.addBuff("Strength", Buff)
-#
-# RPG.calcFormulaAttribute("Self.MaxHealth + Self.Strength * 0.1")
-#
-# MAX_HP =

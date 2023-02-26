@@ -372,36 +372,27 @@ class MovieButton(BaseEntity):
         self.tc = TaskManager.createTaskChain(Repeat=True, NoCheckAntiStackCycle=True)
 
         with self.tc as source_repeat:
-            Scopes = dict(Idle=Functor(self.__stateIdle, MovieIdle), Enter=Functor(self.__stateEnter, MovieEnter), Over=Functor(self.__stateOver, MovieOver), Leave=Functor(self.__stateLeave, MovieLeave), Click=Functor(self.__stateClick, MovieClick), Push=Functor(self.__statePush, MoviePush), Pressed=Functor(self.__statePressed, MoviePressed), Release=Functor(self.__stateRelease, MovieRelease), Release_Play=Functor(self.__stateReleasePlay, MovieRelease),
-
-                Block=Functor(self.__stateBlock, MovieBlock), )
+            Scopes = dict()
+            Scopes["Idle"]=Functor(self.__stateIdle, MovieIdle)
+            Scopes["Enter"]=Functor(self.__stateEnter, MovieEnter)
+            Scopes["Over"]=Functor(self.__stateOver, MovieOver)
+            Scopes["Leave"]=Functor(self.__stateLeave, MovieLeave)
+            Scopes["Click"]=Functor(self.__stateClick, MovieClick)
+            Scopes["Push"]=Functor(self.__statePush, MoviePush)
+            Scopes["Pressed"]=Functor(self.__statePressed, MoviePressed)
+            Scopes["Release"]=Functor(self.__stateRelease, MovieRelease)
+            Scopes["Release_Play"]=Functor(self.__stateReleasePlay, MovieRelease)
+            Scopes["Block="]Functor(self.__stateBlock, MovieBlock)
 
             def __states(isSkip, cb):
                 cb(isSkip, self.state)
                 pass
 
-            # - new ------------------------------------------------------------------
             with source_repeat.addRaceTask(2) as (source_switch, source_skip):
                 source_switch.addScopeSwitch(Scopes, __states)
 
                 source_skip.addEvent(self.EventSkipState)
                 source_skip.addScope(self.scopeDisableAllMovies)
-            # ------------------------------------------------------------------------
-
-            # source_repeat.addScopeSwitch(Scopes, __states)
-
-            # with tc_repeat.addSwitchTask(len(MovieButton.States), __states) as sources:
-            #     sources[MovieButton.States.index("Idle")].addScope(self.__stateIdle, MovieIdle)
-            #     sources[MovieButton.States.index("Enter")].addScope(self.__stateEnter, MovieEnter)
-            #     sources[MovieButton.States.index("Over")].addScope(self.__stateOver, MovieOver)
-            #     sources[MovieButton.States.index("Leave")].addScope(self.__stateLeave, MovieLeave)
-            #     sources[MovieButton.States.index("Click")].addScope(self.__stateClick, MovieClick)
-            #
-            #     sources[MovieButton.States.index("Push")].addScope(self.__statePush, MoviePush)
-            #     sources[MovieButton.States.index("Pressed")].addScope(self.__statePressed, MoviePressed)
-            #     sources[MovieButton.States.index("Release")].addScope(self.__stateRelease, MovieRelease)
-            #     sources[MovieButton.States.index("Release_Play")].addScope(self.__stateReleasePlay, MovieRelease)
-            #     pass
             pass
         pass
 

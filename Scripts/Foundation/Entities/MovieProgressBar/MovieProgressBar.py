@@ -8,7 +8,6 @@ class MovieProgressBar(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        # EditBox
         Type.addActionActivate(Type, "DoubleValue", Update=Type._updateDoubleValue)
         Type.addActionActivate(Type, "Text_ID")
         Type.addActionActivate(Type, "Full_Text_ID")

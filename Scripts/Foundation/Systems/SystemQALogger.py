@@ -21,8 +21,6 @@ class SystemQALogger(System):
         self.log("SystemQA stopped!")
         return True
 
-    # Preparation ======================================================================================================
-
     @classmethod
     def __createLogger(cls):
         if cls.__Logger is not None:
@@ -62,8 +60,6 @@ class SystemQALogger(System):
         self.addObserver(Notificator.onItemCollectComplete, self.__onItemCollectComplete)
         self.addObserver(Notificator.onInventoryCombineInventoryItem, self.__onInventoryCombineInventoryItem)
         self.addObserver(Notificator.onHintActionStart, self.__onHintActionStart)
-
-    # Observers ========================================================================================================
 
     def __createObserver(self, identity, message=None):
         if Notificator.hasIdentity(identity) is False:
@@ -133,8 +129,6 @@ class SystemQALogger(System):
         f_message = "<Hint> {} [{}]".format(HintAction.__class__.__name__, HintAction.Quest.questType)
         SystemQALogger.notify(f_message)
         return False
-
-    # ==================================================================================================================
 
     @classmethod
     def log(cls, msg, type_=None):
