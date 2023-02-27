@@ -54,19 +54,18 @@ class RPGManager(object):
     def __makeFormulaCode(self, name, code):
         c = compile(code, '<string>', 'exec')
 
-        Sandbox = dict(Rand=RPGManager.__Rand)
-        Sandbox.update(self.formules)
+        sandbox = dict(Rand=RPGManager.__Rand)
+        sandbox.update(self.formules)
 
         try:
-            exec
-            c in Sandbox
+            exec(c, sandbox)
         except Exception as ex:
             print("ex: function %s error: %s" % (name, ex))
 
             raise ex
             pass
 
-        f = Sandbox[name]
+        f = sandbox[name]
 
         return f
         pass

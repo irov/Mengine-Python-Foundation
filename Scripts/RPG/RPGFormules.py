@@ -42,8 +42,7 @@ class RPGFormules(object):
         sandbox.update(Other)
 
         try:
-            exec
-            f in sandbox
+            exec(f, sandbox)
         except Exception as ex:
             Trace.log("Utils", 0, "ex: function %s error: %s" % (name, ex))
 
