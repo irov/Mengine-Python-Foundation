@@ -12,7 +12,12 @@ class CurrencyManager(object):
     s_current_currency = None
 
     CURRENCY_TEXTS_IDS = {  # find them in Framework Texts.xml
-        "ID_CURRENCY_DOLLAR": ["USD"], "ID_CURRENCY_POUND": ["GBP"], "ID_CURRENCY_EURO": ["EUR"], "ID_CURRENCY_HRYVNIA": ["UAH"], "ID_CURRENCY_YEN": ["CNY", "JPY"], }
+        "ID_CURRENCY_DOLLAR": ["USD"],
+        "ID_CURRENCY_POUND": ["GBP"],
+        "ID_CURRENCY_EURO": ["EUR"],
+        "ID_CURRENCY_HRYVNIA": ["UAH"],
+        "ID_CURRENCY_YEN": ["CNY", "JPY"],
+    }
 
     @classmethod
     def addCurrencyCode(cls, currency_code, text_id):
