@@ -1,7 +1,6 @@
-# - debug decorators ------------------------------------------------------
 from Foundation.DefaultManager import DefaultManager
+from Foundation.Task.Task import Task
 
-from Task import Task
 
 def print_request(func):
     def wrapper(self):
@@ -13,9 +12,10 @@ def print_request(func):
                                "[url] = {}, " \
                                "[headers] = {}, " \
                                "[data] = {}".format(self.id, self.url, self.headers, self.data)
-            print(curl_request_msg)
+            Trace.msg(curl_request_msg)
         return result
     return wrapper
+
 
 def print_response(response_handler):
     def wrapper(self, id, status, error, response, code, successful):
@@ -28,9 +28,10 @@ def print_response(response_handler):
                                 "[code] = {}, " \
                                 "[successful] = {}, " \
                                 "[response] = {}".format(id, status, error, code, successful, response)
-            print(curl_response_msg)
+            Trace.msg(curl_response_msg)
         response_handler(self, id, status, error, response, code, successful)
     return wrapper
+
 
 class TaskHeaderData(Task):
 
@@ -93,11 +94,4 @@ class TaskHeaderData(Task):
         self.complete()
 
     def _onSkip(self):
-        # print "****************************************"
-        # print "****************************************"
-        # print "****************************************"
-        # print "****************************************"
-        # print "****************************************"
-        # print "****************************************"
-        # print " TASK HEADER DATA SKIP"
         pass

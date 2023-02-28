@@ -1,6 +1,6 @@
 import json
+from Foundation.Task.Task import Task
 
-from Task import Task
 
 class TaskHeaderDataPlayfab(Task):
 

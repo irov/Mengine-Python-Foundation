@@ -1,8 +1,9 @@
 import json
+from Foundation.Task.TaskHeaderDataBase import TaskHeaderDataBase
 
-from Foundation.TaskHeaderDataBase import TaskHeaderDataBase
 
 class TaskPlayFabRequest(TaskHeaderDataBase):
+
     def _onSuccess(self, response):
         error_data = response_data = None
 
@@ -32,4 +33,12 @@ class TaskPlayFabRequest(TaskHeaderDataBase):
                 self.log(str(e))
 
     def _onFailed(self, error, response):
-        self.cb(None, {"code": 408, "status": "Request Timeout", "error": "ServiceUnavailable", "errorCode": 1123, "errorMessage": error, "errorDetails": None, })
+        self.cb(None, {
+            "code": 408,
+            "status":
+                "Request Timeout",
+            "error": "ServiceUnavailable",
+            "errorCode": 1123,
+            "errorMessage": error,
+            "errorDetails": None,
+        })
