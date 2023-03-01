@@ -156,7 +156,11 @@ class SystemAnalytics(System):
 
     @staticmethod
     def addSpecificAnalytic(event_type, event_key, identity, check_method=None, params_method=None):
-        specific_analytics = {"earn_currency": SystemAnalytics.EarnCurrencyAnalytic, "spent_currency": SystemAnalytics.SpentCurrencyAnalytic, "unlock_achievement": SystemAnalytics.UnlockAchievementAnalytic, }
+        specific_analytics = {
+            "earn_currency": SystemAnalytics.EarnCurrencyAnalytic,
+            "spent_currency": SystemAnalytics.SpentCurrencyAnalytic,
+            "unlock_achievement": SystemAnalytics.UnlockAchievementAnalytic,
+        }
 
         if event_type not in specific_analytics:
             Trace.log("System", 0, "SystemAnalytics unknown event type '%s'" % event_type)
@@ -168,7 +172,8 @@ class SystemAnalytics(System):
 
         event_class = specific_analytics[event_type]
 
-        analytics_unit = event_class(event_type, identity, check_method=check_method, create_params_method=params_method)
+        analytics_unit = event_class(event_type, identity, check_method=check_method,
+            create_params_method=params_method)
 
         SystemAnalytics.s_active_analytics[event_key] = analytics_unit
         return True

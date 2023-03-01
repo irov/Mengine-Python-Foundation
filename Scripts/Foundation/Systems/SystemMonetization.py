@@ -343,7 +343,13 @@ class SystemMonetization(System):
                 Trace.log("System", 0, "SystemMonetization.sendReward wrong reward dict {!r} (your input: {!r}, id={!r})".format(reward, rew_dict, prod_id))
             return False
 
-        rewards = {"Gold": cls.addGold, "Chapter": cls.unlockChapter, "SceneUnlock": cls.unlockScene, "Energy": cls.addEnergy, "DisableInterstitialAds": cls.disableInterstitialAds}
+        rewards = {
+            "Gold": cls.addGold,
+            "Chapter": cls.unlockChapter,
+            "SceneUnlock": cls.unlockScene,
+            "Energy": cls.addEnergy,
+            "DisableInterstitialAds": cls.disableInterstitialAds
+        }
         for reward_type, arg in reward.items():
             fn = rewards.get(reward_type)
             if callable(fn):
