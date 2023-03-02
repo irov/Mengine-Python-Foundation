@@ -1023,7 +1023,12 @@ def getCurrentPlatformParams():
     # todo: return to 'platform' when crushes disappear
     option = "platforma"
 
-    platforms = {"Android": _ANDROID is True or Mengine.getOptionValue(option) == "android", "IOS": _IOS is True or Mengine.getOptionValue(option) == "ios", "PC": Mengine.hasTouchpad() is False and Mengine.hasOption(option) is False, "MAC": _MACOS is True or Mengine.getOptionValue(option) == "mac"}
+    platforms = {
+        "Android": _ANDROID is True or Mengine.getOptionValue(option) == "android",
+        "IOS": _IOS is True or Mengine.getOptionValue(option) == "ios",
+        "PC": Mengine.hasTouchpad() is False and Mengine.hasOption(option) is False,
+        "MAC": _MACOS is True or Mengine.getOptionValue(option) == "mac"
+    }
     if True not in platforms.values():
         Trace.msg_err("!!!! Utils.getCurrentPlatformParams: remove -touchpad or add -{}:android|ios".format(option))
         Trace.msg_err("!!!! Utils.getCurrentPlatformParams: set Platform to PC until you fix the conflict")
@@ -1112,7 +1117,7 @@ def isSurvey():
 
         current_build_mode = Mengine.getGameParamUnicode("BuildMode")
         resources_tags = BuildModeManager.getBuildResourceConfig(current_build_mode)
-        return "Survey" in resources_tags
+        return "Survey" in resources_tags and "CE" not in resources_tags
     else:
         return Mengine.getGameParamBool("Survey", False)
 
