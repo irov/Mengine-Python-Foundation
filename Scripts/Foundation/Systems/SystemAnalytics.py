@@ -149,7 +149,8 @@ class SystemAnalytics(System):
             Trace.log("System", 1, "SystemAnalytics already has analytic with event key '%s'" % prefixed_event_key)
             return False
 
-        analytics_unit = SystemAnalytics.AnalyticUnit(prefixed_event_key, identity, check_method=check_method, create_params_method=params_method)
+        analytics_unit = SystemAnalytics.AnalyticUnit(prefixed_event_key, identity,
+                                                      check_method=check_method, create_params_method=params_method)
 
         SystemAnalytics.s_active_analytics[analytics_unit.key] = analytics_unit
         return True
@@ -172,8 +173,8 @@ class SystemAnalytics(System):
 
         event_class = specific_analytics[event_type]
 
-        analytics_unit = event_class(event_type, identity, check_method=check_method,
-            create_params_method=params_method)
+        analytics_unit = event_class(event_type, identity,
+                                     check_method=check_method, create_params_method=params_method)
 
         SystemAnalytics.s_active_analytics[event_key] = analytics_unit
         return True

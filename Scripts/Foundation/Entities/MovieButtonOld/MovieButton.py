@@ -176,7 +176,10 @@ class MovieButton(BaseEntity):
 
         if movie.isEnable() is True:
             socket = movie.getSocket("socket")
-            socket.setEventListener(onHandleMouseEnter=None, onHandleMouseLeave=None, onHandleMouseButtonEvent=None, onHandleKeyEvent=None)
+            socket.setEventListener(onHandleMouseEnter=None,
+                                    onHandleMouseLeave=None,
+                                    onHandleMouseButtonEvent=None,
+                                    onHandleKeyEvent=None)
             movie.setEventListener(onAnimatableEnd=None)
             movie.stop()
             movie.setFirstFrame()
@@ -289,7 +292,8 @@ class MovieButton(BaseEntity):
         self.MovieEnter.play()
         socket = self.MovieEnter.getSocket("socket")
 
-        socket.setEventListener(onHandleMouseButtonEvent=self.__onEnterMouseClick, onHandleMouseLeave=self.__onOverMouseLeave)
+        socket.setEventListener(onHandleMouseButtonEvent=self.__onEnterMouseClick,
+                                onHandleMouseLeave=self.__onOverMouseLeave)
         if self.KeyTag is not None:
             socket.setEventListener(onHandleKeyEvent=self._onKeyEvent)
             pass
@@ -349,7 +353,8 @@ class MovieButton(BaseEntity):
         self.MovieOver.play()
         socket = self.MovieOver.getSocket("socket")
 
-        socket.setEventListener(onHandleMouseLeave=self.__onOverMouseLeave, onHandleMouseButtonEvent=self.__onOverMouseClick)
+        socket.setEventListener(onHandleMouseLeave=self.__onOverMouseLeave,
+                                onHandleMouseButtonEvent=self.__onOverMouseClick)
         if self.KeyTag is not None:
             socket.setEventListener(onHandleKeyEvent=self._onKeyEvent)
             pass
@@ -534,7 +539,8 @@ class MovieButton(BaseEntity):
         self.MovieOver.play()
         socket = self.MovieOver.getSocket("socket")
 
-        socket.setEventListener(onHandleMouseLeave=self.__onOverMouseLeave, onHandleMouseButtonEvent=self.__onOverMouseClick)
+        socket.setEventListener(onHandleMouseLeave=self.__onOverMouseLeave,
+                                onHandleMouseButtonEvent=self.__onOverMouseClick)
 
         if self.KeyTag is not None:
             socket.setEventListener(onHandleKeyEvent=self._onKeyEvent)

@@ -46,12 +46,50 @@ class ObjectMovie2EditBox(DemonObject):
         self.initParam("Text_Present_ID", params, "ID_MovieEditBox_Present")
         self.initParam("Focus", params, False)
         self.initParam("PasswordChar", params, None)
-        self.initParam("BlackList", params, ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', '}', '{', '[', ']', ':', ';', '\'', '\"', '\\', '|', '/', '>', '<', ',', '.', '?', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'])
-        pass
+        self.initParam("BlackList", params, [
+            '~',
+            '`',
+            '!',
+            '@',
+            '#',
+            '$',
+            '%',
+            '^',
+            '&',
+            '*',
+            '(',
+            ')',
+            '-',
+            '+',
+            '=',
+            '}',
+            '{',
+            '[',
+            ']',
+            ':',
+            ';',
+            '\'',
+            '\"',
+            '\\',
+            '|',
+            '/',
+            '>',
+            '<',
+            ',',
+            '.',
+            '?',
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+            '9',
+            '0'
+        ])
 
     def setValueByDefault(self, value):
         entity = self.getEntity()
         entity.setValueByDefault(value)
-        pass
-
-    pass

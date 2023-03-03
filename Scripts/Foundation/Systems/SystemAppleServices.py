@@ -7,7 +7,12 @@ from Notification import Notification
 _Log = SimpleLogger("SystemAppleServices")
 
 class SystemAppleServices(System):
-    b_plugins = {"GameCenter": _PLUGINS.get("AppleGameCenter", False), "Review": _PLUGINS.get("AppleStoreReview", False), "Tracking": _PLUGINS.get("AppleAppTracking", False), "InAppPurchase": _PLUGINS.get("AppleStoreInAppPurchase", False), }
+    b_plugins = {
+        "GameCenter": _PLUGINS.get("AppleGameCenter", False),
+        "Review": _PLUGINS.get("AppleStoreReview", False),
+        "Tracking": _PLUGINS.get("AppleAppTracking", False),
+        "InAppPurchase": _PLUGINS.get("AppleStoreInAppPurchase", False),
+    }
 
     b_GameCenter_authenticate = False
     b_GameCenter_synchronizate = False
@@ -44,7 +49,10 @@ class SystemAppleServices(System):
     @staticmethod
     def setGameCenterConnectProvider():
         if SystemAppleServices.b_plugins["GameCenter"] is True:
-            b_status = Mengine.appleGameCenterSetProvider({"onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate, "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronizate})
+            b_status = Mengine.appleGameCenterSetProvider({
+                "onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate,
+                "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronizate
+            })
             SystemAppleServices.b_provider = True
             _Log("GAME CENTER: set provider - {}".format("wait response!" if b_status else "not initialized"))
         else:
@@ -123,7 +131,9 @@ class SystemAppleServices(System):
         _Log("GAME CENTER: SEND ACHIEVEMENT {!r} (complete {}%%)...".format(achievement_name, percent_complete), force=True)
         if SystemAppleServices.b_plugins["GameCenter"] is False:
             return
-        Mengine.appleGameCenterReportAchievement(achievement_name, percent_complete, SystemAppleServices.__cbGameCenterAchievementReporter, achievement_name, percent_complete)
+        Mengine.appleGameCenterReportAchievement(achievement_name, percent_complete,
+                                                 SystemAppleServices.__cbGameCenterAchievementReporter,
+                                                 achievement_name, percent_complete)
 
     @staticmethod
     def checkGameCenterAchievement(achievement_name):
@@ -175,9 +185,16 @@ class SystemAppleServices(System):
     @staticmethod
     def setInAppPurchaseProvider():
         """ setup payment callbacks """
-        Mengine.appleStoreInAppPurchaseSetPaymentTransactionProvider(
-            {"onProductResponse": SystemAppleServices._cbProductResponse, "onProductFinish": SystemAppleServices._cbProductFinish, "onProductFail": SystemAppleServices._cbProductFail, "onPaymentUpdatedTransactionPurchasing": SystemAppleServices._cbPaymentPurchasing, "onPaymentUpdatedTransactionPurchased": SystemAppleServices._cbPaymentPurchased, "onPaymentUpdatedTransactionFailed": SystemAppleServices._cbPaymentFailed, "onPaymentUpdatedTransactionRestored": SystemAppleServices._cbPaymentRestored,
-                "onPaymentUpdatedTransactionDeferred": SystemAppleServices._cbPaymentDeferred})
+        Mengine.appleStoreInAppPurchaseSetPaymentTransactionProvider({
+            "onProductResponse": SystemAppleServices._cbProductResponse,
+            "onProductFinish": SystemAppleServices._cbProductFinish,
+            "onProductFail": SystemAppleServices._cbProductFail,
+            "onPaymentUpdatedTransactionPurchasing": SystemAppleServices._cbPaymentPurchasing,
+            "onPaymentUpdatedTransactionPurchased": SystemAppleServices._cbPaymentPurchased,
+            "onPaymentUpdatedTransactionFailed": SystemAppleServices._cbPaymentFailed,
+            "onPaymentUpdatedTransactionRestored": SystemAppleServices._cbPaymentRestored,
+            "onPaymentUpdatedTransactionDeferred": SystemAppleServices._cbPaymentDeferred
+        })
 
     @staticmethod
     def removeInAppPurchaseProvider():

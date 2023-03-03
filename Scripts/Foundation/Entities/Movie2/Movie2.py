@@ -6,11 +6,24 @@ class Movie2(BaseAnimatable):
         BaseAnimatable.declareORM(Type)
         Type.addAction(Type, "ResourceMovie")
         Type.addAction(Type, "CompositionName")
-        Type.addActionActivate(Type, "DisableLayers", Update=Movie2.__updateDisableLayers, Append=Movie2.__appendDisableLayers, Remove=Movie2.__removeDisableLayers)
-        Type.addActionActivate(Type, "DisableSubMovies", Update=Movie2.__updateDisableSubMovies, Append=Movie2.__appendDisableSubMovies, Remove=Movie2.__removDisableSubMovies)
-        Type.addActionActivate(Type, "TextAliasEnvironment", Update=Movie2.__updateTextAliasEnvironment)
-        Type.addAction(Type, "LastFrameSubMovies", Update=Movie2.__updateLastFrameSubMovies, Append=Movie2.__appendLastFrameSubMovies, Remove=Movie2.__removeLastFrameSubMovies)
-        Type.addActionActivate(Type, "ExtraOpacityLayers", Update=Movie2.__updateExtraOpacityLayers, InsertDict=Movie2.__insertExtraOpacityLayers, PopDict=Movie2.__popExtraOpacityLayers)
+        Type.addActionActivate(Type, "DisableLayers",
+                               Update=Movie2.__updateDisableLayers,
+                               Append=Movie2.__appendDisableLayers,
+                               Remove=Movie2.__removeDisableLayers)
+        Type.addActionActivate(Type, "DisableSubMovies",
+                               Update=Movie2.__updateDisableSubMovies,
+                               Append=Movie2.__appendDisableSubMovies,
+                               Remove=Movie2.__removDisableSubMovies)
+        Type.addActionActivate(Type, "TextAliasEnvironment",
+                               Update=Movie2.__updateTextAliasEnvironment)
+        Type.addAction(Type, "LastFrameSubMovies",
+                       Update=Movie2.__updateLastFrameSubMovies,
+                       Append=Movie2.__appendLastFrameSubMovies,
+                       Remove=Movie2.__removeLastFrameSubMovies)
+        Type.addActionActivate(Type, "ExtraOpacityLayers",
+                               Update=Movie2.__updateExtraOpacityLayers,
+                               InsertDict=Movie2.__insertExtraOpacityLayers,
+                               PopDict=Movie2.__popExtraOpacityLayers)
         pass
 
     def _onUpdateEnable(self, value):
@@ -56,12 +69,16 @@ class Movie2(BaseAnimatable):
         movie.setResourceMovie2(self.ResourceMovie)
         movie.setCompositionName(self.CompositionName)
 
-        movie.setEventListener(onAnimatableEnd=self.__onAnimatableEnd, onAnimatableStop=self.__onAnimatableStop)
+        movie.setEventListener(onAnimatableEnd=self.__onAnimatableEnd,
+                               onAnimatableStop=self.__onAnimatableStop)
         movie.enable()
 
         sockets = movie.getSockets()
         for movie, name, hotspot in sockets:
-            hotspot.setEventListener(onHandleMouseEnter=Functor(self.__onHandleMouseEnter, name, hotspot), onHandleMouseLeave=Functor(self.__onHandleMouseLeave, name, hotspot), onHandleMouseButtonEvent=Functor(self.__onHandleMouseButtonEvent, name, hotspot), onHandleMouseMove=Functor(self.__onHandleMouseMove, name, hotspot))
+            hotspot.setEventListener(onHandleMouseEnter=Functor(self.__onHandleMouseEnter, name, hotspot),
+                                     onHandleMouseLeave=Functor(self.__onHandleMouseLeave, name, hotspot),
+                                     onHandleMouseButtonEvent=Functor(self.__onHandleMouseButtonEvent, name, hotspot),
+                                     onHandleMouseMove=Functor(self.__onHandleMouseMove, name, hotspot))
 
         self.movie = movie
         pass
@@ -154,7 +171,8 @@ class Movie2(BaseAnimatable):
 
     def __checkSubMovie(self, submovie_name):
         if self.hasSubMovie(submovie_name) is False:
-            Trace.log("Movie2", 0, "Movie2.__updateDisableSubMovies: Movie2 '{}' has no submovie '{}'".format(self.getName(), submovie_name))
+            Trace.log("Movie2", 0, "Movie2.__updateDisableSubMovies: Movie2 '{}' has no submovie '{}'".format(
+                self.getName(), submovie_name))
             return False
 
         return True

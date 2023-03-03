@@ -22,8 +22,14 @@ class DragObject(object):
             return x, y
         return 0.0, y
 
-    def __init__(self, friction, rigidity, dragging_mode, max_scale, disable_drag_if_invalid, drag_start_threshold, allow_out_of_bounds):
-        self._modes = {'none': self._none_mode, 'free': self._free_mode, 'horizontal': self._horizontal_mode, 'vertical': self._vertical_mode}
+    def __init__(self, friction, rigidity, dragging_mode, max_scale, disable_drag_if_invalid,
+                 drag_start_threshold, allow_out_of_bounds):
+        self._modes = {
+            'none': self._none_mode,
+            'free': self._free_mode,
+            'horizontal': self._horizontal_mode,
+            'vertical': self._vertical_mode
+        }
         try:
             self._initial_dragging_mode = self._dragging_mode = self._modes[dragging_mode]
         except KeyError:
@@ -137,7 +143,8 @@ class DragObject(object):
         self._validate_content_size()
 
     def get_bounds_viewport(self):
-        return Mengine.Viewport((self._bounds['begin'].x, self._bounds['begin'].y), (self._bounds['end'].x, self._bounds['end'].y))
+        return Mengine.Viewport((self._bounds['begin'].x, self._bounds['begin'].y),
+                                (self._bounds['end'].x, self._bounds['end'].y))
 
     def get_bounds(self):
         return dict(self._bounds)
@@ -165,9 +172,11 @@ class DragObject(object):
         invalid_height = abs(self._size.w - self._size.y) < vp_size.y
 
         if invalid_width and _DEVELOPMENT:
-            Trace.msg_err("[Invalid width] VirtualArea width must be less then Content (c.width {} < {} va.width)".format(abs(self._size.z - self._size.x), vp_size.x))
+            Trace.msg_err("[Invalid width] VirtualArea width must be less then Content "
+                          "(c.width {} < {} va.width)".format(abs(self._size.z - self._size.x), vp_size.x))
         if invalid_height and _DEVELOPMENT:
-            Trace.msg_err("[Invalid height] VirtualArea height must be less then Content (c.height {} < {} va.height)".format(abs(self._size.w - self._size.y), vp_size.y))
+            Trace.msg_err("[Invalid height] VirtualArea height must be less then Content "
+                          "(c.height {} < {} va.height)".format(abs(self._size.w - self._size.y), vp_size.y))
 
         if invalid_width and invalid_height:
             self._size.set(self._bounds['begin'].x, self._bounds['begin'].y, self._bounds['end'].x, self._bounds['end'].y)

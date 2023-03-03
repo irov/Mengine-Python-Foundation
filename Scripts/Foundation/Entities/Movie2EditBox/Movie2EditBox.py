@@ -224,7 +224,8 @@ class Movie2EditBox(BaseEntity):
                 return None
                 pass
 
-            mov = ObjectManager.createObjectUnique("Movie2", name, self.object, ResourceMovie=resource, CompositionName=comp)
+            mov = ObjectManager.createObjectUnique("Movie2", name, self.object,
+                                                   ResourceMovie=resource, CompositionName=comp)
             mov.setEnable(False)
             mov.setPlay(play)
             mov.setLoop(loop)
@@ -379,7 +380,12 @@ class Movie2EditBox(BaseEntity):
         self.tc = TaskManager.createTaskChain(Repeat=True, NoCheckAntiStackCycle=True)
 
         with self.tc as source_repeat:
-            Scopes = dict(Idle=Functor(self.__stateIdle, MovieIdle), Over=Functor(self.__stateOver, MovieOver), Focus=Functor(self.__stateFocus, MovieFocus), Block=Functor(self.__stateBlock, MovieBlock), )
+            Scopes = dict(
+                Idle=Functor(self.__stateIdle, MovieIdle),
+                Over=Functor(self.__stateOver, MovieOver),
+                Focus=Functor(self.__stateFocus, MovieFocus),
+                Block=Functor(self.__stateBlock, MovieBlock),
+            )
 
             def __states(isSkip, cb):
                 cb(isSkip, self.state)

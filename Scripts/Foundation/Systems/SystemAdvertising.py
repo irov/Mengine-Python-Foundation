@@ -14,7 +14,10 @@ class SystemAdvertising(System):
     s_interstitial_params = {}
     s_general_params = {}
 
-    s_ignore_scenes = ["CutScene", "Menu", "Bonus", "SplashScreen", "Intro", "PreIntro", "DebugMenu", "Store", "Guides", "Map", "MapBonusChapter"]
+    s_ignore_scenes = [
+        "CutScene", "Menu", "Bonus", "SplashScreen", "Intro", "PreIntro",
+        "DebugMenu", "Store", "Guides", "Map", "MapBonusChapter"
+    ]
 
     def __init__(self):
         super(SystemAdvertising, self).__init__()
@@ -29,9 +32,20 @@ class SystemAdvertising(System):
         if Mengine.getConfigBool('Advertising', "Interstitial", False) is False:
             return
 
-        interstitial_params = {"transition": Mengine.getConfigBool('Advertising', "ShowOnTransition", False), "mg_reset": Mengine.getConfigBool('Advertising', "ShowOnResetMG", False), "chapter_done": Mengine.getConfigBool('Advertising', "ShowOnChapterDone", False), "trigger": Mengine.getConfigBool('Advertising', "ShowOnTrigger", False), }
+        interstitial_params = {
+            "transition": Mengine.getConfigBool('Advertising', "ShowOnTransition", False),
+            "mg_reset": Mengine.getConfigBool('Advertising', "ShowOnResetMG", False),
+            "chapter_done": Mengine.getConfigBool('Advertising', "ShowOnChapterDone", False),
+            "trigger": Mengine.getConfigBool('Advertising', "ShowOnTrigger", False),
+        }
 
-        general_params = {"view_delay": Mengine.getConfigInt('Advertising', "ViewDelayInMinutes", 10) * 60, "delay_on_start": Mengine.getConfigInt('Advertising', "StartDelayInMinutes", 5) * 60, "trigger": Mengine.getConfigString('Advertising', "TriggerNotificatorName", ""), "trigger_count_start": Mengine.getConfigInt('Advertising', "TriggerCountStart", 0), "trigger_count_show": Mengine.getConfigInt('Advertising', "TriggerCountShow", 1), }
+        general_params = {
+            "view_delay": Mengine.getConfigInt('Advertising', "ViewDelayInMinutes", 10) * 60,
+            "delay_on_start": Mengine.getConfigInt('Advertising', "StartDelayInMinutes", 5) * 60,
+            "trigger": Mengine.getConfigString('Advertising', "TriggerNotificatorName", ""),
+            "trigger_count_start": Mengine.getConfigInt('Advertising', "TriggerCountStart", 0),
+            "trigger_count_show": Mengine.getConfigInt('Advertising', "TriggerCountShow", 1),
+        }
 
         self._current_trigger_count = general_params["trigger_count_start"]
 
@@ -119,7 +133,16 @@ class SystemAdvertising(System):
         def _setObserver(action, notificator):
             self.addObserver(notificator, self.__interstitialObserver, action=action)
 
-        params = {"transition": ["onTransitionBegin", self.__cbTransitionBegin], "mg_reset": ["onEnigmaReset", None], "chapter_done": ["onGameComplete", None], "trigger": [SystemAdvertising.s_general_params["trigger"], self.__cbTriggerCount], }
+        params = {
+            "transition":
+                ["onTransitionBegin", self.__cbTransitionBegin],
+            "mg_reset":
+                ["onEnigmaReset", None],
+            "chapter_done":
+                ["onGameComplete", None],
+            "trigger":
+                [SystemAdvertising.s_general_params["trigger"], self.__cbTriggerCount],
+        }
 
         for action, (notificator_name, observer) in params.items():
             if self.isInterstitialParamEnable(action) is False:

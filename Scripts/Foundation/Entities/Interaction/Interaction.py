@@ -45,7 +45,13 @@ class Interaction(BaseEntity):
         super(Interaction, self)._onInitialize(obj)
 
         self.__hotspot = self._onCreateHotSpot()
-        self.__hotspot.setEventListener(onHandleKeyEvent=self.__onKeyEvent, onHandleMouseButtonEvent=self._onMouseButtonEvent, onHandleMouseButtonEventEnd=self._onMouseButtonEventEnd, onHandleMouseButtonEventBegin=self._onMouseButtonEventBegin, onHandleMouseEnter=self._onMouseEnter, onHandleMouseLeave=self._onMouseLeave, onHandleMouseOverDestroy=self._onMouseOverDestroy)
+        self.__hotspot.setEventListener(onHandleKeyEvent=self.__onKeyEvent,
+                                        onHandleMouseButtonEvent=self._onMouseButtonEvent,
+                                        onHandleMouseButtonEventEnd=self._onMouseButtonEventEnd,
+                                        onHandleMouseButtonEventBegin=self._onMouseButtonEventBegin,
+                                        onHandleMouseEnter=self._onMouseEnter,
+                                        onHandleMouseLeave=self._onMouseLeave,
+                                        onHandleMouseOverDestroy=self._onMouseOverDestroy)
 
     def _onFinalize(self):
         super(Interaction, self)._onFinalize()

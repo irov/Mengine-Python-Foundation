@@ -1,5 +1,7 @@
 from Foundation.System import System
 from Notification import Notification
+from Foundation.GoogleAnalytics import GoogleAnalytics
+
 
 class SystemStageTime(System):
 
@@ -45,7 +47,15 @@ class SystemStageTime(System):
         pass
 
     def sendAnalytics(self, stage_name, stage_time):
-        data = {'clientID': Mengine.getAccountUID(Mengine.getCurrentAccountName()), 'category': 'Timing', 'action': 'Stage_Time', 'client_definition': {GoogleAnalytics.TimeDimension: stage_name, GoogleAnalytics.TimeMetric: stage_time, }}
+        data = {
+            'clientID': Mengine.getAccountUID(Mengine.getCurrentAccountName()),
+            'category': 'Timing',
+            'action': 'Stage_Time',
+            'client_definition': {
+                GoogleAnalytics.TimeDimension: stage_name,
+                GoogleAnalytics.TimeMetric: stage_time,
+            }
+        }
 
         GoogleAnalytics.send_analytics(data)
         pass

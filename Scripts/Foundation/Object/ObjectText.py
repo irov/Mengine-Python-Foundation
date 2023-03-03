@@ -16,7 +16,6 @@ class ObjectText(Object):
         Type.addParam(Type, "Align")
         Type.addParam(Type, "VerticalAlign")
         Type.addParam(Type, "Pixelsnap")
-        pass
 
     def _onParams(self, params):
         super(ObjectText, self)._onParams(params)
@@ -35,7 +34,6 @@ class ObjectText(Object):
         self.initParam("Align", params, "None")
         self.initParam("VerticalAlign", params, "None")
         self.initParam("Pixelsnap", params, False)
-        pass
 
     def _onInitialize(self):
         super(ObjectText, self)._onInitialize()
@@ -45,8 +43,3 @@ class ObjectText(Object):
             if Font is not None:
                 if Mengine.hasFont(Font) is False:
                     self.initializeFailed("Font %s not found" % (Font))
-                    pass
-                pass
-            pass
-        pass
-    pass

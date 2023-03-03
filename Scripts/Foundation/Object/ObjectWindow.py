@@ -8,7 +8,6 @@ class ObjectWindow(Object):
         Type.addResource(Type, "WindowResourceName")
         Type.addParam(Type, "Polygon")
         Type.addParam(Type, "ClientSize")
-        pass
 
     def _onParams(self, params):
         super(ObjectWindow, self)._onParams(params)
@@ -17,5 +16,3 @@ class ObjectWindow(Object):
 
         self.initParam("Polygon", params, None)
         self.initParam("ClientSize", params, None)
-        pass
-    pass

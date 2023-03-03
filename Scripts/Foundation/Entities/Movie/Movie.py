@@ -10,8 +10,14 @@ class Movie(BaseAnimatable):
         Type.addAction(Type, "Wait")
         Type.addAction(Type, "ExtraGroupName")
         Type.addAction(Type, "ResourceMovie")
-        Type.addAction(Type, "DisableLayers", Update=Movie.__updateDisableLayers, Append=Movie.__appendDisableLayers, Remove=Movie.__removeDisableLayers)
-        Type.addAction(Type, "LastFrameSubMovies", Update=Movie.__updateLastFrameSubMovies, Append=Movie.__appendLastFrameSubMovies, Remove=Movie.__removeLastFrameSubMovies)
+        Type.addAction(Type, "DisableLayers",
+                       Update=Movie.__updateDisableLayers,
+                       Append=Movie.__appendDisableLayers,
+                       Remove=Movie.__removeDisableLayers)
+        Type.addAction(Type, "LastFrameSubMovies",
+                       Update=Movie.__updateLastFrameSubMovies,
+                       Append=Movie.__appendLastFrameSubMovies,
+                       Remove=Movie.__removeLastFrameSubMovies)
         pass
 
     def _onUpdateEnable(self, value):
@@ -206,12 +212,19 @@ class Movie(BaseAnimatable):
 
         self.movie.setResourceMovie(self.ResourceMovie)
 
-        self.movie.setEventListener(onMovieGetInternal=self.__onMovieGetInternal, onMovieActivateInternal=self.__onMovieActivateInternal, onMovieDeactivateInternal=self.__onMovieDeactivateInternal, onAnimatableEnd=self.__onAnimatableEnd, onAnimatableStop=self.__onAnimatableStop)
+        self.movie.setEventListener(onMovieGetInternal=self.__onMovieGetInternal,
+                                    onMovieActivateInternal=self.__onMovieActivateInternal,
+                                    onMovieDeactivateInternal=self.__onMovieDeactivateInternal,
+                                    onAnimatableEnd=self.__onAnimatableEnd,
+                                    onAnimatableStop=self.__onAnimatableStop)
 
         sockets = self.movie.getSockets()
 
         for movie, name, hotspot in sockets:
-            hotspot.setEventListener(onHandleMouseEnter=Functor(self.__onHandleMouseEnter, name, hotspot), onHandleMouseLeave=Functor(self.__onHandleMouseLeave, name, hotspot), onHandleMouseButtonEvent=Functor(self.__onHandleMouseButtonEvent, name, hotspot), onHandleMouseMove=Functor(self.__onHandleMouseMove, name, hotspot))
+            hotspot.setEventListener(onHandleMouseEnter=Functor(self.__onHandleMouseEnter, name, hotspot),
+                                     onHandleMouseLeave=Functor(self.__onHandleMouseLeave, name, hotspot),
+                                     onHandleMouseButtonEvent=Functor(self.__onHandleMouseButtonEvent, name, hotspot),
+                                     onHandleMouseMove=Functor(self.__onHandleMouseMove, name, hotspot))
             pass
 
         self.movie.enable()

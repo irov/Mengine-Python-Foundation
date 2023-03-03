@@ -107,7 +107,8 @@ class SystemGDPR(System):
 
     def _scopeLinkHandler(self, source, event_button_click):
         with source.addRepeatTask() as (repeat, until):
-            repeat.addTask("TaskMovie2SocketClick", GroupName=self.gdpr_group_name, Movie2Name="Movie2_Window", SocketName="link")
+            repeat.addTask("TaskMovie2SocketClick", GroupName=self.gdpr_group_name,
+                           Movie2Name="Movie2_Window", SocketName="link")
             repeat.addFunction(Mengine.openUrlInDefaultBrowser, self.privacy_policy_link)
 
             until.addEvent(event_button_click)

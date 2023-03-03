@@ -8,9 +8,10 @@ from Functor import Functor
 from Multislots import finalslots
 
 class Movie2Button(BaseEntity):
-    __metaclass__ = finalslots("tc", "state", "custom", "Movies", "SlotsChildren", "SemaphoreBlock", "SemaphoreSelected", "EventSkipState", "EventSetState")
+    __metaclass__ = finalslots("tc", "state", "custom", "Movies", "SlotsChildren", "SemaphoreBlock",
+                               "SemaphoreSelected", "EventSkipState", "EventSetState")
 
-    s_keys = dict(Esc=Mengine.KC_ESCAPE, Enter=Mengine.KC_RETURN, False = False)
+    s_keys = dict(Esc=Mengine.KC_ESCAPE, Enter=Mengine.KC_RETURN, False=False)
 
     @staticmethod
     def declareORM(Type):
@@ -72,7 +73,8 @@ class Movie2Button(BaseEntity):
         if current_movie is not None:
             if current_movie.hasSlot(slot_name) is False:
                 if self.hasSlot(slot_name) is False:
-                    Trace.log("Entity", 0, "Movie2Button.addChildToSlot: slot {!r} not found for {!r}, add it at least on one movie".format(slot_name, self.getName()))
+                    Trace.log("Entity", 0, "Movie2Button.addChildToSlot: slot {!r} not found for {!r}, "
+                                           "add it at least on one movie".format(slot_name, self.getName()))
                     return False
             else:
                 slot = current_movie.getMovieSlot(slot_name)
@@ -91,7 +93,8 @@ class Movie2Button(BaseEntity):
             return False
 
         if node not in self.SlotsChildren[slot_name]:
-            Trace.log("Entity", 0, "node {!r} wasn't attached to slot {!r} via addChildToSlot".format(node.getName(), slot_name))
+            Trace.log("Entity", 0, "node {!r} wasn't attached to slot {!r} "
+                                   "via addChildToSlot".format(node.getName(), slot_name))
             return False
         return True
 
@@ -133,7 +136,8 @@ class Movie2Button(BaseEntity):
         current_movie = self.getCurrentMovie()
 
         if not current_movie:
-            Trace.log("Entity", 0, "Movie2Button.getCompositionBounds: {} has no state {} in self.Movies".format(self.getName(), self.state))
+            Trace.log("Entity", 0, "Movie2Button.getCompositionBounds: {} has no state {} "
+                                   "in self.Movies".format(self.getName(), self.state))
             return None
 
         return current_movie.getCompositionBounds()
@@ -142,7 +146,8 @@ class Movie2Button(BaseEntity):
         current_movie = self.getCurrentMovie()
 
         if not current_movie:
-            Trace.log("Entity", 0, "Movie2Button.hasCompositionBounds: {} has no state {} in self.Movies".format(self.getName(), self.state))
+            Trace.log("Entity", 0, "Movie2Button.hasCompositionBounds: {} has no state {} "
+                                   "in self.Movies".format(self.getName(), self.state))
             return None
 
         return current_movie.hasCompositionBounds()
@@ -197,7 +202,8 @@ class Movie2Button(BaseEntity):
             if resource.hasComposition(comp) is False:
                 return None
 
-            mov = ObjectManager.createObjectUnique("Movie2", name, self.object, ResourceMovie=resource, CompositionName=comp)
+            mov = ObjectManager.createObjectUnique("Movie2", name, self.object,
+                                                   ResourceMovie=resource, CompositionName=comp)
             mov.setEnable(False)
             mov.setPlay(play)
             mov.setLoop(loop)
@@ -294,7 +300,8 @@ class Movie2Button(BaseEntity):
         with source.addIfTask(self.object.getEnable) as (source_true, source_false):
             source_false.addBlock()
 
-        with source.addRaceTask(6) as (source_over_click, source_over_enter, source_block, source_selected, source_key, source_play):
+        with source.addRaceTask(6) as (source_over_click, source_over_enter, source_block,
+                                       source_selected, source_key, source_play):
             source_over_click.addTask("TaskMovie2SocketClick", SocketName="socket", Movie2=MovieAppear, isDown=True)
             source_over_click.addFunction(self.__setState, "Push")
 
@@ -317,7 +324,8 @@ class Movie2Button(BaseEntity):
 
     def __stateIdle(self, source, MovieIdle):
         if MovieIdle is None:
-            Trace.log("Entity", 0, "Group '%s' Movie2Button '%s': state Idle not found" % (self.object.getGroupName(), self.getName()))
+            Trace.log("Entity", 0, "Group '%s' Movie2Button '%s': state Idle not found" % (
+                self.object.getGroupName(), self.getName()))
             return
 
         source.addScope(self.__scopeEnable, MovieIdle)
@@ -350,7 +358,8 @@ class Movie2Button(BaseEntity):
         source.addDelay(0.0)
 
         with source.addRaceTask(5) as (source_over_click, source_over_leave, source_block, source_selected, source_key):
-            source_over_click.addTask("TaskMovie2SocketClick", SocketName="socket", Movie2=MovieOver, isDown=True, Already=True)
+            source_over_click.addTask("TaskMovie2SocketClick", SocketName="socket",
+                                      Movie2=MovieOver, isDown=True, Already=True)
             source_over_click.addFunction(self.__setState, "Push")
 
             source_over_leave.addTask("TaskMovie2SocketLeave", SocketName="socket", Movie2=MovieOver)
@@ -387,7 +396,8 @@ class Movie2Button(BaseEntity):
             source_enter_leave.addTask("TaskNotify", ID=Notificator.onMovie2ButtonMouseLeave, Args=(self.object,))
             source_enter_leave.addFunction(self.__setState, "Idle")
 
-            source_enter_click.addTask("TaskMovie2SocketClick", SocketName="socket", Movie2=MovieEnter, isDown=True, Already=True)
+            source_enter_click.addTask("TaskMovie2SocketClick", SocketName="socket",
+                                       Movie2=MovieEnter, isDown=True, Already=True)
             source_enter_click.addFunction(self.__setState, "Push")
 
         source.addDisable(MovieEnter)
@@ -431,7 +441,8 @@ class Movie2Button(BaseEntity):
 
             # source_pressed_click_rel.addTask("TaskMovie2SocketClick", SocketName = "socket",
             #                                  Movie2 = MoviePush, isDown = False, Already = True)
-            source_pressed_click_rel.addTask("TaskMovie2SocketClick", SocketName="socket", Movie2=MoviePush, isDown=False, isPressed=False)
+            source_pressed_click_rel.addTask("TaskMovie2SocketClick", SocketName="socket",
+                                             Movie2=MoviePush, isDown=False, isPressed=False)
             source_pressed_click_rel.addFunction(self.__setState, "Click")
 
         source.addDisable(MoviePush)
@@ -446,7 +457,8 @@ class Movie2Button(BaseEntity):
         source.addNotify(Notificator.onMovie2ButtonPressed, self.object)
 
         with source.addRaceTask(4) as (source_pressed_click_rel, source_pressed_leave, source_block, source_selected):
-            source_pressed_click_rel.addTask("TaskMovie2SocketClick", SocketName="socket", Movie2=MoviePressed, isDown=False, isPressed=False, Already=True)
+            source_pressed_click_rel.addTask("TaskMovie2SocketClick", SocketName="socket",
+                                             Movie2=MoviePressed, isDown=False, isPressed=False, Already=True)
             source_pressed_click_rel.addFunction(self.__setState, "Click")
 
             source_pressed_leave.addTask("TaskMovie2SocketLeave", SocketName="socket", Movie2=MoviePressed)
@@ -588,7 +600,8 @@ class Movie2Button(BaseEntity):
         source.addDisable(MovieSelectedEnd)
 
     def setState(self, state):
-        states = ("Idle", "Appear", "Enter", "Leave", "Over", "Click", "Push", "Pressed", "Release", "Block", "BlockEnter", "BlockEnd", "Selected", "SelectedEnter", "SelectedEnd")
+        states = ("Idle", "Appear", "Enter", "Leave", "Over", "Click", "Push", "Pressed",
+                  "Release", "Block", "BlockEnter", "BlockEnd", "Selected", "SelectedEnter", "SelectedEnd")
         if state not in states:
             return
 
@@ -606,7 +619,12 @@ class Movie2Button(BaseEntity):
 
     def getStateMovie(self, state):
         touchpad_ignore = ["Enter", "Over", "Leave", "Release"]
-        defaults = {"Over": "Idle", "Pressed": "Idle", "Block": "Idle", "Selected": "Idle", }
+        defaults = {
+            "Over": "Idle",
+            "Pressed": "Idle",
+            "Block": "Idle",
+            "Selected": "Idle",
+        }
         default_state_name = defaults.get(state)
         movie_default = self.Movies.get(default_state_name)
         movie_state = self.Movies.get(state, movie_default)
@@ -645,8 +663,24 @@ class Movie2Button(BaseEntity):
         self.tc = TaskManager.createTaskChain(Repeat=True, NoCheckAntiStackCycle=True)
 
         with self.tc as source_repeat:
-            Scopes = dict(Idle=Functor(self.__stateIdle, MovieIdle), Enter=Functor(self.__stateEnter, MovieEnter), Appear=Functor(self.__stateAppear, MovieAppear), Over=Functor(self.__stateOver, MovieOver), Leave=Functor(self.__stateLeave, MovieLeave), Click=Functor(self.__stateClick, MovieClick), Push=Functor(self.__statePush, MoviePush), Pressed=Functor(self.__statePressed, MoviePressed), Release=Functor(self.__stateRelease, MovieRelease), Release_Play=Functor(self.__stateReleasePlay, MovieRelease),
-                Block=Functor(self.__stateBlock, MovieBlock), BlockEnter=Functor(self.__stateBlockEnter, MovieBlockEnter), BlockEnd=Functor(self.__stateBlockEnd, MovieBlockEnd), Selected=Functor(self.__stateSelected, MovieSelected), SelectedEnter=Functor(self.__stateSelectedEnter, MovieSelectedEnter), SelectedEnd=Functor(self.__stateSelectedEnd, MovieSelectedEnd), )
+            Scopes = dict(
+                Idle=Functor(self.__stateIdle, MovieIdle),
+                Enter=Functor(self.__stateEnter, MovieEnter),
+                Appear=Functor(self.__stateAppear, MovieAppear),
+                Over=Functor(self.__stateOver, MovieOver),
+                Leave=Functor(self.__stateLeave, MovieLeave),
+                Click=Functor(self.__stateClick, MovieClick),
+                Push=Functor(self.__statePush, MoviePush),
+                Pressed=Functor(self.__statePressed, MoviePressed),
+                Release=Functor(self.__stateRelease, MovieRelease),
+                Release_Play=Functor(self.__stateReleasePlay, MovieRelease),
+                Block=Functor(self.__stateBlock, MovieBlock),
+                BlockEnter=Functor(self.__stateBlockEnter, MovieBlockEnter),
+                BlockEnd=Functor(self.__stateBlockEnd, MovieBlockEnd),
+                Selected=Functor(self.__stateSelected, MovieSelected),
+                SelectedEnter=Functor(self.__stateSelectedEnter, MovieSelectedEnter),
+                SelectedEnd=Functor(self.__stateSelectedEnd, MovieSelectedEnd),
+            )
 
             def __states(isSkip, cb):
                 cb(isSkip, self.state)

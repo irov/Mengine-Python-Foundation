@@ -43,7 +43,10 @@ class Movie2Scrollbar(BaseEntity):
             if resource.hasComposition(composition_name) is False:
                 return None
 
-            movie = ObjectManager.createObjectUnique("Movie2", name, self.object, ResourceMovie=self.ResourceMovie, CompositionName=composition_name, Interactive=True)
+            movie = ObjectManager.createObjectUnique("Movie2", name, self.object,
+                                                     ResourceMovie=self.ResourceMovie,
+                                                     CompositionName=composition_name,
+                                                     Interactive=True)
             self.addChild(movie.getEntityNode())
 
             movie.setEnable(enable)
@@ -165,7 +168,8 @@ class Movie2Scrollbar(BaseEntity):
         self._slider_box = Mengine.getHotSpotPolygonBoundingBox(self._slider.getSocket('socket'))
         self._bar_box = Mengine.getHotSpotPolygonBoundingBox(self._bar.getSocket('socket'))
 
-        self._slider_size.set(self._slider_box.maximum.x - self._slider_box.minimum.x, self._slider_box.maximum.y - self._slider_box.minimum.y)
+        self._slider_size.set(self._slider_box.maximum.x - self._slider_box.minimum.x,
+                              self._slider_box.maximum.y - self._slider_box.minimum.y)
 
         self._half_slider_size = self._slider_size * 0.5
 

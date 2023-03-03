@@ -40,7 +40,49 @@ class ObjectMovieEditBox(DemonObject):
         self.initParam("Text_Present_ID", params, "ID_MovieEditBox_Present")
         self.initParam("Focus", params, False)
         self.initParam("PasswordChar", params, None)
-        self.initParam("BlackList", params, ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', '}', '{', '[', ']', ':', ';', '\'', '\"', '\\', '|', '/', '>', '<', ',', '.', '?', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'])
+        self.initParam("BlackList", params, [
+            '~',
+            '`',
+            '!',
+            '@',
+            '#',
+            '$',
+            '%',
+            '^',
+            '&',
+            '*',
+            '(',
+            ')',
+            '-',
+            '+',
+            '=',
+            '}',
+            '{',
+            '[',
+            ']',
+            ':',
+            ';',
+            '\'',
+            '\"',
+            '\\',
+            '|',
+            '/',
+            '>',
+            '<',
+            ',',
+            '.',
+            '?',
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+            '9',
+            '0'
+        ])
         pass
 
     def setValueByDefault(self, value):

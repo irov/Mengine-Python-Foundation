@@ -19,7 +19,11 @@ class SystemGoogleServices(System):
 
     __lastProductId = None
 
-    b_plugins = {"GoogleGameSocial": _PLUGINS.get("GoogleGameSocial", False), "GooglePlayBilling": _PLUGINS.get("GooglePlayBilling", False), "GoogleInAppReviews": _PLUGINS.get("GoogleInAppReviews", False)}
+    b_plugins = {
+        "GoogleGameSocial": _PLUGINS.get("GoogleGameSocial", False),
+        "GooglePlayBilling": _PLUGINS.get("GooglePlayBilling", False),
+        "GoogleInAppReviews": _PLUGINS.get("GoogleInAppReviews", False)
+    }
 
     login_event = Event("GoogleGameSocialLoginEvent")
     logout_event = Event("GoogleGameSocialLogoutEvent")
@@ -286,7 +290,10 @@ class SystemGoogleServices(System):
 
         skus = {}
         for prod_id, sku in s_skus.items():
-            params = {"price": round(float(sku["oneTimePurchaseOfferDetails"]["priceAmountMicros"]) / 1000000, 2), "descr": str(sku["description"]), "name": str(sku["name"])}
+            params = {
+                "price": round(float(sku["oneTimePurchaseOfferDetails"]["priceAmountMicros"]) / 1000000, 2),
+                "descr": str(sku["description"]), "name": str(sku["name"])
+            }
             skus[prod_id] = params
 
         _Log("[Billing sendSkus] skus={!r}".format(skus))

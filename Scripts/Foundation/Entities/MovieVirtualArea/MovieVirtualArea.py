@@ -54,7 +54,13 @@ class MovieVirtualArea(BaseEntity):
 
     def _onActivate(self):
         self._virtual_area = VirtualArea()
-        self.virtual_area.onInitialize(friction=self.Friction, rigidity=self.Rigidity, dragging_mode=self.DraggingMode, enable_scale=self.EnableScale, max_scale=self.MaxScaleFactor)
+        self.virtual_area.onInitialize(
+            friction=self.Friction,
+            rigidity=self.Rigidity,
+            dragging_mode=self.DraggingMode,
+            enable_scale=self.EnableScale,
+            max_scale=self.MaxScaleFactor
+        )
 
         if self._content_resource.hasBoundBox():
             box = self._content_resource.getBoundBox()

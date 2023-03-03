@@ -11,8 +11,18 @@ class SystemApplovin(System):
 
     class AdUnitMixin(object):
         ad_type = None
-        s_callbacks = {"onAdDisplayed": None, "onAdDisplayFailed": None, "onAdClicked": None, "onAdHidden": None, }
-        s_androidmethods = {"init": None, "show": None, "can_offer": None, "is_available": None, }
+        s_callbacks = {
+            "onAdDisplayed": None,
+            "onAdDisplayFailed": None,
+            "onAdClicked": None,
+            "onAdHidden": None,
+        }
+        s_androidmethods = {
+            "init": None,
+            "show": None,
+            "can_offer": None,
+            "is_available": None,
+        }
 
         def __init__(self):
             self.inited = False
@@ -83,7 +93,11 @@ class SystemApplovin(System):
             return False
 
         def getProviderMethods(self):
-            return {"Show{}Advert".format(self.ad_type): self.show, "CanOffer{}Advert".format(self.ad_type): self.canOffer, "Is{}AdvertAvailable".format(self.ad_type): self.isAvailable}
+            return {
+                "Show{}Advert".format(self.ad_type): self.show,
+                "CanOffer{}Advert".format(self.ad_type): self.canOffer,
+                "Is{}AdvertAvailable".format(self.ad_type): self.isAvailable
+            }
 
         # callbacks
 
@@ -135,13 +149,35 @@ class SystemApplovin(System):
 
     class InterstitialAd(AdUnitMixin):
         ad_type = "Interstitial"
-        s_callbacks = {"onAdDisplayed": "onApplovinInterstitialOnAdDisplayed", "onAdDisplayFailed": "onApplovinInterstitialOnAdDisplayFailed", "onAdClicked": "onApplovinInterstitialOnAdClicked", "onAdHidden": "onApplovinInterstitialOnAdHidden", }
-        s_androidmethods = {"init": "initInterstitial", "show": "showInterstitial", "is_available": "canYouShowInterstitial", }
+        s_callbacks = {
+            "onAdDisplayed": "onApplovinInterstitialOnAdDisplayed",
+            "onAdDisplayFailed": "onApplovinInterstitialOnAdDisplayFailed",
+            "onAdClicked": "onApplovinInterstitialOnAdClicked",
+            "onAdHidden": "onApplovinInterstitialOnAdHidden",
+        }
+        s_androidmethods = {
+            "init": "initInterstitial",
+            "show": "showInterstitial",
+            "is_available": "canYouShowInterstitial",
+        }
 
     class RewardedAd(AdUnitMixin):
         ad_type = "Rewarded"
-        s_callbacks = {"onAdDisplayed": "onApplovinRewardedOnAdDisplayed", "onAdDisplayFailed": "onApplovinRewardedOnAdDisplayFailed", "onAdClicked": "onApplovinRewardedOnAdClicked", "onAdHidden": "onApplovinRewardedOnAdHidden", "onVideoStarted": "onApplovinRewardedOnRewardedVideoStarted", "onVideoCompleted": "onApplovinRewardedOnRewardedVideoCompleted", "onUserRewarded": "onApplovinRewardedOnUserRewarded", }
-        s_androidmethods = {"init": "initRewarded", "show": "showRewarded", "can_offer": "canOfferRewarded", "is_available": "canYouShowRewarded", }
+        s_callbacks = {
+            "onAdDisplayed": "onApplovinRewardedOnAdDisplayed",
+            "onAdDisplayFailed": "onApplovinRewardedOnAdDisplayFailed",
+            "onAdClicked": "onApplovinRewardedOnAdClicked",
+            "onAdHidden": "onApplovinRewardedOnAdHidden",
+            "onVideoStarted": "onApplovinRewardedOnRewardedVideoStarted",
+            "onVideoCompleted": "onApplovinRewardedOnRewardedVideoCompleted",
+            "onUserRewarded": "onApplovinRewardedOnUserRewarded",
+        }
+        s_androidmethods = {
+            "init": "initRewarded",
+            "show": "showRewarded",
+            "can_offer": "canOfferRewarded",
+            "is_available": "canYouShowRewarded",
+        }
 
         def setCallbacks(self):
             super(self.__class__, self).setCallbacks()

@@ -115,7 +115,11 @@ class DummyAdvertisement(object):
         methods = dict()
 
         for AdType in ["Interstitial", "Rewarded"]:
-            ad_type_methods = {"Show{}Advert".format(AdType): lambda: DummyAdvertisement.showAdvert(AdType), "CanOffer{}Advert".format(AdType): lambda: DummyAdvertisement.canOfferAdvert(AdType), "Is{}AdvertAvailable".format(AdType): lambda: DummyAdvertisement.isAdvertAvailable(AdType), }
+            ad_type_methods = {
+                "Show{}Advert".format(AdType): lambda: DummyAdvertisement.showAdvert(AdType),
+                "CanOffer{}Advert".format(AdType): lambda: DummyAdvertisement.canOfferAdvert(AdType),
+                "Is{}AdvertAvailable".format(AdType): lambda: DummyAdvertisement.isAdvertAvailable(AdType),
+            }
             methods.update(ad_type_methods)
 
         AdvertisementProvider.setProvider("Dummy", methods)

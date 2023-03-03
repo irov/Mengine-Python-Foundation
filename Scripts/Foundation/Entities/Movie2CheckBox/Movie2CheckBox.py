@@ -40,9 +40,21 @@ class Movie2CheckBox(BaseEntity):
         check_box_name = self.object.getName()
         group = self.object.getGroup()
 
-        self.MovieButtonFalse = ObjectManager.createObjectUnique("Movie2Button", check_box_name + "FalseButton", group, ResourceMovie=self.ResourceMovie, CompositionNameIdle=self.CompositionNameFalse_Idle, CompositionNameEnter=self.CompositionNameFalse_Enter, CompositionNameOver=self.CompositionNameFalse_Over, CompositionNameClick=self.CompositionNameFalse_Click, CompositionNameLeave=self.CompositionNameFalse_Leave)
+        self.MovieButtonFalse = ObjectManager.createObjectUnique("Movie2Button", check_box_name + "FalseButton",
+                                                                 group, ResourceMovie=self.ResourceMovie,
+                                                                 CompositionNameIdle=self.CompositionNameFalse_Idle,
+                                                                 CompositionNameEnter=self.CompositionNameFalse_Enter,
+                                                                 CompositionNameOver=self.CompositionNameFalse_Over,
+                                                                 CompositionNameClick=self.CompositionNameFalse_Click,
+                                                                 CompositionNameLeave=self.CompositionNameFalse_Leave)
 
-        self.MovieButtonTrue = ObjectManager.createObjectUnique("Movie2Button", check_box_name + "TrueButton", group, ResourceMovie=self.ResourceMovie, CompositionNameIdle=self.CompositionNameTrue_Idle, CompositionNameEnter=self.CompositionNameTrue_Enter, CompositionNameOver=self.CompositionNameTrue_Over, CompositionNameClick=self.CompositionNameTrue_Click, CompositionNameLeave=self.CompositionNameTrue_Leave)
+        self.MovieButtonTrue = ObjectManager.createObjectUnique("Movie2Button", check_box_name + "TrueButton", group,
+                                                                ResourceMovie=self.ResourceMovie,
+                                                                CompositionNameIdle=self.CompositionNameTrue_Idle,
+                                                                CompositionNameEnter=self.CompositionNameTrue_Enter,
+                                                                CompositionNameOver=self.CompositionNameTrue_Over,
+                                                                CompositionNameClick=self.CompositionNameTrue_Click,
+                                                                CompositionNameLeave=self.CompositionNameTrue_Leave)
 
         button_false_entity_node = self.MovieButtonFalse.getEntityNode()
         self.addChild(button_false_entity_node)

@@ -146,7 +146,8 @@ class MovieButton(BaseEntity):
         source.addDelay(0.0)
 
         with source.addRaceTask(3) as (source_over_click, source_over_leave, source_block):
-            source_over_click.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MovieOver, isDown=True, Already=True)
+            source_over_click.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MovieOver,
+                                      isDown=True, Already=True)
             source_over_click.addFunction(self.__setState, "Push")
 
             source_over_leave.addTask("TaskMovieSocketLeave", SocketName="socket", Movie=MovieOver)
@@ -179,7 +180,8 @@ class MovieButton(BaseEntity):
             source_enter_leave.addTask("TaskMovieSocketLeave", SocketName="socket", Movie=MovieEnter)
             source_enter_leave.addFunction(self.__setState, "Idle")
 
-            source_enter_click.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MovieEnter, isDown=True, Already=True)
+            source_enter_click.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MovieEnter,
+                                       isDown=True, Already=True)
             source_enter_click.addFunction(self.__setState, "Push")
             pass
 
@@ -226,7 +228,8 @@ class MovieButton(BaseEntity):
             source_Push_leave.addTask("TaskMovieSocketLeave", SocketName="socket", Movie=MoviePush)
             source_Push_leave.addFunction(self.__setState, "Release")
 
-            source_Pressed_click_Rel.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MoviePush, isDown=False, Already=True)
+            source_Pressed_click_Rel.addTask("TaskMovieSocketClick", SocketName="socket",
+                                             Movie=MoviePush, isDown=False, Already=True)
             source_Pressed_click_Rel.addFunction(self.__setState, "Click")
             pass
 
@@ -244,7 +247,8 @@ class MovieButton(BaseEntity):
         source.addNotify(Notificator.onMovieButtonPressed, self.object)
 
         with source.addRaceTask(3) as (source_Pressed_click_Rel, source_Pressed_leave, source_block):
-            source_Pressed_click_Rel.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MoviePressed, isDown=False, isPressed=False, Already=True)
+            source_Pressed_click_Rel.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MoviePressed,
+                                             isDown=False, isPressed=False, Already=True)
             source_Pressed_click_Rel.addFunction(self.__setState, "Click")
 
             source_Pressed_leave.addTask("TaskMovieSocketLeave", SocketName="socket", Movie=MoviePressed)
@@ -343,7 +347,11 @@ class MovieButton(BaseEntity):
 
     def getStateMovie(self, state):
         touchpad_ignore = ["Enter", "Over", "Leave", "Release"]
-        defaults = {"Over": "Idle", "Pressed": "Idle", "Block": "Idle", }
+        defaults = {
+            "Over": "Idle",
+            "Pressed": "Idle",
+            "Block": "Idle",
+        }
         default_state_name = defaults.get(state)
         movie_default = self.Movies.get(default_state_name)
         movie_state = self.Movies.get(state, movie_default)
@@ -382,8 +390,7 @@ class MovieButton(BaseEntity):
             Scopes["Pressed"] = Functor(self.__statePressed, MoviePressed)
             Scopes["Release"] = Functor(self.__stateRelease, MovieRelease)
             Scopes["Release_Play"] = Functor(self.__stateReleasePlay, MovieRelease)
-            Scopes["Block="]
-            Functor(self.__stateBlock, MovieBlock)
+            Scopes["Block"] = Functor(self.__stateBlock, MovieBlock)
 
             def __states(isSkip, cb):
                 cb(isSkip, self.state)

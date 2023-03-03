@@ -87,8 +87,10 @@ class MovieTabsGroup(BaseEntity):
             MovieTrueIdle = "Movie{}_{}_Down".format(self.object.getGroupName(), tab)
             MovieFalseIdle = "Movie{}_{}_Idle".format(self.object.getGroupName(), tab)
 
-            btn_true = ObjectManager.createObjectUnique("MovieButton", '{}_Down'.format(tab), self.object, ResourceMovieIdle=MovieTrueIdle)
-            btn_false = ObjectManager.createObjectUnique("MovieButton", '{}_Idle'.format(tab), self.object, ResourceMovieIdle=MovieFalseIdle)
+            btn_true = ObjectManager.createObjectUnique("MovieButton", '{}_Down'.format(tab), self.object,
+                                                        ResourceMovieIdle=MovieTrueIdle)
+            btn_false = ObjectManager.createObjectUnique("MovieButton", '{}_Idle'.format(tab), self.object,
+                                                         ResourceMovieIdle=MovieFalseIdle)
 
             self.addChild(btn_true.getEntityNode())
             self.addChild(btn_false.getEntityNode())

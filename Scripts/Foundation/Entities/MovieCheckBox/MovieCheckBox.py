@@ -34,9 +34,19 @@ class MovieCheckBox(BaseEntity):
         super(MovieCheckBox, self)._onInitialize(obj)
         templateName = self.object.getName()
         group = self.object.getGroup()
-        self.MovieButtonFalse = ObjectManager.createObjectUnique("MovieButton", templateName + "FalseButton", group, ResourceMovieIdle=self.ResourceMovieFalse_Idle, ResourceMovieEnter=self.ResourceMovieFalse_Enter, ResourceMovieOver=self.ResourceMovieFalse_Over, ResourceMovieClick=self.ResourceMovieFalse_Click, ResourceMovieLeave=self.ResourceMovieFalse_Leave)
+        self.MovieButtonFalse = ObjectManager.createObjectUnique("MovieButton", templateName + "FalseButton", group,
+                                                                 ResourceMovieIdle=self.ResourceMovieFalse_Idle,
+                                                                 ResourceMovieEnter=self.ResourceMovieFalse_Enter,
+                                                                 ResourceMovieOver=self.ResourceMovieFalse_Over,
+                                                                 ResourceMovieClick=self.ResourceMovieFalse_Click,
+                                                                 ResourceMovieLeave=self.ResourceMovieFalse_Leave)
 
-        self.MovieButtonTrue = ObjectManager.createObjectUnique("MovieButton", templateName + "TrueButton", group, ResourceMovieIdle=self.ResourceMovieTrue_Idle, ResourceMovieEnter=self.ResourceMovieTrue_Enter, ResourceMovieOver=self.ResourceMovieTrue_Over, ResourceMovieClick=self.ResourceMovieTrue_Click, ResourceMovieLeave=self.ResourceMovieTrue_Leave)
+        self.MovieButtonTrue = ObjectManager.createObjectUnique("MovieButton", templateName + "TrueButton", group,
+                                                                ResourceMovieIdle=self.ResourceMovieTrue_Idle,
+                                                                ResourceMovieEnter=self.ResourceMovieTrue_Enter,
+                                                                ResourceMovieOver=self.ResourceMovieTrue_Over,
+                                                                ResourceMovieClick=self.ResourceMovieTrue_Click,
+                                                                ResourceMovieLeave=self.ResourceMovieTrue_Leave)
         ent = self.MovieButtonFalse.getEntityNode()
         self.addChild(ent)
         ent2 = self.MovieButtonTrue.getEntityNode()

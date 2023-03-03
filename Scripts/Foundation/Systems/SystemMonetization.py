@@ -611,19 +611,37 @@ class SystemMonetization(System):
 
         advert_prod_id = MonetizationManager.getGeneralSetting("AdvertProductID")
 
-        SystemAnalytics.addSpecificAnalytic("earn_currency", "purchase", Notificator.onGameStoreSentRewards, lambda _, rewards: 'Gold' in rewards or 'Energy' in rewards, _cbEarnCurrency)
-        SystemAnalytics.addSpecificAnalytic("spent_currency", "spent_gold", Notificator.onGameStorePayGoldSuccess, None, lambda gold, descr: {'amount': gold, 'description': descr, 'name': 'gold'})
+        SystemAnalytics.addSpecificAnalytic("earn_currency", "purchase", Notificator.onGameStoreSentRewards,
+                                            lambda _, rewards: 'Gold' in rewards or 'Energy' in rewards, _cbEarnCurrency)
+        SystemAnalytics.addSpecificAnalytic("spent_currency", "spent_gold", Notificator.onGameStorePayGoldSuccess,
+                                            None, lambda gold, descr: {'amount': gold, 'description': descr, 'name': 'gold'})
 
-        SystemAnalytics.addAnalytic("got_promocode_reward", Notificator.onGiftExchangeRedeemResult, None, lambda label, result: {'type': label, 'result': result})
-        SystemAnalytics.addAnalytic("got_purchase_reward", Notificator.onGameStoreSentRewards, lambda prod_id, *_: prod_id != advert_prod_id, _cbSentRewardParams)
-        SystemAnalytics.addAnalytic("got_ad_reward", Notificator.onGameStoreSentRewards, lambda prod_id, *_: prod_id == advert_prod_id, lambda prod_id, rewards: rewards)
-        SystemAnalytics.addAnalytic("not_enough_gold", Notificator.onGameStoreNotEnoughGold, None, lambda value, descr: {"not_enough_value": value, "description": descr})
-        SystemAnalytics.addAnalytic("rewarded_ads_reached_limit", Notificator.onAvailableAdsEnded, None, lambda: {"today_viewed_ads": SystemMonetization.getStorageValue("todayViewedAds"), "fingerprint": SystemMonetization.getStorageValue("lastViewedAdDate")})
+        SystemAnalytics.addAnalytic("got_promocode_reward", Notificator.onGiftExchangeRedeemResult, None,
+                                    lambda label, result: {'type': label, 'result': result})
+        SystemAnalytics.addAnalytic("got_purchase_reward", Notificator.onGameStoreSentRewards,
+                                    lambda prod_id, *_: prod_id != advert_prod_id, _cbSentRewardParams)
+        SystemAnalytics.addAnalytic("got_ad_reward", Notificator.onGameStoreSentRewards,
+                                    lambda prod_id, *_: prod_id == advert_prod_id,
+                                    lambda prod_id, rewards: rewards)
+        SystemAnalytics.addAnalytic("not_enough_gold", Notificator.onGameStoreNotEnoughGold, None,
+                                    lambda value, descr: {"not_enough_value": value, "description": descr})
+        SystemAnalytics.addAnalytic("rewarded_ads_reached_limit", Notificator.onAvailableAdsEnded, None,
+                                    lambda: {
+                                        "today_viewed_ads": SystemMonetization.getStorageValue("todayViewedAds"),
+                                        "fingerprint": SystemMonetization.getStorageValue("lastViewedAdDate")
+                                    })
 
     @staticmethod
     def __initStorage():
-        storage = {"gold": SecureValue("gold", int(MonetizationManager.getGeneralSetting("StartBalance", 0))), "todayViewedAds": SecureValue("todayViewedAds", 0), "lastViewedAdDate": SecureStringValue("lastViewedAdDate", ""), "skippedMGs": SecureStringValue("skippedMGs", ""), "acceptPrice": SecureStringValue("acceptPrice", ""), "purchased": SecureStringValue("purchased", ""),  # "{}, "...
-            "PurchasedProductGroups": SecureStringValue("PurchasedProductGroups", "")}
+        storage = {
+            "gold": SecureValue("gold", int(MonetizationManager.getGeneralSetting("StartBalance", 0))),
+            "todayViewedAds": SecureValue("todayViewedAds", 0),
+            "lastViewedAdDate": SecureStringValue("lastViewedAdDate", ""),
+            "skippedMGs": SecureStringValue("skippedMGs", ""),
+            "acceptPrice": SecureStringValue("acceptPrice", ""),
+            "purchased": SecureStringValue("purchased", ""),  # "{}, "...
+            "PurchasedProductGroups": SecureStringValue("PurchasedProductGroups", "")
+        }
         SystemMonetization.storage = storage
 
     @staticmethod
@@ -880,7 +898,8 @@ class SystemMonetization(System):
 
         def _getSettingsWidgetTitle():
             title = "**Monetization settings**"
-            title += "".join(["\n* {}: `{}`".format(key, val) for key, val in MonetizationManager.getGeneralSettings().items()])
+            title += "".join(["\n* {}: `{}`".format(key, val)
+                                 for key, val in MonetizationManager.getGeneralSettings().items()])
             return title
 
         w_settings_descr = Mengine.createDevToDebugWidgetText("monetization_settings_descr")

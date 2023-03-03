@@ -41,7 +41,8 @@ class MovieScrollbar(BaseEntity):
                 Trace.log("Entity", 0, "************************** no movies")
                 return
 
-            movie = ObjectManager.createObjectUnique('Movie', name, self.object, ResourceMovie=Mengine.getResourceReference(resource_name))
+            movie = ObjectManager.createObjectUnique('Movie', name, self.object,
+                                                     ResourceMovie=Mengine.getResourceReference(resource_name))
             self.addChild(movie.getEntityNode())
 
             movie.setEnable(enable)

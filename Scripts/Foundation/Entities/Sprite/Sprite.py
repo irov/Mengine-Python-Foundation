@@ -5,8 +5,10 @@ class Sprite(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "SpriteResourceName", Update=Sprite.__updateSpriteResourceName)
-        Type.addAction(Type, "ExtraResource", Update=Sprite.__updateExtraResource)
+        Type.addAction(Type, "SpriteResourceName",
+                       Update=Sprite.__updateSpriteResourceName)
+        Type.addAction(Type, "ExtraResource",
+                       Update=Sprite.__updateExtraResource)
         pass
 
     def __updateSpriteResourceName(self, value):

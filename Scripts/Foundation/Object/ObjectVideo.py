@@ -7,12 +7,9 @@ class ObjectVideo(Object):
 
         Type.addResource(Type, "VideoResourceName")
         Type.addParam(Type, "Play")
-        pass
 
     def _onParams(self, params):
         super(ObjectVideo, self)._onParams(params)
 
         self.initResource("VideoResourceName", params, None)
         self.initParam("Play", params, False)
-        pass
-    pass

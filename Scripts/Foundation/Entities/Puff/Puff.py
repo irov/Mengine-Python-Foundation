@@ -6,7 +6,10 @@ class Puff(BaseEntity):
         BaseEntity.declareORM(Type)
 
         Type.addAction(Type, "PuffElements")
-        Type.addAction(Type, "PuffElementsVisible", Update=Puff._updatePuffElementsVisible, Append=Puff._appendPuffElementsVisible, Remove=Puff._removePuffElementsVisible)
+        Type.addAction(Type, "PuffElementsVisible",
+                       Update=Puff._updatePuffElementsVisible,
+                       Append=Puff._appendPuffElementsVisible,
+                       Remove=Puff._removePuffElementsVisible)
         pass
 
     def _updatePuffElementsVisible(self, elementsVisible):

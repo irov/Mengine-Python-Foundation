@@ -315,7 +315,8 @@ class MovieEditBox(BaseEntity):
         # source.addTask('TaskSendAnalytics', clientID='555', category='Over', action='Enter', client_definition=cDict)
         # source.addFacebookAuth(response_type='code', scope='publish_actions,public_profile')
         with source.addRaceTask(4) as (source_over_click, source_over_leave, source_block, source_tab_focus):
-            source_over_click.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MovieOver, isDown=True, Already=True)
+            source_over_click.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MovieOver,
+                                      isDown=True, Already=True)
             source_over_click.addFunction(self.__setState, "Focus")
 
             source_over_leave.addTask("TaskMovieSocketLeave", SocketName="socket", Movie=MovieOver)
@@ -394,7 +395,12 @@ class MovieEditBox(BaseEntity):
         self.tc = TaskManager.createTaskChain(Repeat=True, NoCheckAntiStackCycle=True)
 
         with self.tc as source_repeat:
-            Scopes = dict(Idle=Functor(self.__stateIdle, MovieIdle), Over=Functor(self.__stateOver, MovieOver), Focus=Functor(self.__stateFocus, MovieFocus), Block=Functor(self.__stateBlock, MovieBlock), )
+            Scopes = dict(
+                Idle=Functor(self.__stateIdle, MovieIdle),
+                Over=Functor(self.__stateOver, MovieOver),
+                Focus=Functor(self.__stateFocus, MovieFocus),
+                Block=Functor(self.__stateBlock, MovieBlock),
+            )
 
             def __states(isSkip, cb):
                 cb(isSkip, self.state)

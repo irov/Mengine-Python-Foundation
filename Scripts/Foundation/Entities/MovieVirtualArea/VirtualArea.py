@@ -47,8 +47,15 @@ class VirtualArea(Initializer):
         scale_factor = kwargs.get('scale_factor', 0.375)
         viewport = kwargs.get('viewport_node', None)
         content_size = kwargs.get('content_size', (0.0, 0.0, 2736.0, 1536.0))
-        drag_object_params = {"friction": kwargs.get('friction', 0.5), "rigidity": kwargs.get('rigidity', 0.5), "dragging_mode": kwargs.get('dragging_mode', 'free'), "max_scale": kwargs.get('max_scale', 6.0), "disable_drag_if_invalid": kwargs.get('disable_drag_if_invalid', True), "drag_start_threshold": kwargs.get('drag_start_threshold', 50.0),  # todo: px -> cm
-            "allow_out_of_bounds": kwargs.get('allow_out_of_bounds', True)}
+        drag_object_params = {
+            "friction": kwargs.get('friction', 0.5),
+            "rigidity": kwargs.get('rigidity', 0.5),
+            "dragging_mode": kwargs.get('dragging_mode', 'free'),
+            "max_scale": kwargs.get('max_scale', 6.0),
+            "disable_drag_if_invalid": kwargs.get('disable_drag_if_invalid', True),
+            "drag_start_threshold": kwargs.get('drag_start_threshold', 50.0),  # todo: px -> cm
+            "allow_out_of_bounds": kwargs.get('allow_out_of_bounds', True)
+        }
 
         self._enable_scale = enable_scale
         self._scale_factor = scale_factor
@@ -153,7 +160,8 @@ class VirtualArea(Initializer):
         elif y_is_None:
             self._target.set_position(x=bounds['begin'].x + (self.get_width() - abs(size.x - size.z)) * x)
         else:
-            self._target.set_position(bounds['begin'].x + (self.get_width() - abs(size.x - size.z)) * x, bounds['begin'].y + (self.get_height() - abs(size.y - size.w)) * y)
+            self._target.set_position(bounds['begin'].x + (self.get_width() - abs(size.x - size.z)) * x,
+                                      bounds['begin'].y + (self.get_height() - abs(size.y - size.w)) * y)
 
     def get_percentage(self):
         position = self._target._position

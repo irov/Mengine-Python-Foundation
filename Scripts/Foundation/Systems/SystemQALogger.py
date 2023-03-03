@@ -47,8 +47,20 @@ class SystemQALogger(System):
 
     def __addObservers(self):
         identities = {  # use $id for paste identity in message
-            "onParagraphRun": "      $id '%s'", "onParagraphComplete": "      $id '%s'", "onScenarioComplete": "    $id '%s'", "onEnableSceneLayerGroup": "<SceneManager> enable scene '%s' layer '%s'", "onDisableSceneLayerGroup": "<SceneManager> disable scene '%s' layer '%s'", "onGameSceneChange": "<SceneManager> changed game scene from '%s' to '%s'", "onEnigmaStart": "start enigma '%s'", "onEnigmaComplete": "complete enigma '%s'", "onInventoryItemDetach": "<Inventory> detach item '%s' (state=%s)",
-            "onInventoryItemPick": "<Inventory> pick item '%s' (state=%s)", "onHOGFittingItemPicked": "<HOGInventoryFitting> pick item '%s'", "onHOGFittingItemUsed": "<HOGInventoryFitting> use item '%s'", "onHOGFittingItemDetached": "<HOGInventoryFitting> detach item '%s'"}
+            "onParagraphRun": "      $id '%s'",
+            "onParagraphComplete": "      $id '%s'",
+            "onScenarioComplete": "    $id '%s'",
+            "onEnableSceneLayerGroup": "<SceneManager> enable scene '%s' layer '%s'",
+            "onDisableSceneLayerGroup": "<SceneManager> disable scene '%s' layer '%s'",
+            "onGameSceneChange": "<SceneManager> changed game scene from '%s' to '%s'",
+            "onEnigmaStart": "start enigma '%s'",
+            "onEnigmaComplete": "complete enigma '%s'",
+            "onInventoryItemDetach": "<Inventory> detach item '%s' (state=%s)",
+            "onInventoryItemPick": "<Inventory> pick item '%s' (state=%s)",
+            "onHOGFittingItemPicked": "<HOGInventoryFitting> pick item '%s'",
+            "onHOGFittingItemUsed": "<HOGInventoryFitting> use item '%s'",
+            "onHOGFittingItemDetached": "<HOGInventoryFitting> detach item '%s'"
+        }
         for identity, message in identities.items():
             self.__createObserver(identity, message)
 
@@ -89,7 +101,8 @@ class SystemQALogger(System):
     @staticmethod
     def __onInventoryCombineInventoryItem(inv, arrowItem, invItem):
         inv_name = inv.getName().replace("Demon_", "")
-        f_message = "<{}> try combine {!r} (arrow) with {!r} (inventory)".format(inv_name, arrowItem.getName(), invItem.getName())
+        f_message = "<{}> try combine {!r} (arrow) with {!r} (inventory)".format(
+            inv_name, arrowItem.getName(), invItem.getName())
         SystemQALogger.notify(f_message)
         return False
 
@@ -114,7 +127,8 @@ class SystemQALogger(System):
 
     @staticmethod
     def __onMovieSocketClick(object, name, touchId, x, y, button, isDown, isPressed):
-        f_message = "click on socket {!r} [{!r}]: isDown={}, isPressed={}".format(name, object.getGroupName(), isDown, isPressed)
+        f_message = "click on socket {!r} [{!r}]: isDown={}, isPressed={}".format(
+            name, object.getGroupName(), isDown, isPressed)
         SystemQALogger.notify(f_message)
         return False
 
