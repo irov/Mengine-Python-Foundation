@@ -1,10 +1,12 @@
 from Foundation.System import System
 
+
 class SystemQALogger(System):
-    # Confluence doc: https://wonderland-games.atlassian.net/wiki/spaces/TDH/pages/1772421145/QA
+    """
+        Confluence doc: https://wonderland-games.atlassian.net/wiki/spaces/TDH/pages/1772421145/QA
+    """
 
     __Logger = None
-    s_functions = []
     s_msg_prefixes = {"notify": "    * "}
 
     def _onRun(self):
@@ -21,18 +23,9 @@ class SystemQALogger(System):
         self.log("SystemQA stopped!")
         return True
 
-    @classmethod
-    def __createLogger(cls):
-        if cls.__Logger is not None:
-            return
-        if cls.onlyConsole() is True:
-            return
-        t = Mengine.getDatePathTimestamp()
-        file_name = "QA_{}.log".format(t)
-        cls.__Logger = Mengine.makeFileLogger(file_name)
-
     @staticmethod
     def shouldDuplicate():
+        """ if -qa:duplicate - all logs will write to file and console """
         if _QUALITYASSURANCE is True:
             option = Mengine.getOptionValue("qa")
             return option == "duplicate"
@@ -40,13 +33,20 @@ class SystemQALogger(System):
 
     @staticmethod
     def onlyConsole():
+        """ if -qa:console - all logs will write only to console """
         if _QUALITYASSURANCE is True:
             option = Mengine.getOptionValue("qa")
             return option == "console"
         return False
 
+    # --- Observer utils -----------------------------------------------------------------------------------------------
+
     def __addObservers(self):
-        identities = {  # use $id for paste identity in message
+        self._addMessageObservers()
+        self._addFilterObservers()
+
+    def _addMessageObservers(self):
+        identities_with_message = {  # use $id for paste identity in message
             "onParagraphRun": "      $id '%s'",
             "onParagraphComplete": "      $id '%s'",
             "onScenarioComplete": "    $id '%s'",
@@ -61,19 +61,27 @@ class SystemQALogger(System):
             "onHOGFittingItemUsed": "<HOGInventoryFitting> use item '%s'",
             "onHOGFittingItemDetached": "<HOGInventoryFitting> detach item '%s'"
         }
-        for identity, message in identities.items():
-            self.__createObserver(identity, message)
+        for identity, message in identities_with_message.items():
+            self.__createMessageObserver(identity, message)
 
-        self.addObserver(Notificator.onInventoryAddItem, self.__onInventoryAddItem)
-        self.addObserver(Notificator.onButtonClick, self.__onButtonClick)
-        self.addObserver(Notificator.onItemClick, self.__onButtonClick)
-        # self.addObserver(Notificator.onMovieSocketClickSuccessful, self.__onMovieSocketClick)
-        self.addObserver(Notificator.onSocketClick, self.__onSocketClick)
-        self.addObserver(Notificator.onItemCollectComplete, self.__onItemCollectComplete)
-        self.addObserver(Notificator.onInventoryCombineInventoryItem, self.__onInventoryCombineInventoryItem)
-        self.addObserver(Notificator.onHintActionStart, self.__onHintActionStart)
+    def _addFilterObservers(self):
+        identities_with_filter = {
+            "onInventoryAddItem": self._cbInventoryAddItem,
+            "onButtonClick": self._cbButtonClick,
+            "onItemClick": self._cbButtonClick,
+            "onMovieSocketClickSuccessful": self._cbMovieSocketClick,
+            "onSocketClick": self._cbSocketClick,
+            "onItemCollectComplete": self._cbItemCollectComplete,
+            "onInventoryCombineInventoryItem": self._cbInventoryCombineInventoryItem,
+            "onHintActionStart": self._cbHintActionStart,
+        }
+        for identity, Filter in identities_with_filter.items():
+            if Notificator.hasIdentity(identity) is False:
+                continue
+            notificator = Notificator.getIdentity(identity)
+            self.addObserver(notificator, Filter)
 
-    def __createObserver(self, identity, message=None):
+    def __createMessageObserver(self, identity, message=None):
         if Notificator.hasIdentity(identity) is False:
             return False
         notificator = Notificator.getIdentity(identity)
@@ -98,8 +106,10 @@ class SystemQALogger(System):
 
         self.addObserver(notificator, Filter)
 
+    # --- Custom observer filters --------------------------------------------------------------------------------------
+
     @staticmethod
-    def __onInventoryCombineInventoryItem(inv, arrowItem, invItem):
+    def _cbInventoryCombineInventoryItem(inv, arrowItem, invItem):
         inv_name = inv.getName().replace("Demon_", "")
         f_message = "<{}> try combine {!r} (arrow) with {!r} (inventory)".format(
             inv_name, arrowItem.getName(), invItem.getName())
@@ -107,42 +117,55 @@ class SystemQALogger(System):
         return False
 
     @staticmethod
-    def __onInventoryAddItem(inv, item):
+    def _cbInventoryAddItem(inv, item):
         inv_name = inv.getName().replace("Demon_", "")
         f_message = "<{}> add item {!r}".format(inv_name, item.getName())
         SystemQALogger.notify(f_message)
         return False
 
     @staticmethod
-    def __onButtonClick(obj):
+    def _cbButtonClick(obj):
         f_message = "click on {!r} [{!r}]".format(obj.getName(), obj.getGroupName())
         SystemQALogger.notify(f_message)
         return False
 
     @staticmethod
-    def __onSocketClick(obj):
+    def _cbSocketClick(obj):
         f_message = "click on socket {!r} [{!r}]".format(obj.getName(), obj.getGroupName())
         SystemQALogger.notify(f_message)
         return False
 
     @staticmethod
-    def __onMovieSocketClick(object, name, touchId, x, y, button, isDown, isPressed):
+    def _cbMovieSocketClick(object, name, touchId, x, y, button, isDown, isPressed):
         f_message = "click on socket {!r} [{!r}]: isDown={}, isPressed={}".format(
             name, object.getGroupName(), isDown, isPressed)
         SystemQALogger.notify(f_message)
         return False
 
     @staticmethod
-    def __onItemCollectComplete(socket, item_list):
+    def _cbItemCollectComplete(socket, item_list):
         f_message = "romashka {!r} complete".format(socket.getName().replace("Socket_", ""))
         SystemQALogger.notify(f_message)
         return False
 
     @staticmethod
-    def __onHintActionStart(HintAction):
+    def _cbHintActionStart(HintAction):
         f_message = "<Hint> {} [{}]".format(HintAction.__class__.__name__, HintAction.Quest.questType)
         SystemQALogger.notify(f_message)
         return False
+
+    # --- Logger utils -------------------------------------------------------------------------------------------------
+
+    @classmethod
+    def __createLogger(cls):
+        """ Creates logger file and starts logger instance """
+        if cls.__Logger is not None:
+            return
+        if cls.onlyConsole() is True:
+            return
+        t = Mengine.getDatePathTimestamp()
+        file_name = "QA_{}.log".format(t)
+        cls.__Logger = Mengine.makeFileLogger(file_name)
 
     @classmethod
     def log(cls, msg, type_=None):
