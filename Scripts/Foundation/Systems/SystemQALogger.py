@@ -59,7 +59,8 @@ class SystemQALogger(System):
             "onInventoryItemPick": "<Inventory> pick item '%s' (state=%s)",
             "onHOGFittingItemPicked": "<HOGInventoryFitting> pick item '%s'",
             "onHOGFittingItemUsed": "<HOGInventoryFitting> use item '%s'",
-            "onHOGFittingItemDetached": "<HOGInventoryFitting> detach item '%s'"
+            "onHOGFittingItemDetached": "<HOGInventoryFitting> detach item '%s'",
+            "onLocationComplete": "complete location '%s'",
         }
         for identity, message in identities_with_message.items():
             self.__createMessageObserver(identity, message)
