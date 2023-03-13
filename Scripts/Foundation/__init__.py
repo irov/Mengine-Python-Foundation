@@ -757,7 +757,6 @@ def onInitialize():
         , 'onAdvertLoadFail'
         , 'onAdvertDisplayed'
         , 'onAdvertDisplayFailed'
-        , 'onAdvertCompleted'
         , 'onAdvertClicked'
         , 'onAdvertRewarded'
         , 'onAdvertHidden'

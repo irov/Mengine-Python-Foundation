@@ -168,8 +168,6 @@ class SystemApplovin(System):
             "onAdDisplayFailed": "onApplovinRewardedOnAdDisplayFailed",
             "onAdClicked": "onApplovinRewardedOnAdClicked",
             "onAdHidden": "onApplovinRewardedOnAdHidden",
-            "onVideoStarted": "onApplovinRewardedOnRewardedVideoStarted",
-            "onVideoCompleted": "onApplovinRewardedOnRewardedVideoCompleted",
             "onUserRewarded": "onApplovinRewardedOnUserRewarded",
         }
         s_androidmethods = {
@@ -182,16 +180,7 @@ class SystemApplovin(System):
         def setCallbacks(self):
             super(self.__class__, self).setCallbacks()
             if _ANDROID:
-                Mengine.setAndroidCallback(PLUGIN_NAME, self.s_callbacks["onVideoStarted"], self.cbVideoStarted)
-                Mengine.setAndroidCallback(PLUGIN_NAME, self.s_callbacks["onVideoCompleted"], self.cbVideoCompleted)
                 Mengine.setAndroidCallback(PLUGIN_NAME, self.s_callbacks["onUserRewarded"], self.cbUserRewarded)
-
-        def cbVideoStarted(self):
-            _Log("[{} cb] video started".format(self.ad_type))
-
-        def cbVideoCompleted(self):
-            _Log("[{} cb] video completed".format(self.ad_type))
-            Notification.notify(Notificator.onAdvertCompleted, self.ad_type)
 
         def cbUserRewarded(self, label, reward):
             Notification.notify(Notificator.onAdvertRewarded, label, reward)
