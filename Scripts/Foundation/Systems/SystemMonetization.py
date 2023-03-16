@@ -193,15 +193,17 @@ class SystemMonetization(System):
             return
 
         should_accept_price = kwargs.get("ShouldAcceptPrice", False) or cls.shouldAcceptPrice()
+        price = cls.components[descr].getProductPrice() if descr in cls.components else gold
 
         def _isPriceAccepted():
+            if price == 0:
+                return True
             if should_accept_price is False:
                 return True
             return cls.isPriceAccepted(descr) is True
 
-        if should_accept_price is True:
-            arg = cls.components[descr].getProductPrice() if descr in cls.components else " "
-            source.addScope(cls._scopePGAcceptPrice, arg, descr=descr)
+        if price != 0 and should_accept_price is True:
+            source.addScope(cls._scopePGAcceptPrice, gold=price, descr=descr)
 
         with source.addIfTask(_isPriceAccepted) as (true, false):
             # ignores storage['acceptPrice'] if ShouldAcceptPrice is False, check _isPriceAccepted method
@@ -223,7 +225,6 @@ class SystemMonetization(System):
         icon = GameStore.generateObjectUnique("Movie2_Coin", "Movie2_Coin_{}".format(getCurrentPublisher()), Enable=True)
         icon.setTextAliasEnvironment("DialogWindowIcon")
         Mengine.setTextAlias("DialogWindowIcon", "$AliasCoinUsePrice", "ID_EMPTY")
-
         text_args = dict(icon_value=[gold])
 
         if cls.isPriceAccepted(descr) is True:
