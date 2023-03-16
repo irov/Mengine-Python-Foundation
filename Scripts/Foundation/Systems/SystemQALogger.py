@@ -61,17 +61,26 @@ class SystemQALogger(System):
             "onHOGFittingItemUsed": "<HOGInventoryFitting> use item '%s'",
             "onHOGFittingItemDetached": "<HOGInventoryFitting> detach item '%s'",
             "onLocationComplete": "complete location '%s'",
+            # Dungeon
+            "onBankSetResource": "upd bank [%s] '%s' from %s to %s",
+            "onGameBattleStart": "start battle",
+            "onGameBattleEnd": "end battle (win=%s) (level_up=%s) with results: %s. Transition to '%s'",
+            "onEnemyKilled": "killed enemy %s (by player: %s)",
+            "onShowBattleCardInfo": "show battle card info: %s",
+            "onBattleCardClick": "click on card at position %s",
         }
         for identity, message in identities_with_message.items():
             self.__createMessageObserver(identity, message)
 
     def _addFilterObservers(self):
         identities_with_filter = {
-            "onInventoryAddItem": self._cbInventoryAddItem,
-            "onButtonClick": self._cbButtonClick,
-            "onItemClick": self._cbButtonClick,
+            # Foundation
             "onMovieSocketClickSuccessful": self._cbMovieSocketClick,
             "onSocketClick": self._cbSocketClick,
+            "onButtonClick": self._cbButtonClick,
+            # HOPA
+            "onInventoryAddItem": self._cbInventoryAddItem,
+            "onItemClick": self._cbButtonClick,
             "onItemCollectComplete": self._cbItemCollectComplete,
             "onInventoryCombineInventoryItem": self._cbInventoryCombineInventoryItem,
             "onHintActionStart": self._cbHintActionStart,
@@ -109,20 +118,7 @@ class SystemQALogger(System):
 
     # --- Custom observer filters --------------------------------------------------------------------------------------
 
-    @staticmethod
-    def _cbInventoryCombineInventoryItem(inv, arrowItem, invItem):
-        inv_name = inv.getName().replace("Demon_", "")
-        f_message = "<{}> try combine {!r} (arrow) with {!r} (inventory)".format(
-            inv_name, arrowItem.getName(), invItem.getName())
-        SystemQALogger.notify(f_message)
-        return False
-
-    @staticmethod
-    def _cbInventoryAddItem(inv, item):
-        inv_name = inv.getName().replace("Demon_", "")
-        f_message = "<{}> add item {!r}".format(inv_name, item.getName())
-        SystemQALogger.notify(f_message)
-        return False
+    # Foundation
 
     @staticmethod
     def _cbButtonClick(obj):
@@ -140,6 +136,23 @@ class SystemQALogger(System):
     def _cbMovieSocketClick(object, name, touchId, x, y, button, isDown, isPressed):
         f_message = "click on socket {!r} [{!r}]: isDown={}, isPressed={}".format(
             name, object.getGroupName(), isDown, isPressed)
+        SystemQALogger.notify(f_message)
+        return False
+
+    # HOPA
+
+    @staticmethod
+    def _cbInventoryCombineInventoryItem(inv, arrowItem, invItem):
+        inv_name = inv.getName().replace("Demon_", "")
+        f_message = "<{}> try combine {!r} (arrow) with {!r} (inventory)".format(
+            inv_name, arrowItem.getName(), invItem.getName())
+        SystemQALogger.notify(f_message)
+        return False
+
+    @staticmethod
+    def _cbInventoryAddItem(inv, item):
+        inv_name = inv.getName().replace("Demon_", "")
+        f_message = "<{}> add item {!r}".format(inv_name, item.getName())
         SystemQALogger.notify(f_message)
         return False
 
