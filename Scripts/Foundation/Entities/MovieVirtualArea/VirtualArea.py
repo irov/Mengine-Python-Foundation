@@ -109,6 +109,13 @@ class VirtualArea(Initializer):
             Mengine.removeGlobalHandler(self._mouse_leave_handler)
             self._mouse_leave_handler = None
 
+        self.on_drag = None
+        self.on_drag_start = None
+        self.on_drag_move = None
+        self.on_drag_end = None
+        self.on_scale = None
+        self.on_touch = None
+
         self._socket = None
 
         if self._root is not None:
