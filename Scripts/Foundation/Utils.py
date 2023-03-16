@@ -1148,3 +1148,18 @@ def benchmark(func):
         Trace.msg('[*] Runtime: {} ms.'.format(end - start))
         return return_value
     return wrapper
+
+def replace_last(string, old, new, n, already_reverted_substrings=False):
+    """ replaces last `n` substrings `old` to `new` in input `string`
+        Example:
+            >>> before = "I want two first args: %s %s %s and %s"
+            >>> after = replace_last(before, "%s", "_", 2)
+            >>> print(after)    # "I want two first args: %s %s _ and _"
+    """
+    if already_reverted_substrings is True:
+        _old, _new = old, new
+    else:
+        _old, _new = old[::-1], new[::-1]
+
+    replaced = string[::-1].replace(_old, _new, n)[::-1]
+    return replaced
