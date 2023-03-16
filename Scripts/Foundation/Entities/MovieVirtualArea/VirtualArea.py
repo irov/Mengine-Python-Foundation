@@ -370,15 +370,15 @@ class VirtualArea(Initializer):
                 self._target.mouse_move(event.touchId, event.x, event.y, event.dx, event.dy)
 
         def mouse_release(event):
-            if event.isDown is True:  # just touched, not release
+            if event.isDown is True:
+                # just touched, not release
                 return
-            self.__mouse_release(event)
             self.on_drag_end()
+            self.__mouse_release(event)
 
         def mouse_leave(event):
-            self.__mouse_release(event)
             self.on_drag_end()
-            pass
+            self.__mouse_release(event)
 
         self._mouse_move_handler = Mengine.addMouseMoveHandler(mouse_move)
         self._mouse_release_handler = Mengine.addMouseButtonHandler(mouse_release)
