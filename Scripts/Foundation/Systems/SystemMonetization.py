@@ -229,7 +229,11 @@ class SystemMonetization(System):
         if cls.isPriceAccepted(descr) is True:
             return
 
-        source.addFunction(DialogWindow.runPreset, "AcceptPrice", content_style="icon", icon_obj=icon, text_args=text_args)
+        preset_name = "{}AcceptPrice".format(descr)
+        if DialogWindow.hasPreset(preset_name) is False:
+            preset_name = "AcceptPrice"
+
+        source.addFunction(DialogWindow.runPreset, preset_name, content_style="icon", icon_obj=icon, text_args=text_args)
 
         with source.addRaceTask(2) as (confirm, cancel):
             confirm.addListener(Notificator.onDialogWindowConfirm)
