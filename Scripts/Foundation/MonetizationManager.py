@@ -6,6 +6,7 @@ from Foundation.Utils import getCurrentPlatformParams, getCurrentPublisher, getC
 from Foundation.Utils import isCollectorEdition
 from Notification import Notification
 
+
 class CurrencyManager(object):
     """ Util for MonetizationManager"""
 
@@ -33,7 +34,8 @@ class CurrencyManager(object):
             CurrencyManager.s_current_currency = None
             return True
         if isinstance(currency_code, str) is False:
-            Trace.log("Manager", 0, "setCurrentCurrencyCode {!r} must be str, not {}".format(currency_code, type(currency_code)))
+            Trace.log("Manager", 0, "setCurrentCurrencyCode {!r} must be str, not {}"
+                      .format(currency_code, type(currency_code)))
             return False
         if len(currency_code) != 3:
             Trace.log("Manager", 0, "setCurrentCurrencyCode {!r} length must be 3".format(currency_code))
@@ -88,8 +90,16 @@ class CurrencyManager(object):
         symbol = Mengine.getTextFromID(symbol_text_id)
         return symbol
 
+
 class MonetizationManager(Manager, CurrencyManager):
-    __PARAMS_TABLE_NAMES = {"general": "MonetizationGeneral", "store_items": "StoreItems", "store_images": "StoreImages", "products_info": "ProductsInfo", "special_promotions": "SpecialPromotions", "redirect": "MonetizationRedirect"}
+    __PARAMS_TABLE_NAMES = {
+        "general": "MonetizationGeneral",
+        "store_items": "StoreItems",
+        "store_images": "StoreImages",
+        "products_info": "ProductsInfo",
+        "special_promotions": "SpecialPromotions",
+        "redirect": "MonetizationRedirect"
+    }
 
     s_params = {}  # key
     s_cards = {}  # card_id
@@ -238,7 +248,9 @@ class MonetizationManager(Manager, CurrencyManager):
                     continue
                 _alias_dict_save[alias_id] = params
 
-        # print "LOADED {} records FOR {}:".format(len(_dict_save), _class.__name__)  # print "   > ", _dict_save.keys()  # if _alias_dict_save: print "   > ", _alias_dict_save.keys()
+        # print "LOADED {} records FOR {}:".format(len(_dict_save), _class.__name__)
+        # print "   > ", _dict_save.keys()
+        # if _alias_dict_save: print "   > ", _alias_dict_save.keys()
 
     @staticmethod
     def loadGeneralParams(records):
@@ -257,12 +269,16 @@ class MonetizationManager(Manager, CurrencyManager):
         allowed_providers = ["Store", "GameStore"]
         store_provider = MonetizationManager.getGeneralSetting("GameStoreName", "GameStore")
         if store_provider not in allowed_providers:
-            Trace.log("Manager", 0, "MonetizationGeneral (General) param 'GameStoreName' - should be one of these: {}".format(allowed_providers))
+            Trace.log("Manager", 0, "MonetizationGeneral (General) param 'GameStoreName'"
+                                    " - should be one of these: {}".format(allowed_providers))
 
     @staticmethod
     def loadRedirector(records):
         TYPES_BLACKLIST = ["redirect"]
-        HUMAN_TABLE_NAMES = {value: key for key, value in MonetizationManager.__PARAMS_TABLE_NAMES.items() if key not in TYPES_BLACKLIST}
+        HUMAN_TABLE_NAMES = {
+            value: key for key, value in MonetizationManager.__PARAMS_TABLE_NAMES.items()
+            if key not in TYPES_BLACKLIST
+        }
 
         current_publisher = getCurrentPublisher()
         if current_publisher is None:
@@ -277,7 +293,8 @@ class MonetizationManager(Manager, CurrencyManager):
             Type = HUMAN_TABLE_NAMES.get(record.get("Type"))
             if Type is None:
                 redirect_table_name = MonetizationManager.__PARAMS_TABLE_NAMES["redirect"]
-                Trace.log("Manager", 0, "{} has error in Type {!r} - choose one of them: {!r}".format(redirect_table_name, record.get("Type"), HUMAN_TABLE_NAMES))
+                Trace.log("Manager", 0, "{} has error in Type {!r} - choose one of them: {!r}"
+                          .format(redirect_table_name, record.get("Type"), HUMAN_TABLE_NAMES))
                 continue
 
             platforms = getCurrentPlatformParams()
@@ -289,7 +306,9 @@ class MonetizationManager(Manager, CurrencyManager):
                 if table_name is None:
                     # only one platform could be True, so we don't need to continue our loop
                     break
-                table_name = table_name.format(tag=MonetizationManager.__PARAMS_TABLE_NAMES[Type], platform=Publisher, publisher=Publisher)
+                table_name = table_name.format(
+                    tag=MonetizationManager.__PARAMS_TABLE_NAMES[Type],
+                    platform=Publisher, publisher=Publisher)
                 MonetizationManager.__PARAMS_TABLE_NAMES[Type] = table_name
 
     @staticmethod
@@ -329,21 +348,31 @@ class MonetizationManager(Manager, CurrencyManager):
 
         if name == MonetizationManager.__PARAMS_TABLE_NAMES["redirect"]:  # Always should be first !!!
             MonetizationManager.loadRedirector(records)
+
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["general"]:
             MonetizationManager.loadGeneralParams(records)
             MonetizationManager.reportStatus()
+
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["store_items"]:
             if store_provider == "Store":
                 return True  # this store use own manager for store_items (see StoreButtons)
-            MonetizationManager.loadWithClassParams(records, MonetizationManager.StoreItemParam, MonetizationManager.s_cards)
+            MonetizationManager.loadWithClassParams(records, MonetizationManager.StoreItemParam,
+                                                    MonetizationManager.s_cards)
+
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["store_images"]:
             if store_provider == "Store":
                 return True  # this store use own manager for manage icons (see StoreButtons)
-            MonetizationManager.loadWithClassParams(records, MonetizationManager.StoreImageParam, MonetizationManager.s_images)
+            MonetizationManager.loadWithClassParams(records, MonetizationManager.StoreImageParam,
+                                                    MonetizationManager.s_images)
+
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["products_info"]:
-            MonetizationManager.loadWithClassParams(records, MonetizationManager.ProductInfoParam, MonetizationManager.s_products, MonetizationManager.s_alias_products)
+            MonetizationManager.loadWithClassParams(records, MonetizationManager.ProductInfoParam,
+                                                    MonetizationManager.s_products,
+                                                    MonetizationManager.s_alias_products)
+
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["special_promotions"]:
-            MonetizationManager.loadWithClassParams(records, MonetizationManager.SpecialPromoParam, MonetizationManager.s_specials)
+            MonetizationManager.loadWithClassParams(records, MonetizationManager.SpecialPromoParam,
+                                                    MonetizationManager.s_specials)
 
         return True
 
@@ -410,7 +439,11 @@ class MonetizationManager(Manager, CurrencyManager):
         if prod_id not in MonetizationManager.s_products:
             return False
 
-        whitelist = {"discount": (int, float), "id": str, "reward": dict, }
+        whitelist = {
+            "discount": (int, float),
+            "id": str,
+            "reward": dict,
+        }
 
         try:
             patch = json.loads(json_string)
@@ -425,7 +458,8 @@ class MonetizationManager(Manager, CurrencyManager):
 
                 allowed_types = whitelist[key]
                 if isinstance(value, allowed_types) is False:  # noqa
-                    Trace.msg_err("MonetizationManager can't patch {!r}: {} has wrong type '{}', must be {}".format(prod_id, key, type(value), allowed_types))
+                    Trace.msg_err("MonetizationManager can't patch {!r}: {} has wrong type '{}', must be {}"
+                                  .format(prod_id, key, type(value), allowed_types))
                     continue
 
                 product = MonetizationManager.getProductInfo(prod_id)
@@ -519,14 +553,16 @@ class MonetizationManager(Manager, CurrencyManager):
             return MonetizationManager.s_products.get(prod_id)
 
         if _DEVELOPMENT is True:
-            Trace.log("Manager", 0, "MonetizationManager::getProductInfo - wrong prod_id {} {}: {} & aliases: {}".format(prod_id, type(prod_id), MonetizationManager.s_products.keys(), MonetizationManager.s_alias_products.keys()))
+            Trace.log("Manager", 0, "MonetizationManager::getProductInfo - wrong prod_id {} {}: {} & aliases: {}".format(
+                prod_id, type(prod_id), MonetizationManager.s_products.keys(), MonetizationManager.s_alias_products.keys()))
         return None
 
     @staticmethod
     def getCardProductInfo(card_id):
         card = MonetizationManager.getCardParamsById(card_id)
         if card is None:
-            Trace.log("Manager", 0, "MonetizationManager::getCardProductInfo - wrong card_id {}, possible: {}".format(card, MonetizationManager.s_cards.keys()))
+            Trace.log("Manager", 0, "MonetizationManager::getCardProductInfo - wrong card_id {}, possible: {}"
+                      .format(card, MonetizationManager.s_cards.keys()))
             return None
         return MonetizationManager.getProductInfo(card.prod_id)
 
