@@ -1,5 +1,4 @@
 import json
-
 from Event import Event
 from Foundation.PolicyManager import PolicyManager
 from Foundation.System import System
@@ -8,6 +7,7 @@ from Foundation.Utils import SimpleLogger
 from Notification import Notification
 
 _Log = SimpleLogger("SystemGoogleServices")
+
 
 class SystemGoogleServices(System):
     """ Google service that provides
@@ -83,7 +83,10 @@ class SystemGoogleServices(System):
         self.__remDevToDebug()
 
     def _onStop(self):
-        pass
+        if TaskManager.existTaskChain("SystemGoogleServices_RetryPurchase") is True:
+            TaskManager.cancelTaskChain("SystemGoogleServices_RetryPurchase")
+        if TaskManager.existTaskChain("SystemGoogleServices_SignIn") is True:
+            TaskManager.cancelTaskChain("SystemGoogleServices_SignIn")
 
     def _onRun(self):
         self.__setDefaultSaves()
@@ -91,7 +94,10 @@ class SystemGoogleServices(System):
         return True
 
     def _onSave(self):
-        dict_save = {"cbs": SystemGoogleServices.__on_auth_cbs, "achievements": SystemGoogleServices.__on_auth_achievements}
+        dict_save = {
+            "cbs": SystemGoogleServices.__on_auth_cbs,
+            "achievements": SystemGoogleServices.__on_auth_achievements
+        }
         return dict_save
 
     def _onLoad(self, dict_save):
@@ -100,8 +106,14 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __setDefaultSaves():
-        SystemGoogleServices.__on_auth_cbs = {"showAchievements": False, "buy": None}
-        SystemGoogleServices.__on_auth_achievements = {"increment": [], "unlock": []}
+        SystemGoogleServices.__on_auth_cbs = {
+            "showAchievements": False,
+            "buy": None
+        }
+        SystemGoogleServices.__on_auth_achievements = {
+            "increment": [],
+            "unlock": []
+        }
 
     # --- GoogleGameSocial ---------------------------------------------------------------------------------------------
 
@@ -120,12 +132,12 @@ class SystemGoogleServices(System):
             SystemGoogleServices._signInIntent()
             return
 
-        if TaskManager.existTaskChain("GoogleGameSocialSignIn"):
+        if TaskManager.existTaskChain("SystemGoogleServices_SignIn"):
             if _DEVELOPMENT:
-                _Log("[Auth] GoogleGameSocialSignIn is already in process...", err=True)
+                _Log("[Auth] SystemGoogleServices_SignIn is already in process...", err=True)
             return
 
-        with TaskManager.createTaskChain(Name="GoogleGameSocialSignIn") as tc:
+        with TaskManager.createTaskChain(Name="SystemGoogleServices_SignIn") as tc:
             with tc.addParallelTask(2) as (respond, request):
                 with respond.addRaceTask(2) as (success, fail):
                     success.addEvent(SystemGoogleServices.login_event, Filter=lambda status: status is True)
@@ -291,8 +303,10 @@ class SystemGoogleServices(System):
         skus = {}
         for prod_id, sku in s_skus.items():
             params = {
+                # convert price from micros to normal with 2 digits after comma
                 "price": round(float(sku["oneTimePurchaseOfferDetails"]["priceAmountMicros"]) / 1000000, 2),
-                "descr": str(sku["description"]), "name": str(sku["name"])
+                "descr": str(sku["description"]),
+                "name": str(sku["name"])
             }
             skus[prod_id] = params
 
@@ -309,25 +323,29 @@ class SystemGoogleServices(System):
     # callbacks
 
     @staticmethod
+    def _retryPurchase(prod_id):
+        if Mengine.getConfigBool("GoogleService", "RetryPurchaseOnFail", True) is False:
+            return
+        if TaskManager.existTaskChain("SystemGoogleServices_RetryPurchase") is True:
+            return
+
+        timeout_delay = Mengine.getConfigInt("GoogleService", "RetryPurchaseTimeout", 10) * 1000.0
+
+        with TaskManager.createTaskChain(Name="SystemGoogleServices_RetryPurchase") as tc:
+            with tc.addRaceTask(2) as (timeout, retry):
+                timeout.addDelay(timeout_delay)
+
+                with retry.addParallelTask(2) as (respond, request):
+                    respond.addListener(Notificator.onProductsUpdateDone)
+                    respond.addFunction(SystemGoogleServices.buy, prod_id)
+                    request.addFunction(SystemGoogleServices.updateProducts)
+
+    @staticmethod
     def __cbBillingBuyInAppSuccess(prod_id, status):
         """ purchase process status """
         if status is False:
             Notification.notify(Notificator.onPayFailed, prod_id)
-
-            if Mengine.getConfigBool("GoogleService", "RetryPurchaseOnFail", True) is True:
-                if TaskManager.existTaskChain("SystemGoogleServices_RetryPurchase") is True:
-                    return
-
-                timeout_delay = Mengine.getConfigInt("GoogleService", "RetryPurchaseTimeout", 10) * 1000.0
-
-                with TaskManager.createTaskChain(Name="SystemGoogleServices_RetryPurchase") as tc:
-                    with tc.addRaceTask(2) as (timeout, retry):
-                        timeout.addDelay(timeout_delay)
-
-                        with retry.addParallelTask(2) as (respond, request):
-                            respond.addListener(Notificator.onProductsUpdateDone)
-                            respond.addFunction(SystemGoogleServices.buy, prod_id)
-                            request.addFunction(SystemGoogleServices.updateProducts)
+            SystemGoogleServices._retryPurchase(prod_id)
 
         _Log("[Billing cb] onGooglePlayBillingBuyInAppSuccess: prod_id={!r}, status={!r}".format(prod_id, status))
 
