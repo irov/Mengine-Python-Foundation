@@ -1,75 +1,39 @@
-class AdvertisementProvider(object):
+from Foundation.Providers.BaseProvider import BaseProvider
+
+
+class AdvertisementProvider(BaseProvider):
     """
     Types of Advertisement (AdType):
         - Rewarded
         - Interstitial
-
-    Names:
-        - Show{AdType}Advert
-        - CanOffer{AdType}Advert
-        - Is{AdType}AdvertAvailable
     """
 
-    s_name = None
-    s_methods = {}
+    s_allowed_methods = [
+        "ShowRewardedAdvert",
+        "ShowInterstitialAdvert",
+        "CanOfferRewardedAdvert",
+        "CanOfferInterstitialAdvert",
+        "IsRewardedAdvertAvailable",
+        "IsInterstitialAdvertAvailable",
+    ]
 
     @staticmethod
-    def setProvider(name, methods):
-        if isinstance(methods, dict) is False:
-            Trace.log("Provider", 0, "Wrong type {} must be dict".format(type(methods)))
-            return False
-
-        AdvertisementProvider.s_methods = methods
-        AdvertisementProvider.s_name = name
-
-        return True
-
-    @staticmethod
-    def setDevProvider():
-        if _DEVELOPMENT is False:
-            return
-
+    def _setDevProvider():
         DummyAdvertisement.setProvider()
-
-    @staticmethod
-    def getName():
-        return AdvertisementProvider.s_name
-
-    @staticmethod
-    def removeProvider():
-        AdvertisementProvider.s_name = None
-        AdvertisementProvider.s_methods = {}
 
     @staticmethod
     def showAdvert(AdType, **params):
         """ type: Rewarded|Interstitial """
-        fn = AdvertisementProvider.s_methods.get("Show{}Advert".format(AdType))
-
-        if fn is None:
-            Trace.log("Provider", 1, "Not found method for ad {}".format(AdType))
-            return False
-
-        return fn(**params)
+        return AdvertisementProvider._call("Show{}Advert".format(AdType), **params)
 
     @staticmethod
     def canOfferAdvert(AdType, **params):
-        fn = AdvertisementProvider.s_methods.get("CanOffer{}Advert".format(AdType))
-
-        if fn is None:
-            Trace.log("Provider", 1, "Not found method for ad {}".format(AdType))
-            return False
-
-        return fn(**params)
+        return AdvertisementProvider._call("CanOffer{}Advert".format(AdType), **params)
 
     @staticmethod
     def isAdvertAvailable(AdType, **params):
-        fn = AdvertisementProvider.s_methods.get("Is{}AdvertAvailable".format(AdType))
+        return AdvertisementProvider._call("Is{}AdvertAvailable".format(AdType), **params)
 
-        if fn is None:
-            Trace.log("Provider", 1, "Not found method for ad {}".format(AdType))
-            return False
-
-        return fn(**params)
 
 class DummyAdvertisement(object):
     """ Dummy Provider """
