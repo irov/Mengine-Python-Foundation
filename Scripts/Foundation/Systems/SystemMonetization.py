@@ -885,26 +885,32 @@ class SystemMonetization(System):
         w_pay.setCommandEvent(self.pay)
         tab.addWidget(w_pay)
 
-        def _showSpecialPromo(special_prod_id):
-            if DemonManager.hasDemon("SpecialPromotion") is False:
-                _Log("[DevToDebug] SpecialPromotion demon not found", err=True)
+        def _showSpecialPromo(special_prod_id, demon_name="SpecialPromo"):
+            if DemonManager.hasDemon(demon_name) is False:
+                _Log("[DevToDebug] {} demon not found".format(demon_name), err=True)
                 return
-            SpecialPromotion = DemonManager.getDemon("SpecialPromotion")
-            _Log("[DevToDebug] run SpecialPromotion {}".format(special_prod_id))
-            SpecialPromotion.run(special_prod_id)
+            demon = DemonManager.getDemon(demon_name)
+            _Log("[DevToDebug] run {} {}".format(demon_name, special_prod_id))
+            demon.run(special_prod_id)
 
-        w_special_promo = Mengine.createDevToDebugWidgetCommandLine("special_promo")
+        w_special_promo = Mengine.createDevToDebugWidgetCommandLine("show_special_promo")
         w_special_promo.setTitle("Show special promotion")
         w_special_promo.setPlaceholder("Syntax: <product_id>")
-        w_special_promo.setCommandEvent(_showSpecialPromo)
+        w_special_promo.setCommandEvent(_showSpecialPromo, "SpecialPromotion")
         tab.addWidget(w_special_promo)
+
+        w_limited_promo = Mengine.createDevToDebugWidgetCommandLine("show_limited_promo")
+        w_limited_promo.setTitle("Show limited promotion")
+        w_limited_promo.setPlaceholder("Syntax: <product_id>")
+        w_limited_promo.setCommandEvent(_showSpecialPromo, "LimitedPromo")
+        tab.addWidget(w_limited_promo)
 
         # info texts
 
         def _getSettingsWidgetTitle():
             title = "**Monetization settings**"
             title += "".join(["\n* {}: `{}`".format(key, val)
-                                 for key, val in MonetizationManager.getGeneralSettings().items()])
+                              for key, val in MonetizationManager.getGeneralSettings().items()])
             return title
 
         w_settings_descr = Mengine.createDevToDebugWidgetText("monetization_settings_descr")
