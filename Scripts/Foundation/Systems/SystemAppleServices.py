@@ -236,7 +236,8 @@ class SystemAppleServices(System):
 
     @staticmethod
     def _cbProductResponse(products):
-        _Log("(CALLBACK) Product Response: {}".format(products))
+        _Log("(CALLBACK) Product Response: {}".format([p.getProductIdentifier() for p in products]))
+
         for product in products:
             product_id = product.getProductIdentifier()
             SystemAppleServices._products[product_id] = product
@@ -249,7 +250,7 @@ class SystemAppleServices(System):
 
     @staticmethod
     def _cbProductFail():
-        _Log("(CALLBACK) Product Response Fail")
+        _Log("(CALLBACK) Product Response Fail", err=True)
         SystemAppleServices.EVENT_PRODUCTS_RESPONDED(False)
         SystemAppleServices.b_can_pay = False
 
@@ -300,7 +301,7 @@ class SystemAppleServices(System):
             return
         if Mengine.hasDevToDebugTab("AppleServices"):
             return
-        if any([self.b_plugins["GameCenter"], self.b_plugins["Review"]]) is False:
+        if any([self.b_plugins["GameCenter"], self.b_plugins["Review"], self.b_plugins["InAppPurchase"]]) is False:
             return
 
         tab = Mengine.addDevToDebugTab("AppleServices")
@@ -322,6 +323,24 @@ class SystemAppleServices(System):
             w_achievement.setPlaceholder("syntax: <achievement_id> [0-100]")
             w_achievement.setCommandEvent(_send_achievement)
             widgets.append(w_achievement)
+
+        # purchases
+        if self.b_plugins["InAppPurchase"] is True:
+            w_restore = Mengine.createDevToDebugWidgetButton("restore_purchases")
+            w_restore.setTitle("Restore Purchases")
+            w_restore.setClickEvent(self.restorePurchases)
+            widgets.append(w_restore)
+
+            w_buy = Mengine.createDevToDebugWidgetCommandLine("buy")
+            w_buy.setTitle("Buy product")
+            w_buy.setPlaceholder("syntax: <prod_id>")
+            w_buy.setCommandEvent(self.pay)
+            widgets.append(w_buy)
+
+            w_update_products = Mengine.createDevToDebugWidgetButton("update_products")
+            w_update_products.setTitle("Update products (update prices and prod params)")
+            w_update_products.setClickEvent(self.updateProducts)
+            widgets.append(w_update_products)
 
         # rateApp
         if self.b_plugins["Review"] is True:
