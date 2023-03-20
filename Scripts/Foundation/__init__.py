@@ -68,7 +68,6 @@ def onInitialize():
 
     SceneManager.importScenes("Foundation.Scenes", Scenes)
 
-
     tasks = [
         "TaskChain"
         , "TaskQuitApplication"
@@ -387,7 +386,6 @@ def onInitialize():
     from TaskManager import TaskManager
     TaskManager.importTasks("Foundation.Policy", policies)
 
-
     traces = [
         "TaskInventoryAddCountItem"
         , "TaskInventoryRemoveItem"
@@ -443,7 +441,6 @@ def onInitialize():
 
     from Foundation.Notificator import Notificator
     Mengine.addGlobalModule("Notificator", Notificator)
-
 
     notifiers = [
         #    Notificator.onSave
@@ -877,9 +874,12 @@ def onInitialize():
     EntityManager.importEntity("Foundation.Entities", "MovieTabsGroup")
     ObjectManager.importObject("Foundation.Entities.MovieTabsGroup", "MovieTabsGroup")
 
-    if _DEVELOPMENT is True:
-        from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
-        AdvertisementProvider.setDevProvider()
+    providers = [
+        "AdvertisementProvider"
+        , "RatingAppProvider"
+    ]
+    from Foundation.ProviderManager import ProviderManager
+    ProviderManager.importProviders("Foundation.Providers", providers)
 
     Trace.msg("Foundation.onInitialize")
 
@@ -914,7 +914,7 @@ def onInitialize():
     SessionManager.onInitialize()
 
     return True
-    pass
+
 
 def onFinalize():
     Trace.msg("Foundation.onFinalize")
@@ -966,4 +966,6 @@ def onFinalize():
 
     from Notification import Notification
     Notification.onFinalize()
-    pass
+
+    from Foundation.ProviderManager import ProviderManager
+    ProviderManager.onFinalize()
