@@ -1,6 +1,7 @@
 import json
 from Event import Event
 from Foundation.PolicyManager import PolicyManager
+from Foundation.Providers.RatingAppProvider import RatingAppProvider
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
@@ -73,6 +74,7 @@ class SystemGoogleServices(System):
         if self.b_plugins["GoogleInAppReviews"] is True:
             Mengine.setAndroidCallback("GoogleInAppReviews", "onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
             Mengine.setAndroidCallback("GoogleInAppReviews", "onGoogleInAppReviewsLaunchingTheReviewCompleted", self.__cbReviewsLaunchingComplete)
+            RatingAppProvider.setProvider("Google", dict(rateApp=self.rateApp))
 
         if self.b_plugins["GoogleGameSocial"] is True:
             self.signIn()

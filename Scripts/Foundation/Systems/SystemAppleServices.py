@@ -2,9 +2,11 @@ from Foundation.PolicyManager import PolicyManager
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
+from Foundation.Providers.RatingAppProvider import RatingAppProvider
 from Notification import Notification
 
 _Log = SimpleLogger("SystemAppleServices")
+
 
 class SystemAppleServices(System):
     b_plugins = {
@@ -36,6 +38,9 @@ class SystemAppleServices(System):
                 self.updateProducts()
 
                 PolicyManager.setPolicy("Purchase", "PolicyPurchaseAppleInApp")
+
+        if self.b_plugins["Review"] is True:
+            RatingAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
 
     def _onFinalize(self):
         self.__remDevToDebug()
