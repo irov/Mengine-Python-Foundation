@@ -283,6 +283,8 @@ class SystemAppleServices(System):
         product_id = transaction.getProductIndetifier()
         _Log("(callback) Payment Restored {}".format(product_id))
 
+        Notification.notify(Notificator.onPaySuccess, product_id)
+
         transaction.finish()
 
     @staticmethod
