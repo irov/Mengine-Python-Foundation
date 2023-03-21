@@ -12,10 +12,11 @@ class RatingAppProvider(BaseProvider):
 
     @staticmethod
     def rateApp():
-        def _NotFoundCb():
-            Trace.msg_err("Not found module to show RateApp...")
+        return RatingAppProvider._call("rateApp")
 
-        return RatingAppProvider._call("rateApp", NotFoundCb=_NotFoundCb)
+    @staticmethod
+    def _rateAppNotFoundCb():
+        Trace.msg_err("Not found module to show RateApp...")
 
 
 class DummyRatingApp(object):
