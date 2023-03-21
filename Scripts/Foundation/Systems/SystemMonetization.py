@@ -588,10 +588,15 @@ class SystemMonetization(System):
 
     def _onAppRated(self):
         rate_reward = MonetizationManager.getGeneralSetting("RateUsReward")
-        if rate_reward is None:
+        if rate_reward is not None:
+            self.sendReward(rew_dict={"Gold": int(rate_reward)})
             return True
 
-        self.sendReward(rew_dict={"Gold": int(rate_reward)})
+        rate_product = MonetizationManager.getGeneralProductInfo("RateUsProductID")
+        if rate_product is not None:
+            self.sendReward(prod_id=rate_product.id)
+            return True
+
         return True
 
     # --- Other --------------------------------------------------------------------------------------------------------
