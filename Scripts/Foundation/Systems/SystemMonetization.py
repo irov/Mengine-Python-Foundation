@@ -49,8 +49,8 @@ class SystemMonetization(System):
             return True
 
         self._setupParams()
-        self._setupObservers()
-        self._setupPolicies()
+        self.setupObservers()
+        self.setupPolicies()
         self._addAnalytics()
 
         self.__addDevToDebug()
@@ -58,9 +58,6 @@ class SystemMonetization(System):
         return True
 
     def _onStop(self):
-        if Mengine.hasTouchpad() is False:
-            return True
-
         for component in SystemMonetization.components.values():
             component.stop()
         SystemMonetization.components = {}
@@ -69,22 +66,13 @@ class SystemMonetization(System):
 
         return True
 
+    def setupPolicies(self):
+        self._setupPolicies()
+
     @staticmethod
     def _setupPolicies():
-        """ Setups policies for other modules """
-
-        message_provider = MonetizationManager.getGeneralSetting("NotEnoughMessageProvider", "DialogWindow")
-        if message_provider == "DialogWindow":
-            if DemonManager.hasDemon("DialogWindow") is False:
-                Trace.log("System", 0, "SystemMonetization NotEnoughGold policy can't be with DialogWindow - it's not active")
-            else:
-                PolicyManager.setPolicy("NotEnoughGoldMessage", "PolicyNotEnoughGoldDialog")
-                PolicyManager.setPolicy("NotEnoughEnergyMessage", "PolicyNotEnoughEnergyDialog")
-        elif message_provider == "MessageOK" or message_provider is None:
-            PolicyManager.setPolicy("NotEnoughGoldMessage", "PolicyNotEnoughGoldMessage")
-            PolicyManager.setPolicy("NotEnoughEnergyMessage", "PolicyNotEnoughEnergyMessage")
-        else:
-            Trace.log("System", 0, "SystemMonetization policies: param 'NotEnoughMessageProvider' should be DialogWindow or MessageOK ")
+        """ override it for specific behaviour """
+        pass
 
     # --- Payment ------------------------------------------------------------------------------------------------------
 
@@ -527,57 +515,27 @@ class SystemMonetization(System):
 
     # --- Observers ----------------------------------------------------------------------------------------------------
 
-    def _setupObservers(self):
+    def setupObservers(self):
         self.addObserver(Notificator.onSelectAccount, self._onSelectAccount)
-
-        # GameStore
-        self.addObserver(Notificator.onGiftExchangeRedeemResult, self._onGiftExchangeRedeemResult)
-        self.addObserver(Notificator.onAvailableAdsEnded, self._onAvailableAdsEnded)
-        self.addObserver(Notificator.onGameStoreNotEnoughGold, self._onGameStoreNotEnoughGold)
-        self.addObserver(Notificator.onEnergyNotEnough, self._onEnergyNotEnough)
-
-        self.addObserver(Notificator.onLayerGroupEnable, self._cbLayerGroupEnable)
-
-        # monetization features
-        self.addObserver(Notificator.onAdvertRewarded, self._onAdvertisementResult)
-        self.addObserver(Notificator.onAppRated, self._onAppRated)
 
         # payment
         self.addObserver(Notificator.onPaySuccess, self._onPaySuccess)
         self.addObserver(Notificator.onPayFailed, self._onPayFailed)
 
-    def _cbLayerGroupEnable(self, group_name):
-        if group_name in ["BalanceIndicator", SystemMonetization.game_store_name]:
-            Notification.notify(Notificator.onUpdateGoldBalance, str(self.getBalance()))
-        return False
+        # other
+        self.addObserver(Notificator.onAdvertRewarded, self._onAdvertisementResult)
+        self.addObserver(Notificator.onAppRated, self._onAppRated)
+
+        self._setupObservers()
+
+    def _setupObservers(self):
+        """ override it for specific behaviour """
+        pass
 
     def _onSelectAccount(self, account_id):
         self._saveSessionPurchases()
 
         self.updateAvailableAds()
-        return False
-
-    @staticmethod
-    def _onGiftExchangeRedeemResult(reward_type, reward_amount):
-        """ todo: send reward to user (in progress) """
-        _Log("onGiftExchangeRedeemResult DUMMY - {} {}".format(reward_type, reward_amount))
-        return False
-
-    @staticmethod
-    def _onAvailableAdsEnded(*args, **kwargs):
-        _Log("onAvailableAdsEnded - args:{} kwargs:{}".format(args, kwargs))
-        return False
-
-    def _onGameStoreNotEnoughGold(self, gold, descr):
-        NotEnoughMoneyPageID = MonetizationManager.getGeneralSetting("NotEnoughMoneyPageID")
-
-        TaskManager.runAlias("AliasNotEnoughGold", None, Gold=gold, Descr=descr, PageID=NotEnoughMoneyPageID)
-        return False
-
-    def _onEnergyNotEnough(self, action_name):
-        NotEnoughMoneyPageID = MonetizationManager.getGeneralSetting("NotEnoughMoneyPageID")
-
-        TaskManager.runAlias("AliasNotEnoughEnergy", None, Action=action_name, PageID=NotEnoughMoneyPageID)
         return False
 
     @staticmethod
@@ -658,16 +616,22 @@ class SystemMonetization(System):
     def _setupParams():
         SystemMonetization.__initStorage()
 
-        if _DEVELOPMENT is True:
-            default_currency_code = Mengine.getConfigString("Monetization", "DebugCurrencyCode", "USD")
-            if default_currency_code.lower() != "none":
-                MonetizationManager.setCurrentCurrencyCode(default_currency_code)
+        SystemMonetization._setDebugCurrency()
 
         for name, new in MonetizationManager.getComponentsType().items():
             component = new()
             if component.initialize() is True:
                 component.run()
                 SystemMonetization.components[name] = component
+
+    @staticmethod
+    def _setDebugCurrency():
+        if _DEVELOPMENT is False:
+            return
+
+        default_currency_code = Mengine.getConfigString("Monetization", "DebugCurrencyCode", "USD")
+        if default_currency_code.lower() != "none":
+            MonetizationManager.setCurrentCurrencyCode(default_currency_code)
 
     # --- Data Storage -------------------------------------------------------------------------------------------------
 
