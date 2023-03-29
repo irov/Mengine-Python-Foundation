@@ -623,12 +623,7 @@ class SystemMonetization(System):
 
     @staticmethod
     def _setDebugCurrency():
-        if _DEVELOPMENT is False:
-            return
-
-        default_currency_code = Mengine.getConfigString("Monetization", "DebugCurrencyCode", "USD")
-        if default_currency_code.lower() != "none":
-            MonetizationManager.setCurrentCurrencyCode(default_currency_code)
+        MonetizationManager.setDebugCurrency()
 
     # --- Data Storage -------------------------------------------------------------------------------------------------
 
