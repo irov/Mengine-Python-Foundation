@@ -1,8 +1,8 @@
 from Foundation.PolicyManager import PolicyManager
 from Foundation.System import System
-from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
 from Foundation.Providers.RatingAppProvider import RatingAppProvider
+from Foundation.Providers.PaymentProvider import PaymentProvider
 from Notification import Notification
 
 _Log = SimpleLogger("SystemAppleServices")
@@ -35,9 +35,7 @@ class SystemAppleServices(System):
         if self.b_plugins["InAppPurchase"] is True:
             if self.canUserMakePurchases() is True:
                 self.setInAppPurchaseProvider()
-                self.updateProducts()
-
-                PolicyManager.setPolicy("Purchase", "PolicyPurchaseAppleInApp")
+                PaymentProvider.queryProducts()
 
         if self.b_plugins["Review"] is True:
             RatingAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
@@ -74,6 +72,7 @@ class SystemAppleServices(System):
                 _Log("GAME CENTER: provider doesn't active")
         else:
             _Log("GAME CENTER: remove provider - plugin 'AppleGameCenter' not active")
+
 
     @staticmethod
     def connectToGameCenter():
@@ -200,6 +199,11 @@ class SystemAppleServices(System):
             "onPaymentUpdatedTransactionRestored": SystemAppleServices._cbPaymentRestored,
             "onPaymentUpdatedTransactionDeferred": SystemAppleServices._cbPaymentDeferred
         })
+        PaymentProvider.setProvider("Apple", dict(
+            pay=SystemAppleServices.pay,
+            canUserMakePurchases=SystemAppleServices.canUserMakePurchases,
+            requestProducts=SystemAppleServices.requestProducts,
+        ))
 
     @staticmethod
     def removeInAppPurchaseProvider():
@@ -209,12 +213,7 @@ class SystemAppleServices(System):
         Mengine.appleStoreInAppPurchaseRemovePaymentTransactionProvider()
 
     @staticmethod
-    def updateProducts():
-        """ Must be called to get products and initialize payment """
-        TaskManager.runAlias("AliasCurrentProductsCall", None, CallFunction=SystemAppleServices._requestProducts)
-
-    @staticmethod
-    def _requestProducts(products_ids):
+    def requestProducts(products_ids):
         Mengine.appleStoreInAppPurchaseRequestProducts(products_ids)
 
     @staticmethod

@@ -1,7 +1,6 @@
 from Foundation.DemonManager import DemonManager
 from Foundation.GroupManager import GroupManager
 from Foundation.MonetizationManager import MonetizationManager
-from Foundation.PolicyManager import PolicyManager
 from Foundation.SecureStringValue import SecureStringValue
 from Foundation.SecureValue import SecureValue
 from Foundation.System import System
@@ -9,6 +8,7 @@ from Foundation.SystemManager import SystemManager
 from Foundation.Systems.SystemAnalytics import SystemAnalytics
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger, getCurrentPublisher
+from Foundation.Providers.PaymentProvider import PaymentProvider
 from Notification import Notification
 
 _Log = SimpleLogger("SystemMonetization")
@@ -78,10 +78,7 @@ class SystemMonetization(System):
 
     @classmethod
     def pay(cls, prod_id):
-        prod_params = MonetizationManager.getProductInfo(prod_id)
-
-        PolicyPurchase = PolicyManager.getPolicy("Purchase", "PolicyPurchaseDummy")
-        TaskManager.runAlias(PolicyPurchase, None, Product=prod_params)
+        PaymentProvider.pay(prod_id)
 
     @classmethod
     def scopePay(cls, source, prod_id, scopeSuccess=None, scopeFail=None, scopeTimeout=None):
@@ -849,7 +846,7 @@ class SystemMonetization(System):
         tab.addWidget(w_pay_gold)
 
         w_pay = Mengine.createDevToDebugWidgetCommandLine("pay")
-        w_pay.setTitle("Payment with `{}`".format(PolicyManager.getPolicy("Purchase", "PolicyPurchaseDummy")))
+        w_pay.setTitle("Payment with `{}`".format(PaymentProvider.getName()))
         w_pay.setPlaceholder("Syntax: <product_id>")
         w_pay.setCommandEvent(self.pay)
         tab.addWidget(w_pay)

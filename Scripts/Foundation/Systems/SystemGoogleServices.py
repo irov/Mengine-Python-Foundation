@@ -2,6 +2,7 @@ import json
 from Event import Event
 from Foundation.PolicyManager import PolicyManager
 from Foundation.Providers.RatingAppProvider import RatingAppProvider
+from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
@@ -69,11 +70,16 @@ class SystemGoogleServices(System):
             Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingDeveloperError", self.__cbBillingDeveloperError)
             Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingUserCanceled", self.__cbBillingUserCanceled)
 
-            PolicyManager.setPolicy("Purchase", "PolicyPurchaseGoogleBilling")
+            PaymentProvider.setProvider("Google", dict(
+                pay=self.buy,
+                queryProducts=self.setSkuList,
+                restorePurchases=self.restorePurchases
+            ))
 
         if self.b_plugins["GoogleInAppReviews"] is True:
             Mengine.setAndroidCallback("GoogleInAppReviews", "onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
             Mengine.setAndroidCallback("GoogleInAppReviews", "onGoogleInAppReviewsLaunchingTheReviewCompleted", self.__cbReviewsLaunchingComplete)
+
             RatingAppProvider.setProvider("Google", dict(rateApp=self.rateApp))
 
         if self.b_plugins["GoogleGameSocial"] is True:
@@ -179,7 +185,7 @@ class SystemGoogleServices(System):
             account_id = "undefined"
 
         SystemGoogleServices.login_data = account_id
-        SystemGoogleServices.updateProducts()
+        PaymentProvider.queryProducts()
         SystemGoogleServices.login_event(True)
 
         SystemGoogleServices.__cbRestoreTasks()
@@ -237,13 +243,6 @@ class SystemGoogleServices(System):
         SystemGoogleServices.__setDefaultSaves()
 
     # --- GooglePlayBilling --------------------------------------------------------------------------------------------
-
-    @staticmethod
-    def updateProducts():
-        # this alias will call `setSkuList` with all products ids
-        # then in callback `__cbBillingOnSkuResponse` calls `sendSkus`
-        # and finally sends push to MonetizationManager for update products
-        TaskManager.runAlias("AliasCurrentProductsCall", None, CallFunction=SystemGoogleServices.setSkuList)
 
     @staticmethod
     def setSkuList(skus):
@@ -340,7 +339,7 @@ class SystemGoogleServices(System):
                 with retry.addParallelTask(2) as (respond, request):
                     respond.addListener(Notificator.onProductsUpdateDone)
                     respond.addFunction(SystemGoogleServices.buy, prod_id)
-                    request.addFunction(SystemGoogleServices.updateProducts)
+                    request.addFunction(PaymentProvider.queryProducts)
 
     @staticmethod
     def __cbBillingBuyInAppSuccess(prod_id, status):
@@ -575,7 +574,7 @@ class SystemGoogleServices(System):
 
             w_update_products = Mengine.createDevToDebugWidgetButton("update_products")
             w_update_products.setTitle("Update products (update prices and prod params)")
-            w_update_products.setClickEvent(self.updateProducts)
+            w_update_products.setClickEvent(PaymentProvider.queryProducts)
             widgets.append(w_update_products)
 
         # rateApp
