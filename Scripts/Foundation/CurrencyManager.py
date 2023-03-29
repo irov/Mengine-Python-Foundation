@@ -78,3 +78,12 @@ class CurrencyManager(object):
 
         symbol = Mengine.getTextFromID(symbol_text_id)
         return symbol
+
+    @staticmethod
+    def setDebugCurrency():
+        if _DEVELOPMENT is False:
+            return
+
+        default_currency_code = Mengine.getConfigString("Monetization", "DebugCurrencyCode", "USD")
+        if default_currency_code.lower() != "none":
+            CurrencyManager.setCurrentCurrencyCode(default_currency_code)
