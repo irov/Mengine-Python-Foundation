@@ -2,6 +2,7 @@ import json
 from Foundation.DatabaseManager import DatabaseManager
 from Foundation.Manager import Manager
 from Foundation.CurrencyManager import CurrencyManager
+from Foundation.Providers.ProductsProvider import ProductsProvider
 from Foundation.Utils import getCurrentPlatformParams, getCurrentPublisher, getCurrentBusinessModel
 from Foundation.Utils import isCollectorEdition
 from Notification import Notification
@@ -294,6 +295,14 @@ class MonetizationManager(Manager, CurrencyManager):
 
     @classmethod
     def _onInitialize(cls, *args):
+        ProductsProvider.setProvider(cls.__name__, dict(
+            getProductsInfo=cls.getProductsInfo,
+            getProductReward=cls.getProductReward,
+            getProductPrice=cls.getProductPrice,
+            getProductInfo=cls.getProductInfo,
+            hasProductInfo=cls.hasProductInfo,
+        ))
+
         # --- How to update products?
         cls.addObserver(Notificator.onProductsUpdate, MonetizationManager._cbProductsUpdate)
         # Optional step 1: call policy 'CurrentProductsCall' and do something with current products

@@ -1,5 +1,5 @@
 from Foundation.Providers.BaseProvider import BaseProvider
-from Foundation.MonetizationManager import MonetizationManager
+from Foundation.Providers.ProductsProvider import ProductsProvider
 
 
 class PaymentProvider(BaseProvider):
@@ -32,7 +32,7 @@ class PaymentProvider(BaseProvider):
         """ query products from provider
             - onProductsUpdate dict: when we got products from provider
             - onProductsUpdateDone: when update complete """
-        products_id = MonetizationManager.getProductsInfo().keys()
+        products_id = ProductsProvider.getProductsInfo().keys()
         return PaymentProvider._call("queryProducts", products_id)
 
     @staticmethod
@@ -61,7 +61,7 @@ class DummyPayment(object):
 
     @staticmethod
     def pay(product_id):
-        prod_params = MonetizationManager.getProductInfo(product_id)
+        prod_params = ProductsProvider.getProductInfo(product_id)
 
         Trace.msg("DUMMY success pay {} ({})".format(product_id, prod_params))
         Notification.notify(Notificator.onPaySuccess, product_id)
