@@ -877,6 +877,7 @@ def onInitialize():
     providers = [
         "AdvertisementProvider"
         , "RatingAppProvider"
+        , "PaymentProvider"
     ]
     from Foundation.ProviderManager import ProviderManager
     ProviderManager.importProviders("Foundation.Providers", providers)
