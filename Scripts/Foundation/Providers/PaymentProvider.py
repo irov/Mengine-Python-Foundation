@@ -45,7 +45,7 @@ class PaymentProvider(BaseProvider):
 
     @staticmethod
     def completeOrder(order_id):
-        return bool(PaymentProvider._call("completeOrder"), order_id)
+        return bool(PaymentProvider._call("completeOrder", order_id))
 
 
 class DummyPayment(object):
