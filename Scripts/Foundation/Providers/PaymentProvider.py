@@ -7,7 +7,8 @@ class PaymentProvider(BaseProvider):
         "pay",
         "restorePurchases",
         "queryProducts",
-        "canUserMakePurchases"
+        "canUserMakePurchases",
+        "completeOrder",
     ]
 
     @staticmethod
@@ -41,6 +42,10 @@ class PaymentProvider(BaseProvider):
     @staticmethod
     def canUserMakePurchases():
         return bool(PaymentProvider._call("canUserMakePurchases"))
+
+    @staticmethod
+    def completeOrder(order_id):
+        return bool(PaymentProvider._call("completeOrder"), order_id)
 
 
 class DummyPayment(object):
