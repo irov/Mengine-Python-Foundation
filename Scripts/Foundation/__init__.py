@@ -376,10 +376,7 @@ def onInitialize():
     TaskManager.importTasks("Foundation.Alias", aliases)
 
     policies = [
-        "PolicyPurchaseDummy"
-        , "PolicyPurchaseGoogleBilling"
-        , "PolicyPurchaseAppleInApp"
-        , "PolicyExternalAchieveProgressAppleGameCenter"
+        "PolicyExternalAchieveProgressAppleGameCenter"
         , "PolicyExternalAchieveProgressGooglePlay"
     ]
 
