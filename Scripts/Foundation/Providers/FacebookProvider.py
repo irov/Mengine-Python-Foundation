@@ -52,6 +52,7 @@ class FacebookProvider(BaseProvider):
 
 class DummyFacebook(object):
 
+    _logged_in = False
     SHARE_POST_ID = "DUMMY_POST_ID"
 
     class User(object):
@@ -80,13 +81,14 @@ class DummyFacebook(object):
 
     @staticmethod
     def isLoggedIn():
-        return False
+        return DummyFacebook._logged_in
 
     @staticmethod
     def performLogin(permissions=('email', 'public_profile'), _cb_success=None, _cb_cancel=None, _cb_error=None):
         # onFacebookLoginSuccess
         if _cb_success:
             _cb_success(DummyFacebook.User.ACCESS_TOKEN)
+            DummyFacebook._logged_in = True
 
     @staticmethod
     def shareLink(link='www.wonderland-games.com', msg='', _cb_success=None, _cb_cancel=None, _cb_error=None):
@@ -98,6 +100,7 @@ class DummyFacebook(object):
     def logout(_cb_success=None, _cb_cancel=None):
         if _cb_success:
             _cb_success()
+            DummyFacebook._logged_in = False
 
     @staticmethod
     def getUser(_cb=None):
