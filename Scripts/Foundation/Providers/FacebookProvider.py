@@ -119,9 +119,9 @@ class DummyFacebook(object):
     }
   }
 }"""
-            response.replace("{%id%}", DummyFacebook.User.USER_ID)
-            response.replace("{%username%}", DummyFacebook.User.USER_NAME)
-            response.replace("{%email%}", DummyFacebook.User.USER_EMAIL)
+            response = response.replace("{%id%}", DummyFacebook.User.USER_ID)
+            response = response.replace("{%username%}", DummyFacebook.User.USER_NAME)
+            response = response.replace("{%email%}", DummyFacebook.User.USER_EMAIL)
             _cb(response, "")
 
     @staticmethod
