@@ -53,9 +53,6 @@ def onInitialize():
     from GoogleAnalytics import GoogleAnalytics
     Mengine.addGlobalModule("GoogleAnalytics", GoogleAnalytics)
 
-    from Facebook import Facebook
-    Mengine.addGlobalModule("Facebook", Facebook)
-
     from Foundation.ArrowManager import ArrowManager
 
     Arrows = ["Default"]
@@ -876,6 +873,7 @@ def onInitialize():
         , "RatingAppProvider"
         , "PaymentProvider"
         , "ProductsProvider"
+        , "FacebookProvider"
     ]
     from Foundation.ProviderManager import ProviderManager
     ProviderManager.importProviders("Foundation.Providers", providers)
