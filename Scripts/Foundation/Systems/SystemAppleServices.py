@@ -343,7 +343,7 @@ class SystemAppleServices(System):
 
             w_update_products = Mengine.createDevToDebugWidgetButton("update_products")
             w_update_products.setTitle("Update products (update prices and prod params)")
-            w_update_products.setClickEvent(self.updateProducts)
+            w_update_products.setClickEvent(PaymentProvider.queryProducts)
             widgets.append(w_update_products)
 
         # rateApp
