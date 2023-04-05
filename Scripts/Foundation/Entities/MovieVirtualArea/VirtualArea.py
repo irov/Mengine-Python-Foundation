@@ -354,7 +354,8 @@ class VirtualArea(Initializer):
         def mouse_move(event):
             # pinch technique - scale
             self._touch_ids[event.touchId] = event  # update
-            _mouse_scale()
+            if self._enable_scale is True:
+                _mouse_scale()
 
             # scroll
             if len(self._touch_ids) != 1:
