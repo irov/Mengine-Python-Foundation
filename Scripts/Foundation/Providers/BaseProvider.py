@@ -69,3 +69,7 @@ class BaseProvider(object):
     @classmethod
     def hasMethod(cls, name):
         return name in cls.s_methods
+
+    @classmethod
+    def hasProvider(cls):
+        return cls.s_name is not None
