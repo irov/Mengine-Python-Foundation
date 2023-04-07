@@ -139,7 +139,7 @@ class SystemMonetization(System):
     # --- Gold ---------------------------------------------------------------------------------------------------------
 
     @classmethod
-    def payGold(cls, gold=None, descr=None):
+    def _onPayGold(cls, gold=None, descr=None):
         """ Main method for pay gold, where 'gold' may be None, but you need
             setup special 'descr' (i.e. 'Hint', 'SkipPuzzle'... check more in class attr 'components') """
         component = cls.components[descr] if descr in cls.components else None
@@ -168,14 +168,15 @@ class SystemMonetization(System):
 
     @classmethod
     def scopePayGold(cls, source, gold=None, descr=None, scopeSuccess=None, scopeFail=None, **kwargs):
-        """ Scope method with all payment logic. Params 'gold' and 'descr' used in SystemMonetization.payGold.
-            - scopeSuccess: scope method will be called if gold is paid successfully;
-            - scopeFail: scope method will be called if gold payment failed;
+        """ Payment logic. Params 'gold' and 'descr' are must have.
+                - scopeSuccess: scope method will be called if gold is paid successfully;
+                - scopeFail: scope method will be called if gold payment failed;
             Use this kwargs:
-            - ShouldAcceptPrice: if user decline - payment will be failed """
+                - ShouldAcceptPrice: if user decline - payment will be failed;
+        """
         if cls.isGameStoreEnable() is False:
-            source.addScope(scopeSuccess)
-            return
+            Trace.log("System", 0, "Try to pay gold while store is not enable!!!!!!!!!!!!")
+            return False
 
         should_accept_price = kwargs.get("ShouldAcceptPrice", False) or cls.shouldAcceptPrice()
         price = cls.components[descr].getProductPrice() if descr in cls.components else gold
@@ -191,11 +192,11 @@ class SystemMonetization(System):
             source.addScope(cls._scopePGAcceptPrice, gold=price, descr=descr)
 
         with source.addIfTask(_isPriceAccepted) as (true, false):
-            # ignores storage['acceptPrice'] if ShouldAcceptPrice is False, check _isPriceAccepted method
             with true.addParallelTask(2) as (response, pay):
                 response.addScope(cls._scopePGResponse, scopeSuccess, scopeFail)
-                pay.addFunction(cls.payGold, gold=gold, descr=descr)
+                pay.addNotify(Notificator.onGameStorePayGold, gold=gold, descr=descr)
             false.addDummy()
+        return True
 
     @classmethod
     def _scopePGAcceptPrice(cls, source, gold, descr):
@@ -237,15 +238,15 @@ class SystemMonetization(System):
         """ Used for scopePayGold - responses on payGold """
         with source.addRaceTask(3) as (success, fail, no_money):
             success.addListener(Notificator.onGameStorePayGoldSuccess)
-            if callable(scopeSuccess):
+            if scopeSuccess is not None:
                 success.addScope(scopeSuccess)
 
             fail.addListener(Notificator.onGameStorePayGoldFailed)
-            if callable(scopeFail):
+            if scopeFail is not None:
                 fail.addScope(scopeFail)
 
             no_money.addListener(Notificator.onGameStoreNotEnoughGold)
-            with no_money.addRaceTask(2) as (confirm, cancel):
+            with no_money.addRaceTask(2) as (confirm, cancel):  # wait close window
                 confirm.addListener(Notificator.onDialogWindowConfirm)
                 cancel.addListener(Notificator.onDialogWindowCancel)
 
@@ -294,7 +295,6 @@ class SystemMonetization(System):
     @staticmethod
     def getBalance():
         balance = SystemMonetization.getStorageValue("gold")
-        _Log("balance={}".format(balance))
         return balance
 
     @staticmethod
@@ -518,6 +518,7 @@ class SystemMonetization(System):
         # payment
         self.addObserver(Notificator.onPaySuccess, self._onPaySuccess)
         self.addObserver(Notificator.onPayFailed, self._onPayFailed)
+        self.addObserver(Notificator.onGameStorePayGold, self._onPayGold)
 
         # other
         self.addObserver(Notificator.onAdvertRewarded, self._onAdvertisementResult)
@@ -704,8 +705,8 @@ class SystemMonetization(System):
                 if key not in SystemMonetization.storage:
                     _Log("Saver: storage key {!r} not found".format(key), err=True)
                     continue
-                _Log("Saver: save {!r} on device...".format(key))
                 save = SystemMonetization.storage[key].getSave()
+                _Log("Saver: save {!r} on device... []".format(key, save))
                 Mengine.changeCurrentAccountSetting(key, unicode(save))
 
         Mengine.saveAccounts()
