@@ -164,7 +164,8 @@ class SystemMonetization(System):
             _Log("gold wasn't withdrawn - current price for {} is 0".format(descr))
 
         Notification.notify(Notificator.onGameStorePayGoldSuccess, gold, descr)
-        return True
+
+        return False
 
     @classmethod
     def scopePayGold(cls, source, gold=None, descr=None, scopeSuccess=None, scopeFail=None, **kwargs):
