@@ -720,7 +720,7 @@ class SystemMonetization(System):
 
         def _debug(account_id, value, key=None):
             if _IOS or _DEVELOPMENT:
-                print "[{}] update {!r}: {!r}".format(account_id, value, key)
+                print "[{}] update {!r}: {!r}".format(account_id, key, value)
 
         observers = {
             # add here key from storage and function that will be called if setting would be changed
