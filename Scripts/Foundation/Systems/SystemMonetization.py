@@ -707,7 +707,7 @@ class SystemMonetization(System):
                     _Log("Saver: storage key {!r} not found".format(key), err=True)
                     continue
                 save = SystemMonetization.storage[key].getSave()
-                _Log("Saver: save {!r} on device... []".format(key, save))
+                _Log("Saver: save {!r} on device... [{}]".format(key, save))
                 Mengine.changeCurrentAccountSetting(key, unicode(save))
 
         Mengine.saveAccounts()
