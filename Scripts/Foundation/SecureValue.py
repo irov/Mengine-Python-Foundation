@@ -1,9 +1,8 @@
 class SecureValue(object):
-    s_secure_values = {}
 
     def __init__(self, value_id, value):
-        self.id = self.__setupID(value_id)
-        self.value = self.__makeSecureValue(value)  # print SecureValue.s_secure_values
+        self.id = value_id
+        self.value = self.__makeSecureValue(value)
 
     def __makeSecureValue(self, value):
         if isinstance(value, int) is False:
@@ -60,22 +59,6 @@ class SecureValue(object):
             return
         if self.value.loadHexadecimal(save) is False:
             Trace.log("Utils", 0, "SecureValue {} - your save {!r} is broken!!!".format(self.id, save))
-
-    def __setupID(self, value_id):
-        if value_id in SecureValue.s_secure_values.keys():
-            tmp = 1
-            new_id = value_id + str(tmp)
-            while new_id in SecureValue.s_secure_values.keys():
-                tmp += 1
-                new_id = value_id[:-1] + str(tmp)
-            value_id = new_id
-        SecureValue.s_secure_values[value_id] = self
-        return value_id
-
-    @staticmethod
-    def getById(value_id):
-        value = SecureValue.s_secure_values.get(value_id, None)
-        return value
 
     @staticmethod
     def getValueFromSecure(secure_value):
