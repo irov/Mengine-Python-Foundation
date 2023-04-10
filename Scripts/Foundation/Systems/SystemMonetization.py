@@ -718,8 +718,16 @@ class SystemMonetization(System):
         if isGlobal is True:
             return
 
-        observers = {  # add here key from storage and function that will be called if setting would be changed
-            "gold": SystemMonetization._onChangeGold}
+        def _debug(account_id, value, key=None):
+            if _IOS or _DEVELOPMENT:
+                print "[{}] update {!r}: {!r}".format(account_id, value, key)
+
+        observers = {
+            # add here key from storage and function that will be called if setting would be changed
+            "gold": SystemMonetization._onChangeGold,
+            "purchased": lambda *args: _debug(*args, key="purchased"),
+            "acceptPrice": lambda *args: _debug(*args, key="acceptPrice"),
+        }
 
         for key in SystemMonetization.storage.keys():
             fn = observers.get(key)
