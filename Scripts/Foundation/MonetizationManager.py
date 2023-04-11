@@ -483,6 +483,17 @@ class MonetizationManager(Manager, CurrencyManager):
         return None
 
     @staticmethod
+    def getProductRealId(prod_id):
+        """ Useful if you don't know you get alias id or real id
+            Returns None if product doesn't exist """
+        product = MonetizationManager.getProductInfo(prod_id)
+        if product is None:
+            return None
+
+        real_prod_id = prod_id.id
+        return real_prod_id
+
+    @staticmethod
     def getCardProductInfo(card_id):
         card = MonetizationManager.getCardParamsById(card_id)
         if card is None:
