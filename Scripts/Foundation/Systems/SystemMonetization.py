@@ -79,7 +79,8 @@ class SystemMonetization(System):
 
     @classmethod
     def pay(cls, prod_id):
-        PaymentProvider.pay(prod_id)
+        real_prod_id = MonetizationManager.getProductRealId(prod_id)
+        PaymentProvider.pay(real_prod_id)
 
     @classmethod
     def scopePay(cls, source, prod_id, scopeSuccess=None, scopeFail=None, scopeTimeout=None):
