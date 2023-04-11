@@ -13,6 +13,7 @@ from Notification import Notification
 
 _Log = SimpleLogger("SystemMonetization")
 
+
 class SystemMonetization(System):
     storage = {}
     components = {}
@@ -645,7 +646,7 @@ class SystemMonetization(System):
         saved_products = set(SystemMonetization.getStorageListValues("purchased"))
 
         not_saved_products = session_products - saved_products
-        _Log("_saveSessionPurchases found {} save candidates : {}".format(len(not_saved_products), not_saved_products))
+        _Log("_saveSessionPurchases found {} save candidates: {}".format(len(not_saved_products), not_saved_products))
 
         for prod_id in not_saved_products:
             SystemMonetization.addStorageListValue("purchased", prod_id)
@@ -718,15 +719,9 @@ class SystemMonetization(System):
         if isGlobal is True:
             return
 
-        def _debug(account_id, value, key=None):
-            if _IOS or _DEVELOPMENT:
-                print "[{}] update {!r}: {!r}".format(account_id, key, value)
-
         observers = {
             # add here key from storage and function that will be called if setting would be changed
             "gold": SystemMonetization._onChangeGold,
-            "purchased": lambda *args: _debug(*args, key="purchased"),
-            "acceptPrice": lambda *args: _debug(*args, key="acceptPrice"),
         }
 
         for key in SystemMonetization.storage.keys():
