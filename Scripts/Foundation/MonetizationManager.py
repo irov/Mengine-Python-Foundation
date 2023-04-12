@@ -490,7 +490,7 @@ class MonetizationManager(Manager, CurrencyManager):
         if product is None:
             return None
 
-        real_prod_id = prod_id.id
+        real_prod_id = product.id
         return real_prod_id
 
     @staticmethod
