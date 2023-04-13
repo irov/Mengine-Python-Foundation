@@ -39,6 +39,10 @@ class SystemAdvertising(System):
             "mg_reset": Mengine.getConfigBool('Advertising', "ShowOnResetMG", False),
             "chapter_done": Mengine.getConfigBool('Advertising', "ShowOnChapterDone", False),
             "trigger": Mengine.getConfigBool('Advertising', "ShowOnTrigger", False),
+            # param for 'ShowOnTransition'. If true: check if scene is game scene
+            "only_game_scenes": Mengine.getConfigBool('Advertising', "ShowOnlyOnGameScenes", True),
+            # param for 'ShowOnTransition'. If true: always show ads on this scenes
+            "only_specific_scenes": Mengine.getConfigBool('Advertising', "ShowOnlyOnSpecificScenes", True),
         }
 
         general_params = {
@@ -47,6 +51,7 @@ class SystemAdvertising(System):
             "trigger": Mengine.getConfigString('Advertising', "TriggerNotificatorName", ""),
             "trigger_count_start": Mengine.getConfigInt('Advertising', "TriggerCountStart", 0),
             "trigger_count_show": Mengine.getConfigInt('Advertising', "TriggerCountShow", 1),
+            "scenes_to_view": Mengine.getConfigString('Advertising', "ScenesToView", "").split(", "),
         }
 
         self._current_trigger_count = general_params["trigger_count_start"]
@@ -175,7 +180,14 @@ class SystemAdvertising(System):
         return False
 
     def __cbTransitionBegin(self, scene_from, scene_to, zoom_name, action=None):
-        if SceneManager.isGameScene(scene_to) is False or scene_to in self.s_ignore_scenes:
+        if self.isInterstitialParamEnable("only_specific_scenes") is True:
+            if scene_to not in self.getGeneralParam("scenes_to_view"):
+                return False
+            return self.__interstitialObserver(action=action)
+
+        if self.isInterstitialParamEnable("only_game_scenes") is True and SceneManager.isGameScene(scene_to) is False:
+            return False
+        if scene_to in self.s_ignore_scenes:
             return False
 
         return self.__interstitialObserver(action=action)
@@ -185,11 +197,15 @@ class SystemAdvertising(System):
             return True
 
         self._current_trigger_count += 1
-
-        if self._current_trigger_count < self.s_general_params["trigger_count_show"]:
+        if self.__checkTriggerCounter() is False:
             return False
-
         self._current_trigger_count = 0
 
         self.showInterstitial(descr="trigger")
         return False
+
+    def __checkTriggerCounter(self):
+        """ returns True if trigger counter >= trigger_count_show """
+        if self._current_trigger_count < self.s_general_params["trigger_count_show"]:
+            return False
+        return True
