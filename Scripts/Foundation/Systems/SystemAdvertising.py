@@ -1,10 +1,15 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.SceneManager import SceneManager
+from Foundation.DefaultManager import DefaultManager
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
 
 _Log = SimpleLogger("SystemAdvertising")
+DEFAULT_IGNORE_SCENES = [
+    "CutScene", "Menu", "Bonus", "SplashScreen", "Intro", "PreIntro",
+    "DebugMenu", "Store", "Guides", "Map", "MapBonusChapter", "Options"
+]
 
 class SystemAdvertising(System):
     disable_key = "075ae3d2fc31640504f814f60e5ef713"
@@ -14,10 +19,7 @@ class SystemAdvertising(System):
     s_interstitial_params = {}
     s_general_params = {}
 
-    s_ignore_scenes = [
-        "CutScene", "Menu", "Bonus", "SplashScreen", "Intro", "PreIntro",
-        "DebugMenu", "Store", "Guides", "Map", "MapBonusChapter"
-    ]
+    s_ignore_scenes = []
 
     def __init__(self):
         super(SystemAdvertising, self).__init__()
@@ -48,6 +50,9 @@ class SystemAdvertising(System):
         }
 
         self._current_trigger_count = general_params["trigger_count_start"]
+
+        SystemAdvertising.s_ignore_scenes = DefaultManager.getDefaultTuple("InterstitialAdvertisingIgnoreScenes",
+                                                                           default=DEFAULT_IGNORE_SCENES)
 
         SystemAdvertising.s_interstitial_params = interstitial_params
         SystemAdvertising.s_general_params = general_params
