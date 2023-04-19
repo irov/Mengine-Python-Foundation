@@ -63,7 +63,7 @@ class SystemAdvertising(System):
         SystemAdvertising.s_general_params = general_params
         SystemAdvertising.is_enable = True
 
-        self.__initDisableAccountParam()
+        self._initDisableAccountParam()
 
     def _onRun(self):
         if self.is_enable is False:
@@ -118,7 +118,7 @@ class SystemAdvertising(System):
             _Log("updateViewedTime to {} ({} seconds from last view)".format(timestamp, _seconds_passed))
         self._last_view_timestamp = timestamp
 
-    def __initDisableAccountParam(self):
+    def _initDisableAccountParam(self):
         def __addExtraAccountSettings(accountID, isGlobal):
             if isGlobal is True:
                 return
