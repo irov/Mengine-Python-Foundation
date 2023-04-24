@@ -116,6 +116,7 @@ class SystemMonetization(System):
             _Log("Unknown product id {!r} ({})".format(prod_id, type(prod_id)), err=True, force=True)
             return False
 
+        SystemMonetization._session_purchased_products.append(prod_id)
         SystemMonetization.sendReward(prod_id=prod_id)
 
         if product.group_id is not None:
@@ -128,7 +129,6 @@ class SystemMonetization(System):
         if product.only_one_purchase is False:
             return False
 
-        SystemMonetization._session_purchased_products.append(prod_id)
         SystemMonetization.addStorageListValue("purchased", prod_id)
 
         return False
@@ -643,14 +643,10 @@ class SystemMonetization(System):
         if len(SystemMonetization._session_purchased_products) == 0:
             return
 
-        session_products = set(SystemMonetization._session_purchased_products)
-        saved_products = set(SystemMonetization.getStorageListValues("purchased"))
+        for product_id in SystemMonetization._session_purchased_products:
+            Notification.notify(Notificator.onPaySuccess, product_id)
 
-        not_saved_products = session_products - saved_products
-        _Log("_saveSessionPurchases found {} save candidates: {}".format(len(not_saved_products), not_saved_products))
-
-        for prod_id in not_saved_products:
-            SystemMonetization.addStorageListValue("purchased", prod_id)
+        SystemMonetization._session_purchased_products = []
 
     @staticmethod
     def addStorageListValue(key, value):
