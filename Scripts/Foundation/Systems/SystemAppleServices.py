@@ -1,8 +1,8 @@
-from Foundation.PolicyManager import PolicyManager
 from Foundation.System import System
 from Foundation.Utils import SimpleLogger
 from Foundation.Providers.RatingAppProvider import RatingAppProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
+from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Notification import Notification
 
 _Log = SimpleLogger("SystemAppleServices")
@@ -39,6 +39,11 @@ class SystemAppleServices(System):
 
         if self.b_plugins["Review"] is True:
             RatingAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
+
+        if self.b_plugins["GameCenter"] is True:
+            AchievementsProvider.setProvider("Apple", dict(
+                unlockAchievement=self.unlockAchievement,
+            ))
 
     def _onFinalize(self):
         self.__remDevToDebug()
@@ -81,8 +86,6 @@ class SystemAppleServices(System):
         if SystemAppleServices.b_plugins["GameCenter"] is True:
             b_result = Mengine.appleGameCenterConnect()  # check is request to GameCenter was sent
             # if True, cb provider will return bool that means player connected or not
-
-            PolicyManager.setPolicy("ExternalAchieveProgress", "PolicyExternalAchieveProgressAppleGameCenter")
         else:
             b_result = False
 
@@ -129,7 +132,24 @@ class SystemAppleServices(System):
         return status
 
     @staticmethod
-    def sendAchievementToGameCenter(achievement_name, percent_complete=100.0):
+    def unlockAchievement(achievement_name):
+        return SystemAppleServices._sendAchievementToGameCenter(achievement_name, percent_complete=100.0)
+
+    @staticmethod
+    def incrementAchievement(achievement_name, current_step, total_steps):
+        if current_step < 1 or total_steps < 1:
+            Trace.log("System", 0, "current={}, total={} steps must be 1 or bigger".format(current_step, total_steps))
+            return
+        if current_step > total_steps:
+            Trace.log("System", 0, "current={} must be equal or lower than total={}".format(current_step, total_steps))
+            percent = 100.0
+        else:
+            percent = round(current_step / total_steps, 1)
+
+        return SystemAppleServices._sendAchievementToGameCenter(achievement_name, percent_complete=percent)
+
+    @staticmethod
+    def _sendAchievementToGameCenter(achievement_name, percent_complete):
         SystemAppleServices.isGameCenterConnected(report=True)
 
         _Log("GAME CENTER: SEND ACHIEVEMENT {!r} (complete {}%%)...".format(achievement_name, percent_complete), force=True)
@@ -320,7 +340,7 @@ class SystemAppleServices(System):
                 params = text.split(" ")
                 achievement_name = params[0]
                 percent_complete = int(params[1]) if len(params) > 1 else 100
-                self.sendAchievementToGameCenter(achievement_name, percent_complete)
+                self._sendAchievementToGameCenter(achievement_name, percent_complete)
 
             w_achievement = Mengine.createDevToDebugWidgetCommandLine("send_achievement")
             w_achievement.setTitle("Send achievement to GameCenter")

@@ -2,6 +2,7 @@ import json
 from Event import Event
 from Foundation.PolicyManager import PolicyManager
 from Foundation.Providers.RatingAppProvider import RatingAppProvider
+from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
@@ -58,7 +59,10 @@ class SystemGoogleServices(System):
             Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialShowAchievementSuccess", self.__cbAchievementShowSuccess)
             Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialShowAchievementError", self.__cbAchievementShowError)
 
-            PolicyManager.setPolicy("ExternalAchieveProgress", "PolicyExternalAchieveProgressGooglePlay")
+            AchievementsProvider.setProvider("Google", dict(
+                unlockAchievement=self.unlockAchievement,
+                incrementAchievement=self.incrementAchievement,
+            ))
             PolicyManager.setPolicy("Authorize", "PolicyAuthGoogleService")
 
         if self.b_plugins["GooglePlayBilling"] is True:
