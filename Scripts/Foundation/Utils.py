@@ -1117,7 +1117,7 @@ def isSurvey():
 
         current_build_mode = Mengine.getGameParamUnicode("BuildMode")
         resources_tags = BuildModeManager.getBuildResourceConfig(current_build_mode)
-        return "Survey" in resources_tags and "CE" not in resources_tags
+        return all(["Survey" in resources_tags, "CE" not in resources_tags, "SE" not in resources_tags])
     else:
         return Mengine.getGameParamBool("Survey", False)
 
