@@ -126,9 +126,10 @@ class SystemMonetization(System):
                 if product.group_id in MonetizationManager.getGeneralSetting("DoubledGroupOnFirstPurchase", []):
                     SystemMonetization.sendReward(prod_id=prod_id)
 
-        if product.only_one_purchase is False:
+        if product.isConsumable() is True:
             return False
 
+        # save non-consumable product
         SystemMonetization.addStorageListValue("purchased", prod_id)
 
         return False
@@ -644,6 +645,8 @@ class SystemMonetization(System):
             return
 
         for product_id in SystemMonetization._session_purchased_products:
+            if SystemMonetization.isProductPurchased(product_id) is True:
+                continue
             Notification.notify(Notificator.onPaySuccess, product_id)
 
         SystemMonetization._session_purchased_products = []

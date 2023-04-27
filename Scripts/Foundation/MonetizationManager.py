@@ -114,6 +114,9 @@ class MonetizationManager(Manager, CurrencyManager):
                 return int(discount_price)
             return discount_price
 
+        def isConsumable(self):
+            return self.only_one_purchase is False
+
     @staticmethod
     def _getRecordDict(record, key, default=None, delimiter=", "):
         """ takes value like 'key1=value1, key2=value' and returns dict {key1:value1, key2:value2}
