@@ -889,18 +889,28 @@ class SystemMonetization(System):
                 return
 
             all_settings = MonetizationManager.getGeneralSettings()
-            setting = params[0]
+            setting, raw_value = params
+
             if setting not in all_settings:
                 _Log("[DevToDebug] setting {!r} not found".format(setting), err=True)
                 return
 
-            value = int(params[1]) if params[1].isdigit() else params[1]
+            cast_types = [int, float, bool]
+            for type_ in cast_types:
+                prefix = "({})".format(type_.__name__)
+                if raw_value.startswith(prefix) is True:
+                    value = type_(raw_value[len(prefix):])
+                    break
+            else:
+                # if no cast prefix found
+                value = raw_value
+
             _Log("[DevToDebug] changed setting {!r} from {!r} to {!r}".format(setting, all_settings[setting], value))
             all_settings[setting] = value
 
         w_settings = Mengine.createDevToDebugWidgetCommandLine("change_settings")
-        w_settings.setTitle("Change settings (from list above)")
-        w_settings.setPlaceholder("Syntax: <setting_name> <new_value>")
+        w_settings.setTitle("Change settings (from list above) | cast prefixes: (bool) (int) (float)")
+        w_settings.setPlaceholder("Syntax: <setting_name> [cast_prefix]<new_value>")
         w_settings.setCommandEvent(_updateSetting)
         tab.addWidget(w_settings)
 
