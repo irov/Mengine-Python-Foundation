@@ -14,6 +14,7 @@ class SystemDevToDebug(System):
         # self.createSpamTabs()
         # self.createGroupedButtons()
         # self.createTextInputTab()
+        self.createDebugExamples()
 
         return True
 
@@ -109,6 +110,57 @@ class SystemDevToDebug(System):
         widget_btn.setClickEvent(__add_coins)
 
         tab.addWidget(widget_btn)
+
+    def createDebugExamples(self):
+        tab = Mengine.getDevToDebugTab("Debug") or Mengine.addDevToDebugTab("Debug")
+        widgets = []
+
+        def _follower(text):
+            x, y, z = [float(X) for X in text.split(" ")]
+
+            def _upd(val):
+                Trace.msg("[DevToDebug] follow [{}] {}".format(Mengine.getTimeMs(), val))
+                if val >= z:
+                    Mengine.destroyValueFollower(follower)
+                    Trace.msg("[DevToDebug] destroyValueFollower")
+
+            follower = Mengine.createValueFollowerLinear(x, y, _upd)
+            Trace.msg("[DevToDebug] createValueFollowerLinear (start={}, speed={}, stop={})".format(x, y, z))
+            follower.setFollow(z)
+
+        w_follower = Mengine.createDevToDebugWidgetCommandLine("follower")
+        w_follower.setTitle("Try linear value follower")
+        w_follower.setPlaceholder("Syntax: <start> <speed> <stop>")
+        w_follower.setCommandEvent(_follower)
+        widgets.append(w_follower)
+
+        def _affector(text):
+            z = float(text)
+            d = {"total": 0}
+
+            def _upd(dt, d):
+                d["total"] += dt
+                Trace.msg("[DevToDebug] ({}) affect [{}] dt={}, total={}".format(
+                    affector_id, Mengine.getTimeMs(), dt, d["total"]))
+                if dt >= z:
+                    Mengine.removeAffector(affector_id)
+                    Trace.msg("[DevToDebug] removeAffector {}".format(affector_id))
+                    return True
+                return False
+
+            affector_id = Mengine.addAffector(_upd, d)
+            Trace.msg("[DevToDebug] addAffector (stop={}) {}".format(z, affector_id))
+
+        w_affector = Mengine.createDevToDebugWidgetCommandLine("affector")
+        w_affector.setTitle("Try affector")
+        w_affector.setPlaceholder("Syntax: <stop>")
+        w_affector.setCommandEvent(_affector)
+        widgets.append(w_affector)
+
+        for widget in widgets:
+            if tab.findWidget(widget) is not None:
+                continue
+            tab.addWidget(widget)
 
     def _onStop(self):
         return True  # clean
