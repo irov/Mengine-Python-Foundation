@@ -145,6 +145,7 @@ class SystemDevToDebug(System):
                 if d["total"] >= z:
                     Mengine.removeAffector(affector_id)     # or return True
                     Trace.msg("[DevToDebug] removeAffector {}".format(affector_id))
+                    return True
                 return False
 
             affector_id = Mengine.addAffector(_upd, d)
