@@ -764,6 +764,30 @@ def getMovieSocketPolygonWM2(Movie, SocketName):
     return Polygon
     pass
 
+def getMovieSocketWidth(movie, socket_name):
+    socket = movie.getSocket(socket_name)
+    bb = Mengine.getHotSpotPolygonBoundingBox(socket)
+    width = bb.maximum.x - bb.minimum.x
+    return width
+
+def getMovieSocketHeight(movie, socket_name):
+    socket = movie.getSocket(socket_name)
+    bb = Mengine.getHotSpotPolygonBoundingBox(socket)
+    height = bb.maximum.y - bb.minimum.y
+    return height
+
+def getBoundingBoxWidth(bounds):
+    bounds_begin = bounds.minimum
+    bounds_end = bounds.maximum
+    width = bounds_end.x - bounds_begin.x
+    return width
+
+def getBoundingBoxHeight(bounds):
+    bounds_begin = bounds.minimum
+    bounds_end = bounds.maximum
+    height = bounds_end.y - bounds_begin.y
+    return height
+
 def attachMovieSlotNode(Movie, SlotName, Node):
     Slot = Movie.getMovieSlot(SlotName)
 
