@@ -1082,18 +1082,27 @@ class SimpleLogger(object):
                 title (str): what title will be in square brackets (i.e. <Utils>);
                 debug (bool): (default=True) messages will be printed only in _DEVELOPMENT if True;
                 enable (bool): (default=True) enable logger or not;
+                option (str): logs only if with call kwarg `optional=True` and -debug:<option>
         """
         self.title = title
 
-        self.debug = kwargs.get("debug", True)
-        self.enable = kwargs.get("enable", True)
+        self._debug = kwargs.get("debug", True)
+        self._enable = kwargs.get("enable", True)
+        self._optional = False
 
-    def __call__(self, msg, err=False, force=False):
-        if self.enable is False:
+        option = kwargs.get("option")
+        if option is not None and option in Mengine.getOptionValues("debug"):
+            self._optional = True
+
+    def __call__(self, msg, err=False, force=False, optional=False):
+        if self._enable is False:
             return
         if force is False:
-            if self.debug is True and _DEVELOPMENT is False:
-                return
+            if self._debug is True:
+                if _DEVELOPMENT is False:
+                    return
+                if optional is True and self._optional is False:
+                    return
 
         f_message = " <%s> %s" % (self.title, msg)
         if err is True:
