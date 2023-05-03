@@ -142,7 +142,7 @@ class SystemDevToDebug(System):
                 d["total"] += dt
                 Trace.msg("[DevToDebug] ({}) affect [{}] dt={}, total={}".format(
                     affector_id, Mengine.getTimeMs(), dt, d["total"]))
-                if dt >= z:
+                if d["total"] >= z:
                     Mengine.removeAffector(affector_id)
                     Trace.msg("[DevToDebug] removeAffector {}".format(affector_id))
                     return True
