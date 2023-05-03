@@ -143,13 +143,15 @@ class SystemDevToDebug(System):
                 Trace.msg("[DevToDebug] ({}) affect [{}] dt={}, total={}".format(
                     affector_id, Mengine.getTimeMs(), dt, d["total"]))
                 if d["total"] >= z:
-                    Mengine.removeAffector(affector_id)
+                    Mengine.removeAffector(affector_id)     # or return True
                     Trace.msg("[DevToDebug] removeAffector {}".format(affector_id))
-                    return True
                 return False
 
             affector_id = Mengine.addAffector(_upd, d)
-            Trace.msg("[DevToDebug] addAffector (stop={}) {}".format(z, affector_id))
+            if affector_id == 0:
+                Trace.msg_err("[DevToDebu] addAffector initialize failed")
+            else:
+                Trace.msg("[DevToDebug] addAffector (stop={}) {}".format(z, affector_id))
 
         w_affector = Mengine.createDevToDebugWidgetCommandLine("affector")
         w_affector.setTitle("Try affector")
