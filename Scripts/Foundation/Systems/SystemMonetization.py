@@ -837,7 +837,7 @@ class SystemMonetization(System):
                 return
             gold = params[0]
             descr = None if len(params) < 2 else params[1]
-            self.payGold(gold, descr)
+            Notification.notify(Notificator.onGameStorePayGold, gold, descr)
 
         w_pay_gold = Mengine.createDevToDebugWidgetCommandLine("pay_gold")
         w_pay_gold.setTitle("Pay gold")
