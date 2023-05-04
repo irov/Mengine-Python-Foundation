@@ -11,13 +11,14 @@ from Foundation.Utils import SimpleLogger, getCurrentPublisher
 from Foundation.Providers.PaymentProvider import PaymentProvider
 from Notification import Notification
 
-_Log = SimpleLogger("SystemMonetization")
+_Log = SimpleLogger("SystemMonetization", option="monetization")
 
 
 class SystemMonetization(System):
     storage = {}
     components = {}
     _session_purchased_products = []
+    _session_delayed_products = []
 
     game_store_name = None
 
@@ -80,6 +81,11 @@ class SystemMonetization(System):
     @classmethod
     def pay(cls, prod_id):
         real_prod_id = MonetizationManager.getProductRealId(prod_id)
+
+        if cls.isPurchaseDelayed(real_prod_id) is True:
+            Notification.notify(Notificator.onReleasePurchased, real_prod_id)
+            return
+
         PaymentProvider.pay(real_prod_id)
 
     @classmethod
@@ -131,6 +137,35 @@ class SystemMonetization(System):
 
         # save non-consumable product
         SystemMonetization.addStorageListValue("purchased", prod_id)
+
+        return False
+
+    @staticmethod
+    def _onDelayPurchased(prod_id):
+        """ these products already purchased, but we shouldn't send rewards at this moment """
+
+        if MonetizationManager.hasProductInfo(prod_id) is False:
+            _Log("Unknown product id {!r} ({})".format(prod_id, type(prod_id)), err=True, force=True)
+            return False
+
+        if SystemMonetization.isPurchaseDelayed(prod_id) is True:
+            _Log("Purchase already delayed {!r}".format(prod_id), err=True, optional=True)
+            return False
+
+        SystemMonetization._session_delayed_products.append(prod_id)
+        _Log("Delay purchase {!r}".format(prod_id), optional=True)
+
+        return False
+
+    @staticmethod
+    def _onReleasePurchased(prod_id):
+        if SystemMonetization.isPurchaseDelayed(prod_id) is False:
+            _Log("Product {!r} not purchased or delayed".format(prod_id), err=True, force=True)
+            return False
+
+        SystemMonetization._session_delayed_products.remove(prod_id)
+        _Log("Release delayed purchase {!r}...".format(prod_id), optional=True)
+        Notification.notify(Notificator.onPaySuccess, prod_id)
 
         return False
 
@@ -514,6 +549,10 @@ class SystemMonetization(System):
         is_purchased = str(group_id) in items
         return is_purchased
 
+    @staticmethod
+    def isPurchaseDelayed(prod_id):
+        return prod_id in SystemMonetization._session_delayed_products
+
     # --- Observers ----------------------------------------------------------------------------------------------------
 
     def setupObservers(self):
@@ -521,6 +560,8 @@ class SystemMonetization(System):
 
         # payment
         self.addObserver(Notificator.onPaySuccess, self._onPaySuccess)
+        self.addObserver(Notificator.onDelayPurchased, self._onDelayPurchased)
+        self.addObserver(Notificator.onReleasePurchased, self._onReleasePurchased)
         self.addObserver(Notificator.onPayFailed, self._onPayFailed)
         self.addObserver(Notificator.onGameStorePayGold, self._onPayGold)
 
