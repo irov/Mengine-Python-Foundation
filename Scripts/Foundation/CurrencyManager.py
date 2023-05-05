@@ -89,7 +89,15 @@ class CurrencyManager(object):
             CurrencyManager.setCurrentCurrencyCode(default_currency_code)
 
     @staticmethod
-    def updateCurrencyText(env, alias, text_id):
-        currency_symbol = CurrencyManager.getCurrentCurrencySymbol() or ""
+    def updateCurrencyText(env, alias, text_id, currency_type="symbol"):
+        """ @param currency_type: "symbol" | "code" """
+        if currency_type == "symbol":
+            currency = CurrencyManager.getCurrentCurrencySymbol() or ""
+        elif currency_type == "code":
+            currency = CurrencyManager.getCurrentCurrencyCode()
+        else:
+            Trace.log("Manager", 0, "Unknown currency_type {}".format(currency_type))
+            return
+
         Mengine.setTextAlias(env, alias, text_id)
-        Mengine.setTextAliasArguments(env, alias, currency_symbol)
+        Mengine.setTextAliasArguments(env, alias, currency)
