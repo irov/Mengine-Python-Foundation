@@ -1,3 +1,5 @@
+import math
+
 class RPGFormules(object):
     def __init__(self):
         self.formules = {}
@@ -32,8 +34,11 @@ class RPGFormules(object):
             return 1.0 if Mengine.randf(100.0) <= value else 0.0
         def __sum(value):
             return sum(value)
+        def __roundup(value):
+            return math.ceil(value)
 
-        sandbox = dict(Value=Value, rand=__rand, fibo=__fibo, log10=__log10, Resist=__resist, Evade=__evade, sum=__sum)
+        sandbox = dict(Value=Value, rand=__rand, fibo=__fibo, log10=__log10, Resist=__resist, Evade=__evade, sum=__sum,
+                       roundup=__roundup)
 
         if Global is not None:
             sandbox.update(Global)
