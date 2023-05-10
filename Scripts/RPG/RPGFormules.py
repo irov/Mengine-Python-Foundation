@@ -36,9 +36,11 @@ class RPGFormules(object):
             return sum(value)
         def __roundup(value):
             return math.ceil(value)
+        def __rounddown(value):
+            return math.floor(value)
 
         sandbox = dict(Value=Value, rand=__rand, fibo=__fibo, log10=__log10, Resist=__resist, Evade=__evade, sum=__sum,
-                       roundup=__roundup)
+                       roundup=__roundup, rounddown=__rounddown)
 
         if Global is not None:
             sandbox.update(Global)
