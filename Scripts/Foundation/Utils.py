@@ -1210,3 +1210,23 @@ def getWeightedRandomIndex(weights):
         random_weight -= weight
         if random_weight <= 0:
             return i
+
+def getWeightedRandomByKey(records, key):
+    if len(records) == 0:
+        return None
+
+    elements, weights = [], []
+    for record in records:
+        if hasattr(record, key):
+            continue
+        elements.append(record)
+        weights.append(getattr(record, key))
+
+    lookup_index = getWeightedRandomIndex(weights)
+
+    if lookup_index is None:
+        return None
+
+    element = elements[lookup_index]
+
+    return element
