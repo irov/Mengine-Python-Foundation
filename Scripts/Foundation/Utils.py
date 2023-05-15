@@ -1196,3 +1196,17 @@ def replace_last(string, old, new, n, already_reverted_substrings=False):
 
     replaced = string[::-1].replace(_old, _new, n)[::-1]
     return replaced
+
+def getWeightedRandomIndex(weights):
+    if len(weights) == 0:
+        return None
+    if len(weights) == 1:
+        return 0
+
+    total_weight = sum(weights)
+    random_weight = Mengine.range_randf(0, total_weight)
+
+    for i, weight in enumerate(weights):
+        random_weight -= weight
+        if random_weight <= 0:
+            return i
