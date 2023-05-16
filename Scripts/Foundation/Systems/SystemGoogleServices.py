@@ -11,6 +11,10 @@ from Notification import Notification
 
 _Log = SimpleLogger("SystemGoogleServices")
 
+BILLING_CLIENT_STATUS_NOT_CONNECTED = 0
+BILLING_CLIENT_STATUS_OK = 1
+BILLING_CLIENT_STATUS_FAIL = 2
+
 
 class SystemGoogleServices(System):
     """ Google service that provides
@@ -33,31 +37,35 @@ class SystemGoogleServices(System):
     login_data = None
     __on_auth_achievements = {}
     __on_auth_cbs = {}
-    sku_response_event = Event("SkuListResponse")
+    sku_response_event = Event("SkuListResponse")   # todo: check is deprecated
 
-    s_skus = {}
+    s_products = {}
+    __billing_client_status = BILLING_CLIENT_STATUS_NOT_CONNECTED
 
     def _onInitialize(self):
+
         if self.b_plugins["GoogleGameSocial"] is True:
+            def setSocialCallback(callback_name, *callback):
+                method_name = "onGoogleGameSocial" + callback_name
+                Mengine.setAndroidCallback("GoogleGameSocial", method_name, *callback)
+
             # auth:
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialOnSign", self.__cbSignSuccess)
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialOnSignError", self.__cbSignError)
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialOnSignFailed", self.__cbSignFail)
-
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutSuccess", self.__cbSignOutSuccess)
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutCanceled", self.__cbSignOutCanceled)
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutFailure", self.__cbSignOutFailure)
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialSignOutComplete", self.__cbSignOutComplete)
-
+            setSocialCallback("OnSign", self.__cbSignSuccess)
+            setSocialCallback("OnSignError", self.__cbSignError)
+            setSocialCallback("OnSignFailed", self.__cbSignFail)
+            setSocialCallback("SignOutSuccess", self.__cbSignOutSuccess)
+            setSocialCallback("SignOutCanceled", self.__cbSignOutCanceled)
+            setSocialCallback("SignOutFailure", self.__cbSignOutFailure)
+            setSocialCallback("SignOutComplete", self.__cbSignOutComplete)
             # incrementAchievement:
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementIncrementError", self.__cbAchievementIncError)
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementIncrementSuccess", self.__cbAchievementIncSuccess)
+            setSocialCallback("AchievementIncrementError", self.__cbAchievementIncError)
+            setSocialCallback("AchievementIncrementSuccess", self.__cbAchievementIncSuccess)
             # unlockAchievement:
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementSuccess", self.__cbAchievementUnlockSuccess)
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialAchievementError", self.__cbAchievementUnlockError)
+            setSocialCallback("AchievementSuccess", self.__cbAchievementUnlockSuccess)
+            setSocialCallback("AchievementError", self.__cbAchievementUnlockError)
             # showAchievements:
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialShowAchievementSuccess", self.__cbAchievementShowSuccess)
-            Mengine.setAndroidCallback("GoogleGameSocial", "onGoogleGameSocialShowAchievementError", self.__cbAchievementShowError)
+            setSocialCallback("ShowAchievementSuccess", self.__cbAchievementShowSuccess)
+            setSocialCallback("ShowAchievementError", self.__cbAchievementShowError)
 
             AchievementsProvider.setProvider("Google", dict(
                 unlockAchievement=self.unlockAchievement,
@@ -66,23 +74,58 @@ class SystemGoogleServices(System):
             PolicyManager.setPolicy("Authorize", "PolicyAuthGoogleService")
 
         if self.b_plugins["GooglePlayBilling"] is True:
-            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingBuyInAppSuccess", self.__cbBillingBuyInAppSuccess)
-            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingOnSkuResponse", self.__cbBillingOnSkuResponse)
-            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingOnConsume", self.__cbBillingOnConsume)
-            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingIsAcknowledge", self.__cbBillingIsAcknowledge)
-            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingAcknowledge", self.__cbBillingAcknowledge)
-            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingDeveloperError", self.__cbBillingDeveloperError)
-            Mengine.setAndroidCallback("GooglePlayBilling", "onGooglePlayBillingUserCanceled", self.__cbBillingUserCanceled)
+            def setBillingCallback(callback_name, *callback):
+                method_name = "onGooglePlayBilling" + callback_name
+                Mengine.setAndroidCallback("GooglePlayBilling", method_name, *callback)
+
+            setBillingCallback("PurchasesUpdatedServiceTimeout", self.__cbBillingPurchaseError, "ServiceTimeout")
+            setBillingCallback("PurchasesUpdatedFeatureNotSupported", self.__cbBillingPurchaseError, "FeatureNotSupported")
+            setBillingCallback("PurchasesUpdatedServiceDisconnected", self.__cbBillingPurchaseError, "ServiceDisconnected")
+            setBillingCallback("PurchasesUpdatedServiceUnavailable", self.__cbBillingPurchaseError, "ServiceUnavailable")
+            setBillingCallback("PurchasesUpdatedBillingUnavailable", self.__cbBillingPurchaseError, "BillingUnavailable")
+            setBillingCallback("PurchasesUpdatedItemUnavailable", self.__cbBillingPurchaseError, "ItemUnavailable")
+            setBillingCallback("PurchasesUpdatedDeveloperError", self.__cbBillingPurchaseError, "DeveloperError")
+            setBillingCallback("PurchasesUpdatedError", self.__cbBillingPurchaseError, "Error")
+            setBillingCallback("PurchasesUpdatedItemAlreadyOwned", self.__cbBillingPurchaseError, "ItemAlreadyOwned")
+            setBillingCallback("PurchasesUpdatedItemNotOwned", self.__cbBillingPurchaseError, "ItemNotOwned")
+            setBillingCallback("PurchasesUpdatedUnknown", self.__cbBillingPurchaseError, "Unknown")
+            setBillingCallback("PurchasesUpdatedUserCanceled", self.__cbBillingPurchaseError, "UserCanceled")
+            setBillingCallback("PurchasesUpdatedOk", self.__cbBillingPurchaseOk)
+
+            setBillingCallback("BuyInAppSuccessful", self.__cbBillingBuyInAppStatus, True)
+            setBillingCallback("BuyInAppFailed", self.__cbBillingBuyInAppStatus, False)
+
+            setBillingCallback("PurchasesOnConsumeSuccessful", self.__cbBillingPurchaseConsumeSuccess)
+            setBillingCallback("PurchasesOnConsumeFailed", self.__cbBillingPurchaseConsumeFail)
+
+            setBillingCallback("QueryProductSuccessful", self.__cbBillingQueryProductsSuccess)
+            setBillingCallback("QueryProductFailed", self.__cbBillingQueryProductsFail)
+            setBillingCallback("QueryPurchasesSuccessful", self.__cbBillingQueryPurchasesStatus, True)
+            setBillingCallback("QueryPurchasesFailed", self.__cbBillingQueryPurchasesStatus, False)
+
+            setBillingCallback("PurchasesAcknowledge", self.__cbBillingPurchaseAcknowledge)
+            setBillingCallback("PurchasesAcknowledgeSuccessful", self.__cbBillingPurchaseAcknowledgeStatus, True)
+            setBillingCallback("PurchasesAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeStatus, False)
+            # billingConnect callbacks:
+            setBillingCallback("ConnectServiceDisconnected", self.__cbBillingClientDisconnected)
+            setBillingCallback("ConnectSetupFinishedFailed", self.__cbBillingClientSetupFinishedFail)
+            setBillingCallback("ConnectSetupFinishedSuccessful", self.__cbBillingClientSetupFinishedSuccess)
+
+            self.startBillingClient()
 
             PaymentProvider.setProvider("Google", dict(
                 pay=self.buy,
-                queryProducts=self.setSkuList,
+                queryProducts=self.queryProducts,
                 restorePurchases=self.restorePurchases
             ))
 
         if self.b_plugins["GoogleInAppReviews"] is True:
-            Mengine.setAndroidCallback("GoogleInAppReviews", "onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
-            Mengine.setAndroidCallback("GoogleInAppReviews", "onGoogleInAppReviewsLaunchingTheReviewCompleted", self.__cbReviewsLaunchingComplete)
+            def setReviewsCallback(callback_name, *callback):
+                method_name = "onGoogleInAppReviews" + callback_name
+                Mengine.setAndroidCallback("GoogleInAppReviews", method_name, *callback)
+
+            setReviewsCallback("GettingReviewObject", self.__cbReviewsGettingReviewObject)
+            setReviewsCallback("LaunchingTheReviewCompleted", self.__cbReviewsLaunchingComplete)
 
             RatingAppProvider.setProvider("Google", dict(rateApp=self.rateApp))
 
@@ -249,115 +292,90 @@ class SystemGoogleServices(System):
     # --- GooglePlayBilling --------------------------------------------------------------------------------------------
 
     @staticmethod
-    def setSkuList(skus):
-        """ setup product's list and return details via callback `__cbBillingOnSkuResponse`
-            @param skus: List<String> - product ids list. Each non-str value will be ignored """
-        skus = filter(lambda x: isinstance(x, str), skus)
-        _Log("[Billing] setSkuList: skus={!r}".format(skus))
-        Mengine.androidMethod("GooglePlayBilling", "setSkuList", skus)
+    def startBillingClient():
+        """ callbacks:
+            __cbBillingClientDisconnected
+            __cbBillingClientSetupFinishedFail
+            __cbBillingClientSetupFinishedSuccess   - OK
+        """
+        Mengine.androidMethod("GooglePlayBilling", "billingConnect")
 
     @staticmethod
-    def buy(sku):
-        """ buy product, success callback is `__cbBillingOnConsume`
-            @param sku: String - product id """
+    def getBillingClientStatus():
+        return SystemGoogleServices.__billing_client_status
+
+    @staticmethod
+    def queryProducts(skus):
+        """ setup product's list and return details via callback `__cbBillingOnSkuResponse`
+            @param skus: List<String> - product ids list. Each non-str value will be ignored """
+        if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
+            _Log("[Billing] queryProducts fail: billing client is not connected", err=True, force=True)
+            return False
+
+        skus = filter(lambda x: isinstance(x, str), skus)
+        _Log("[Billing] queryProducts: skus={!r}".format(skus))
+        Mengine.androidMethod("GooglePlayBilling", "queryProducts", skus)
+        return True
+
+    @staticmethod
+    def buy(product_id):
+        """ buy product, success callback is `__cbBillingOnConsume` """
+        if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
+            _Log("[Billing] buy fail: billing client is not connected", err=True, force=True)
+            SystemGoogleServices.__cbBillingPurchaseError("BillingClientUnavailable")
+            return
+
         if SystemGoogleServices.isLoggedIn() is False:
-            _Log("[Billing error] buy: sku={!r} failed: not authorized, try auth...".format(sku), err=True, force=True)
-            SystemGoogleServices.__on_auth_cbs["buy"] = sku
+            _Log("[Billing error] buy {!r} failed: not authorized, try auth...".format(product_id), err=True, force=True)
+            SystemGoogleServices.__on_auth_cbs["buy"] = product_id
             SystemGoogleServices.signIn(only_intent=True)
             return
 
-        _Log("[Billing] buy: sku={!r}".format(sku))
-        Mengine.androidBooleanMethod("GooglePlayBilling", "buyInApp", sku)
-        SystemGoogleServices.__lastProductId = sku
+        _Log("[Billing] buy: sku={!r}".format(product_id))
+        Mengine.androidBooleanMethod("GooglePlayBilling", "buyInApp", product_id)
+        SystemGoogleServices.__lastProductId = product_id
 
     @staticmethod
     def restorePurchases():  # todo: configure callbacks
         _Log("[Billing] restore purchases...")
         Mengine.androidMethod("GooglePlayBilling", "queryPurchases")
 
-    # utils
-
     @staticmethod
-    def skuJsonToDict(raw_sku):
-        """ Returns python dict from raw sku json string or None if error """
-
-        if raw_sku is None:
-            Trace.log("System", 3, "Can't skuJsonToDict None, may be you put unknown product_id")
-            return None
-
-        # remove wrong characters
-        raw = raw_sku.replace("\xc2\xa0", " ").replace("\n", "&#10;")
-        raw = raw.replace("ProductDetails{jsonString='", "")
-        raw = raw[:raw.index("}'") + 1]  # +1 because we want to get this bracket too in our slice
-        # we do "}'", not "'", because game title could contain "'"
-
-        try:
-            sku = json.loads(raw)
-        except ValueError as e:
-            Trace.log("System", 0, "Can't json.loads [{}] from {!r}".format(e, raw))
-            sku = None
-
-        return sku
-
-    @staticmethod
-    def sendSkus():
-        s_skus = SystemGoogleServices.s_skus
-        if s_skus is None:
+    def responseProducts():
+        if SystemGoogleServices.s_products is None:
             return
 
-        skus = {}
-        for prod_id, sku in s_skus.items():
+        currency = None
+        products = {}
+        for prod_id, details in SystemGoogleServices.s_products.items():
             params = {
                 # convert price from micros to normal with 2 digits after comma
-                "price": round(float(sku["oneTimePurchaseOfferDetails"]["priceAmountMicros"]) / 1000000, 2),
-                "descr": str(sku["description"]),
-                "name": str(sku["name"])
+                "price": round(float(details["oneTimePurchaseOfferDetails"]["priceAmountMicros"]) / 1000000, 2),
+                "descr": str(details["description"]),
+                "name": str(details["name"])
             }
-            skus[prod_id] = params
+            products[prod_id] = params
 
-        _Log("[Billing sendSkus] skus={!r}".format(skus))
+            if currency is None:
+                currency = str(details["oneTimePurchaseOfferDetails"]["priceCurrencyCode"])
 
-        if len(s_skus) > 0:
-            _random_sku = s_skus.items()[0][1]
-            currency = str(_random_sku["oneTimePurchaseOfferDetails"]["priceCurrencyCode"])
-        else:
-            currency = None
+        _Log("[Billing] response on queryProducts: {}".format(products))
 
-        Notification.notify(Notificator.onProductsUpdate, skus, currency)
+        Notification.notify(Notificator.onProductsUpdate, products, currency)
 
     # callbacks
 
     @staticmethod
-    def _retryPurchase(prod_id):
-        if Mengine.getConfigBool("GoogleService", "RetryPurchaseOnFail", True) is False:
-            return
-        if TaskManager.existTaskChain("SystemGoogleServices_RetryPurchase") is True:
-            return
-
-        timeout_delay = Mengine.getConfigInt("GoogleService", "RetryPurchaseTimeout", 10) * 1000.0
-
-        with TaskManager.createTaskChain(Name="SystemGoogleServices_RetryPurchase") as tc:
-            with tc.addRaceTask(2) as (timeout, retry):
-                timeout.addDelay(timeout_delay)
-
-                with retry.addParallelTask(2) as (respond, request):
-                    respond.addListener(Notificator.onProductsUpdateDone)
-                    respond.addFunction(SystemGoogleServices.buy, prod_id)
-                    request.addFunction(PaymentProvider.queryProducts)
-
-    @staticmethod
-    def __cbBillingBuyInAppSuccess(prod_id, status):
+    def __cbBillingBuyInAppStatus(prod_id, status):
         """ purchase process status """
         if status is False:
             Notification.notify(Notificator.onPayFailed, prod_id)
-            SystemGoogleServices._retryPurchase(prod_id)
 
         _Log("[Billing cb] onGooglePlayBillingBuyInAppSuccess: prod_id={!r}, status={!r}".format(prod_id, status))
 
     @staticmethod
-    def __cbBillingOnSkuResponse(raw_skus):
+    def __cbBillingQueryProductsSuccess(products):
         """ this callback receives details of every product in json format
-            :param raw_skus: list of strings in json format with prod details
 
             - productId - The product ID for the product.
             - type - "inapp"  for an in-app product or "subs" for subscriptions.
@@ -369,48 +387,77 @@ class SystemGoogleServices(System):
             - description - Description of the product.
         """
 
-        _Log("[Billing cb] onGooglePlayBillingOnSkuResponse raw: {!r}".format(raw_skus))
+        _Log("[Billing cb] query products SUCCESS: {!r}".format(products))
         SystemGoogleServices.sku_response_event()
 
-        # save skus
-        list_skus = [params for params in [SystemGoogleServices.skuJsonToDict(sku) for sku in raw_skus] if params]
-        dict_skus = {sku["productId"]: sku for sku in list_skus}
-        SystemGoogleServices.s_skus = dict_skus
-        SystemGoogleServices.sendSkus()
-
-        _Log("[Billing cb] onGooglePlayBillingOnSkuResponse skus: {!r}".format(list_skus))
+        # save
+        SystemGoogleServices.s_products = {product["productId"]: product for product in products}
+        SystemGoogleServices.responseProducts()
 
     @staticmethod
-    def __cbBillingOnConsume(_prod_ids):
+    def __cbBillingQueryProductsFail():
+        _Log("[Billing cb] query products FAIL", err=True, force=True)
+
+    @staticmethod
+    def __cbBillingPurchaseConsumeSuccess(products):
         """ pay success """
-        prod_ids = filter(lambda x: x is not None, _prod_ids)
+        print "__cbBillingPurchaseConsumeSuccess", products
+        prod_ids = filter(lambda x: x is not None, products)
         for prod_id in prod_ids:
             Notification.notify(Notificator.onPaySuccess, prod_id)
-        _Log("[Billing cb] onGooglePlayBillingOnConsume: {!r}".format(prod_ids))
+        _Log("[Billing cb] purchase consume successful: {!r}".format(prod_ids))
 
     @staticmethod
-    def __cbBillingIsAcknowledge(cb, skus):
+    def __cbBillingPurchaseConsumeFail(products):
+        """ pay fail """
+        print "__cbBillingPurchaseConsumeFail", products
+        prod_ids = filter(lambda x: x is not None, products)
+        for prod_id in prod_ids:
+            Notification.notify(Notificator.onPayFailed, prod_id)
+        _Log("[Billing cb] purchase consume failed: {!r}".format(prod_ids))
+
+    @staticmethod
+    def __cbBillingPurchaseAcknowledge(cb, products):
         """ purchase completed + Cb """
+        _Log("[Billing cb] purchase acknowledge: products={!r} cb={!r} ".format(products, cb))
+        print "----- acknowledge start ------"
+        cb(products)
+        print "----- acknowledge done -------"
+
+    @staticmethod
+    def __cbBillingPurchaseAcknowledgeStatus(products, status):
         # todo
-        _Log("[Billing cb] onGooglePlayBillingIsAcknowledge: cb={!r} skus={!r}".format(cb, skus))
+        _Log("[Billing cb] purchase acknowledge status: products={!r} status={}".format(products, status))
 
     @staticmethod
-    def __cbBillingAcknowledge(skus):
-        """ callback from Google after successful product sale """
-        # todo
-        _Log("[Billing cb] onGooglePlayBillingAcknowledge: {!r}".format(skus))
-
-    @staticmethod
-    def __cbBillingDeveloperError():
-        """  error in credentials or purchased products """
+    def __cbBillingPurchaseError(details):
+        """  error while purchase """
         Notification.notify(Notificator.onPayFailed, SystemGoogleServices.__lastProductId)
-        _Log("[Billing cb] onGooglePlayBillingDeveloperError", force=True, err=True)
+        _Log("[Billing cb] purchase error: {}".format(details), force=True, err=True)
 
     @staticmethod
-    def __cbBillingUserCanceled():
-        """ user canceled a purchase  """
-        Notification.notify(Notificator.onPayFailed, SystemGoogleServices.__lastProductId)
-        _Log("[Billing cb] onGooglePlayBillingUserCanceled")
+    def __cbBillingPurchaseOk():
+        """  error while purchase """
+        _Log("[Billing cb] purchase ok: {}".format(SystemGoogleServices.__lastProductId))
+
+    @staticmethod
+    def __cbBillingClientDisconnected():
+        _Log("[Billing cb] billing client disconnected")
+        SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_NOT_CONNECTED
+
+    @staticmethod
+    def __cbBillingClientSetupFinishedFail():
+        _Log("[Billing cb] billing client setup finished with status: FAIL", err=True)
+        SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_FAIL
+
+    @staticmethod
+    def __cbBillingClientSetupFinishedSuccess():
+        _Log("[Billing cb] billing client setup finished with status: SUCCESS")
+        SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_OK
+
+    @staticmethod
+    def __cbBillingQueryPurchasesStatus(status):
+        _Log("[Billing cb] query purchases status: {}".format(status))
 
     # --- Achievements --------------------------------------------------------------------------------------------
 
@@ -518,13 +565,10 @@ class SystemGoogleServices(System):
 
         # achievements
         if self.b_plugins["GoogleGameSocial"] is True:
-            def _unlock_achievement(achievement_id):
-                self.unlockAchievement(achievement_id)
-
             w_achievement_unlock = Mengine.createDevToDebugWidgetCommandLine("unlock_achievement")
             w_achievement_unlock.setTitle("Unlock achievement")
             w_achievement_unlock.setPlaceholder("syntax: <achievement_id>")
-            w_achievement_unlock.setCommandEvent(_unlock_achievement)
+            w_achievement_unlock.setCommandEvent(self.unlockAchievement)
             widgets.append(w_achievement_unlock)
 
             def _increment_achievement(text):
@@ -567,17 +611,14 @@ class SystemGoogleServices(System):
 
         # payment
         if self.b_plugins["GooglePlayBilling"] is True:
-            def _buy(prod_id):
-                self.buy(prod_id)
-
             w_buy = Mengine.createDevToDebugWidgetCommandLine("buy_sku")
             w_buy.setTitle("Buy product")
             w_buy.setPlaceholder("syntax: <prod_id>")
-            w_buy.setCommandEvent(_buy)
+            w_buy.setCommandEvent(self.buy)
             widgets.append(w_buy)
 
-            w_update_products = Mengine.createDevToDebugWidgetButton("update_products")
-            w_update_products.setTitle("Update products (update prices and prod params)")
+            w_update_products = Mengine.createDevToDebugWidgetButton("query_products")
+            w_update_products.setTitle("Query products (update prices and prod params)")
             w_update_products.setClickEvent(PaymentProvider.queryProducts)
             widgets.append(w_update_products)
 
