@@ -48,7 +48,7 @@ class SystemRemoteConfig(System):
         config = {}
 
         if _ANDROID:
-            config = Mengine.androidConfigMethod(SystemRemoteConfig.PLUGIN_NAME, "getRemoteConfig")
+            config = Mengine.androidObjectMethod(SystemRemoteConfig.PLUGIN_NAME, "getRemoteConfig")
         else:
             Trace.log("System", 0, "'{}' do not work on this OS".format(SystemRemoteConfig.PLUGIN_NAME))
 
