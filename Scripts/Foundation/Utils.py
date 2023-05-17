@@ -1217,7 +1217,7 @@ def getWeightedRandomByKey(records, key):
 
     elements, weights = [], []
     for record in records:
-        if hasattr(record, key):
+        if hasattr(record, key) is False:
             continue
         elements.append(record)
         weights.append(getattr(record, key))
