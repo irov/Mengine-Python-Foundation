@@ -404,7 +404,6 @@ class SystemGoogleServices(System):
     @staticmethod
     def __cbBillingPurchaseConsumeSuccess(products):
         """ pay success """
-        print "__cbBillingPurchaseConsumeSuccess", products
         prod_ids = filter(lambda x: x is not None, products)
         for prod_id in prod_ids:
             Notification.notify(Notificator.onPaySuccess, prod_id)
@@ -413,7 +412,6 @@ class SystemGoogleServices(System):
     @staticmethod
     def __cbBillingPurchaseConsumeFail(products):
         """ pay fail """
-        print "__cbBillingPurchaseConsumeFail", products
         prod_ids = filter(lambda x: x is not None, products)
         for prod_id in prod_ids:
             Notification.notify(Notificator.onPayFailed, prod_id)
@@ -423,9 +421,8 @@ class SystemGoogleServices(System):
     def __cbBillingPurchaseAcknowledge(cb, products):
         """ purchase completed + Cb """
         _Log("[Billing cb] purchase acknowledge: products={!r} cb={!r} ".format(products, cb))
-        print "----- acknowledge start ------"
-        cb(products)
-        print "----- acknowledge done -------"
+        for product_id in products:
+            cb(product_id)
 
     @staticmethod
     def __cbBillingPurchaseAcknowledgeStatus(products, status):
@@ -440,7 +437,7 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbBillingPurchaseOk():
-        """  error while purchase """
+        """  item purchsed successfull """
         _Log("[Billing cb] purchase ok: {}".format(SystemGoogleServices.__lastProductId))
 
     @staticmethod
@@ -628,9 +625,14 @@ class SystemGoogleServices(System):
             widgets.append(w_connect_billing)
 
             w_update_products = Mengine.createDevToDebugWidgetButton("query_products")
-            w_update_products.setTitle("Query products (update prices and prod params)")
+            w_update_products.setTitle("Query products")
             w_update_products.setClickEvent(PaymentProvider.queryProducts)
             widgets.append(w_update_products)
+
+            w_restore = Mengine.createDevToDebugWidgetButton("restore_products")
+            w_restore.setTitle("Restore purchases")
+            w_restore.setClickEvent(self.restorePurchases)
+            widgets.append(w_restore)
 
         # rateApp
         if self.b_plugins["GoogleInAppReviews"] is True:
