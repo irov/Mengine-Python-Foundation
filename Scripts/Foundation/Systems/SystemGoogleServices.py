@@ -232,7 +232,6 @@ class SystemGoogleServices(System):
             account_id = "undefined"
 
         SystemGoogleServices.login_data = account_id
-        PaymentProvider.queryProducts()
         SystemGoogleServices.login_event(True)
 
         SystemGoogleServices.__cbRestoreTasks()
@@ -283,9 +282,9 @@ class SystemGoogleServices(System):
         if SystemGoogleServices.__on_auth_cbs.get("showAchievements", False) is True:
             SystemGoogleServices.showAchievements()
 
-        sku = SystemGoogleServices.__on_auth_cbs.get("buy", None)
-        if sku is not None:
-            SystemGoogleServices.buy(sku)
+        product_id = SystemGoogleServices.__on_auth_cbs.get("buy", None)
+        if product_id is not None:
+            SystemGoogleServices.buy(product_id)
 
         SystemGoogleServices.__setDefaultSaves()
 
@@ -298,6 +297,7 @@ class SystemGoogleServices(System):
             __cbBillingClientSetupFinishedFail
             __cbBillingClientSetupFinishedSuccess   - OK
         """
+        _Log("Start connect to the billing client...")
         Mengine.androidMethod("GooglePlayBilling", "billingConnect")
 
     @staticmethod
@@ -305,16 +305,18 @@ class SystemGoogleServices(System):
         return SystemGoogleServices.__billing_client_status
 
     @staticmethod
-    def queryProducts(skus):
-        """ setup product's list and return details via callback `__cbBillingOnSkuResponse`
-            @param skus: List<String> - product ids list. Each non-str value will be ignored """
+    def queryProducts(product_ids):
+        """ setup product's list and response via callbacks
+            - __cbBillingQueryProductsSuccess <- product details - OK
+            - __cbBillingQueryProductsFail
+        """
         if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
             _Log("[Billing] queryProducts fail: billing client is not connected", err=True, force=True)
             return False
 
-        skus = filter(lambda x: isinstance(x, str), skus)
-        _Log("[Billing] queryProducts: skus={!r}".format(skus))
-        Mengine.androidMethod("GooglePlayBilling", "queryProducts", skus)
+        query_list = filter(lambda x: isinstance(x, str), product_ids)
+        _Log("[Billing] queryProducts: query_list={!r}".format(query_list))
+        Mengine.androidMethod("GooglePlayBilling", "queryProducts", query_list)
         return True
 
     @staticmethod
@@ -331,9 +333,10 @@ class SystemGoogleServices(System):
             SystemGoogleServices.signIn(only_intent=True)
             return
 
-        _Log("[Billing] buy: sku={!r}".format(product_id))
-        Mengine.androidBooleanMethod("GooglePlayBilling", "buyInApp", product_id)
+        _Log("[Billing] buy {!r}".format(product_id))
         SystemGoogleServices.__lastProductId = product_id
+        if Mengine.androidBooleanMethod("GooglePlayBilling", "buyInApp", product_id) is False:
+            SystemGoogleServices.__cbBillingPurchaseError("BuyInApp return False")
 
     @staticmethod
     def restorePurchases():  # todo: configure callbacks
@@ -454,6 +457,8 @@ class SystemGoogleServices(System):
     def __cbBillingClientSetupFinishedSuccess():
         _Log("[Billing cb] billing client setup finished with status: SUCCESS")
         SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_OK
+        # we should call query products only with PaymentProvider
+        PaymentProvider.queryProducts()
 
     @staticmethod
     def __cbBillingQueryPurchasesStatus(status):
@@ -611,11 +616,16 @@ class SystemGoogleServices(System):
 
         # payment
         if self.b_plugins["GooglePlayBilling"] is True:
-            w_buy = Mengine.createDevToDebugWidgetCommandLine("buy_sku")
+            w_buy = Mengine.createDevToDebugWidgetCommandLine("buy")
             w_buy.setTitle("Buy product")
             w_buy.setPlaceholder("syntax: <prod_id>")
             w_buy.setCommandEvent(self.buy)
             widgets.append(w_buy)
+
+            w_connect_billing = Mengine.createDevToDebugWidgetButton("connect_billing")
+            w_connect_billing.setTitle("Connect billing client")
+            w_connect_billing.setClickEvent(self.startBillingClient)
+            widgets.append(w_connect_billing)
 
             w_update_products = Mengine.createDevToDebugWidgetButton("query_products")
             w_update_products.setTitle("Query products (update prices and prod params)")
