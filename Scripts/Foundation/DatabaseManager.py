@@ -93,7 +93,6 @@ class DatabaseManager(object):
 
     @staticmethod
     def getDatabaseORMs(module, param):
-        # type: (object, object) -> object
         database = DatabaseManager.getDatabase(module, param)
 
         if database is None:
