@@ -40,7 +40,7 @@ class RPGFormules(object):
             return math.floor(value)
 
         sandbox = dict(Value=Value, rand=__rand, fibo=__fibo, log10=__log10, Resist=__resist, Evade=__evade, sum=__sum,
-                       roundup=__roundup, rounddown=__rounddown)
+                       roundup=__roundup, rounddown=__rounddown, ceil=__roundup, floor=__rounddown)
 
         if Global is not None:
             sandbox.update(Global)
