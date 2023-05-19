@@ -65,7 +65,6 @@ class SystemQALogger(System):
             "onBankSetResource": "upd bank [%s] '%s' from %s to %s",
             "onGameBattleStart": "start battle",
             "onGameBattleEnd": "end battle (win=%s) (level_up=%s) with results: %s. Transition to '%s'",
-            "onEnemyKilled": "killed enemy %s (by player: %s)",
             "onShowBattleCardInfo": "show battle card info: %s",
             "onBattleCardClick": "click on card at position %s",
         }
