@@ -42,7 +42,7 @@ class SystemAdvertising(System):
             # param for 'ShowOnTransition'. If true: check if scene is game scene
             "only_game_scenes": Mengine.getConfigBool('Advertising', "ShowOnlyOnGameScenes", True),
             # param for 'ShowOnTransition'. If true: always show ads on this scenes
-            "only_specific_scenes": Mengine.getConfigBool('Advertising', "ShowOnlyOnSpecificScenes", True),
+            "only_specific_scenes": Mengine.getConfigBool('Advertising', "ShowOnlyOnSpecificScenes", False),
         }
 
         general_params = {
