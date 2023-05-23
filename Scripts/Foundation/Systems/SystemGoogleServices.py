@@ -1,9 +1,9 @@
-import json
 from Event import Event
 from Foundation.PolicyManager import PolicyManager
 from Foundation.Providers.RatingAppProvider import RatingAppProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
+from Foundation.Providers.ProductsProvider import ProductsProvider
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
@@ -78,6 +78,7 @@ class SystemGoogleServices(System):
                 method_name = "onGooglePlayBilling" + callback_name
                 Mengine.setAndroidCallback("GooglePlayBilling", method_name, *callback)
 
+            # purchase status
             setBillingCallback("PurchasesUpdatedServiceTimeout", self.__cbBillingPurchaseError, "ServiceTimeout")
             setBillingCallback("PurchasesUpdatedFeatureNotSupported", self.__cbBillingPurchaseError, "FeatureNotSupported")
             setBillingCallback("PurchasesUpdatedServiceDisconnected", self.__cbBillingPurchaseError, "ServiceDisconnected")
@@ -91,21 +92,22 @@ class SystemGoogleServices(System):
             setBillingCallback("PurchasesUpdatedUnknown", self.__cbBillingPurchaseError, "Unknown")
             setBillingCallback("PurchasesUpdatedUserCanceled", self.__cbBillingPurchaseError, "UserCanceled")
             setBillingCallback("PurchasesUpdatedOk", self.__cbBillingPurchaseOk)
-
-            setBillingCallback("BuyInAppSuccessful", self.__cbBillingBuyInAppStatus, True)
-            setBillingCallback("BuyInAppFailed", self.__cbBillingBuyInAppStatus, False)
-
-            setBillingCallback("PurchasesOnConsumeSuccessful", self.__cbBillingPurchaseConsumeSuccess)
-            setBillingCallback("PurchasesOnConsumeFailed", self.__cbBillingPurchaseConsumeFail)
-
+            # query products & purchases (for restore)
             setBillingCallback("QueryProductSuccessful", self.__cbBillingQueryProductsSuccess)
             setBillingCallback("QueryProductFailed", self.__cbBillingQueryProductsFail)
             setBillingCallback("QueryPurchasesSuccessful", self.__cbBillingQueryPurchasesStatus, True)
             setBillingCallback("QueryPurchasesFailed", self.__cbBillingQueryPurchasesStatus, False)
-
-            setBillingCallback("PurchasesAcknowledge", self.__cbBillingPurchaseAcknowledge)
-            setBillingCallback("PurchasesAcknowledgeSuccessful", self.__cbBillingPurchaseAcknowledgeStatus, True)
-            setBillingCallback("PurchasesAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeStatus, False)
+            # purchase flow
+            setBillingCallback("PurchaseIsConsumable", self.__cbBillingPurchaseIsConsumable)
+            setBillingCallback("BuyInAppSuccessful", self.__cbBillingBuyInAppStatus, True)
+            setBillingCallback("BuyInAppFailed", self.__cbBillingBuyInAppStatus, False)
+            #  - consumable
+            setBillingCallback("PurchasesOnConsumeSuccessful", self.__cbBillingPurchaseConsumeSuccess)
+            setBillingCallback("PurchasesOnConsumeFailed", self.__cbBillingPurchaseConsumeFail)
+            #  - non-consumable
+            setBillingCallback("PurchaseAcknowledged", self.__cbBillingPurchaseAcknowledgeSuccess)
+            setBillingCallback("PurchasesAcknowledgeSuccessful", self.__cbBillingPurchaseAcknowledgeSuccess, True)
+            setBillingCallback("PurchasesAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeFail, False)
             # billingConnect callbacks:
             setBillingCallback("ConnectServiceDisconnected", self.__cbBillingClientDisconnected)
             setBillingCallback("ConnectSetupFinishedFailed", self.__cbBillingClientSetupFinishedFail)
@@ -321,7 +323,17 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def buy(product_id):
-        """ buy product, success callback is `__cbBillingOnConsume` """
+        """ start purchase flow
+            1. onGooglePlayBillingPurchasesUpdatedOk or FAIL
+            2. onGooglePlayBillingPurchaseIsConsumable - here we check is consumable and starts handling
+            - consumable:
+                3. onGooglePlayBillingPurchasesOnConsumeSuccessful - OK
+                   onGooglePlayBillingPurchasesOnConsumeFailed
+            - non-consumable:
+                3. onGooglePlayBillingPurchasesAcknowledgeSuccessful - OK
+                   onGooglePlayBillingPurchasesAcknowledgeFailed
+
+        """
         if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
             _Log("[Billing] buy fail: billing client is not connected", err=True, force=True)
             SystemGoogleServices.__cbBillingPurchaseError("BillingClientUnavailable")
@@ -369,6 +381,17 @@ class SystemGoogleServices(System):
     # callbacks
 
     @staticmethod
+    def __cbBillingPurchaseIsConsumable(products, cb):
+        """ after we call buyInApp, we need to setup consumable status for purchase
+            cb is `MengineFunctorBoolean cb = (Boolean isConsumable)`
+            if product is acknowledged, Mengine sends onGooglePlayBillingPurchaseAcknowledged
+        """
+        for prod_id in products:
+            is_consumable = ProductsProvider.isProductConsumable(prod_id)
+            _Log("[Billing cb] onGooglePlayBillingPurchaseIsConsumable: {!r} consumable={!r}".format(prod_id, is_consumable))
+            cb(is_consumable)
+
+    @staticmethod
     def __cbBillingBuyInAppStatus(prod_id, status):
         """ purchase process status """
         if status is False:
@@ -403,42 +426,53 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbBillingPurchaseConsumeSuccess(products):
-        """ pay success """
-        prod_ids = filter(lambda x: x is not None, products)
-        for prod_id in prod_ids:
-            Notification.notify(Notificator.onPaySuccess, prod_id)
-        _Log("[Billing cb] purchase consume successful: {!r}".format(prod_ids))
+        """ pay success for consumable """
+        _Log("[Billing cb] purchase consumable successful: {!r}".format(products))
+        SystemGoogleServices.handlePurchased(products, True)
 
     @staticmethod
     def __cbBillingPurchaseConsumeFail(products):
-        """ pay fail """
-        prod_ids = filter(lambda x: x is not None, products)
-        for prod_id in prod_ids:
-            Notification.notify(Notificator.onPayFailed, prod_id)
-        _Log("[Billing cb] purchase consume failed: {!r}".format(prod_ids))
+        """ pay fail for consumable  """
+        _Log("[Billing cb] purchase consumable failed: {!r}".format(products))
+        SystemGoogleServices.handlePurchased(products, False)
 
     @staticmethod
-    def __cbBillingPurchaseAcknowledge(cb, products):
-        """ purchase completed + Cb """
-        _Log("[Billing cb] purchase acknowledge: products={!r} cb={!r} ".format(products, cb))
-        for product_id in products:
-            cb(product_id)
+    def __cbBillingPurchaseAcknowledged(products):
+        """ pay success if already purchased non-consumable """
+        _Log("[Billing cb] purchase non-consumable already acknowledged: {!r}".format(products))
+        SystemGoogleServices.handlePurchased(products, True)
 
     @staticmethod
-    def __cbBillingPurchaseAcknowledgeStatus(products, status):
-        # todo
-        _Log("[Billing cb] purchase acknowledge status: products={!r} status={}".format(products, status))
+    def __cbBillingPurchaseAcknowledgeSuccess(products):
+        """ pay success for non-consumable """
+        _Log("[Billing cb] purchase non-consumable successful: {!r}".format(products))
+        SystemGoogleServices.handlePurchased(products, True)
+
+    @staticmethod
+    def __cbBillingPurchaseAcknowledgeFail(products):
+        """ pay fail for non-consumable  """
+        _Log("[Billing cb] purchase non-consumable failed: {!r}".format(products))
+        SystemGoogleServices.handlePurchased(products, False)
+
+    @staticmethod
+    def handlePurchased(_products, status):
+        products = filter(lambda x: x is not None, _products)
+        for prod_id in products:
+            if status is True:
+                Notification.notify(Notificator.onPaySuccess, prod_id)
+            else:
+                Notification.notify(Notificator.onPayFailed, prod_id)
 
     @staticmethod
     def __cbBillingPurchaseError(details):
         """  error while purchase """
         Notification.notify(Notificator.onPayFailed, SystemGoogleServices.__lastProductId)
-        _Log("[Billing cb] purchase error: {}".format(details), force=True, err=True)
+        _Log("[Billing cb] purchase process error: {}".format(details), force=True, err=True)
 
     @staticmethod
     def __cbBillingPurchaseOk():
-        """  item purchsed successfull """
-        _Log("[Billing cb] purchase ok: {}".format(SystemGoogleServices.__lastProductId))
+        """  item purchased successful """
+        _Log("[Billing cb] purchase process ok: {}".format(SystemGoogleServices.__lastProductId))
 
     @staticmethod
     def __cbBillingClientDisconnected():
