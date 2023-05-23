@@ -34,3 +34,9 @@ class ProductsProvider(BaseProvider):
     def hasProductInfo(product_id):
         """ returns True if product with that id exists """
         return bool(ProductsProvider._call("hasProductInfo", product_id))
+
+    @staticmethod
+    def isProductConsumable(product_id):
+        """ returns True if product with that id exists """
+        product_info = ProductsProvider.getProductInfo(product_id)
+        return product_info.isConsumable()
