@@ -141,6 +141,16 @@ class SystemMonetization(System):
         return False
 
     @staticmethod
+    def _onProductAlreadyOwned(prod_id):
+        if SystemMonetization.isProductPurchased(prod_id) is True:
+            _Log("Product {!r} already owned and applied for game".format(prod_id))
+            return False
+
+        _Log("Product {!r} already owned, but not applied - fix it".format(prod_id))
+        Notification.notify(Notificator.onPaySuccess, prod_id)
+        return False
+
+    @staticmethod
     def _onDelayPurchased(prod_id):
         """ these products already purchased, but we shouldn't send rewards at this moment """
 
@@ -560,6 +570,7 @@ class SystemMonetization(System):
         self.addObserver(Notificator.onSelectAccount, self._onSelectAccount)
 
         # payment
+        self.addObserver(Notificator.onProductAlreadyOwned, self._onProductAlreadyOwned)
         self.addObserver(Notificator.onPaySuccess, self._onPaySuccess)
         self.addObserver(Notificator.onDelayPurchased, self._onDelayPurchased)
         self.addObserver(Notificator.onReleasePurchased, self._onReleasePurchased)

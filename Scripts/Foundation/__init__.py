@@ -777,6 +777,7 @@ def onInitialize():
         , "onGameStorePayGold"
         , "onGameStoreSentRewards"
 
+        , "onProductAlreadyOwned"
         , "onPaySuccess"
         , "onPayFailed"
         , "onProductsUpdate"
