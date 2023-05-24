@@ -87,7 +87,7 @@ class SystemGoogleServices(System):
             setBillingCallback("PurchasesUpdatedItemUnavailable", self.__cbBillingPurchaseError, "ItemUnavailable")
             setBillingCallback("PurchasesUpdatedDeveloperError", self.__cbBillingPurchaseError, "DeveloperError")
             setBillingCallback("PurchasesUpdatedError", self.__cbBillingPurchaseError, "Error")
-            setBillingCallback("PurchasesUpdatedItemAlreadyOwned", self.__cbBillingPurchaseError, "ItemAlreadyOwned")
+            setBillingCallback("PurchasesUpdatedItemAlreadyOwned", self.__cbBillingPurchaseItemAlreadyOwned)
             setBillingCallback("PurchasesUpdatedItemNotOwned", self.__cbBillingPurchaseError, "ItemNotOwned")
             setBillingCallback("PurchasesUpdatedUnknown", self.__cbBillingPurchaseError, "Unknown")
             setBillingCallback("PurchasesUpdatedUserCanceled", self.__cbBillingPurchaseError, "UserCanceled")
@@ -105,9 +105,9 @@ class SystemGoogleServices(System):
             setBillingCallback("PurchasesOnConsumeSuccessful", self.__cbBillingPurchaseConsumeSuccess)
             setBillingCallback("PurchasesOnConsumeFailed", self.__cbBillingPurchaseConsumeFail)
             #  - non-consumable
-            setBillingCallback("PurchaseAcknowledged", self.__cbBillingPurchaseAcknowledgeSuccess)
-            setBillingCallback("PurchasesAcknowledgeSuccessful", self.__cbBillingPurchaseAcknowledgeSuccess, True)
-            setBillingCallback("PurchasesAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeFail, False)
+            setBillingCallback("PurchaseAcknowledged", self.__cbBillingPurchaseAcknowledged)
+            setBillingCallback("PurchasesAcknowledgeSuccessful", self.__cbBillingPurchaseAcknowledgeSuccess)
+            setBillingCallback("PurchasesAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeFail)
             # billingConnect callbacks:
             setBillingCallback("ConnectServiceDisconnected", self.__cbBillingClientDisconnected)
             setBillingCallback("ConnectSetupFinishedFailed", self.__cbBillingClientSetupFinishedFail)
@@ -351,7 +351,7 @@ class SystemGoogleServices(System):
             SystemGoogleServices.__cbBillingPurchaseError("BuyInApp return False")
 
     @staticmethod
-    def restorePurchases():  # todo: configure callbacks
+    def restorePurchases():
         _Log("[Billing] restore purchases...")
         Mengine.androidMethod("GooglePlayBilling", "queryPurchases")
 
@@ -440,7 +440,8 @@ class SystemGoogleServices(System):
     def __cbBillingPurchaseAcknowledged(products):
         """ pay success if already purchased non-consumable """
         _Log("[Billing cb] purchase non-consumable already acknowledged: {!r}".format(products))
-        SystemGoogleServices.handlePurchased(products, True)
+        for prod_id in products:
+            Notification.notify(Notificator.onProductAlreadyOwned, prod_id)
 
     @staticmethod
     def __cbBillingPurchaseAcknowledgeSuccess(products):
@@ -468,6 +469,11 @@ class SystemGoogleServices(System):
         """  error while purchase """
         Notification.notify(Notificator.onPayFailed, SystemGoogleServices.__lastProductId)
         _Log("[Billing cb] purchase process error: {}".format(details), force=True, err=True)
+
+    @staticmethod
+    def __cbBillingPurchaseItemAlreadyOwned():
+        _Log("[Billing cb] purchase process error: ItemAlreadyOwned - start restore purchases", force=True, err=True)
+        PaymentProvider.restorePurchases()
 
     @staticmethod
     def __cbBillingPurchaseOk():
