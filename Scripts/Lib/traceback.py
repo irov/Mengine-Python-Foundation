@@ -276,7 +276,7 @@ def string_stack(f=None, limit=None):
         return None
     str = ""
     for s in l[:-1]:
-        str += repr(s)
+        str += s
         pass
     return str
     
