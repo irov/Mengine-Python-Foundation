@@ -121,8 +121,8 @@ class SystemDevToDebug(System):
             def _upd(val):
                 Trace.msg("[DevToDebug] follow [{}] {}".format(Mengine.getTimeMs(), val))
                 if val >= z:
-                    Mengine.destroyValueFollower(follower)
                     Trace.msg("[DevToDebug] destroyValueFollower")
+                    return True
 
             follower = Mengine.createValueFollowerLinear(x, y, _upd)
             Trace.msg("[DevToDebug] createValueFollowerLinear (start={}, speed={}, stop={})".format(x, y, z))

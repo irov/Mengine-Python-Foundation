@@ -20,16 +20,16 @@ class TaskVirtualAreaScroll(Task):
     def __update_x(self, new_value, virtual_area):
         virtual_area.set_percentage(x=new_value)
         if new_value == self.finish_value.x:
-            Mengine.destroyValueFollower(self.progress_value_follower_x)
             if self.wait is True:
                 self.complete()
+            return True
 
     def __update_y(self, new_value, virtual_area):
         virtual_area.set_percentage(y=new_value)
         if new_value == self.finish_value.y:
-            Mengine.destroyValueFollower(self.progress_value_follower_y)
             if self.wait is True:
                 self.complete()
+            return True
 
     def _onFastSkip(self):
         self.virtual_area.set_percentage(x=self.finish_value[0], y=self.finish_value[1])
