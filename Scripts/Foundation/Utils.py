@@ -1043,24 +1043,24 @@ def make_text_node(name, text_id, font=None, v_align=None, h_align=None, *args):
         text_field.setTextFormatArgs(args)
 
 def getCurrentPlatformParams():
-    """ :returns: dict where keys are 'Android', 'IOS', 'PC' and values is bool """
+    """ :returns: dict where keys are 'Android', 'IOS', 'WINDOWS' and values is bool """
     # todo: return to 'platform' when crushes disappear
     option = "platforma"
 
     platforms = {
         "Android": _ANDROID is True or Mengine.getOptionValue(option) == "android",
         "IOS": _IOS is True or Mengine.getOptionValue(option) == "ios",
-        "PC": Mengine.hasTouchpad() is False and Mengine.hasOption(option) is False,
-        "MAC": _MACOS is True or Mengine.getOptionValue(option) == "mac"
+        "WINDOWS": (_WINDOWS is True or Mengine.getOptionValue(option) == "windows") and Mengine.hasTouchpad() is False,
+        "MAC": (_MACOS is True or Mengine.getOptionValue(option) == "mac") and Mengine.hasTouchpad() is False
     }
     if True not in platforms.values():
         Trace.msg_err("!!!! Utils.getCurrentPlatformParams: remove -touchpad or add -{}:android|ios".format(option))
-        Trace.msg_err("!!!! Utils.getCurrentPlatformParams: set Platform to PC until you fix the conflict")
-        platforms["PC"] = True
+        Trace.msg_err("!!!! Utils.getCurrentPlatformParams: set Platform to 'WINDOWS' until you fix the conflict")
+        platforms["WINDOWS"] = True
     return platforms
 
 def getCurrentPlatform():
-    """ :returns: 'Android' or 'IOS' or 'PC' """
+    """ :returns: 'Android' or 'IOS' or 'WINDOWS' """
     platforms = getCurrentPlatformParams()
     __active_platforms = [p for (p, v) in platforms.items() if v is True]
     cur_platform = __active_platforms[0]
