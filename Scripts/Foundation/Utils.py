@@ -1091,6 +1091,10 @@ def getCurrentBuildMode():
     buildmode = Mengine.getOptionValue("buildmode") or Mengine.getGameParamUnicode("BuildMode") or None
     return buildmode
 
+def getCurrentBuildVersion():
+    build_version = Mengine.getOptionValue("version") or _BUILD_VERSION or None
+    return build_version
+
 class SimpleLogger(object):
     """ Usage example:
 
