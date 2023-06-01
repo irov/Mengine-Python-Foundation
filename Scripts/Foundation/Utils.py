@@ -1104,9 +1104,12 @@ def getCurrentBuildVersionNumber():
     """ :returns: _BUILD_VERSION_NUMBER from Mengine or -version param converted to number or None """
     build_version_number = _BUILD_VERSION_NUMBER or None
 
-    if Mengine.getOptionValue("version") != "":
-        build_version = Mengine.getOptionValue("version")
-        build_version_number = getNumberFromVersion(build_version)
+    custom_version = Mengine.getOptionValue("version")
+    if custom_version != "":
+        if custom_version == "0":
+            build_version_number = int(custom_version)
+        else:
+            build_version_number = getNumberFromVersion(custom_version)
 
     return build_version_number
 
