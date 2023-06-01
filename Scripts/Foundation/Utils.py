@@ -1092,8 +1092,39 @@ def getCurrentBuildMode():
     return buildmode
 
 def getCurrentBuildVersion():
-    build_version = Mengine.getOptionValue("version") or _BUILD_VERSION or None
+    """ :returns: _BUILD_VERSION from Mengine or -version param or None """
+    build_version = _BUILD_VERSION or None
+
+    if Mengine.getOptionValue("version") != "":
+        build_version = Mengine.getOptionValue("version")
+
     return build_version
+
+def getCurrentBuildVersionNumber():
+    """ :returns: _BUILD_VERSION_NUMBER from Mengine or -version param converted to number or None """
+    build_version_number = _BUILD_VERSION_NUMBER or None
+
+    if Mengine.getOptionValue("version") != "":
+        build_version = Mengine.getOptionValue("version")
+        build_version_number = getNumberFromVersion(build_version)
+
+    return build_version_number
+
+def getNumberFromVersion(version):
+    """ :returns: int(hex-string) version from string version type *.*.* or None """
+    import re
+
+    if type(version) == str and "." in version and not re.search("[a-zA-Z]", version):
+        split_in = version.split(".")
+        split_out = []
+
+        for char in split_in:
+            split_out.append(format(int(char), "0{}".format(4 if char == split_in[0] else 2)))
+
+        version_number = int("0x" + "".join(char for char in split_out), 0)
+        return version_number
+
+    return None
 
 class SimpleLogger(object):
     """ Usage example:
