@@ -17,6 +17,7 @@ class ObjectMovie2ProgressBar(DemonObject):
         Type.addParam(Type, 'Text_ID')
         Type.addParam(Type, 'Full_Text_ID')
         Type.addParam(Type, 'DoubleValue')
+        Type.addParam(Type, 'Block')
 
         pass
 
@@ -36,6 +37,7 @@ class ObjectMovie2ProgressBar(DemonObject):
         self.initParam('Full_Text_ID', params, 'ID_MovieProgressBar')
         self.initParam('Value', params, 0)
         self.initParam('MaxValue', params, 100)
+        self.initParam('Block', params, False)
 
     def eachMovies(self):
         if self.isActive() is not False:

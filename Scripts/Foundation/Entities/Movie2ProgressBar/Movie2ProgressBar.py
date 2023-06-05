@@ -14,6 +14,7 @@ class Movie2ProgressBar(BaseEntity):
         Type.addActionActivate(Type, "Full_Text_ID")
         Type.addActionActivate(Type, "MaxValue", Update=Type._updateMaxValue)
         Type.addActionActivate(Type, "Value", Update=Type._updateValue)
+        Type.addActionActivate(Type, "Block", Update=Type._updateBlock)
 
         Type.addActionActivate(Type, "ResourceMovie")
 
@@ -52,7 +53,10 @@ class Movie2ProgressBar(BaseEntity):
             return
 
         self.__choose_bar()
-        pass
+
+    def _updateBlock(self, value):
+        self.SemaphoreBlock.setValue(value)
+        self.__choose_bar()
 
     def _updateMaxValue(self, value):
         if value < 0:
@@ -69,6 +73,16 @@ class Movie2ProgressBar(BaseEntity):
 
     def get_progress(self):
         return float(self.object.getValue()) / self.object.getMaxValue()
+
+    def __place_block(self):
+        MovieBlock = self.Movies.get('Block')
+
+        if MovieBlock is None:
+            return
+
+        self.Movies['Progress'].setEnable(False)
+        self.Movies['FullProgress'].setEnable(False)
+        MovieBlock.setEnable(True)
 
     def __place_progress(self):
         MovieProgress = self.Movies.get('Progress')
@@ -108,6 +122,10 @@ class Movie2ProgressBar(BaseEntity):
         pass
 
     def __choose_bar(self):
+        if self.SemaphoreBlock.getValue() is True:
+            self.__place_block()
+            return
+
         if self.Movies.get('FullProgress', None) is None:
             self.__place_progress()
             return
