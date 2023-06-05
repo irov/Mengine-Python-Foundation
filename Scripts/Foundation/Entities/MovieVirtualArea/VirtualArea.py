@@ -237,6 +237,9 @@ class VirtualArea(Initializer):
         """
         return self._root
 
+    def get_touch_count(self):
+        return len(self._touch_ids)
+
     def update_target(self):
         self._target.setup_affector()
 
