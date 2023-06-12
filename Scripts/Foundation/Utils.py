@@ -1203,6 +1203,15 @@ def calcTime(time_in_sec):
 
     return days, hours, min, sec
 
+def calcTime2(time_in_sec):
+    """ Python 2 returns: hours, min, sec """
+
+    hours = time_in_sec / 3600
+    min = (time_in_sec % 3600) / 60
+    sec = (time_in_sec % 3600) % 60
+
+    return hours, min, sec
+
 def benchmark(func):
     def wrapper(*args, **kwargs):
         start = Mengine.getTimeMs()
