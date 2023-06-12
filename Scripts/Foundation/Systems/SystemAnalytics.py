@@ -3,6 +3,7 @@ from Notification import Notification
 
 ANALYTIC_PREFIX_NAME = "mengine_"
 
+
 class SystemAnalytics(System):
     s_active_analytics = {}
     __static_extra_params_methods = []
@@ -12,8 +13,8 @@ class SystemAnalytics(System):
         allowed_types = (int, str, float, bool)
 
         def __init__(self, event_key, identity, check_method=None, create_params_method=None):
-            self.identity = identity
             self.key = event_key
+            self.identity = identity
 
             self._check = None
             if check_method is not None and callable(check_method) is True:
@@ -80,27 +81,68 @@ class SystemAnalytics(System):
 
     class EarnCurrencyAnalytic(AnalyticUnit):
         def send(self, params):
-            currency_name = params["name"]
-            amount = params["amount"]
+            currency_name = params["name"]  # str
+            amount = params["amount"]   # float
 
             SystemAnalytics._sendDebugLog(self.key, {"name": currency_name, "amount": amount})
             Mengine.analyticsEarnVirtualCurrencyEvent(currency_name, amount)
 
     class SpentCurrencyAnalytic(AnalyticUnit):
         def send(self, params):
-            currency_name = params["name"]
-            amount = params["amount"]
-            descr = params["description"]
+            currency_name = params["name"]  # str
+            amount = params["amount"]   # float
+            descr = params["description"]   # str
 
             SystemAnalytics._sendDebugLog(self.key, {"name": currency_name, "amount": amount, "description": descr})
             Mengine.analyticsSpendVirtualCurrencyEvent(descr, currency_name, amount)
 
     class UnlockAchievementAnalytic(AnalyticUnit):
         def send(self, params):
-            achievement_id = params["achievement_id"]
+            achievement_id = params["achievement_id"]   # str
 
             SystemAnalytics._sendDebugLog(self.key, {"achievement_id": achievement_id})
             Mengine.analyticsUnlockAchievementEvent(achievement_id)
+
+    class LevelUpAnalytic(AnalyticUnit):
+        def send(self, params):
+            name = params["name"] + "_level"    # str
+            level = params["level"]     # int
+
+            SystemAnalytics._sendDebugLog(self.key, {"name": name, "level": level})
+            Mengine.analyticsLevelUp(name, level)
+
+    class LevelStartAnalytic(AnalyticUnit):
+        def send(self, params):
+            name = params["name"]   # str
+
+            SystemAnalytics._sendDebugLog(self.key, {"name": name})
+            Mengine.analyticsLevelStart(name)
+
+    class LevelEndAnalytic(AnalyticUnit):
+        def send(self, params):
+            name = params["name"]   # str
+            successful = params["successful"]   # bool
+
+            SystemAnalytics._sendDebugLog(self.key, {"name": name, "successful": successful})
+            Mengine.analyticsLeveEnd(name, successful)
+
+    class SelectItemAnalytic(AnalyticUnit):
+        def send(self, params):
+            category = params["category"]   # str
+            item_id = params["item_id"]   # str
+
+            SystemAnalytics._sendDebugLog(self.key, {"category": category, "item_id": item_id})
+            Mengine.analyticsSelectItem(category, item_id)
+
+    class TutorialBeginAnalytic(AnalyticUnit):
+        def send(self, params):
+            SystemAnalytics._sendDebugLog(self.key, {})
+            Mengine.analyticsTutorialBegin()
+
+    class TutorialCompleteAnalytic(AnalyticUnit):
+        def send(self, params):
+            SystemAnalytics._sendDebugLog(self.key, {})
+            Mengine.analyticsTutorialComplete()
 
     def _onInitialize(self):
         self.addDefaultAnalytics()
@@ -160,7 +202,12 @@ class SystemAnalytics(System):
         specific_analytics = {
             "earn_currency": SystemAnalytics.EarnCurrencyAnalytic,
             "spent_currency": SystemAnalytics.SpentCurrencyAnalytic,
-            "unlock_achievement": SystemAnalytics.UnlockAchievementAnalytic,
+            "level_up": SystemAnalytics.LevelUpAnalytic,
+            "level_start": SystemAnalytics.LevelStartAnalytic,
+            "level_end": SystemAnalytics.LevelEndAnalytic,
+            "select_item": SystemAnalytics.SelectItemAnalytic,
+            "tutorial_begin": SystemAnalytics.TutorialBeginAnalytic,
+            "tutorial_complete": SystemAnalytics.TutorialCompleteAnalytic,
         }
 
         if event_type not in specific_analytics:
