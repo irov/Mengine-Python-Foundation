@@ -124,7 +124,7 @@ class SystemAnalytics(System):
             successful = params["successful"]   # bool
 
             SystemAnalytics._sendDebugLog(self.key, {"name": name, "successful": successful})
-            Mengine.analyticsLeveEnd(name, successful)
+            Mengine.analyticsLevelEnd(name, successful)
 
     class SelectItemAnalytic(AnalyticUnit):
         def send(self, params):
