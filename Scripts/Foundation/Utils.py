@@ -1084,7 +1084,7 @@ def getCurrentBuildMode():
     return buildmode
 
 def getCurrentBuildVersion():
-    """ :returns: _BUILD_VERSION from Mengine or -version param or None """
+    """ :returns: _BUILD_VERSION from Mengine or -version param """
     build_version = _BUILD_VERSION
 
     if Mengine.getOptionValue("version") != "":
@@ -1093,7 +1093,7 @@ def getCurrentBuildVersion():
     return build_version
 
 def getCurrentBuildVersionNumber():
-    """ :returns: _BUILD_VERSION_NUMBER from Mengine or -version param converted to number or None """
+    """ :returns: _BUILD_VERSION_NUMBER from Mengine or -version param converted to number """
     build_version_number = _BUILD_VERSION_NUMBER
 
     custom_version = Mengine.getOptionValue("version")
