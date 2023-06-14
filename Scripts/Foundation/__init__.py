@@ -785,6 +785,8 @@ def onInitialize():
         , "onDelayPurchased"
         , "onReleasePurchased"
 
+        , "onAnalyticsEvent"
+
     ]
 
     Notificator.addIdentities(notifiers)
