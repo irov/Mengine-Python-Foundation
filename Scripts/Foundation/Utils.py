@@ -1269,3 +1269,6 @@ def getWeightedRandomByKey(records, key):
     element = elements[lookup_index]
 
     return element
+
+def getTimeStamp():
+    return Mengine.getTimeMs() / 1000
