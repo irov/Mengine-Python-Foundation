@@ -174,10 +174,11 @@ class SystemAnalytics(System):
 
     @staticmethod
     def addExtraAnalyticParams(static_method):
-        test_params = static_method()
-        if isinstance(test_params, dict) is False:
-            Trace.log("System", 0, "Wrong extra params method return type {} (must be dict)".format(type(test_params)))
-            return
+        if _DEVELOPMENT is True:
+            test_params = static_method()
+            if isinstance(test_params, dict) is False:
+                Trace.log("System", 0, "Wrong extra params method return type {} (must be dict)".format(type(test_params)))
+                return
 
         SystemAnalytics.__static_extra_params_methods.append(static_method)
 
