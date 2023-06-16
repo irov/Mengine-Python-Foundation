@@ -245,12 +245,14 @@ class SystemAppleServices(System):
     def pay(product_id):
         if SystemAppleServices.b_can_pay is False:
             Notification.notify(Notificator.onPayFailed, product_id)
+            Notification.notify(Notificator.onPayComplete, product_id)
             Trace.log("System", 0, "This user can't use payment (product_id={})".format(product_id))
             return
 
         product = SystemAppleServices._products.get(product_id)
         if product is None:
             Notification.notify(Notificator.onPayFailed, product_id)
+            Notification.notify(Notificator.onPayComplete, product_id)
             Trace.log("System", 0, "Product with id {} not found in responded products!!!".format(product_id))
             return
 
@@ -291,6 +293,7 @@ class SystemAppleServices(System):
         _Log("(callback) Payment Purchased (success) {}".format(product_id))
 
         Notification.notify(Notificator.onPaySuccess, product_id)
+        Notification.notify(Notificator.onPayComplete, product_id)
         transaction.finish()
 
     @staticmethod
@@ -300,6 +303,7 @@ class SystemAppleServices(System):
         _Log("(callback) Payment purchase Failed {}".format(product_id))
 
         Notification.notify(Notificator.onPayFailed, product_id)
+        Notification.notify(Notificator.onPayComplete, product_id)
         transaction.finish()
 
     @staticmethod
@@ -309,6 +313,7 @@ class SystemAppleServices(System):
         _Log("(callback) Payment Restored {}".format(product_id))
 
         Notification.notify(Notificator.onPaySuccess, product_id)
+        Notification.notify(Notificator.onPayComplete, product_id)
 
         transaction.finish()
 

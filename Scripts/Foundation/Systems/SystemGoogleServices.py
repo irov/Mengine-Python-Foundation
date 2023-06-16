@@ -396,7 +396,7 @@ class SystemGoogleServices(System):
         """ purchase process status """
         if status is False:
             Notification.notify(Notificator.onPayFailed, prod_id)
-
+            Notification.notify(Notificator.onPayComplete, prod_id)
         _Log("[Billing cb] onGooglePlayBillingBuyInAppSuccess: prod_id={!r}, status={!r}".format(prod_id, status))
 
     @staticmethod
@@ -442,6 +442,7 @@ class SystemGoogleServices(System):
         _Log("[Billing cb] purchase non-consumable already acknowledged: {!r}".format(products))
         for prod_id in products:
             Notification.notify(Notificator.onProductAlreadyOwned, prod_id)
+            Notification.notify(Notificator.onPayComplete, prod_id)
 
     @staticmethod
     def __cbBillingPurchaseAcknowledgeSuccess(products):
@@ -463,11 +464,13 @@ class SystemGoogleServices(System):
                 Notification.notify(Notificator.onPaySuccess, prod_id)
             else:
                 Notification.notify(Notificator.onPayFailed, prod_id)
+            Notification.notify(Notificator.onPayComplete, prod_id)
 
     @staticmethod
     def __cbBillingPurchaseError(details):
         """  error while purchase """
         Notification.notify(Notificator.onPayFailed, SystemGoogleServices.__lastProductId)
+        Notification.notify(Notificator.onPayComplete, SystemGoogleServices.__lastProductId)
         _Log("[Billing cb] purchase process error: {}".format(details), force=True, err=True)
 
     @staticmethod
