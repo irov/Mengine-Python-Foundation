@@ -65,6 +65,7 @@ class DummyPayment(object):
 
         Trace.msg("DUMMY success pay {} ({})".format(product_id, prod_params))
         Notification.notify(Notificator.onPaySuccess, product_id)
+        Notification.notify(Notificator.onPayComplete, product_id)
 
     @staticmethod
     def restorePurchases():
