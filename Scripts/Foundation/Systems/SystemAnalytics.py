@@ -14,6 +14,7 @@ class SystemAnalytics(System):
 
         def __init__(self, event_key, identity, check_method=None, create_params_method=None):
             self.key = event_key
+            self._service_key = ANALYTIC_PREFIX_NAME + event_key
             self.identity = identity
 
             self._check = None
@@ -21,8 +22,12 @@ class SystemAnalytics(System):
                 self._check = check_method
 
             self._create_params = None
-            if create_params_method is not None and callable(create_params_method) is True:
-                self._create_params = create_params_method
+            if create_params_method is not None:
+                if callable(create_params_method) is True:
+                    self._create_params = create_params_method
+                if create_params_method is False:
+                    # no params
+                    self._create_params = lambda *_, **__: {}
 
             self._observer = None
             self.create_observer()
@@ -68,7 +73,7 @@ class SystemAnalytics(System):
         def send(self, params):
             """ finally send event with name from `self.key` and params from `params` dict """
             SystemAnalytics._sendDebugLog(self.key, params)
-            Mengine.analyticsCustomEvent(self.key, params)
+            Mengine.analyticsCustomEvent(self._service_key, params)
             Notification.notify(Notificator.onAnalyticsEvent, self.key, params)
 
         def clean(self):
@@ -203,13 +208,11 @@ class SystemAnalytics(System):
             @param check_method: should get same args as notificator sends: returns bool, if True - send event
             @param params_method: should get same args as notificator sends: returns dict
         """
-        prefixed_event_key = ANALYTIC_PREFIX_NAME + event_key
-
-        if SystemAnalytics.hasAnalytic(prefixed_event_key) is True:
-            Trace.log("System", 1, "SystemAnalytics already has analytic with event key '%s'" % prefixed_event_key)
+        if SystemAnalytics.hasAnalytic(event_key) is True:
+            Trace.log("System", 1, "SystemAnalytics already has analytic with event key '%s'" % event_key)
             return False
 
-        analytics_unit = SystemAnalytics.AnalyticUnit(prefixed_event_key, identity,
+        analytics_unit = SystemAnalytics.AnalyticUnit(event_key, identity,
                                                       check_method=check_method, create_params_method=params_method)
 
         SystemAnalytics.s_active_analytics[analytics_unit.key] = analytics_unit
@@ -247,14 +250,11 @@ class SystemAnalytics(System):
     @staticmethod
     def sendCustomAnalytic(event_key, send_params):
         """ force sends analytic event to analytic service """
-
-        prefixed_event_key = ANALYTIC_PREFIX_NAME + event_key
-
         params = SystemAnalytics.getExtraAnalyticParams()
         params.update(send_params)
 
-        SystemAnalytics._sendDebugLog(prefixed_event_key, params)
-        Mengine.analyticsCustomEvent(prefixed_event_key, params)
+        SystemAnalytics._sendDebugLog(event_key, params)
+        Mengine.analyticsCustomEvent(ANALYTIC_PREFIX_NAME+event_key, params)
         Notification.notify(Notificator.onAnalyticsEvent, event_key, params)
 
     def addDefaultAnalytics(self):
@@ -262,10 +262,17 @@ class SystemAnalytics(System):
         pass
 
     @staticmethod
-    def addIgnoreLogEventKey(event_key, add_prefix=True):
-        if add_prefix is True:
-            event_key = ANALYTIC_PREFIX_NAME + event_key
+    def addRelatedAnalytics(this_event_key, related_event_key, Filter=None, Params=None):
+        """ Creates analytics based on analytic with key `related_event_key`.
+            Sends this event if Filter is True.
+            For specific params input Params as function <- related_event_params_dict
+        """
+        check_method = lambda event_key, params: event_key == related_event_key and Filter(params) is True
+        return SystemAnalytics.addAnalytic(this_event_key, Notificator.onAnalyticsEvent,
+                                           check_method=check_method, params_method=Params)
 
+    @staticmethod
+    def addIgnoreLogEventKey(event_key):
         if event_key not in SystemAnalytics.__ignore_log_events:
             SystemAnalytics.__ignore_log_events.append(event_key)
 
