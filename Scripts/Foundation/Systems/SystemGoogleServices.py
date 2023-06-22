@@ -497,8 +497,12 @@ class SystemGoogleServices(System):
     def __cbBillingClientSetupFinishedSuccess():
         _Log("[Billing cb] billing client setup finished with status: SUCCESS")
         SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_OK
+
         # we should call query products only with PaymentProvider
-        PaymentProvider.queryProducts()
+        if Mengine.getConfigBool("Monetization", "AutoQueryProducts", True) is True:
+            PaymentProvider.queryProducts()
+        else:
+            _Log("Auto query products disabled, do it manually in code")
 
     @staticmethod
     def __cbBillingQueryPurchasesStatus(status):

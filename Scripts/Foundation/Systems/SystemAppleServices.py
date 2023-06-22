@@ -35,7 +35,11 @@ class SystemAppleServices(System):
         if self.b_plugins["InAppPurchase"] is True:
             if self.canUserMakePurchases() is True:
                 self.setInAppPurchaseProvider()
-                PaymentProvider.queryProducts()
+
+                if Mengine.getConfigBool("Monetization", "AutoQueryProducts", True) is True:
+                    PaymentProvider.queryProducts()
+                else:
+                    _Log("Auto query products disabled, do it manually in code")
 
         if self.b_plugins["Review"] is True:
             RatingAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
