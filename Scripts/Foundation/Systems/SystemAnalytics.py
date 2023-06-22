@@ -268,9 +268,11 @@ class SystemAnalytics(System):
             Sends this event if Filter is True.
             For specific params input Params as function <- related_event_params_dict
         """
-        check_method = lambda event_key, params: event_key == related_event_key and Filter(params) is True
+        def check_method(event_key, params): return event_key == related_event_key and Filter(params) is True
+        def params_method(event_key, params): return Params(params)
+
         return SystemAnalytics.addAnalytic(this_event_key, Notificator.onAnalyticsEvent,
-                                           check_method=check_method, params_method=Params)
+                                           check_method=check_method, params_method=params_method)
 
     @staticmethod
     def addIgnoreLogEventKey(event_key):
