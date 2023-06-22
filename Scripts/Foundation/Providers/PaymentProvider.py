@@ -75,12 +75,17 @@ class DummyPayment(object):
         Trace.msg("DUMMY restorePurchases - no actions")
 
     @staticmethod
-    def queryProducts():
-        Trace.msg("DUMMY queryProducts - no actions, products are the same")
+    def queryProducts(product_ids):
+        Trace.msg("DUMMY queryProducts {} - no actions, products are the same".format(product_ids))
         Notification.notify(Notificator.onProductsUpdateDone)
 
     @staticmethod
     def canUserMakePurchases():
+        return True
+
+    @staticmethod
+    def completeOrder(order_id):
+        Trace.msg("DUMMY completeOrder {!r}".format(order_id))
         return True
 
 
