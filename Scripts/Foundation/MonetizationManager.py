@@ -300,6 +300,7 @@ class MonetizationManager(Manager, CurrencyManager):
     def _onInitialize(cls, *args):
         ProductsProvider.setProvider(cls.__name__, dict(
             getProductsInfo=cls.getProductsInfo,
+            getQueryProductIds=lambda: cls.getProductsInfo().keys(),
             getProductReward=cls.getProductReward,
             getProductPrice=cls.getProductPrice,
             getProductInfo=cls.getProductInfo,

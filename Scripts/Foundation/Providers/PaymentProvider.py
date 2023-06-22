@@ -32,7 +32,7 @@ class PaymentProvider(BaseProvider):
         """ query products from provider
             - onProductsUpdate dict: when we got products from provider
             - onProductsUpdateDone: when update complete """
-        products_id = ProductsProvider.getProductsInfo().keys()
+        products_id = ProductsProvider.getQueryProductIds()
         return PaymentProvider._call("queryProducts", products_id)
 
     @staticmethod

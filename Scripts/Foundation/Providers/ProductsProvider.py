@@ -5,6 +5,7 @@ class ProductsProvider(BaseProvider):
 
     s_allowed_methods = [
         "getProductsInfo",
+        "getQueryProductIds",
         "getProductReward",
         "getProductPrice",
         "getProductInfo",
@@ -15,6 +16,11 @@ class ProductsProvider(BaseProvider):
     def getProductsInfo():
         """ returns dict (key=product_id, value=instance)"""
         return ProductsProvider._call("getProductsInfo")
+
+    @staticmethod
+    def getQueryProductIds():
+        """ returns dict (key=product_id, value=instance)"""
+        return ProductsProvider._call("getQueryProductIds")
 
     @staticmethod
     def getProductReward(product_id):
