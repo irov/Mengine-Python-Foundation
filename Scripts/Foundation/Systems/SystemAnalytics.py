@@ -223,6 +223,7 @@ class SystemAnalytics(System):
         specific_analytics = {
             "earn_currency": SystemAnalytics.EarnCurrencyAnalytic,
             "spent_currency": SystemAnalytics.SpentCurrencyAnalytic,
+            "unlock_achievement": SystemAnalytics.UnlockAchievementAnalytic,
             "level_up": SystemAnalytics.LevelUpAnalytic,
             "level_start": SystemAnalytics.LevelStartAnalytic,
             "level_end": SystemAnalytics.LevelEndAnalytic,
