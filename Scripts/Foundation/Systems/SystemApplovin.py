@@ -65,6 +65,7 @@ class SystemApplovin(System):
 
         def show(self):
             if self.__checkInit() is False:
+                self.cbDisplayFailed()
                 return False
 
             _Log("[{}] show advertisement...".format(self.ad_type))
@@ -107,7 +108,7 @@ class SystemApplovin(System):
 
         def cbDisplayFailed(self):
             Notification.notify(Notificator.onAdvertDisplayFailed, self.ad_type)
-            _Log("[{} cb] !!! display failed".format(self.ad_type))
+            _Log("[{} cb] !!! display failed".format(self.ad_type), err=True, force=True)
 
         def cbHidden(self):
             Notification.notify(Notificator.onAdvertHidden, self.ad_type)
