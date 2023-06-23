@@ -30,7 +30,7 @@ class SystemApplovin(System):
         def __init__(self, name):
             self.inited = False
             self.name = name
-            self.ad_unit_id = Mengine.getConfigString(PLUGIN_NAME + "Plugin", "%sAdUnitId" % self.ad_type, "")
+            self.ad_unit_id = Mengine.getConfigString(PLUGIN_NAME + "Plugin", "%sAdUnitId" % self.name, "")
 
         def setCallbacks(self):
             if _ANDROID:
