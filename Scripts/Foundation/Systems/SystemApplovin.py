@@ -5,6 +5,9 @@ from Notification import Notification
 
 _Log = SimpleLogger("SystemApplovin")
 PLUGIN_NAME = "AppLovin"
+# todo: add banners
+# todo: update notifications
+
 
 class SystemApplovin(System):
     """ Advertisement module 'Applovin' """
@@ -24,8 +27,9 @@ class SystemApplovin(System):
             "is_available": None,
         }
 
-        def __init__(self):
+        def __init__(self, name):
             self.inited = False
+            self.name = name
             self.ad_unit_id = Mengine.getConfigString(PLUGIN_NAME + "Plugin", "%sAdUnitId" % self.ad_type, "")
 
         def setCallbacks(self):
@@ -39,10 +43,10 @@ class SystemApplovin(System):
             if bool(Mengine.getConfigBool('Advertising', self.ad_type, False)) is False:
                 return False
             if self.ad_unit_id == "":
-                _Log("[{}] call init failed: ad unit id is not configured or wrong ({})!".format(self.ad_type, self.ad_unit_id), err=True)
+                _Log("[{}] call init failed: ad unit id is not configured or wrong ({})!".format(self.name, self.ad_unit_id), err=True)
                 return False
 
-            _Log("[{}] call init".format(self.ad_type))
+            _Log("[{}] call init".format(self.name))
             Mengine.androidMethod(PLUGIN_NAME, self.s_androidmethods["init"], self.ad_unit_id)
 
             self.inited = True
@@ -54,13 +58,13 @@ class SystemApplovin(System):
             if self.s_androidmethods["can_offer"] is None:
                 return True
             status = Mengine.androidBooleanMethod(PLUGIN_NAME, self.s_androidmethods["can_offer"])
-            _Log("[{}] available to offer is {}".format(self.ad_type, status))
+            _Log("[{}] available to offer is {}".format(self.name, status))
             return status
 
         def isAvailable(self):
             """ Call this method if you 100% will show ad, but want to do something before show """
             status = Mengine.androidBooleanMethod(PLUGIN_NAME, self.s_androidmethods["is_available"])
-            _Log("[{}] available to show is {}".format(self.ad_type, status))
+            _Log("[{}] available to show is {}".format(self.name, status))
             return status
 
         def show(self):
@@ -68,7 +72,7 @@ class SystemApplovin(System):
                 self.cbDisplayFailed()
                 return False
 
-            _Log("[{}] show advertisement...".format(self.ad_type))
+            _Log("[{}] show advertisement...".format(self.name))
             if Mengine.androidBooleanMethod(PLUGIN_NAME, self.s_androidmethods["show"]) is False:
                 self.cbDisplayFailed()
             return True
@@ -84,7 +88,7 @@ class SystemApplovin(System):
 
             if self.inited is True:
                 return True
-            err_msg = "Applovin ad [{}] not inited".format(self.ad_type)
+            err_msg = "Applovin ad [{}] not inited".format(self.name)
 
             if init_if_no is True:
                 err_msg += ". Try init..."
@@ -93,30 +97,23 @@ class SystemApplovin(System):
             _Log(err_msg, err=True)
             return False
 
-        def getProviderMethods(self):
-            return {
-                "Show{}Advert".format(self.ad_type): self.show,
-                "CanOffer{}Advert".format(self.ad_type): self.canOffer,
-                "Is{}AdvertAvailable".format(self.ad_type): self.isAvailable
-            }
-
         # callbacks
 
         def cbDisplaySuccess(self):
             Notification.notify(Notificator.onAdvertDisplayed, self.ad_type)
-            _Log("[{} cb] displayed".format(self.ad_type))
+            _Log("[{} cb] displayed".format(self.name))
 
         def cbDisplayFailed(self):
             Notification.notify(Notificator.onAdvertDisplayFailed, self.ad_type)
-            _Log("[{} cb] !!! display failed".format(self.ad_type), err=True, force=True)
+            _Log("[{} cb] !!! display failed".format(self.name), err=True, force=True)
 
         def cbHidden(self):
             Notification.notify(Notificator.onAdvertHidden, self.ad_type)
-            _Log("[{} cb] hidden".format(self.ad_type))
+            _Log("[{} cb] hidden".format(self.name))
 
         def cbClicked(self):
             Notification.notify(Notificator.onAdvertClicked, self.ad_type)
-            _Log("[{} cb] clicked".format(self.ad_type))
+            _Log("[{} cb] clicked".format(self.name))
 
         # devtodebug
 
@@ -128,12 +125,12 @@ class SystemApplovin(System):
             is_enable = bool(Mengine.getConfigBool('Advertising', self.ad_type, False))
 
             def _getDescr():
-                text = "### {}".format(self.ad_type)
+                text = "### [{}] {}".format(self.ad_type, self.name)
                 text += "\nenable in configs.json: `{}`".format(is_enable)
                 text += "\ninited: `{}`".format(self.inited)
                 return text
 
-            w_descr = Mengine.createDevToDebugWidgetText(self.ad_type + "_descr")
+            w_descr = Mengine.createDevToDebugWidgetText(self.name + "_descr")
             w_descr.setText(_getDescr)
             widgets.append(w_descr)
 
@@ -141,7 +138,7 @@ class SystemApplovin(System):
 
             methods = {"init": self.init, "show": self.show, }
             for key, method in methods.items():
-                w_btn = Mengine.createDevToDebugWidgetButton(self.ad_type + "_" + key)
+                w_btn = Mengine.createDevToDebugWidgetButton(self.name + "_" + key)
                 w_btn.setTitle(key)
                 w_btn.setClickEvent(method)
                 widgets.append(w_btn)
@@ -149,6 +146,8 @@ class SystemApplovin(System):
             return widgets
 
     class InterstitialAd(AdUnitMixin):
+        """ player is obligated to watch these ads """
+
         ad_type = "Interstitial"
         s_callbacks = {
             "onAdDisplayed": "onApplovinInterstitialOnAdDisplayed",
@@ -163,6 +162,8 @@ class SystemApplovin(System):
         }
 
     class RewardedAd(AdUnitMixin):
+        """ player could watch ad without skip and get reward after full view """
+
         ad_type = "Rewarded"
         s_callbacks = {
             "onAdDisplayed": "onApplovinRewardedOnAdDisplayed",
@@ -194,25 +195,34 @@ class SystemApplovin(System):
 
     def __init__(self):
         super(SystemApplovin, self).__init__()
-        self.interstitial = None
-        self.rewarded = None
+        self.interstitials = {}
+        self.rewardeds = {}
 
     def _onInitialize(self):
         if self.b_plugin is False:
             return
 
-        self.interstitial = SystemApplovin.InterstitialAd()
-        self.rewarded = SystemApplovin.RewardedAd()
+        init_params = [
+            ["RewardedUnitNames", ["Rewarded"], self.interstitials, SystemApplovin.RewardedAd],
+            ["InterstitialUnitNames", ["Interstitial"], self.rewardeds, SystemApplovin.InterstitialAd],
+        ]
+
+        for config_key, default_values, storage, Type in init_params:
+            unit_names = Mengine.getConfigStrings("Advertising", config_key, default_values)
+            for name in unit_names:
+                if name in storage:
+                    _Log("Duplicate name {} in {}".format(name, Type.ad_type), err=True)
+                    continue
+
+                rewarded = Type(name)
+                storage[name] = rewarded
 
         if _ANDROID:
             # cb on init Applovin sdk
             Mengine.waitAndroidSemaphore("AppLovinSdkInitialized", self.__cbSdkInitialized)
 
-        # Interstitial advertisements (player is obligated to watch these ads)
-        self.interstitial.setCallbacks()
-
-        # Rewarded advertisements (the player can watch ads at will and get reward after full view)
-        self.rewarded.setCallbacks()
+        for ad_unit in self._getAllAdUnits():
+            ad_unit.setCallbacks()
 
         # ads do init in `__cbSdkInitialized`
         self.__addDevToDebug()
@@ -220,12 +230,16 @@ class SystemApplovin(System):
     # utils
 
     def initAds(self):
-        self.rewarded.init()
-        self.interstitial.init()
+        for ad_unit in self._getAllAdUnits():
+            ad_unit.init()
 
-        provider_methods = dict()
-        provider_methods.update(self.rewarded.getProviderMethods())
-        provider_methods.update(self.interstitial.getProviderMethods())
+        provider_methods = dict(
+            ShowRewardedAdvert=Functor(self.showAdvert, self.rewardeds),
+            ShowInterstitialAdvert=Functor(self.showAdvert, self.interstitials),
+            CanOfferRewardedAdvert=Functor(self.canOfferAdvert, self.rewardeds),
+            IsRewardedAdvertAvailable=Functor(self.isAdvertAvailable, self.rewardeds),
+            IsInterstitialAdvertAvailable=Functor(self.isAdvertAvailable, self.interstitials),
+        )
         AdvertisementProvider.setProvider(PLUGIN_NAME, provider_methods)
 
     @staticmethod
@@ -236,6 +250,9 @@ class SystemApplovin(System):
     def showMediationDebugger():
         Mengine.androidMethod(PLUGIN_NAME, "showMediationDebugger")
 
+    def _getAllAdUnits(self):
+        return self.rewardeds.values() + self.interstitials.values()
+
     # callbacks
 
     def __cbSdkInitialized(self):
@@ -244,6 +261,29 @@ class SystemApplovin(System):
         self.initAds()
 
         self.__disableDevToDebugInitButton()
+
+    # provider handling
+
+    def showAdvert(self, ad_unit_name, advert_dict):
+        advert = advert_dict.get(ad_unit_name)
+        if advert is None:
+            Trace.log("System", 0, "Advert {} not found for showAdvert".format(ad_unit_name))
+            return False
+        return advert.show()
+
+    def canOfferAdvert(self, ad_unit_name, advert_dict):
+        advert = advert_dict.get(ad_unit_name)
+        if advert is None:
+            Trace.log("System", 0, "Advert {} not found for canOfferAdvert".format(ad_unit_name))
+            return False
+        return advert.can_offer()
+
+    def isAdvertAvailable(self, ad_unit_name, advert_dict):
+        advert = advert_dict.get(ad_unit_name)
+        if advert is None:
+            Trace.log("System", 0, "Advert {} not found for isAdvertAvailable".format(ad_unit_name))
+            return False
+        return advert.is_available()
 
     # devtodebug
 
@@ -280,8 +320,8 @@ class SystemApplovin(System):
         w_debug.setClickEvent(self.showMediationDebugger)
         widgets.append(w_debug)
 
-        widgets.extend(self.rewarded._getDevToDebugWidgets())
-        widgets.extend(self.interstitial._getDevToDebugWidgets())
+        for ad_unit in self._getAllAdUnits():
+            widgets.extend(ad_unit._getDevToDebugWidgets())
 
         for widget in widgets:
             tab.addWidget(widget)

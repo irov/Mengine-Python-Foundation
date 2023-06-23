@@ -22,17 +22,25 @@ class AdvertisementProvider(BaseProvider):
         DummyAdvertisement.setProvider()
 
     @staticmethod
-    def showAdvert(AdType, **params):
-        """ type: Rewarded|Interstitial """
-        return AdvertisementProvider._call("Show{}Advert".format(AdType), **params)
+    def showAdvert(AdType, AdUnitName=None, **params):
+        if AdUnitName is None:
+            AdUnitName = AdType
+        return AdvertisementProvider._call("Show{}Advert".format(AdType),
+                                           ad_unit_name=AdUnitName, **params)
 
     @staticmethod
-    def canOfferAdvert(AdType, **params):
-        return AdvertisementProvider._call("CanOffer{}Advert".format(AdType), **params)
+    def canOfferAdvert(AdType, AdUnitName=None, **params):
+        if AdUnitName is None:
+            AdUnitName = AdType
+        return AdvertisementProvider._call("CanOffer{}Advert".format(AdType),
+                                           ad_unit_name=AdUnitName, **params)
 
     @staticmethod
-    def isAdvertAvailable(AdType, **params):
-        return AdvertisementProvider._call("Is{}AdvertAvailable".format(AdType), **params)
+    def isAdvertAvailable(AdType, AdUnitName=None, **params):
+        if AdUnitName is None:
+            AdUnitName = AdType
+        return AdvertisementProvider._call("Is{}AdvertAvailable".format(AdType),
+                                           ad_unit_name=AdUnitName, **params)
 
 
 class DummyAdvertisement(object):

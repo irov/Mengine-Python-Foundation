@@ -6,6 +6,7 @@ class AliasShowAdvert(TaskAlias):
 
     def _onParams(self, params):
         self.AdType = params.get("AdType", "Rewarded")
+        self.AdUnitName = params.get("AdUnitName", self.AdType)
         self.Timeout = params.get("TimeoutInSeconds", 30) * 1000
         self.SuccessCallback = params.get("SuccessCallback")  # starts after show success (not rewarded, just shown)
         self.FailCallback = params.get("FailCallback")  # starts after show if show failed
@@ -25,7 +26,7 @@ class AliasShowAdvert(TaskAlias):
         self._ad_display_failed = True
 
     def _showAd(self):
-        AdvertisementProvider.showAdvert(AdType=self.AdType)
+        AdvertisementProvider.showAdvert(AdType=self.AdType, AdUnitName=self.AdUnitName)
 
     def _scopeShowAdvert(self, source):
         with source.addParallelTask(2) as (display_respond, show):
