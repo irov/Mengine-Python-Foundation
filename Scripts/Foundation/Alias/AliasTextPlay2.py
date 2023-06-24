@@ -17,7 +17,7 @@ class AliasTextPlay2(TaskAlias):
             pass
 
         if self.AudioDuration is not None:
-            text = Mengine.getTextFromID(self.TextID)
+            text = Mengine.getTextFromId(self.TextID)
             text_length = len(text)
             self.TextDelay = float(self.AudioDuration) / float(text_length)
 

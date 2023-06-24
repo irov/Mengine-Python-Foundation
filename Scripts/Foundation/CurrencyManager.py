@@ -76,7 +76,7 @@ class CurrencyManager(object):
         if only_text_id is True:
             return symbol_text_id
 
-        symbol = Mengine.getTextFromID(symbol_text_id)
+        symbol = Mengine.getTextFromId(symbol_text_id)
         return symbol
 
     @staticmethod
