@@ -53,23 +53,25 @@ class DummyAdvertisement(object):
         DisplayFail = params.get("DisplayFail", "Random")
         FakeWatchDelay = params.get("Delay", 5000)
         GoldReward = params.get("GoldReward", 1)
+        AdUnitName = params.get("AdUnitName", AdType)
 
         display_failed = Mengine.rand(20) < 5 if DisplayFail is "Random" else bool(DisplayFail)
 
         with TaskManager.createTaskChain(Name="DummyShow{}Advert".format(AdType)) as source:
-            source.addPrint("<DummyAdvertisement> watch advertisement, delay {}s (display failed is {})...".format(round(float(FakeWatchDelay) / 1000, 1), display_failed))
+            source.addPrint("<DummyAdvertisement> watch advertisement {}:{}, delay {}s (fail: {})...".format(
+                AdType, AdUnitName, round(float(FakeWatchDelay) / 1000, 1), display_failed))
 
             if display_failed:
                 source.addDelay(FakeWatchDelay)
-                source.addNotify(Notificator.onAdvertDisplayFailed, AdType)
+                source.addNotify(Notificator.onAdvertDisplayFailed, AdType, AdUnitName)
             else:
-                source.addNotify(Notificator.onAdvertDisplayed, AdType)
+                source.addNotify(Notificator.onAdvertDisplayed, AdType, AdUnitName)
                 source.addDelay(FakeWatchDelay)
 
                 if AdType == "Rewarded":
-                    source.addNotify(Notificator.onAdvertRewarded, "gold", GoldReward)
+                    source.addNotify(Notificator.onAdvertRewarded, AdUnitName, "gold", GoldReward)
 
-                source.addNotify(Notificator.onAdvertHidden, AdType)
+                source.addNotify(Notificator.onAdvertHidden, AdType, AdUnitName)
 
     @staticmethod
     def canOfferAdvert(AdType, **params):

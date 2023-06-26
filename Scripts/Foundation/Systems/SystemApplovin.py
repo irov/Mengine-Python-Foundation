@@ -100,19 +100,19 @@ class SystemApplovin(System):
         # callbacks
 
         def cbDisplaySuccess(self):
-            Notification.notify(Notificator.onAdvertDisplayed, self.ad_type)
+            Notification.notify(Notificator.onAdvertDisplayed, self.ad_type, self.name)
             _Log("[{} cb] displayed".format(self.name))
 
         def cbDisplayFailed(self):
-            Notification.notify(Notificator.onAdvertDisplayFailed, self.ad_type)
+            Notification.notify(Notificator.onAdvertDisplayFailed, self.ad_type, self.name)
             _Log("[{} cb] !!! display failed".format(self.name), err=True, force=True)
 
         def cbHidden(self):
-            Notification.notify(Notificator.onAdvertHidden, self.ad_type)
+            Notification.notify(Notificator.onAdvertHidden, self.ad_type, self.name)
             _Log("[{} cb] hidden".format(self.name))
 
         def cbClicked(self):
-            Notification.notify(Notificator.onAdvertClicked, self.ad_type)
+            Notification.notify(Notificator.onAdvertClicked, self.ad_type, self.name)
             _Log("[{} cb] clicked".format(self.name))
 
         # devtodebug
@@ -185,7 +185,7 @@ class SystemApplovin(System):
                 Mengine.setAndroidCallback(PLUGIN_NAME, self.s_callbacks["onUserRewarded"], self.cbUserRewarded)
 
         def cbUserRewarded(self, label, reward):
-            Notification.notify(Notificator.onAdvertRewarded, label, reward)
+            Notification.notify(Notificator.onAdvertRewarded, self.name, label, reward)
             _Log("[{} cb] user rewarded: {}={!r}".format(self.ad_type, label, reward))
 
     # ---
