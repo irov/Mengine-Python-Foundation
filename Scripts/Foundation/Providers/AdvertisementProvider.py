@@ -90,9 +90,9 @@ class DummyAdvertisement(object):
 
         for AdType in ["Interstitial", "Rewarded"]:
             ad_type_methods = {
-                "Show{}Advert".format(AdType): lambda: DummyAdvertisement.showAdvert(AdType),
-                "CanOffer{}Advert".format(AdType): lambda: DummyAdvertisement.canOfferAdvert(AdType),
-                "Is{}AdvertAvailable".format(AdType): lambda: DummyAdvertisement.isAdvertAvailable(AdType),
+                "Show{}Advert".format(AdType): lambda *_, **__: DummyAdvertisement.showAdvert(AdType),
+                "CanOffer{}Advert".format(AdType): lambda *_, **__: DummyAdvertisement.canOfferAdvert(AdType),
+                "Is{}AdvertAvailable".format(AdType): lambda *_, **__: DummyAdvertisement.isAdvertAvailable(AdType),
             }
             methods.update(ad_type_methods)
 
