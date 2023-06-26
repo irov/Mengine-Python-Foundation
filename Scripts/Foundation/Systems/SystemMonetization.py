@@ -469,7 +469,7 @@ class SystemMonetization(System):
     # callbacks
 
     @staticmethod
-    def _onAdvertisementResult(label, result):  # react on showAd()
+    def _onAdvertisementResult(ad_name, label, result):  # react on showAd()
         _Log("onAdvertisementReward - [{}] {}".format(label, result))
 
         # if we have advert product - reward will be gathered from product info,
