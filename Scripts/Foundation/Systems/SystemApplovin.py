@@ -208,7 +208,10 @@ class SystemApplovin(System):
         ]
 
         for config_key, default_values, storage, Type in init_params:
-            unit_names = Mengine.getConfigStrings("Advertising", config_key, default_values)
+            unit_names = Mengine.getConfigStrings("Advertising", config_key)
+            if len(unit_names) == 0:
+                unit_names = default_values
+
             for name in unit_names:
                 if name in storage:
                     _Log("Duplicate name {} in {}".format(name, Type.ad_type), err=True)
