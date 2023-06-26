@@ -1046,8 +1046,9 @@ def getCurrentPlatformParams():
         "MAC": (_MACOS is True or Mengine.getOptionValue(option) == "mac") and Mengine.hasTouchpad() is False
     }
     if True not in platforms.values():
-        Trace.msg("!!!! Utils.getCurrentPlatformParams: remove -touchpad or add -{}:android|ios".format(option))
-        Trace.msg("!!!! Utils.getCurrentPlatformParams: set Platform to 'WINDOWS' until you fix the conflict")
+        if _DEVELOPMENT is True:
+            Trace.msg("!!!! Utils.getCurrentPlatformParams: remove -touchpad or add -{}:android|ios".format(option))
+            Trace.msg("!!!! Utils.getCurrentPlatformParams: set Platform to 'WINDOWS' until you fix the conflict")
         platforms["WINDOWS"] = True
     return platforms
 
