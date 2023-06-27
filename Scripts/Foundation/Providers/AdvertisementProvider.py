@@ -25,22 +25,19 @@ class AdvertisementProvider(BaseProvider):
     def showAdvert(AdType, AdUnitName=None, **params):
         if AdUnitName is None:
             AdUnitName = AdType
-        return AdvertisementProvider._call("Show{}Advert".format(AdType),
-                                           ad_unit_name=AdUnitName, **params)
+        return AdvertisementProvider._call("Show{}Advert".format(AdType), AdUnitName, **params)
 
     @staticmethod
     def canOfferAdvert(AdType, AdUnitName=None, **params):
         if AdUnitName is None:
             AdUnitName = AdType
-        return AdvertisementProvider._call("CanOffer{}Advert".format(AdType),
-                                           ad_unit_name=AdUnitName, **params)
+        return AdvertisementProvider._call("CanOffer{}Advert".format(AdType), AdUnitName, **params)
 
     @staticmethod
     def isAdvertAvailable(AdType, AdUnitName=None, **params):
         if AdUnitName is None:
             AdUnitName = AdType
-        return AdvertisementProvider._call("Is{}AdvertAvailable".format(AdType),
-                                           ad_unit_name=AdUnitName, **params)
+        return AdvertisementProvider._call("Is{}AdvertAvailable".format(AdType), AdUnitName, **params)
 
 
 class DummyAdvertisement(object):
