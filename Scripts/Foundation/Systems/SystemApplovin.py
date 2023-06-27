@@ -6,7 +6,6 @@ from Notification import Notification
 _Log = SimpleLogger("SystemApplovin")
 PLUGIN_NAME = "AppLovin"
 # todo: add banners
-# todo: update notifications
 
 
 class SystemApplovin(System):
@@ -57,13 +56,13 @@ class SystemApplovin(System):
             """ Call this method only once when you create rewarded button """
             if self.s_androidmethods["can_offer"] is None:
                 return True
-            status = Mengine.androidBooleanMethod(PLUGIN_NAME, self.s_androidmethods["can_offer"])
+            status = Mengine.androidBooleanMethod(PLUGIN_NAME, self.s_androidmethods["can_offer"], self.ad_unit_id)
             _Log("[{}] available to offer is {}".format(self.name, status))
             return status
 
         def isAvailable(self):
             """ Call this method if you 100% will show ad, but want to do something before show """
-            status = Mengine.androidBooleanMethod(PLUGIN_NAME, self.s_androidmethods["is_available"])
+            status = Mengine.androidBooleanMethod(PLUGIN_NAME, self.s_androidmethods["is_available"], self.ad_unit_id)
             _Log("[{}] available to show is {}".format(self.name, status))
             return status
 
@@ -73,7 +72,7 @@ class SystemApplovin(System):
                 return False
 
             _Log("[{}] show advertisement...".format(self.name))
-            if Mengine.androidBooleanMethod(PLUGIN_NAME, self.s_androidmethods["show"]) is False:
+            if Mengine.androidBooleanMethod(PLUGIN_NAME, self.s_androidmethods["show"], self.ad_unit_id) is False:
                 self.cbDisplayFailed()
             return True
 
