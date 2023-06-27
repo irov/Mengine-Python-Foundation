@@ -141,16 +141,16 @@ class Button(Interaction):
 
     def _restoreTextID(self, value):
         if value is None:
-            self.text.removeTextID()
+            self.text.removeTextId()
             return
             pass
 
-        self.text.setTextID(value)
+        self.text.setTextId(value)
         pass
 
     def _updateTextID(self, value):
         if value is None:
-            self.text.removeTextID()
+            self.text.removeTextId()
             return
             pass
 
@@ -159,7 +159,7 @@ class Button(Interaction):
             return
             pass
 
-        self.text.setTextID(value)
+        self.text.setTextId(value)
         pass
 
     def _updateTextArgs(self, args):

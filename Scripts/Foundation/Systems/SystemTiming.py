@@ -105,7 +105,7 @@ class SystemTiming(System):
         self.__removeSchedule()
 
         self.textNode = layer.createChild("TextField")
-        self.textNode.setTextID("__ID_TIMING")
+        self.textNode.setTextId("__ID_TIMING")
         self.textNode.setFontName("__CONSOLE_FONT__")
         self.textNode.setTextFormatArgs(round(factor, 2))
         self.textNode.enable()

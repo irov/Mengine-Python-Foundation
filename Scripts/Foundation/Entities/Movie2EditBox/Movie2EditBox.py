@@ -580,7 +580,7 @@ class Movie2EditBox(BaseEntity):
         # todo: this is dirty hack
         # todo: find out how to get text width in pixels if we now TextID and its arguments if needed
         temp_text_field = Mengine.createNode("TextField")
-        temp_text_field.setTextID(self.object.getText_ID())
+        temp_text_field.setTextId(self.object.getText_ID())
 
         temp_text_field.setTextFormatArgs(text_value)
         length = temp_text_field.getTextSize().x
