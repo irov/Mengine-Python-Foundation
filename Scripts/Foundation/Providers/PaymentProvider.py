@@ -36,6 +36,9 @@ class PaymentProvider(BaseProvider):
         if products_id is None:
             Trace.log("Provider", 0, "ProductsProvider.getQueryProductIds return None - queryProducts fail")
             return
+        if len(products_id) == 0:
+            Trace.log("Provider", 0, "ProductsProvider.queryProducts got empty products_id list!")
+            return
         return PaymentProvider._call("queryProducts", products_id)
 
     @staticmethod
