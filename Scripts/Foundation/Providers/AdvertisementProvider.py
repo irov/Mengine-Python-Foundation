@@ -44,13 +44,14 @@ class DummyAdvertisement(object):
     """ Dummy Provider """
 
     @staticmethod
-    def showAdvert(AdType, **params):
+    def showAdvert(AdType, AdUnitName=None, **params):
         from Foundation.TaskManager import TaskManager
 
         DisplayFail = params.get("DisplayFail", "Random")
         FakeWatchDelay = params.get("Delay", 5000)
         GoldReward = params.get("GoldReward", 1)
-        AdUnitName = params.get("AdUnitName", AdType)
+        if AdUnitName is None:
+            AdUnitName = params.get("AdUnitName", AdType)
 
         display_failed = Mengine.rand(20) < 5 if DisplayFail is "Random" else bool(DisplayFail)
 
