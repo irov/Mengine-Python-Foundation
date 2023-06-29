@@ -72,15 +72,24 @@ class DummyAdvertisement(object):
                 source.addNotify(Notificator.onAdvertHidden, AdType, AdUnitName)
 
     @staticmethod
-    def canOfferAdvert(AdType, **params):
+    def canOfferAdvert(AdType, AdUnitName=None, **params):
+        if AdUnitName is None:
+            AdUnitName = AdType
+
+        status = True
         if AdType == "Rewarded":
             status = Mengine.rand(20) < 15
-            return status
-        return True
+
+        Trace.msg("<DummyAdvertisement> canOfferAdvert {}:{} result = {}".format(AdType, AdUnitName, status))
+        return status
 
     @staticmethod
-    def isAdvertAvailable(AdType, **params):
-        return True
+    def isAdvertAvailable(AdType, AdUnitName=None, **params):
+        if AdUnitName is None:
+            AdUnitName = AdType
+        status = True
+        Trace.msg("<DummyAdvertisement> isAdvertAvailable {}:{} result = {}".format(AdType, AdUnitName, status))
+        return status
 
     @staticmethod
     def setProvider():
@@ -88,9 +97,12 @@ class DummyAdvertisement(object):
 
         for AdType in ["Interstitial", "Rewarded"]:
             ad_type_methods = {
-                "Show{}Advert".format(AdType): lambda *_, **__: DummyAdvertisement.showAdvert(AdType),
-                "CanOffer{}Advert".format(AdType): lambda *_, **__: DummyAdvertisement.canOfferAdvert(AdType),
-                "Is{}AdvertAvailable".format(AdType): lambda *_, **__: DummyAdvertisement.isAdvertAvailable(AdType),
+                "Show{}Advert".format(AdType):
+                    lambda AdUnitName=None, **__: DummyAdvertisement.showAdvert(AdType, AdUnitName),
+                "CanOffer{}Advert".format(AdType):
+                    lambda AdUnitName=None, **__: DummyAdvertisement.canOfferAdvert(AdType, AdUnitName),
+                "Is{}AdvertAvailable".format(AdType):
+                    lambda AdUnitName=None, **__: DummyAdvertisement.isAdvertAvailable(AdType, AdUnitName),
             }
             methods.update(ad_type_methods)
 
