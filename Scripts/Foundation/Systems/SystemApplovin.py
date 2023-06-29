@@ -202,8 +202,8 @@ class SystemApplovin(System):
             return
 
         init_params = [
-            ["RewardedUnitNames", ["Rewarded"], self.interstitials, SystemApplovin.RewardedAd],
-            ["InterstitialUnitNames", ["Interstitial"], self.rewardeds, SystemApplovin.InterstitialAd],
+            ["RewardedUnitNames", ["Rewarded"], self.rewardeds, SystemApplovin.RewardedAd],
+            ["InterstitialUnitNames", ["Interstitial"], self.interstitials, SystemApplovin.InterstitialAd],
         ]
 
         for config_key, default_values, storage, Type in init_params:
@@ -269,7 +269,7 @@ class SystemApplovin(System):
     def showAdvert(self, ad_unit_name, advert_dict):
         advert = advert_dict.get(ad_unit_name)
         if advert is None:
-            Trace.log("System", 0, "Advert {} not found for showAdvert".format(ad_unit_name))
+            Trace.log("System", 0, "Advert {} not found for showAdvert {}".format(ad_unit_name, advert_dict))
             return False
         return advert.show()
 
