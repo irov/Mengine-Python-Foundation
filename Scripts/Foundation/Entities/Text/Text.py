@@ -66,11 +66,11 @@ class Text(BaseEntity):
 
     def __updateTextID(self, textID):
         if textID is None:
-            self.text_field.removeTextID()
+            self.text_field.removeTextId()
             return
             pass
 
-        self.text_field.setTextID(textID)
+        self.text_field.setTextId(textID)
         pass
 
     def __updateTextArgs(self, args):
