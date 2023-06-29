@@ -8,6 +8,14 @@ PLUGIN_NAME = "AppLovin"
 # todo: add banners
 
 
+def ad_callback(bound_method):
+    def wrap(self, ad_unit_id, *args, **kwargs):
+        if ad_unit_id != self.ad_unit_id:
+            return
+        return bound_method(self, *args, **kwargs)
+    return wrap
+
+
 class SystemApplovin(System):
     """ Advertisement module 'Applovin' """
 
@@ -51,6 +59,13 @@ class SystemApplovin(System):
             self.inited = True
 
             return True
+
+        def cleanUp(self):
+            if _ANDROID:
+                Mengine.removeAndroidCallback(self.s_callbacks["onAdDisplayed"], self.cbDisplaySuccess)
+                Mengine.removeAndroidCallback(self.s_callbacks["onAdDisplayFailed"], self.cbDisplayFailed)
+                Mengine.removeAndroidCallback(self.s_callbacks["onAdClicked"], self.cbClicked)
+                Mengine.removeAndroidCallback(self.s_callbacks["onAdHidden"], self.cbHidden)
 
         def canOffer(self):
             """ Call this method only once when you create rewarded button """
@@ -98,18 +113,22 @@ class SystemApplovin(System):
 
         # callbacks
 
+        @ad_callback
         def cbDisplaySuccess(self):
             Notification.notify(Notificator.onAdvertDisplayed, self.ad_type, self.name)
             _Log("[{} cb] displayed".format(self.name))
 
+        @ad_callback
         def cbDisplayFailed(self):
             Notification.notify(Notificator.onAdvertDisplayFailed, self.ad_type, self.name)
             _Log("[{} cb] !!! display failed".format(self.name), err=True, force=True)
 
+        @ad_callback
         def cbHidden(self):
             Notification.notify(Notificator.onAdvertHidden, self.ad_type, self.name)
             _Log("[{} cb] hidden".format(self.name))
 
+        @ad_callback
         def cbClicked(self):
             Notification.notify(Notificator.onAdvertClicked, self.ad_type, self.name)
             _Log("[{} cb] clicked".format(self.name))
@@ -181,11 +200,17 @@ class SystemApplovin(System):
         def setCallbacks(self):
             super(self.__class__, self).setCallbacks()
             if _ANDROID:
-                Mengine.setAndroidCallback(PLUGIN_NAME, self.s_callbacks["onUserRewarded"], self.cbUserRewarded)
+                Mengine.addAndroidCallback(PLUGIN_NAME, self.s_callbacks["onUserRewarded"], self.cbUserRewarded)
 
+        def cleanUp(self):
+            super(self.__class__, self).cleanUp()
+            if _ANDROID:
+                Mengine.removeAndroidCallback(self.s_callbacks["onUserRewarded"], self.cbUserRewarded)
+
+        @ad_callback
         def cbUserRewarded(self, label, reward):
             Notification.notify(Notificator.onAdvertRewarded, self.name, label, reward)
-            _Log("[{} cb] user rewarded: {}={!r}".format(self.ad_type, label, reward))
+            _Log("[{} cb] user rewarded: label={!r}, amount={!r}".format(self.ad_type, label, reward))
 
     # ---
 
@@ -229,6 +254,12 @@ class SystemApplovin(System):
         # ads do init in `__cbSdkInitialized`
         self.__addDevToDebug()
 
+    def _onFinalize(self):
+        for ad_unit in self._getAllAdUnits():
+            ad_unit.cleanUp()
+        self.rewardeds = None
+        self.interstitials = None
+
     # utils
 
     def initAds(self):
@@ -269,25 +300,28 @@ class SystemApplovin(System):
     def showAdvert(self, ad_unit_name, advert_dict):
         advert = advert_dict.get(ad_unit_name)
         if advert is None:
-            Trace.log("System", 0, "Advert {} not found for showAdvert {}".format(ad_unit_name, advert_dict))
+            Trace.log("System", 0, "Advert {!r} not found for showAdvert in {}".format(
+                ad_unit_name, advert_dict.keys()))
             return False
         return advert.show()
 
     def canOfferAdvert(self, ad_unit_name, advert_dict):
         advert = advert_dict.get(ad_unit_name)
         if advert is None:
-            Trace.log("System", 0, "Advert {} not found for canOfferAdvert".format(ad_unit_name))
+            Trace.log("System", 0, "Advert {!r} not found for canOfferAdvert in {}".format(
+                ad_unit_name, advert_dict.keys()))
             return False
         return advert.can_offer()
 
     def isAdvertAvailable(self, ad_unit_name, advert_dict):
         advert = advert_dict.get(ad_unit_name)
         if advert is None:
-            Trace.log("System", 0, "Advert {} not found for isAdvertAvailable".format(ad_unit_name))
+            Trace.log("System", 0, "Advert {!r} not found for isAdvertAvailable in {}".format(
+                ad_unit_name, advert_dict.keys()))
             return False
         return advert.is_available()
 
-    # devtodebug
+    # debug
 
     def __disableDevToDebugInitButton(self):
         if Mengine.isAvailablePlugin("DevToDebug") is False:
