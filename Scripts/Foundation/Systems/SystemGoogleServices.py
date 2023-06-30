@@ -314,6 +314,7 @@ class SystemGoogleServices(System):
         """
         if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
             _Log("[Billing] queryProducts fail: billing client is not connected", err=True, force=True)
+            SystemGoogleServices.__cbBillingPurchaseError("BillingClientUnavailable")
             return False
 
         query_list = filter(lambda x: isinstance(x, str), product_ids)
@@ -472,6 +473,8 @@ class SystemGoogleServices(System):
         Notification.notify(Notificator.onPayFailed, SystemGoogleServices.__lastProductId)
         Notification.notify(Notificator.onPayComplete, SystemGoogleServices.__lastProductId)
         _Log("[Billing cb] purchase process error: {}".format(details), force=True, err=True)
+        if details == "BillingClientUnavailable":
+            SystemGoogleServices.startBillingClient()
 
     @staticmethod
     def __cbBillingPurchaseItemAlreadyOwned():
