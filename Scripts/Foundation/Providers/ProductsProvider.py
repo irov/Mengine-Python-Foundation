@@ -43,6 +43,6 @@ class ProductsProvider(BaseProvider):
 
     @staticmethod
     def isProductConsumable(product_id):
-        """ returns True if product with that id exists """
+        """ returns True if product is Consumable """
         product_info = ProductsProvider.getProductInfo(product_id)
         return product_info.isConsumable()
