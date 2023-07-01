@@ -73,8 +73,7 @@ class SystemAnalytics(System):
         def send(self, params):
             """ finally send event with name from `self.key` and params from `params` dict """
             SystemAnalytics._sendDebugLog(self.key, params)
-            Mengine.analyticsCustomEvent(self._service_key, params)
-            Notification.notify(Notificator.onAnalyticsEvent, self.key, params)
+            Mengine.analyticsCustomEvent(self._service_key, None, params)
 
         def clean(self):
             if self._observer is not None:
@@ -93,7 +92,6 @@ class SystemAnalytics(System):
 
             SystemAnalytics._sendDebugLog(self.key, _params)
             Mengine.analyticsEarnVirtualCurrencyEvent(currency_name, amount)
-            Notification.notify(Notificator.onAnalyticsEvent, self.key, params)
 
     class SpentCurrencyAnalytic(AnalyticUnit):
         def send(self, params):
@@ -104,7 +102,6 @@ class SystemAnalytics(System):
 
             SystemAnalytics._sendDebugLog(self.key, _params)
             Mengine.analyticsSpendVirtualCurrencyEvent(descr, currency_name, amount)
-            Notification.notify(Notificator.onAnalyticsEvent, self.key, params)
 
     class UnlockAchievementAnalytic(AnalyticUnit):
         def send(self, params):
@@ -113,7 +110,6 @@ class SystemAnalytics(System):
 
             SystemAnalytics._sendDebugLog(self.key, _params)
             Mengine.analyticsUnlockAchievementEvent(achievement_id)
-            Notification.notify(Notificator.onAnalyticsEvent, self.key, params)
 
     class LevelUpAnalytic(AnalyticUnit):
         def send(self, params):
@@ -123,7 +119,6 @@ class SystemAnalytics(System):
 
             SystemAnalytics._sendDebugLog(self.key, _params)
             Mengine.analyticsLevelUp(name, level)
-            Notification.notify(Notificator.onAnalyticsEvent, self.key, params)
 
     class LevelStartAnalytic(AnalyticUnit):
         def send(self, params):
@@ -132,7 +127,6 @@ class SystemAnalytics(System):
 
             SystemAnalytics._sendDebugLog(self.key, _params)
             Mengine.analyticsLevelStart(name)
-            Notification.notify(Notificator.onAnalyticsEvent, self.key, params)
 
     class LevelEndAnalytic(AnalyticUnit):
         def send(self, params):
@@ -142,7 +136,6 @@ class SystemAnalytics(System):
 
             SystemAnalytics._sendDebugLog(self.key, _params)
             Mengine.analyticsLevelEnd(name, successful)
-            Notification.notify(Notificator.onAnalyticsEvent, self.key, params)
 
     class SelectItemAnalytic(AnalyticUnit):
         def send(self, params):
@@ -152,19 +145,16 @@ class SystemAnalytics(System):
 
             SystemAnalytics._sendDebugLog(self.key, _params)
             Mengine.analyticsSelectItem(category, item_id)
-            Notification.notify(Notificator.onAnalyticsEvent, self.key, params)
 
     class TutorialBeginAnalytic(AnalyticUnit):
         def send(self, params):
             SystemAnalytics._sendDebugLog(self.key, {})
             Mengine.analyticsTutorialBegin()
-            Notification.notify(Notificator.onAnalyticsEvent, self.key, {})
 
     class TutorialCompleteAnalytic(AnalyticUnit):
         def send(self, params):
             SystemAnalytics._sendDebugLog(self.key, {})
             Mengine.analyticsTutorialComplete()
-            Notification.notify(Notificator.onAnalyticsEvent, self.key, {})
 
     def _onInitialize(self):
         self.addDefaultAnalytics()
@@ -255,8 +245,7 @@ class SystemAnalytics(System):
         params.update(send_params)
 
         SystemAnalytics._sendDebugLog(event_key, params)
-        Mengine.analyticsCustomEvent(ANALYTIC_PREFIX_NAME+event_key, params)
-        Notification.notify(Notificator.onAnalyticsEvent, event_key, params)
+        Mengine.analyticsCustomEvent(ANALYTIC_PREFIX_NAME+event_key, None, params)
 
     def addDefaultAnalytics(self):
         """ create default analytics and run them """

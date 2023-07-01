@@ -251,3 +251,8 @@ def oniOSApplicationWillTerminate():
     if _DEVELOPMENT is True:
         print("oniOSApplicationWillTerminate -- app is about to terminate")
     Notification.notify(Notificator.oniOSApplicationWillTerminate)
+
+def onAnalyticsEvent(type, name, timestamp, params):
+    Notification.notify(Notificator.onAnalyticsEvent, type, name, timestamp, params)
+    pass
+
