@@ -1,17 +1,71 @@
 import sys
 
+from Notification import Notification
+
 from Foundation.AccountManager import AccountManager
 from Foundation.Bootstrapper import Bootstrapper
 from Foundation.DefaultManager import DefaultManager
 from Foundation.GameManager import GameManager
 from Foundation.StateManager import StateManager
-from Notification import Notification
+from Foundation.Notificator import Notificator
 
 sys.setrecursionlimit(500)
 
 exception_array = {Mengine.KC_TAB, Mengine.KC_OEM_4, Mengine.KC_OEM_6, Mengine.KC_F1, Mengine.KC_F2, Mengine.KC_F3, Mengine.KC_F4, Mengine.KC_F5, Mengine.KC_F6, Mengine.KC_F7, Mengine.KC_F, Mengine.KC_F9, Mengine.KC_F10, Mengine.KC_F11, Mengine.KC_F12}
 
 def onPreparation(isDebug):
+    from Foundation.Notificator import Notificator
+    Mengine.addGlobalModule("Notificator", Notificator)
+
+    notifiers = [
+        "onFocus"
+        , "onAppMouseEnter"
+        , "onAppMouseLeave"
+        , "onRun"
+        , "onInterruption"
+        , "onStop"
+        , "onAccountFinalize"
+        , "onFinalize"
+
+        , "onKeyEvent"
+        , "onKeyEventEnd"
+        , "onTextEvent"
+        , "onMouseMove"
+        , "onMouseButtonEventBegin"
+        , "onMouseButtonEvent"
+        , "onMouseButtonEventEnd"
+        , "onTimingFactor"
+        , "onFullscreen"
+        , "onFixedContentResolution"
+        , "onCursorMode"
+        , "onSelectAccount"
+        , "onRenderViewportChange"
+        , "onGameViewportChange"
+        , "onUnselectAccount"
+        , "onDeleteAccount"
+        , "onInitializeRenderResources"
+        , "onFinalizeRenderResources"
+        , "onCreateAccout"
+        , "onCreateDefaultAccount"
+        , "onCreateGlobalAccount"
+        , "onLoadAccounts"
+        , "onMute"
+        , "onSoundVolume"
+        , "onMusicVolume"
+        , "onVoiceVolume"
+        , "onUserEvent"
+
+        , "oniOSApplicationDidEnterBackground"
+        , "oniOSApplicationDidBecomeActive"
+        , "oniOSApplicationWillEnterForeground"
+        , "oniOSApplicationWillResignActive"
+        , "oniOSApplicationWillTerminate"
+
+        , "onAnalyticsEvent"
+    ]
+
+    Notificator.addIdentities(notifiers)
+
     return True
 
 def onFocus(value):
@@ -23,7 +77,7 @@ def onAppMouseEnter(event):
 def onAppMouseLeave(event):
     Notification.notify(Notificator.onAppMouseLeave, event)
 
-def onInitialize(*args):
+def onInitialize():
     StateManager.addState("AliasMessageShow", False)
     StateManager.addState("StateHintReady", True)
     StateManager.addState("StateHintCharge", False)
@@ -65,10 +119,6 @@ def onInitialize(*args):
     TraceManager.setLevel("Item", 0)
     TraceManager.setLevel("Scenario", 0)
     TraceManager.setLevel("MacroCommand", 0)
-
-    print("===========================================")
-    print("----------------RUN SYSTEMS----------------")
-    print("===========================================")
 
     if Bootstrapper.loadSystems("Database", "Systems") is False:
         return False
@@ -187,9 +237,6 @@ def onUnselectAccount(accountID):
 def onDeleteAccount(accountID):
     Notification.notify(Notificator.onDeleteAccount, accountID)
 
-def changeTutorial(value):
-    Notification.notify(Notificator.onTutorialChange, value)
-
 def onInitializeRenderResources():
     Notification.notify(Notificator.onInitializeRenderResources)
 
@@ -198,6 +245,7 @@ def onFinalizeRenderResources():
 
 def onCreateAccount(accountID, isGlobal):
     AccountManager.callCreateAccount(accountID, isGlobal)
+    Notification.notify(Notificator.onCreateAccout, accountID, isGlobal)
 
 def onCreateDefaultAccount():
     AccountManager.callCreateDefaultAccount()
@@ -222,34 +270,24 @@ def onOverFillrate(fillrate, limit):
 def onUserEvent(event, params):
     Notification.notify(Notificator.onUserEvent, event, params)
 
+# ios app is now in the background
 def oniOSApplicationDidEnterBackground():
-    # ios app is now in the background
-    if _DEVELOPMENT is True:
-        print("oniOSApplicationDidEnterBackground -- app is now in the background")
     Notification.notify(Notificator.oniOSApplicationDidEnterBackground)
 
+# ios app has become active
 def oniOSApplicationDidBecomeActive():
-    # ios app has become active
-    if _DEVELOPMENT is True:
-        print("oniOSApplicationDidBecomeActive -- app has become active")
     Notification.notify(Notificator.oniOSApplicationDidBecomeActive)
 
+# ios app is about to enter the foreground
 def oniOSApplicationWillEnterForeground():
-    # ios app is about to enter the foreground
-    if _DEVELOPMENT is True:
-        print("oniOSApplicationWillEnterForeground -- app is about to enter the foreground")
     Notification.notify(Notificator.oniOSApplicationWillEnterForeground)
 
+# ios app is about to become inactive
 def oniOSApplicationWillResignActive():
-    # ios app is about to become inactive
-    if _DEVELOPMENT is True:
-        print("oniOSApplicationWillResignActive -- app is about to become inactive")
     Notification.notify(Notificator.oniOSApplicationWillResignActive)
 
+# ios app is about to terminate
 def oniOSApplicationWillTerminate():
-    # ios app is about to terminate
-    if _DEVELOPMENT is True:
-        print("oniOSApplicationWillTerminate -- app is about to terminate")
     Notification.notify(Notificator.oniOSApplicationWillTerminate)
 
 def onAnalyticsEvent(type, name, timestamp, params):

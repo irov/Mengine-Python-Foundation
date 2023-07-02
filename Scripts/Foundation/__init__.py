@@ -442,12 +442,7 @@ def onInitialize():
         , "onCommandLayerEnable"
         , "onSetCurrentChapter"
 
-        , "onSelectAccount"
-        , "onUnselectAccount"
-        , "onCreateDefaultAccount"
-        , "onLoadAccounts"
         , "onLoadSession"
-        , "onDeleteAccount"
 
         , "onCustomCursor"
 
@@ -613,26 +608,8 @@ def onInitialize():
         , "onObjectEnable"
         , "onObjectDisable"
 
-        , "onTimingFactor"
-
-        , "onKeyEvent"
-        , "onKeyEventEnd"
         , "onKeyEvent2"
         , "onKeyEvent2End"
-        , "onTextEvent"
-
-        , "onRun"
-        , "onInterruption"
-        , "onStop"
-        , "onAccountFinalize"
-        , "onFinalize"
-        , "onFocus"
-        , "onAppMouseEnter"
-        , "onAppMouseLeave"
-        , "onInitializeRenderResources"
-        , "onFinalizeRenderResources"
-        , "onRenderViewportChange"
-        , "onGameViewportChange"
 
         , "onZoomBlockOpen"
         , "onTransitionBlockOpen"
@@ -643,27 +620,14 @@ def onInitialize():
         , "onButtonEnter"
 
         , "onSwitchChainsClick"
-        , "onCursorMode"
-
-        , "onFullscreen"
-        , "onMute"
-        , "onMusicVolume"
-        , "onSoundVolume"
-        , "onVoiceVolume"
 
         , "EditBoxEmpty"
         , "EditBoxChange"
         , "EditBoxFocus"
         , "EditBoxUnhold"
         , "EditBoxKeyEvent"
-        , "onFixedContentResolution"
-        , "onFixedDisplayResolution"
 
-        , "onMouseMove"
-        , "onMouseButtonEventBegin"
-        , "onMouseButtonEvent"
         , "onMouseButtonEvent2"
-        , "onMouseButtonEventEnd"
 
         , "onChargerRun"
         , "onChargerRelease"
@@ -722,7 +686,6 @@ def onInitialize():
         , 'onFacebookAuthEscape'
         , 'onLoadedVersionFiles'
         , 'onSpinnerStop'
-        , 'onCreateGlobalAccount'
         , 'onLoadingVersionMessage'
 
         , 'onStageTimePassed'
@@ -752,12 +715,6 @@ def onInitialize():
         , 'onAdvertRewarded'
         , 'onAdvertHidden'
 
-        , "oniOSApplicationDidEnterBackground"
-        , "oniOSApplicationDidBecomeActive"
-        , "oniOSApplicationWillEnterForeground"
-        , "oniOSApplicationWillResignActive"
-        , "oniOSApplicationWillTerminate"
-
         , "onAndroidActivityResumed"
         , "onAndroidActivityPaused"
         , "onAndroidActivityStarted"
@@ -785,9 +742,6 @@ def onInitialize():
         , "onProductsUpdateDone"
         , "onDelayPurchased"
         , "onReleasePurchased"
-
-        , "onAnalyticsEvent"
-
     ]
 
     Notificator.addIdentities(notifiers)
