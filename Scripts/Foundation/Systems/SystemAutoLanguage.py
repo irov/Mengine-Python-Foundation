@@ -6,15 +6,19 @@ class SystemAutoLanguage(System):
     def __init__(self):
         super(SystemAutoLanguage, self).__init__()
         self.disabled = False
-        if Mengine.hasOption("locale") is True:
-            self.disabled = True
 
     def _onSave(self):
         save = {"disabled": self.disabled}
         return save
 
     def _onLoad(self, save):
-        if Mengine.hasOption("locale") is False:
+        if Mengine.hasOption("locale") is True:
+            self.disabled = True
+            return
+
+        if Mengine.hasCurrentAccountSetting("AutoLanguageDisable"):
+            self.disabled = Mengine.getCurrentAccountSettingBool("AutoLanguageDisable")
+        else:
             self.disabled = save.get("disabled", False)
 
     def _onRun(self):
@@ -28,6 +32,9 @@ class SystemAutoLanguage(System):
 
     def disable(self):
         self.disabled = True
+        if Mengine.hasCurrentAccountSetting("AutoLanguageDisable"):
+            Mengine.changeCurrentAccountSetting("AutoLanguageDisable", u'True')
+            Mengine.saveAccounts()
 
     @staticmethod
     def getFullDeviceLang():
