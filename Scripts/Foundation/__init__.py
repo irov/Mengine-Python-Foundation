@@ -742,6 +742,10 @@ def onInitialize():
         , "onProductsUpdateDone"
         , "onDelayPurchased"
         , "onReleasePurchased"
+
+        , "onAppRated"
+        , "onGetRemoteConfig"
+
     ]
 
     Notificator.addIdentities(notifiers)
