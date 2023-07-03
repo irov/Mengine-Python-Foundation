@@ -28,6 +28,12 @@ class SystemAutoLanguage(System):
     def _cbSelectAccount(self, account_id):
         if self.disabled is False:
             self.setGameLangAsDevice()
+
+        elif Mengine.hasCurrentAccountSetting("SelectedLanguage"):
+            locale = str(Mengine.getCurrentAccountSetting("SelectedLanguage"))
+            if locale != "":
+                self._setLocale(locale)
+
         return True
 
     def disable(self):
@@ -51,7 +57,9 @@ class SystemAutoLanguage(System):
 
     def setGameLangAsDevice(self):
         locale = self.getDeviceLangCode()
+        self._setLocale(locale)
 
+    def _setLocale(self, locale):
         if Mengine.getLocale() == locale:
             # already set to this locale
             return
