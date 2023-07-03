@@ -1,11 +1,12 @@
 from Foundation.System import System
 
+
 class SystemAutoLanguage(System):
 
     def __init__(self):
         super(SystemAutoLanguage, self).__init__()
         self.disabled = False
-        if _DEVELOPMENT is True and Mengine.hasOption("locale"):
+        if Mengine.hasOption("locale") is True:
             self.disabled = True
 
     def _onSave(self):
