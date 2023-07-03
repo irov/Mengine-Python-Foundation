@@ -29,7 +29,7 @@ class SystemAutoLanguage(System):
         if self.disabled is False:
             self.setGameLangAsDevice()
 
-        elif Mengine.hasCurrentAccountSetting("SelectedLanguage"):
+        elif Mengine.hasOption("locale") is False and Mengine.hasCurrentAccountSetting("SelectedLanguage"):
             locale = str(Mengine.getCurrentAccountSetting("SelectedLanguage"))
             if locale != "":
                 self._setLocale(locale)
