@@ -5,15 +5,17 @@ class SystemAutoLanguage(System):
 
     def __init__(self):
         super(SystemAutoLanguage, self).__init__()
+        self._has_locale_option = Mengine.hasOption("locale") is True
         self.disabled = False
+        if self._has_locale_option is True:
+            self.disabled = True
 
     def _onSave(self):
         save = {"disabled": self.disabled}
         return save
 
     def _onLoad(self, save):
-        if Mengine.hasOption("locale") is True:
-            self.disabled = True
+        if self._has_locale_option is True:
             return
 
         if Mengine.hasCurrentAccountSetting("AutoLanguageDisable"):
@@ -29,7 +31,7 @@ class SystemAutoLanguage(System):
         if self.disabled is False:
             self.setGameLangAsDevice()
 
-        elif Mengine.hasOption("locale") is False and Mengine.hasCurrentAccountSetting("SelectedLanguage"):
+        elif self._has_locale_option is False and Mengine.hasCurrentAccountSetting("SelectedLanguage"):
             locale = str(Mengine.getCurrentAccountSetting("SelectedLanguage"))
             if locale != "":
                 self._setLocale(locale)
