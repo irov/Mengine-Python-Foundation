@@ -157,21 +157,7 @@ def onAccountFinalize():
     Notification.notify(Notificator.onAccountFinalize)
 
 def onFinalize():
-    param = Mengine.getGameParamUnicode("SurveyUrl")
-    SurveyLink = Mengine.getGameParamBool("SurveyLink", False)
-
-    def isSurvey():
-        """ copy from Foundation.Utils (cause crash if we import this method) """
-        if Mengine.getGameParamUnicode("BuildModeCheckVersion") == u"2.0":
-            return Mengine.getGameParamUnicode("BuildMode") == u"Survey"
-        else:
-            return Mengine.getGameParamBool("Survey", False)
-
-    if SurveyLink is True and isSurvey() is True:
-        Mengine.openUrlInDefaultBrowser(param)
-
     Notification.notify(Notificator.onFinalize)
-
     Bootstrapper.shutdown()
 
 def onDestroy():
