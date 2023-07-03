@@ -14,7 +14,8 @@ class SystemAutoLanguage(System):
         return save
 
     def _onLoad(self, save):
-        self.disabled = save.get("disabled", False)
+        if Mengine.hasOption("locale") is False:
+            self.disabled = save.get("disabled", False)
 
     def _onRun(self):
         self.addObserver(Notificator.onSelectAccount, self._cbSelectAccount)
