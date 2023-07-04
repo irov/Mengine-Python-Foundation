@@ -48,9 +48,18 @@ class MonetizationManager(Manager, CurrencyManager):
             self.id_descr = MonetizationManager.getRecordValue(record, "DescrTextID", default=self.DEFAULT_TEXT_ID)
             self.id_new_price = MonetizationManager.getRecordValue(record, "NewPriceTextID", default=self.DEFAULT_TEXT_ID)
             self.id_old_price = MonetizationManager.getRecordValue(record, "OldPriceTextID", default=self.DEFAULT_TEXT_ID)
-            self.use_reward_plate = MonetizationManager.getRecordValue(record, "UseRewardPlate", cast=bool, default=False)
+            self.id_discount = MonetizationManager.getRecordValue(record, "DiscountTextID", default=self.DEFAULT_TEXT_ID)
             self.id_reward_gold = MonetizationManager.getRecordValue(record, "RewardGoldTextID", default=self.DEFAULT_TEXT_ID)
             self.id_reward_energy = MonetizationManager.getRecordValue(record, "RewardEnergyTextID", default=self.DEFAULT_TEXT_ID)
+            self.background_movie_name = MonetizationManager.getRecordValue(record, "BackgroundMovieName")
+            if MonetizationManager.getRecordValue(record, "UseRewardPlate", cast=bool, default=False) is True:
+                self.reward_prototype_name = "Movie2_Rewards"
+                if _DEVELOPMENT is True:
+                    Trace.msg_err("DEPRECATED warning: SpecialPromoParam {!r} - param 'UseRewardPlate' is deprecated, "
+                                  "use 'BackgroundPrototypeName' with name {!r} (was default) or empty to disable"
+                                  .format(self.id, self.reward_prototype_name))
+            else:
+                self.reward_prototype_name = MonetizationManager.getRecordValue(record, "RewardsPrototypeName")
 
         @property
         def price(self):
