@@ -56,7 +56,7 @@ class MonetizationManager(Manager, CurrencyManager):
                 self.reward_prototype_name = "Movie2_Rewards"
                 if _DEVELOPMENT is True:
                     Trace.msg_err("DEPRECATED warning: SpecialPromoParam {!r} - param 'UseRewardPlate' is deprecated, "
-                                  "use 'BackgroundPrototypeName' with name {!r} (was default) or empty to disable"
+                                  "use 'RewardsPrototypeName' with name {!r} (was default) or empty to disable"
                                   .format(self.id, self.reward_prototype_name))
             else:
                 self.reward_prototype_name = MonetizationManager.getRecordValue(record, "RewardsPrototypeName")
