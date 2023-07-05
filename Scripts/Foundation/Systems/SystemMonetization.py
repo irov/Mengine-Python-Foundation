@@ -523,15 +523,13 @@ class SystemMonetization(System):
 
     @staticmethod
     def getComponent(name):
-        if SystemMonetization.hasComponent(name):
+        if SystemMonetization.hasComponent(name) is False:
             return None
         return SystemMonetization.components[name]
 
     @staticmethod
     def hasComponent(name):
-        if name not in SystemMonetization.components:
-            return False
-        return True
+        return name in SystemMonetization.components
 
     @staticmethod
     def isProductPurchased(prod_id):
