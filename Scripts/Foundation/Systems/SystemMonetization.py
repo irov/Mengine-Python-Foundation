@@ -807,7 +807,11 @@ class SystemMonetization(System):
         # saves all data from storage
         self.saveData()
 
-        return {}
+        save = {
+            "components": self.saveComponents()
+        }
+
+        return save
 
     def _onLoad(self, save):
         if SystemMonetization.__isActive() is False:
@@ -815,8 +819,24 @@ class SystemMonetization(System):
 
         # load saves from account params
         self.loadData()
+        self.loadComponents(save.get("components", {}))
 
         return
+
+    def saveComponents(self):
+        save_data = {}
+        for name, component in self.components.items():
+            save = component.save()
+            save_data[name] = save
+        return save_data
+
+    def loadComponents(self, save_data):
+        for name, save in save_data.items():
+            component = self.components.get(name)
+            if component is None:
+                Trace.log("System", 0, "Not found component {!r} for load save".format(name))
+                continue
+            component.load(save)
 
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 
