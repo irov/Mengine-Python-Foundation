@@ -35,6 +35,7 @@ class MonetizationManager(Manager, CurrencyManager):
 
     class SpecialPromoParam(__Param):
         DEFAULT_TEXT_ID = "ID_EMPTY_TEXT"
+        ACTIONS = ["purchase", "advert"]
 
         def __init__(self, record):
             self.id = MonetizationManager.getRecordValue(record, "ProductID", cast=str)
@@ -61,6 +62,8 @@ class MonetizationManager(Manager, CurrencyManager):
             else:
                 self.reward_prototype_name = MonetizationManager.getRecordValue(record, "RewardsPrototypeName")
             self.purchase_prototype_name = MonetizationManager.getRecordValue(record, "PurchasePrototypeName")
+            self.purchase_action = MonetizationManager.getRecordValue(record, "PurchaseClickAction",
+                                                                      default=self.ACTIONS[0], whitelist=self.ACTIONS)
 
         @property
         def price(self):
@@ -156,12 +159,19 @@ class MonetizationManager(Manager, CurrencyManager):
         return dict_out
 
     @staticmethod
-    def getRecordValue(record, key, cast=None, default=None):
+    def getRecordValue(record, key, cast=None, default=None, whitelist=None, blacklist=None):
         """ :default: default value if given value is 'default'"""
         value = Manager.getRecordValue(record, key, cast=cast, default=default)
 
         if value == "default":
             value = default
+
+        if whitelist is not None:
+            if value not in whitelist:
+                Trace.log("Manager", 0, "FAIL {!r} value {!r} not in whitelist ({})".format(key, value, whitelist))
+        elif blacklist is not None:
+            if value in blacklist:
+                Trace.log("Manager", 0, "FAIL {!r} value {!r} in blacklist ({})".format(key, value, blacklist))
 
         return value
 
