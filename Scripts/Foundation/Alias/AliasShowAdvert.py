@@ -1,6 +1,7 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.Task.TaskAlias import TaskAlias
 
+
 class AliasShowAdvert(TaskAlias):
     in_processing = False
 
@@ -22,7 +23,8 @@ class AliasShowAdvert(TaskAlias):
         self._ad_displayed = bool(state)
 
     def _displayRespondError(self, msg):
-        Trace.msg_err("AliasShowAdvert [{}] display [{}] respond failed: {}".format(self.AdType, AdvertisementProvider.getName(), msg))
+        Trace.msg_err("AliasShowAdvert [{}:{}] display [{}] respond failed: {}".format(
+            self.AdType, self.AdUnitName, AdvertisementProvider.getName(), msg))
         self._ad_display_failed = True
 
     def _showAd(self):
@@ -71,7 +73,9 @@ class AliasShowAdvert(TaskAlias):
             source.addDummy()
             return
 
-        Trace.msg("AliasShowAdvert [{}] display [{}]".format(self.AdType, AdvertisementProvider.getName()))
+        if _DEVELOPMENT is True:
+            Trace.msg("AliasShowAdvert [{}:{}] display [{}]".format(
+                self.AdType, self.AdUnitName, AdvertisementProvider.getName()))
 
         source.addFunction(self.setInProcessing, True)
 
