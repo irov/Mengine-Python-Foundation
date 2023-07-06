@@ -13,6 +13,8 @@ from Notification import Notification
 
 _Log = SimpleLogger("SystemMonetization", option="monetization")
 
+ALIAS_GLOBAL_ADVERT_COUNTER = "$AliasGlobalAdvertCounter"
+
 
 class SystemMonetization(System):
     storage = {}
@@ -450,6 +452,8 @@ class SystemMonetization(System):
             return  # reset `todayViewedAds` only if it's another day
         SystemMonetization.storage["todayViewedAds"].setValue(0)
         SystemMonetization.saveData("todayViewedAds")
+
+        SystemMonetization._updateAdvertCounterText()
         Notification.notify(Notificator.onAvailableAdsNew)
 
     @staticmethod
@@ -465,6 +469,18 @@ class SystemMonetization(System):
         today_viewed_ads = SystemMonetization.getStorageValue("todayViewedAds")
         ads_per_day = MonetizationManager.getGeneralSetting("AdsPerDay")
         return today_viewed_ads >= ads_per_day
+
+    @staticmethod
+    def _initAdvertCounterText():
+        text_id = MonetizationManager.getGeneralSetting("AdvertGlobalTextId", "ID_GLOBAL_ADVERT_COUNTER")
+        Mengine.setTextAlias("", ALIAS_GLOBAL_ADVERT_COUNTER, text_id)
+        Mengine.setTextAliasArguments("", ALIAS_GLOBAL_ADVERT_COUNTER, 0, 0)
+
+    @staticmethod
+    def _updateAdvertCounterText():
+        viewed_ads = int(SystemMonetization.getStorageValue("todayViewedAds"))
+        max_ads = MonetizationManager.getGeneralSetting("AdsPerDay")
+        Mengine.setTextAliasArguments("", ALIAS_GLOBAL_ADVERT_COUNTER, viewed_ads, max_ads)
 
     # callbacks
 
@@ -490,6 +506,7 @@ class SystemMonetization(System):
                 SystemMonetization.storage["todayViewedAds"].setValue(1)
 
         SystemMonetization.saveData("todayViewedAds", "lastViewedAdDate", "gold")
+        SystemMonetization._updateAdvertCounterText()
 
         if SystemMonetization.isAdsEnded() is True:
             Notification.notify(Notificator.onAvailableAdsEnded)
@@ -588,6 +605,7 @@ class SystemMonetization(System):
     def _onSelectAccount(self, account_id):
         self._saveSessionPurchases()
 
+        self._initAdvertCounterText()
         self.updateAvailableAds()
         return False
 
