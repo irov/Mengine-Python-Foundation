@@ -60,6 +60,7 @@ class MonetizationManager(Manager, CurrencyManager):
                                   .format(self.id, self.reward_prototype_name))
             else:
                 self.reward_prototype_name = MonetizationManager.getRecordValue(record, "RewardsPrototypeName")
+            self.purchase_prototype_name = MonetizationManager.getRecordValue(record, "PurchasePrototypeName")
 
         @property
         def price(self):
