@@ -93,17 +93,28 @@ class DummyAdvertisement(object):
 
     @staticmethod
     def setProvider():
-        methods = dict()
+        def _ShowRewardedAdvert(AdUnitName=None, **_):
+            DummyAdvertisement.showAdvert("Rewarded", AdUnitName)
+        def _CanOfferRewardedAdvert(AdUnitName=None, **_):
+            DummyAdvertisement.canOfferAdvert("Rewarded", AdUnitName)
+        def _IsRewardedAdvertAvailable(AdUnitName=None, **_):
+            DummyAdvertisement.isAdvertAvailable("Rewarded", AdUnitName)
+        def _ShowInterstitialAdvert(AdUnitName=None, **_):
+            DummyAdvertisement.showAdvert("Interstitial", AdUnitName)
+        def _CanOfferInterstitialAdvert(AdUnitName=None, **_):
+            DummyAdvertisement.canOfferAdvert("Interstitial", AdUnitName)
+        def _IsInterstitialAdvertAvailable(AdUnitName=None, **_):
+            DummyAdvertisement.isAdvertAvailable("Interstitial", AdUnitName)
 
-        for AdType in ["Interstitial", "Rewarded"]:
-            ad_type_methods = {
-                "Show{}Advert".format(AdType):
-                    lambda AdUnitName=None, **__: DummyAdvertisement.showAdvert(AdType, AdUnitName),
-                "CanOffer{}Advert".format(AdType):
-                    lambda AdUnitName=None, **__: DummyAdvertisement.canOfferAdvert(AdType, AdUnitName),
-                "Is{}AdvertAvailable".format(AdType):
-                    lambda AdUnitName=None, **__: DummyAdvertisement.isAdvertAvailable(AdType, AdUnitName),
-            }
-            methods.update(ad_type_methods)
+        methods = dict(
+            # rewarded:
+            ShowRewardedAdvert=_ShowRewardedAdvert,
+            CanOfferRewardedAdvert=_CanOfferRewardedAdvert,
+            IsRewardedAdvertAvailable=_IsRewardedAdvertAvailable,
+            # interstitial:
+            ShowInterstitialAdvert=_ShowInterstitialAdvert,
+            CanOfferInterstitialAdvert=_CanOfferInterstitialAdvert,
+            IsInterstitialAdvertAvailable=_IsInterstitialAdvertAvailable,
+        )
 
         AdvertisementProvider.setProvider("Dummy", methods)
