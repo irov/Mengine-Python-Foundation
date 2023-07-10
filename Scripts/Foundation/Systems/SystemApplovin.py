@@ -83,12 +83,12 @@ class SystemApplovin(System):
 
         def show(self):
             if self.__checkInit() is False:
-                self.cbDisplayFailed()
+                self.cbDisplayFailed(self.ad_unit_id)
                 return False
 
             _Log("[{}] show advertisement...".format(self.name))
             if Mengine.androidBooleanMethod(PLUGIN_NAME, self.s_androidmethods["show"], self.ad_unit_id) is False:
-                self.cbDisplayFailed()
+                self.cbDisplayFailed(self.ad_unit_id)
             return True
 
         # utils
