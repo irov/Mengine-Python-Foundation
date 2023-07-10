@@ -259,7 +259,13 @@ class SystemAnalytics(System):
 
     def addDefaultAnalytics(self):
         """ create default analytics and run them """
-        pass
+        self.addSpecificAnalytic("screen_view", "scene_open", Notificator.onSceneActivate,
+                                 params_method=lambda name: {"screen_type": "MengineScene", "screen_name": name})
+
+        self._addDefaultAnalytics()
+
+    def _addDefaultAnalytics(self):
+        return
 
     @staticmethod
     def addRelatedAnalytics(this_event_key, related_event_key, Filter=None, Params=None):
