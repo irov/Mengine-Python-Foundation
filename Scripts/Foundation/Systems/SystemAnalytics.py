@@ -1,7 +1,7 @@
 from Foundation.System import System
 from Notification import Notification
 
-ANALYTIC_PREFIX_NAME = "mengine_"
+ANALYTIC_PREFIX_NAME = "mng_"
 
 
 class SystemAnalytics(System):
@@ -156,6 +156,15 @@ class SystemAnalytics(System):
             SystemAnalytics._sendDebugLog(self.key, {})
             Mengine.analyticsTutorialComplete()
 
+    class ScreenViewAnalytic(AnalyticUnit):
+        def send(self, params):
+            screen_type = params["screen_type"]   # str
+            screen_name = params["screen_name"]   # str
+            _params = {"screen_type": screen_type, "screen_name": screen_name}
+
+            SystemAnalytics._sendDebugLog(self.key, _params)
+            Mengine.analyticsScreenView(screen_type, screen_name)
+
     def _onInitialize(self):
         self.addDefaultAnalytics()
 
@@ -220,6 +229,7 @@ class SystemAnalytics(System):
             "select_item": SystemAnalytics.SelectItemAnalytic,
             "tutorial_begin": SystemAnalytics.TutorialBeginAnalytic,
             "tutorial_complete": SystemAnalytics.TutorialCompleteAnalytic,
+            "screen_view": SystemAnalytics.ScreenViewAnalytic,
         }
 
         if event_type not in specific_analytics:
