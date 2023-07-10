@@ -23,6 +23,11 @@ def msg_err(text, *args):
             print(text, args, ex)
 
 
+def msg_dev(text, *args):
+    if _DEVELOPMENT is True:
+        msg(text, *args)
+
+
 def log(type, level, text, *args):
     if TraceManager.existIn(type) is False:
         print("trace log no type %s" % (type))
