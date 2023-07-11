@@ -311,7 +311,7 @@ class SystemApplovin(System):
             Trace.log("System", 0, "Advert {!r} not found for canOfferAdvert in {}".format(
                 ad_unit_name, advert_dict.keys()))
             return False
-        return advert.can_offer()
+        return advert.canOffer()
 
     def isAdvertAvailable(self, ad_unit_name, advert_dict):
         advert = advert_dict.get(ad_unit_name)
@@ -319,7 +319,7 @@ class SystemApplovin(System):
             Trace.log("System", 0, "Advert {!r} not found for isAdvertAvailable in {}".format(
                 ad_unit_name, advert_dict.keys()))
             return False
-        return advert.is_available()
+        return advert.isAvailable()
 
     # debug
 
