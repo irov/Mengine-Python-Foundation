@@ -661,7 +661,7 @@ class SystemMonetization(System):
                                     lambda prod_id, *_: prod_id != advert_prod_id, _cbSentRewardParams)
         SystemAnalytics.addAnalytic("got_ad_reward", Notificator.onGameStoreSentRewards,
                                     lambda prod_id, *_: prod_id == advert_prod_id,
-                                    lambda prod_id, rewards: rewards)
+                                    lambda prod_id, rewards: rewards.copy())
         SystemAnalytics.addAnalytic("not_enough_gold", Notificator.onGameStoreNotEnoughGold, None,
                                     lambda value, descr: {"not_enough_value": value, "description": descr})
         SystemAnalytics.addAnalytic("rewarded_ads_reached_limit", Notificator.onAvailableAdsEnded, None,
