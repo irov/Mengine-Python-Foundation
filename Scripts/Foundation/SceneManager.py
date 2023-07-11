@@ -627,9 +627,10 @@ class SceneManager(object):
             Group = GroupManager.getGroup(groupName)
             if isinstance(GroupManager.getGroup(groupName), GroupManager.EmptyGroup):
                 continue
-            Mengine.cacheResources(Group.name)
 
-            cache_groups_resource.append(Group)
+            resources = Mengine.cacheResources(Group.name)
+
+            cache_groups_resource.append(resources)
             pass
 
         return cache_groups_resource
@@ -730,8 +731,8 @@ class SceneManager(object):
             Trace.msg("<SceneManager> change scene to '%s'" % sceneName)
 
         if Mengine.createCurrentScene("Main", sceneName, immediately, True, SceneManager._onChangeScene, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb) is False:
-            for Group in cache_resources_groups:
-                Mengine.uncacheResources(Group.name)
+            for resources in cache_resources_groups:
+                Mengine.uncacheResources(resources)
                 pass
 
             for Group in cache_active_groups:
@@ -743,8 +744,8 @@ class SceneManager(object):
     @staticmethod
     def _onChangeScene(scene, isActive, isError, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb):
         if isError is True:
-            for Group in cache_resources_groups:
-                Mengine.uncacheResources(Group.name)
+            for resources in cache_resources_groups:
+                Mengine.uncacheResources(resources)
                 pass
 
             for Group in cache_active_groups:
@@ -781,8 +782,8 @@ class SceneManager(object):
             return
             pass
 
-        for Group in cache_resources_groups:
-            Mengine.uncacheResources(Group.name)
+        for resources in cache_resources_groups:
+            Mengine.uncacheResources(resources)
             pass
 
         for Group in cache_active_groups:

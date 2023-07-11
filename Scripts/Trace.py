@@ -4,6 +4,8 @@ from TraceManager import TraceManager
 
 
 def msg(text, *args):
+    assert type(text) == str
+
     try:
         print(text % args)
     except Exception as ex:
@@ -11,6 +13,8 @@ def msg(text, *args):
 
 
 def msg_err(text, *args):
+    assert type(text) == str
+
     if _PYTHON_VERSION < 300:
         try:
             print >> sys.stderr, text % args
@@ -24,16 +28,20 @@ def msg_err(text, *args):
 
 
 def msg_dev(text, *args):
+    assert type(text) == str
+
     if _DEVELOPMENT is True:
         msg(text, *args)
 
 
-def log(type, level, text, *args):
-    if TraceManager.existIn(type) is False:
-        print("trace log no type %s" % (type))
+def log(category, level, text, *args):
+    assert type(text) == str
+
+    if TraceManager.existIn(category) is False:
+        print("trace log no category %s" % (category))
         return
 
-    if level <= TraceManager.getLevel(type):
+    if level <= TraceManager.getLevel(category):
         if _PYTHON_VERSION < 300:
             print >> sys.stderr, "-----------------------------------------------"
             print >> sys.stderr, "Error:"
