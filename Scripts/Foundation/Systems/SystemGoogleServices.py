@@ -29,7 +29,8 @@ class SystemGoogleServices(System):
     b_plugins = {
         "GoogleGameSocial": _PLUGINS.get("GoogleGameSocial", False),
         "GooglePlayBilling": _PLUGINS.get("GooglePlayBilling", False),
-        "GoogleInAppReviews": _PLUGINS.get("GoogleInAppReviews", False)
+        "GoogleInAppReviews": _PLUGINS.get("GoogleInAppReviews", False),
+        "FirebaseCrashlytics": _PLUGINS.get("FirebaseCrashlytics", False)
     }
 
     login_event = Event("GoogleGameSocialLoginEvent")
@@ -602,6 +603,16 @@ class SystemGoogleServices(System):
         Notification.notify(Notificator.onAppRated)
         _Log("[Reviews cb] LaunchingComplete", force=True)
 
+    # --- FirebaseCrashlytics ------------------------------------------------------------------------------------------
+
+    @staticmethod
+    def testCrash():
+        if SystemGoogleServices.b_plugins["FirebaseCrashlytics"] is False:
+            Trace.log("System", 0, "try to testCrash, but plugin 'FirebaseCrashlytics' is not active")
+            return
+        _Log("[FirebaseCrashlytics] testCrash...")
+        Mengine.androidMethod("FirebaseCrashlytics", "testCrash")
+
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 
     def __addDevToDebug(self):
@@ -690,6 +701,13 @@ class SystemGoogleServices(System):
             w_rate.setTitle("Show Rate App window")
             w_rate.setClickEvent(self.rateApp)
             widgets.append(w_rate)
+
+        # Firebase Crashlytics
+        if self.b_plugins["FirebaseCrashlytics"] is True:
+            w_test_crash = Mengine.createDevToDebugWidgetButton("test_crash")
+            w_test_crash.setTitle("FirebaseCrashlytics - Test Crash")
+            w_test_crash.setClickEvent(self.testCrash)
+            widgets.append(w_test_crash)
 
         for widget in widgets:
             tab.addWidget(widget)
