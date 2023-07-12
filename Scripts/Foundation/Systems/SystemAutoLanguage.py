@@ -5,6 +5,7 @@ class SystemAutoLanguage(System):
 
     def __init__(self):
         super(SystemAutoLanguage, self).__init__()
+        self._is_enabled = Mengine.getGameParamBool("AutoLanguage", True) is True
         self._has_locale_option = Mengine.hasOption("locale") is True
         self.disabled = False
         if self._has_locale_option is True:
@@ -15,7 +16,7 @@ class SystemAutoLanguage(System):
         return save
 
     def _onLoad(self, save):
-        if self._has_locale_option is True:
+        if self._has_locale_option is True or self._is_enabled is False:
             return
 
         if Mengine.hasCurrentAccountSetting("AutoLanguageDisable"):
@@ -24,7 +25,8 @@ class SystemAutoLanguage(System):
             self.disabled = save.get("disabled", False)
 
     def _onRun(self):
-        self.addObserver(Notificator.onSelectAccount, self._cbSelectAccount)
+        if self._is_enabled is True:
+            self.addObserver(Notificator.onSelectAccount, self._cbSelectAccount)
         return True
 
     def _cbSelectAccount(self, account_id):
