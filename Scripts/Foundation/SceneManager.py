@@ -727,9 +727,6 @@ class SceneManager(object):
         SceneManager.s_changeScene = True
         SceneManager.s_changeSceneName = sceneName
 
-        if _DEVELOPMENT is True:
-            Trace.msg("<SceneManager> change scene to '%s'" % sceneName)
-
         if Mengine.createCurrentScene("Main", sceneName, immediately, True, SceneManager._onChangeScene, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb) is False:
             for resources in cache_resources_groups:
                 Mengine.uncacheResources(resources)
