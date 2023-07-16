@@ -28,8 +28,6 @@ def msg_err(text, *args):
 
 
 def msg_dev(text, *args):
-    assert type(text) == str
-
     if _DEVELOPMENT is True:
         msg(text, *args)
 
