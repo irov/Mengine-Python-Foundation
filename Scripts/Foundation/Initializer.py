@@ -56,8 +56,10 @@ class Initializer(object):
         Trace.log("Object", 0, "Initialize._onInitializeFailed %s" % (msg))
         pass
 
-    def initializeFailed(self, value, *args):
-        raise Exception(value % args)
+    def initializeFailed(self, msg, *args):
+        assert type(msg) == str
+
+        raise Exception(msg % args)
         pass
 
     def onFinalize(self):

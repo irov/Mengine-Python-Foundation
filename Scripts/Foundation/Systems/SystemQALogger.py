@@ -104,6 +104,8 @@ class SystemQALogger(System):
         def Filter(*args):
             f_args = tuple(map(mapper, args))  # fix for unicode values
             if message is not None:
+                assert type(message) == str
+
                 f_message = str(f_args) + " | " + message
                 if message.count("%s") > 0:
                     f_message = message % f_args

@@ -4,6 +4,8 @@ from Foundation.TaskManager import TaskManager
 
 class TaskGeneratorException(Exception):
     def __init__(self, value, *args):
+        assert type(value) == str
+
         self.value = value % (args)
         pass
 
