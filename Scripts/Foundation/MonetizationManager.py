@@ -110,7 +110,13 @@ class MonetizationManager(Manager, CurrencyManager):
 
             # new version - dict (i.e. {'Gold': 50}) - use getProductReward
             self.reward = MonetizationManager._getRecordDict(record, "Reward", default={"Gold": 0})
-            self.only_one_purchase = MonetizationManager.getRecordValue(record, "OnePurchase", default=False, cast=bool)
+
+            if "OnePurchase" in record:
+                Trace.msg_dev("DEPRECATED warning: ProductInfoParam {!r} - param 'OnePurchase' is deprecated, "
+                              "use 'IsConsumable' with value True (was default) or False instead".format(self.id))
+                self.is_consumable = MonetizationManager.getRecordValue(record, "OnePurchase", default=False, cast=bool)
+            else:
+                self.is_consumable = MonetizationManager.getRecordValue(record, "IsConsumable", default=True, cast=bool)
 
             self.price = MonetizationManager.getRecordValue(record, "AbstractPrice", default=0)
             self.discount = MonetizationManager.getRecordValue(record, "Discount")
@@ -128,7 +134,7 @@ class MonetizationManager(Manager, CurrencyManager):
             return discount_price
 
         def isConsumable(self):
-            return self.only_one_purchase is False
+            return self.is_consumable is True
 
     @staticmethod
     def _getRecordDict(record, key, default=None, delimiter=", "):
