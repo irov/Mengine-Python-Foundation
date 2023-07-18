@@ -8,6 +8,9 @@ from Foundation.Utils import isCollectorEdition
 from Notification import Notification
 
 
+DEFAULT_GAME_CURRENCIES = ["Gold", "Energy", "Real", "Advert"]
+
+
 class MonetizationManager(Manager, CurrencyManager):
     __PARAMS_TABLE_NAMES = {
         "general": "MonetizationGeneral",
@@ -78,6 +81,7 @@ class MonetizationManager(Manager, CurrencyManager):
             return old_price
 
     class StoreImageParam(__Param):
+        """ Special util for GameStore item's image (icon) """
         def __init__(self, record):
             default_proto = MonetizationManager.s_params.get("DefaultStoreImageProto")  # "Movie2_StoreImage
             default_layer = MonetizationManager.s_params.get("DefaultStoreImageLayer")  # "coins3"
@@ -89,6 +93,7 @@ class MonetizationManager(Manager, CurrencyManager):
                 self.layer_name = None
 
     class StoreItemParam(__Param):
+        """ Special util for GameStore item """
         def __init__(self, record):
             default_descr = MonetizationManager.s_params.get("DefaultDescriptionTextID", "ID_EMPTY")
             default_proto = MonetizationManager.s_params.get("DefaultStoreCardProto")
@@ -118,8 +123,14 @@ class MonetizationManager(Manager, CurrencyManager):
             else:
                 self.is_consumable = MonetizationManager.getRecordValue(record, "IsConsumable", default=True, cast=bool)
 
-            self.price = MonetizationManager.getRecordValue(record, "AbstractPrice", default=0)
+            if "AbstractPrice" in record:
+                Trace.msg_dev("DEPRECATED warning: ProductInfoParam {!r} - param 'AbstractPrice' is deprecated, "
+                              "use 'Price' instead".format(self.id))
+                self.price = MonetizationManager.getRecordValue(record, "AbstractPrice", default=0)
+            else:
+                self.price = MonetizationManager.getRecordValue(record, "Price", default=0)
             self.discount = MonetizationManager.getRecordValue(record, "Discount")
+            self.currency = MonetizationManager.getRecordValue(record, "Currency", default="Real")
 
             self.group_id = MonetizationManager.getRecordValue(record, "GroupID")
             self.subgroup_id = MonetizationManager.getRecordValue(record, "SubGroupID")
@@ -135,6 +146,9 @@ class MonetizationManager(Manager, CurrencyManager):
 
         def isConsumable(self):
             return self.is_consumable is True
+
+        def getCurrency(self):
+            return self.currency
 
     @staticmethod
     def _getRecordDict(record, key, default=None, delimiter=", "):
@@ -182,7 +196,7 @@ class MonetizationManager(Manager, CurrencyManager):
         return value
 
     @staticmethod
-    def loadWithClassParams(records, _class, _dict_save, _alias_dict_save=None):
+    def _loadWithClassParams(records, _class, _dict_save, _alias_dict_save=None):
         for record in records:
             params = _class(record)
 
@@ -199,7 +213,7 @@ class MonetizationManager(Manager, CurrencyManager):
         # if _alias_dict_save: print "   > ", _alias_dict_save.keys()
 
     @staticmethod
-    def loadGeneralParams(records):
+    def _loadGeneralParams(records):
         business_model = getCurrentBusinessModel()
         for record in records:
             key = record.get("Key")
@@ -219,7 +233,7 @@ class MonetizationManager(Manager, CurrencyManager):
                                     " - should be one of these: {}".format(allowed_providers))
 
     @staticmethod
-    def loadRedirector(records):
+    def _loadRedirector(records):
         TYPES_BLACKLIST = ["redirect"]
         HUMAN_TABLE_NAMES = {
             value: key for key, value in MonetizationManager.__PARAMS_TABLE_NAMES.items()
@@ -258,7 +272,7 @@ class MonetizationManager(Manager, CurrencyManager):
                 MonetizationManager.__PARAMS_TABLE_NAMES[Type] = table_name
 
     @staticmethod
-    def reportStatus():
+    def _reportStatus():
         SIZE = 50
         HALF_SIZE = SIZE // 2
 
@@ -293,32 +307,32 @@ class MonetizationManager(Manager, CurrencyManager):
         store_provider = MonetizationManager.getGeneralSetting("GameStoreName", "GameStore")
 
         if name == MonetizationManager.__PARAMS_TABLE_NAMES["redirect"]:  # Always should be first !!!
-            MonetizationManager.loadRedirector(records)
+            MonetizationManager._loadRedirector(records)
 
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["general"]:
-            MonetizationManager.loadGeneralParams(records)
-            MonetizationManager.reportStatus()
+            MonetizationManager._loadGeneralParams(records)
+            MonetizationManager._reportStatus()
 
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["store_items"]:
             if store_provider == "Store":
                 return True  # this store use own manager for store_items (see StoreButtons)
-            MonetizationManager.loadWithClassParams(records, MonetizationManager.StoreItemParam,
-                                                    MonetizationManager.s_cards)
+            MonetizationManager._loadWithClassParams(records, MonetizationManager.StoreItemParam,
+                                                     MonetizationManager.s_cards)
 
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["store_images"]:
             if store_provider == "Store":
                 return True  # this store use own manager for manage icons (see StoreButtons)
-            MonetizationManager.loadWithClassParams(records, MonetizationManager.StoreImageParam,
-                                                    MonetizationManager.s_images)
+            MonetizationManager._loadWithClassParams(records, MonetizationManager.StoreImageParam,
+                                                     MonetizationManager.s_images)
 
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["products_info"]:
-            MonetizationManager.loadWithClassParams(records, MonetizationManager.ProductInfoParam,
-                                                    MonetizationManager.s_products,
-                                                    MonetizationManager.s_alias_products)
+            MonetizationManager._loadWithClassParams(records, MonetizationManager.ProductInfoParam,
+                                                     MonetizationManager.s_products,
+                                                     MonetizationManager.s_alias_products)
 
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["special_promotions"]:
-            MonetizationManager.loadWithClassParams(records, MonetizationManager.SpecialPromoParam,
-                                                    MonetizationManager.s_specials)
+            MonetizationManager._loadWithClassParams(records, MonetizationManager.SpecialPromoParam,
+                                                     MonetizationManager.s_specials)
 
         return True
 
@@ -353,6 +367,8 @@ class MonetizationManager(Manager, CurrencyManager):
         cls.s_specials = {}
         cls.s_products = {}
         cls.s_alias_products = {}
+
+    # observers
 
     @staticmethod
     def _cbProductsUpdate(upd_params_dict, currency=None):
@@ -426,6 +442,8 @@ class MonetizationManager(Manager, CurrencyManager):
 
         return False
 
+    # components
+
     @staticmethod
     def importComponents(module, names):
         from Foundation.Utils import importType
@@ -442,6 +460,8 @@ class MonetizationManager(Manager, CurrencyManager):
     def getComponentsType():
         return MonetizationManager.s_components
 
+    # params
+
     @staticmethod
     def isMonetizationEnable():
         if Mengine.getConfigBool("Monetization", "Enable", False) is False:
@@ -456,6 +476,8 @@ class MonetizationManager(Manager, CurrencyManager):
                 return False
 
         return True
+
+    # general
 
     @staticmethod
     def getGeneralSettings():
@@ -525,6 +547,7 @@ class MonetizationManager(Manager, CurrencyManager):
 
     @staticmethod
     def getCardProductInfo(card_id):
+        """ returns product info for given card """
         card = MonetizationManager.getCardParamsById(card_id)
         if card is None:
             Trace.log("Manager", 0, "MonetizationManager::getCardProductInfo - wrong card_id {}, possible: {}"
@@ -534,6 +557,7 @@ class MonetizationManager(Manager, CurrencyManager):
 
     @staticmethod
     def getProductPrice(prod_id):
+        """ returns price for given product """
         prod_params = MonetizationManager.getProductInfo(prod_id)
         if prod_params is None:
             Trace.msg_err("MonetizationManager doesn't found price for prod_id {}".format(prod_id))
@@ -562,5 +586,15 @@ class MonetizationManager(Manager, CurrencyManager):
 
     @staticmethod
     def getSpecialPromoById(prod_id, default=None):
+        """ returns special promo by given REAL prod_id (not alias) """
         params = MonetizationManager.s_specials.get(prod_id)
         return params or default
+
+    @staticmethod
+    def selectProductsByCurrency(currency):
+        """ returns list of all products with given currency (see DEFAULT_GAME_CURRENCIES) """
+        selected = []
+        for product in MonetizationManager.getProductsInfo().values():
+            if product.getCurrency() == currency:
+                selected.append(product)
+        return selected
