@@ -36,6 +36,7 @@ class SystemApplovin(System):
 
         def __init__(self, name):
             self.inited = False
+            self.display = False
             self.name = name
             self.ad_unit_id = Mengine.getConfigString(PLUGIN_NAME + "Plugin", "%sAdUnitId" % self.name, "")
 
@@ -115,6 +116,7 @@ class SystemApplovin(System):
 
         @ad_callback
         def cbDisplaySuccess(self):
+            self.display = True
             Notification.notify(Notificator.onAdvertDisplayed, self.ad_type, self.name)
             _Log("[{} cb] displayed".format(self.name))
 
@@ -125,6 +127,7 @@ class SystemApplovin(System):
 
         @ad_callback
         def cbHidden(self):
+            self.display = False
             Notification.notify(Notificator.onAdvertHidden, self.ad_type, self.name)
             _Log("[{} cb] hidden".format(self.name))
 
@@ -197,6 +200,10 @@ class SystemApplovin(System):
             "is_available": "canYouShowRewarded",
         }
 
+        def __init__(self, name):
+            super(self.__class__, self).__init__(name)
+            self.rewarded = False
+
         def setCallbacks(self):
             super(self.__class__, self).setCallbacks()
             if _ANDROID:
@@ -209,8 +216,21 @@ class SystemApplovin(System):
 
         @ad_callback
         def cbUserRewarded(self, label, reward):
+            self.rewarded = True
             Notification.notify(Notificator.onAdvertRewarded, self.name, label, reward)
-            _Log("[{} cb] user rewarded: label={!r}, amount={!r}".format(self.ad_type, label, reward))
+            _Log("[{} cb] user rewarded: label={!r}, amount={!r}".format(self.name, label, reward))
+
+        @ad_callback
+        def cbDisplaySuccess(self):
+            self.rewarded = False
+            super(self.__class__, self).cbDisplaySuccess(self.ad_unit_id)
+
+        @ad_callback
+        def cbHidden(self):
+            if self.rewarded is False:
+                Notification.notify(Notificator.onAdvertSkipped, self.ad_type, self.name)
+                _Log("[{} cb] advert {!r} was skipped".format(self.ad_type, self.name))
+            super(self.__class__, self).cbHidden(self.ad_unit_id)
 
     # ---
 

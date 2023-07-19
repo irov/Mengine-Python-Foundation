@@ -713,6 +713,7 @@ def onInitialize():
         , 'onAdvertDisplayFailed'
         , 'onAdvertClicked'
         , 'onAdvertRewarded'
+        , 'onAdvertSkipped'
         , 'onAdvertHidden'
 
         , "onAndroidActivityResumed"
