@@ -396,7 +396,7 @@ class SystemMonetization(System):
             if callable(fn):
                 fn(arg)
             else:
-                _Log("Not found reward function for type {!r} (prod_id={})".format(reward_type, prod_id), err=True)
+                _Log("Not found reward function for type {!r} (prod_id={!r})".format(reward_type, prod_id), err=True)
 
         Notification.notify(Notificator.onGameStoreSentRewards, prod_id, reward)
         return True
@@ -433,28 +433,37 @@ class SystemMonetization(System):
     # --- Advertisements -----------------------------------------------------------------------------------------------
 
     @classmethod
-    def showAd(cls, AdType="Rewarded"):
-        if AdType == "Rewarded" and cls.isAdsEnded() is True:
+    def showAd(cls, AdType="Rewarded", AdUnitName=None):
+        if AdUnitName is None:
+            AdUnitName = AdType
+
+        if AdType == "Rewarded" and cls.isAdsEnded(AdUnitName) is True:
             cls.updateAvailableAds()
 
-            if cls.isAdsEnded() is True:
+            if cls.isAdsEnded(AdUnitName) is True:
                 _Log("ad limit reached today", err=True)
-                Notification.notify(Notificator.onAvailableAdsEnded)
+                Notification.notify(Notificator.onAvailableAdsEnded, AdUnitName)
                 return
 
-        TaskManager.runAlias("AliasShowAdvert", None, AdType=AdType)
+        TaskManager.runAlias("AliasShowAdvert", None, AdType=AdType, AdUnitName=AdUnitName)
 
     @staticmethod
     def updateAvailableAds():
-        """ resets `todayViewedAds` if `lastViewedAdDate` is different from today date"""
+        """ resets `today_viewed_ads` if `last_viewed_date` is different from today date"""
         today_date = SystemMonetization.__getTodayDate()
-        if SystemMonetization.storage["lastViewedAdDate"].isEqual(today_date) is True:
-            return  # reset `todayViewedAds` only if it's another day
-        SystemMonetization.storage["todayViewedAds"].setValue(0)
-        SystemMonetization.saveData("todayViewedAds")
 
-        SystemMonetization._updateAdvertCounterText()
-        Notification.notify(Notificator.onAvailableAdsNew)
+        for ad_name in MonetizationManager.getAdvertNames("Rewarded"):
+            storage_keys = SystemMonetization.__getAdvertStorageKeys(ad_name)
+            last_viewed_date = storage_keys["last_viewed_date"]
+            today_viewed_ads = storage_keys["today_viewed_ads"]
+
+            if SystemMonetization.storage[last_viewed_date].isEqual(today_date) is True:
+                continue  # reset today viewed ads only if it's another day
+            SystemMonetization.storage[today_viewed_ads].setValue(0)
+            SystemMonetization.saveData(today_viewed_ads)
+
+            SystemMonetization._updateAdvertCounterText(ad_name)
+            Notification.notify(Notificator.onAvailableAdsNew, ad_name)
 
     @staticmethod
     def __getTodayDate():
@@ -464,53 +473,72 @@ class SystemMonetization(System):
         return today_date
 
     @staticmethod
-    def isAdsEnded():
+    def __getAdvertStorageKeys(ad_name="Rewarded"):
+        """ returns storage keys for adverts """
+        # deprecated keys: "lastViewedAdDate", "todayViewedAds"
+        return {
+            "last_viewed_date": "LastViewed{}AdDate".format(ad_name),
+            "today_viewed_ads": "TodayViewed{}Ads".format(ad_name),
+        }
+
+    @staticmethod
+    def isAdsEnded(AdUnitName="Rewarded"):
         """ :return: True if ads ended """
-        today_viewed_ads = SystemMonetization.getStorageValue("todayViewedAds")
-        ads_per_day = MonetizationManager.getGeneralSetting("AdsPerDay")
-        return today_viewed_ads >= ads_per_day
+        today_viewed_ads = SystemMonetization.getAdvertStorageKey(AdUnitName, "today_viewed_ads")
+
+        viewed_ads = SystemMonetization.getStorageValue(today_viewed_ads)
+        ads_per_day = MonetizationManager.getGeneralSetting("AdsPerDay")    # todo: make it unique for each ad unit
+        return viewed_ads >= ads_per_day
 
     @staticmethod
     def _initAdvertCounterText():
         text_id = MonetizationManager.getGeneralSetting("AdvertGlobalTextId", "ID_GLOBAL_ADVERT_COUNTER")
-        Mengine.setTextAlias("", ALIAS_GLOBAL_ADVERT_COUNTER, text_id)
-        Mengine.setTextAliasArguments("", ALIAS_GLOBAL_ADVERT_COUNTER, 0, 0)
+
+        for ad_name in MonetizationManager.getAdvertNames("Rewarded"):
+            Mengine.setTextAlias(ad_name, ALIAS_GLOBAL_ADVERT_COUNTER, text_id)
+            Mengine.setTextAliasArguments(ad_name, ALIAS_GLOBAL_ADVERT_COUNTER, 0, 0)
 
     @staticmethod
-    def _updateAdvertCounterText():
-        viewed_ads = int(SystemMonetization.getStorageValue("todayViewedAds"))
-        max_ads = MonetizationManager.getGeneralSetting("AdsPerDay")
-        Mengine.setTextAliasArguments("", ALIAS_GLOBAL_ADVERT_COUNTER, viewed_ads, max_ads)
+    def _updateAdvertCounterText(ad_name):
+        today_viewed_ads = SystemMonetization.getAdvertStorageKey(ad_name, "today_viewed_ads")
+
+        viewed_ads = int(SystemMonetization.getStorageValue(today_viewed_ads))
+        max_ads = MonetizationManager.getGeneralSetting("AdsPerDay")    # todo: make it unique for each ad unit
+        Mengine.setTextAliasArguments(ad_name, ALIAS_GLOBAL_ADVERT_COUNTER, viewed_ads, max_ads)
 
     # callbacks
 
     @staticmethod
     def _onAdvertisementResult(ad_name, label, result):  # react on showAd()
-        _Log("onAdvertisementReward - [{}] {}".format(label, result))
+        _Log("onAdvertisementReward {} - [{}] {}".format(ad_name, label, result))
 
-        # if we have advert product - reward will be gathered from product info,
-        # otherwise only gold from param GoldPerAd
-        advert_prod_id = MonetizationManager.getGeneralSetting("AdvertProductID")
-        reward = dict(Gold=MonetizationManager.getGeneralSetting("GoldPerAd"))
+        advert_product = MonetizationManager.findProduct(lambda pr: pr.currency == "Advert" and pr.name == ad_name)
+        if advert_product is None:
+            Trace.log("System", 0, "Not found advert product for ad {!r} (set product currency to 'Advert' and name to {!r})".format(ad_name, ad_name))
+            return False
 
-        last_date = SystemMonetization.getStorageValue("lastViewedAdDate")
+        storage_keys = SystemMonetization.__getAdvertStorageKeys(ad_name)
+        last_viewed_date = storage_keys["last_viewed_date"]
+        today_viewed_ads = storage_keys["today_viewed_ads"]
+
+        last_date = SystemMonetization.getStorageValue(last_viewed_date)
         today_date = SystemMonetization.__getTodayDate()
-        SystemMonetization.storage["lastViewedAdDate"].setValue(today_date)
+        SystemMonetization.storage[last_viewed_date].setValue(today_date)
 
-        if SystemMonetization.isAdsEnded() is False:
-            SystemMonetization.sendReward(rew_dict=reward, prod_id=advert_prod_id)
+        if SystemMonetization.isAdsEnded(ad_name) is False:
+            SystemMonetization.sendReward(prod_id=advert_product.id)
 
             if last_date == today_date:
-                SystemMonetization.storage["todayViewedAds"].additiveValue(1)
+                SystemMonetization.storage[today_viewed_ads].additiveValue(1)
             else:  # imagine if today was 0 viewed ads, and we increase it by 1
-                SystemMonetization.storage["todayViewedAds"].setValue(1)
+                SystemMonetization.storage[today_viewed_ads].setValue(1)
 
-        SystemMonetization.saveData("todayViewedAds", "lastViewedAdDate", "gold")
-        SystemMonetization._updateAdvertCounterText()
+        SystemMonetization.saveData(today_viewed_ads, last_viewed_date, "gold")
+        SystemMonetization._updateAdvertCounterText(ad_name)
 
-        if SystemMonetization.isAdsEnded() is True:
-            Notification.notify(Notificator.onAvailableAdsEnded)
-            _Log("onAvailableAdsEnded")
+        if SystemMonetization.isAdsEnded(ad_name) is True:
+            Notification.notify(Notificator.onAvailableAdsEnded, ad_name)
+            _Log("onAvailableAdsEnded {!r}".format(ad_name))
 
         return False
 
@@ -561,8 +589,8 @@ class SystemMonetization(System):
 
         is_purchased = str(prod_id) in items
 
-        # if _DEVELOPMENT is True:
-        #     _Log("-- isProductPurchased {} in {}: {}".format(prod_id, items, is_purchased))
+        if _DEVELOPMENT is True:
+            _Log("-- isProductPurchased {} in {}: {}".format(prod_id, items, is_purchased))
 
         return is_purchased
 
@@ -664,23 +692,33 @@ class SystemMonetization(System):
                                     lambda prod_id, rewards: rewards.copy())
         SystemAnalytics.addAnalytic("not_enough_gold", Notificator.onGameStoreNotEnoughGold, None,
                                     lambda value, descr: {"not_enough_value": value, "description": descr})
-        SystemAnalytics.addAnalytic("rewarded_ads_reached_limit", Notificator.onAvailableAdsEnded, None,
-                                    lambda: {
-                                        "today_viewed_ads": SystemMonetization.getStorageValue("todayViewedAds"),
-                                        "fingerprint": SystemMonetization.getStorageValue("lastViewedAdDate")
-                                    })
+
+        def _cbAdsEnded(ad_name):
+            storage_keys = SystemMonetization.__getAdvertStorageKeys(ad_name)
+            today_viewed_ads = storage_keys["today_viewed_ads"]
+            last_viewed_date = storage_keys["last_viewed_date"]
+            return {
+                "today_viewed_ads": SystemMonetization.getStorageValue(today_viewed_ads),
+                "fingerprint": SystemMonetization.getStorageValue(last_viewed_date)
+            }
+        SystemAnalytics.addAnalytic("rewarded_ads_reached_limit", Notificator.onAvailableAdsEnded, None, _cbAdsEnded)
 
     @staticmethod
     def __initStorage():
         storage = {
             "gold": SecureValue("gold", int(MonetizationManager.getGeneralSetting("StartBalance", 0))),
-            "todayViewedAds": SecureValue("todayViewedAds", 0),
-            "lastViewedAdDate": SecureStringValue("lastViewedAdDate", ""),
             "skippedMGs": SecureStringValue("skippedMGs", ""),
             "acceptPrice": SecureStringValue("acceptPrice", ""),
             "purchased": SecureStringValue("purchased", ""),  # "{}, "...
             "PurchasedProductGroups": SecureStringValue("PurchasedProductGroups", "")
         }
+        for ad_name in MonetizationManager.getAdvertNames("Rewarded"):
+            storage_keys = SystemMonetization.__getAdvertStorageKeys(ad_name)
+            today_viewed_ads = storage_keys["today_viewed_ads"]
+            last_viewed_date = storage_keys["last_viewed_date"]
+            storage[today_viewed_ads] = SecureValue(today_viewed_ads, 0)
+            storage[last_viewed_date] = SecureStringValue(last_viewed_date, "")
+
         SystemMonetization.storage = storage
 
     @staticmethod
@@ -755,6 +793,12 @@ class SystemMonetization(System):
 
         value = SystemMonetization.storage[key].getValue()
         return value
+
+    @staticmethod
+    def getAdvertStorageKey(ad_name, lookup_value):
+        storage_keys = SystemMonetization.__getAdvertStorageKeys(ad_name)
+        lookup_storage_key = storage_keys[lookup_value]
+        return lookup_storage_key
 
     # --- storage interaction
 
@@ -868,10 +912,11 @@ class SystemMonetization(System):
 
         # buttons
 
-        w_show_ad = Mengine.createDevToDebugWidgetButton("show_ad")
-        w_show_ad.setTitle("Show ad with current provider")
-        w_show_ad.setClickEvent(self.showAd)
-        tab.addWidget(w_show_ad)
+        for ad_name in MonetizationManager.getAdvertNames("Rewarded"):
+            w_show_ad = Mengine.createDevToDebugWidgetButton("show_ad_{}".format(ad_name))
+            w_show_ad.setTitle("Show {!r} ad with current provider".format(ad_name))
+            w_show_ad.setClickEvent(self.showAd, "Rewarded", ad_name)
+            tab.addWidget(w_show_ad)
 
         w_upd_ads = Mengine.createDevToDebugWidgetButton("update_ads")
         w_upd_ads.setTitle("Update available ads")
