@@ -9,6 +9,7 @@ from Notification import Notification
 
 
 DEFAULT_GAME_CURRENCIES = ["Gold", "Energy", "Real", "Advert"]
+ALLOWED_STORE_PROVIDERS = ["Store", "GameStore"]
 
 
 class MonetizationManager(Manager, CurrencyManager):
@@ -30,6 +31,11 @@ class MonetizationManager(Manager, CurrencyManager):
     s_components = {}
 
     s_alias_products = {}  # alias_prod_id
+
+    s_advert_names = {
+        "Rewarded": Mengine.getConfigStrings("Advertising", "RewardedUnitNames"),
+        "Interstitial": Mengine.getConfigStrings("Advertising", "InterstitialUnitNames"),
+    }
 
     class __Param(object):
         if _DEVELOPMENT is True:
@@ -117,15 +123,17 @@ class MonetizationManager(Manager, CurrencyManager):
             self.reward = MonetizationManager._getRecordDict(record, "Reward", default={"Gold": 0})
 
             if "OnePurchase" in record:
-                Trace.msg_dev("DEPRECATED warning: ProductInfoParam {!r} - param 'OnePurchase' is deprecated, "
-                              "use 'IsConsumable' with value True (was default) or False instead".format(self.id))
-                self.is_consumable = MonetizationManager.getRecordValue(record, "OnePurchase", default=False, cast=bool)
+                if _DEVELOPMENT is True:
+                    Trace.msg_err("DEPRECATED warning: ProductInfoParam {!r} - param 'OnePurchase' is deprecated, "
+                                  "use 'IsConsumable' with value True (was default) or False instead".format(self.id))
+                self.is_consumable = MonetizationManager.getRecordValue(record, "OnePurchase", default=False, cast=bool) is False
             else:
                 self.is_consumable = MonetizationManager.getRecordValue(record, "IsConsumable", default=True, cast=bool)
 
             if "AbstractPrice" in record:
-                Trace.msg_dev("DEPRECATED warning: ProductInfoParam {!r} - param 'AbstractPrice' is deprecated, "
-                              "use 'Price' instead".format(self.id))
+                if _DEVELOPMENT is True:
+                    Trace.msg_err("DEPRECATED warning: ProductInfoParam {!r} - param 'AbstractPrice' is deprecated, "
+                                  "use 'Price' instead".format(self.id))
                 self.price = MonetizationManager.getRecordValue(record, "AbstractPrice", default=0)
             else:
                 self.price = MonetizationManager.getRecordValue(record, "Price", default=0)
@@ -149,6 +157,26 @@ class MonetizationManager(Manager, CurrencyManager):
 
         def getCurrency(self):
             return self.currency
+
+    @staticmethod
+    def _validateProducts():
+        if _DEVELOPMENT is False:
+            return True
+
+        for product in MonetizationManager.s_products.values():
+            if product.getCurrency() == "Advert":
+                if " " in product.name:
+                    Trace.msg_err("Product {!r} has spaces in name!!!".format(product.id))
+                    return False
+                if product.name not in MonetizationManager.s_advert_names["Rewarded"]:
+                    Trace.msg_err("Product {!r} not registered in config (name {!r})".format(product.id, product.name))
+                    return False
+            if product.getCurrency() in ["Gold", "Energy"]:
+                if product.price < 0:
+                    Trace.msg_err("Product {!r} has negative price!!! ({})".format(product.id, product.price))
+                    return False
+
+        return True
 
     @staticmethod
     def _getRecordDict(record, key, default=None, delimiter=", "):
@@ -200,12 +228,21 @@ class MonetizationManager(Manager, CurrencyManager):
         for record in records:
             params = _class(record)
 
+            if _DEVELOPMENT is True:    # validation
+                if params.id is None:
+                    Trace.msg_err("Found {} item with None id: {}".format(_class.__name__, params))
+                if params.id in _dict_save:
+                    Trace.msg_err("Found {} duplicate id={!r}".format(_class.__name__, params.id))
+
             _dict_save[params.id] = params
 
-            if _alias_dict_save is not None and "alias_id" in params.__dict__:
-                alias_id = params.__dict__.get("alias_id")
+            if _alias_dict_save is not None and hasattr(params, "alias_id"):
+                alias_id = getattr(params, "alias_id")
                 if alias_id is None:
                     continue
+                if _DEVELOPMENT is True:    # validation
+                    if alias_id in _alias_dict_save:
+                        Trace.msg_err("Found {} alias duplicate id={!r}".format(_class.__name__, alias_id))
                 _alias_dict_save[alias_id] = params
 
         # print "LOADED {} records FOR {}:".format(len(_dict_save), _class.__name__)
@@ -226,11 +263,10 @@ class MonetizationManager(Manager, CurrencyManager):
             MonetizationManager.s_params[key] = value
 
         # check params
-        allowed_providers = ["Store", "GameStore"]
         store_provider = MonetizationManager.getGeneralSetting("GameStoreName", "GameStore")
-        if store_provider not in allowed_providers:
+        if store_provider not in ALLOWED_STORE_PROVIDERS:
             Trace.log("Manager", 0, "MonetizationGeneral (General) param 'GameStoreName'"
-                                    " - should be one of these: {}".format(allowed_providers))
+                                    " - should be one of these: {}".format(ALLOWED_STORE_PROVIDERS))
 
     @staticmethod
     def _loadRedirector(records):
@@ -329,6 +365,8 @@ class MonetizationManager(Manager, CurrencyManager):
             MonetizationManager._loadWithClassParams(records, MonetizationManager.ProductInfoParam,
                                                      MonetizationManager.s_products,
                                                      MonetizationManager.s_alias_products)
+            if MonetizationManager._validateProducts() is False:
+                raise ValueError("Monetization ProductInfo validation failed - check previous log")
 
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["special_promotions"]:
             MonetizationManager._loadWithClassParams(records, MonetizationManager.SpecialPromoParam,
@@ -356,6 +394,10 @@ class MonetizationManager(Manager, CurrencyManager):
         # Step 4: on done sends push on `onProductsUpdateDone`
 
         cls.addObserver(Notificator.onGetRemoteConfig, MonetizationManager._cbGetRemoteConfig)
+
+        for ad_type, ad_names in MonetizationManager.s_advert_names.items():
+            if len(ad_names) == 0:
+                MonetizationManager.s_advert_names[ad_type] = [ad_type]     # default name
 
     @classmethod
     def _onFinalize(cls):
@@ -499,6 +541,10 @@ class MonetizationManager(Manager, CurrencyManager):
     def getSpecialPromotionParams():
         return MonetizationManager.s_specials
 
+    @staticmethod
+    def getAdvertNames(ad_type):
+        return MonetizationManager.s_advert_names[ad_type]
+
     # specific
 
     @staticmethod
@@ -591,10 +637,18 @@ class MonetizationManager(Manager, CurrencyManager):
         return params or default
 
     @staticmethod
-    def selectProductsByCurrency(currency):
-        """ returns list of all products with given currency (see DEFAULT_GAME_CURRENCIES) """
+    def selectProducts(Filter):
+        """ returns list of all products if Filter(product) is True """
         selected = []
         for product in MonetizationManager.getProductsInfo().values():
-            if product.getCurrency() == currency:
+            if Filter(product) is True:
                 selected.append(product)
         return selected
+
+    @staticmethod
+    def findProduct(Filter):
+        """ returns first found product if Filter(product) is True or None"""
+        for product in MonetizationManager.getProductsInfo().values():
+            if Filter(product) is True:
+                return product
+        return None
