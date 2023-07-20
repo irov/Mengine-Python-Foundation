@@ -8,7 +8,7 @@ from Foundation.Utils import isCollectorEdition
 from Notification import Notification
 
 
-DEFAULT_GAME_CURRENCIES = ["Gold", "Energy", "Real", "Advert"]
+# DEFAULT_GAME_CURRENCIES = ["Gold", "Energy", "Real", "Advert", "Technical"]
 ALLOWED_STORE_PROVIDERS = ["Store", "GameStore"]
 
 
@@ -164,14 +164,15 @@ class MonetizationManager(Manager, CurrencyManager):
             return True
 
         for product in MonetizationManager.s_products.values():
-            if product.getCurrency() == "Advert":
+            currency = product.getCurrency()
+            if currency == "Advert":
                 if " " in product.name:
                     Trace.msg_err("Product {!r} has spaces in name!!!".format(product.id))
                     return False
                 if product.name not in MonetizationManager.s_advert_names["Rewarded"]:
                     Trace.msg_err("Product {!r} not registered in config (name {!r})".format(product.id, product.name))
                     return False
-            if product.getCurrency() in ["Gold", "Energy"]:
+            if currency in ["Gold", "Energy"]:
                 if product.price < 0:
                     Trace.msg_err("Product {!r} has negative price!!! ({})".format(product.id, product.price))
                     return False
