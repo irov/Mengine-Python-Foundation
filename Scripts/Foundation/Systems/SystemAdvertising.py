@@ -95,6 +95,9 @@ class SystemAdvertising(System):
         TaskManager.runAlias("AliasShowAdvert", _cb, AdType="Interstitial")
 
     def hasPermissionToViewAd(self, timestamp):
+        if AdvertisementProvider.canOfferAdvert("Interstitial") is False:
+            return False
+
         if self._start_delay_done is False:
             start_delay = self.getGeneralParam("delay_on_start")
             seconds_since_first_enter = timestamp - self._first_enter_timestamp
