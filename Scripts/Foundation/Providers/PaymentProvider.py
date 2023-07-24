@@ -76,6 +76,7 @@ class DummyPayment(object):
     @staticmethod
     def restorePurchases():
         Trace.msg("DUMMY restorePurchases - no actions")
+        Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod
     def queryProducts(product_ids):

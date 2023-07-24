@@ -244,6 +244,8 @@ class SystemAppleServices(System):
     def restorePurchases():
         """ returns list of purchased products via cb _cbPaymentRestored """
         Mengine.appleStoreInAppPurchaseRestoreCompletedTransactions()
+        Notification.notify(Notificator.onRestorePurchasesDone)
+        # TODO: it would be better to know when we complete all _cbPaymentRestored
 
     @staticmethod
     def pay(product_id):

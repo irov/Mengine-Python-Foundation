@@ -445,6 +445,7 @@ class SystemGoogleServices(System):
         for prod_id in products:
             Notification.notify(Notificator.onProductAlreadyOwned, prod_id)
             Notification.notify(Notificator.onPayComplete, prod_id)
+        Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod
     def __cbBillingPurchaseAcknowledgeSuccess(products):
