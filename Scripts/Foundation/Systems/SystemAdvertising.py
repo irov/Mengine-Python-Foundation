@@ -215,6 +215,7 @@ class SystemAdvertising(System):
 
         self._current_trigger_count += 1
         if self.__checkTriggerCounter() is False:
+            self.optionalNotifyNoPermission()
             return False
         self._current_trigger_count = 0
 
