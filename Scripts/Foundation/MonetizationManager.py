@@ -9,7 +9,7 @@ from Notification import Notification
 
 
 # DEFAULT_GAME_CURRENCIES = ["Gold", "Energy", "Real", "Advert", "Technical"]
-ALLOWED_STORE_PROVIDERS = ["Store", "GameStore"]
+ALLOWED_STORE_PROVIDERS = ["Store", "GameStore", None]
 
 
 class MonetizationManager(Manager, CurrencyManager):
@@ -351,14 +351,14 @@ class MonetizationManager(Manager, CurrencyManager):
             MonetizationManager._reportStatus()
 
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["store_items"]:
-            if store_provider == "Store":
-                return True  # this store use own manager for store_items (see StoreButtons)
+            if store_provider != "GameStore":
+                return True
             MonetizationManager._loadWithClassParams(records, MonetizationManager.StoreItemParam,
                                                      MonetizationManager.s_cards)
 
         elif name == MonetizationManager.__PARAMS_TABLE_NAMES["store_images"]:
-            if store_provider == "Store":
-                return True  # this store use own manager for manage icons (see StoreButtons)
+            if store_provider != "GameStore":
+                return True
             MonetizationManager._loadWithClassParams(records, MonetizationManager.StoreImageParam,
                                                      MonetizationManager.s_images)
 
