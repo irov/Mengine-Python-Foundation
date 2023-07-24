@@ -715,6 +715,7 @@ def onInitialize():
         , 'onAdvertRewarded'
         , 'onAdvertSkipped'
         , 'onAdvertHidden'
+        , 'onDisableInterstitialAds'
 
         , "onAndroidActivityResumed"
         , "onAndroidActivityPaused"

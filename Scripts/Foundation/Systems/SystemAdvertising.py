@@ -11,6 +11,7 @@ DEFAULT_IGNORE_SCENES = [
     "DebugMenu", "Store", "Guides", "Map", "MapBonusChapter", "Options"
 ]
 
+
 class SystemAdvertising(System):
     disable_key = "075ae3d2fc31640504f814f60e5ef713"
     account_disable_setting_key = "IsInterstitialDisabled"
@@ -27,6 +28,7 @@ class SystemAdvertising(System):
         self._start_delay_done = False
         self._last_view_timestamp = None
         self._current_trigger_count = 0
+        self._no_permission_identity = None
 
     def _onInitialize(self):
         if Mengine.hasTouchpad() is False:
@@ -53,6 +55,11 @@ class SystemAdvertising(System):
             "trigger_count_show": Mengine.getConfigInt('Advertising', "TriggerCountShow", 1),
             "scenes_to_view": Mengine.getConfigString('Advertising', "ScenesToView", "").split(", "),
         }
+
+        if Mengine.getConfigBool('Advertising', "NoPermissionsNotify", False) is True:
+            no_permission_identity_name = Mengine.getConfigString('Advertising', "NoPermissionsIdentity", "")
+            if Notificator.hasIdentity(no_permission_identity_name) is True:
+                self._no_permission_identity = Notificator.getIdentity(no_permission_identity_name)
 
         self._current_trigger_count = general_params["trigger_count_start"]
 
@@ -115,6 +122,10 @@ class SystemAdvertising(System):
             return True
         return False
 
+    def optionalNotifyNoPermission(self):
+        if self._no_permission_identity is not None:
+            Notification.notify(self._no_permission_identity)
+
     def updateViewedTime(self, timestamp):
         if _DEVELOPMENT is True:
             _seconds_passed = (timestamp - self._last_view_timestamp) if self._last_view_timestamp else None
@@ -143,6 +154,8 @@ class SystemAdvertising(System):
         return Mengine.getCurrentAccountSetting(self.account_disable_setting_key) == self.disable_key
 
     def __addObservers(self):
+        self.addObserver(Notificator.onDisableInterstitialAds, self._cbDisableInterstitialAds)
+
         def _setObserver(action, notificator):
             self.addObserver(notificator, self.__interstitialObserver, action=action)
 
@@ -175,6 +188,7 @@ class SystemAdvertising(System):
             return True
 
         if self.hasPermissionToViewAd(Mengine.getTime()) is False:
+            self.optionalNotifyNoPermission()
             return False
 
         action = kwargs.get("action")
@@ -211,4 +225,8 @@ class SystemAdvertising(System):
         """ returns True if trigger counter >= trigger_count_show """
         if self._current_trigger_count < self.s_general_params["trigger_count_show"]:
             return False
+        return True
+
+    def _cbDisableInterstitialAds(self):
+        self.disableForever()
         return True
