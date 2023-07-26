@@ -410,13 +410,17 @@ class SystemMonetization(System):
         Notification.notify(Notificator.onChapterSelectionBlock, chapter_id, False)
         _Log("unlock chapter '{}'".format(chapter_id))
 
+        if MonetizationManager.getGeneralSetting("CompleteProductsOnChapterUnlock", True) is False:
+            return
+
         for product in MonetizationManager.getProductsInfo().values():
             reward_chapter_id = product.reward.get("Chapter")
             if reward_chapter_id != chapter_id:
                 continue
             if SystemMonetization.isProductPurchased(product.id) is False:
                 SystemMonetization.addStorageListValue("purchased", product.id)
-                _Log("autosave product {!r} - chapter {!r} is already unlocked!".format(product.id, chapter_id), optional=True)
+                _Log("autosave product {!r} - chapter {!r} is already unlocked!".format(
+                    product.id, chapter_id), optional=True)
 
     @staticmethod
     def disableInterstitialAds(*args):
