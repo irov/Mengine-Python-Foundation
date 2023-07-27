@@ -34,6 +34,9 @@ class SceneManager(object):
 
     onTransitionBeginObserver = None
     onTransitionEndObserver = None
+    onSessionSaveObserver = None
+    onSessionLoadObserver = None
+    onSessionRemoveCompleteObserver = None
 
     module = None
 
@@ -112,8 +115,8 @@ class SceneManager(object):
         pass
 
     @staticmethod
-    def importScenes(module, prototypies):
-        for prototype in prototypies:
+    def importScenes(module, prototypes):
+        for prototype in prototypes:
             SceneManager.importScene(module, prototype)
             pass
         pass
@@ -268,7 +271,8 @@ class SceneManager(object):
                 pass
             pass
         elif param == "Stages":
-            SceneManager.loadStageStartScenes(module, "Stages")
+            Trace.log("Manager", 0, "SceneManager loadParams %s [%s] not implemented" % (param, module))
+            # SceneManager.loadStageStartScenes(module, "Stages")
             pass
         else:
             return False
@@ -506,7 +510,7 @@ class SceneManager(object):
                 slot["Groups"].append(GroupName)
                 pass
         else:
-            Trace.log("SceneManager", 0, "SceneManager.loadParam: param '%s' scene '%s' slot '%s' invalid type '%s'" % (param, SceneName, SlotName, SceneType))
+            Trace.log("SceneManager", 0, "SceneManager.loadParam: scene '%s' slot '%s' invalid type '%s'" % (SceneName, SlotName, SceneType))
             pass
 
         return True
@@ -810,12 +814,6 @@ class SceneManager(object):
         SceneManager.s_changeScene = False
 
         Mengine.removeCurrentScene(False, cb)
-        pass
-
-    @staticmethod
-    def isChangeScene():
-        return SceneManager.s_changeScene
-        pass
 
     @staticmethod
     def setCurrentSceneEntering(Value):
