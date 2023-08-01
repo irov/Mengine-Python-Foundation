@@ -41,6 +41,7 @@ class SystemAdvertising(System):
             "mg_reset": Mengine.getConfigBool('Advertising', "ShowOnResetMG", False),
             "chapter_done": Mengine.getConfigBool('Advertising', "ShowOnChapterDone", False),
             "trigger": Mengine.getConfigBool('Advertising', "ShowOnTrigger", False),
+            "manual_trigger": Mengine.getConfigBool('Advertising', "ManualTrigger", False),
             # param for 'ShowOnTransition'. If true: check if scene is game scene
             "only_game_scenes": Mengine.getConfigBool('Advertising', "ShowOnlyOnGameScenes", True),
             # param for 'ShowOnTransition'. If true: always show ads on this scenes
@@ -101,7 +102,14 @@ class SystemAdvertising(System):
 
         TaskManager.runAlias("AliasShowAdvert", _cb, AdType="Interstitial")
 
-    def hasPermissionToViewAd(self, timestamp):
+    def isReadyToView(self):
+        """ for manual check if interstitial is ready to view """
+        if self.isInterstitialParamEnable("trigger") is True:
+            return self.__checkTriggerCounter() is True
+        else:
+            return self._hasPermissionToViewAd(Mengine.getTime()) is True
+
+    def _hasPermissionToViewAd(self, timestamp):
         if AdvertisementProvider.canOfferAdvert("Interstitial") is False:
             return False
 
@@ -122,7 +130,7 @@ class SystemAdvertising(System):
             return True
         return False
 
-    def optionalNotifyNoPermission(self):
+    def _optionalNotifyNoPermission(self):
         if self._no_permission_identity is not None:
             Notification.notify(self._no_permission_identity)
 
@@ -165,10 +173,10 @@ class SystemAdvertising(System):
             "mg_reset":
                 ["onEnigmaReset", None],
             "chapter_done":
-                ["onGameComplete", None],
-            "trigger":
-                [SystemAdvertising.s_general_params["trigger"], self.__cbTriggerCount],
+                ["onGameComplete", None]
         }
+        if self.isInterstitialParamEnable("manual_trigger") is False:
+            params["trigger"] = [SystemAdvertising.s_general_params["trigger"], self.__cbTriggerCount]
 
         for action, (notificator_name, observer) in params.items():
             if self.isInterstitialParamEnable(action) is False:
@@ -187,14 +195,18 @@ class SystemAdvertising(System):
         if self.isDisabledForever() is True:
             return True
 
-        if self.hasPermissionToViewAd(Mengine.getTime()) is False:
-            self.optionalNotifyNoPermission()
+        if self._hasPermissionToViewAd(Mengine.getTime()) is False:
+            self._optionalNotifyNoPermission()
             return False
 
         action = kwargs.get("action")
         self.showInterstitial(descr=action)
 
         return False
+
+    def _cbDisableInterstitialAds(self):
+        self.disableForever()
+        return True
 
     def __cbTransitionBegin(self, scene_from, scene_to, zoom_name, action=None):
         if self.isInterstitialParamEnable("only_specific_scenes") is True:
@@ -213,21 +225,27 @@ class SystemAdvertising(System):
         if self.isDisabledForever() is True:
             return True
 
-        self._current_trigger_count += 1
+        self.increaseTriggerCounter()
         if self.__checkTriggerCounter() is False:
-            self.optionalNotifyNoPermission()
+            self._optionalNotifyNoPermission()
             return False
-        self._current_trigger_count = 0
+        if AdvertisementProvider.canOfferAdvert("Interstitial") is False:
+            self._optionalNotifyNoPermission()
+            return False
 
-        self.showInterstitial(descr="trigger")
+        self.releaseTriggerCounter()
         return False
 
     def __checkTriggerCounter(self):
         """ returns True if trigger counter >= trigger_count_show """
-        if self._current_trigger_count < self.s_general_params["trigger_count_show"]:
+        if self._current_trigger_count < self.getGeneralParam("trigger_count_show"):
             return False
         return True
 
-    def _cbDisableInterstitialAds(self):
-        self.disableForever()
+    def increaseTriggerCounter(self):
+        self._current_trigger_count += 1
+
+    def releaseTriggerCounter(self):
+        self._current_trigger_count = 0
+        self.showInterstitial(descr="trigger")
         return True
