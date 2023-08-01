@@ -74,10 +74,10 @@ class SystemAdvertising(System):
         self._initDisableAccountParam()
 
     def _onRun(self):
+        self._first_enter_timestamp = Mengine.getTime()
+
         if self.is_enable is False:
             return True
-
-        self._first_enter_timestamp = Mengine.getTime()
 
         self.__addObservers()
         return True
