@@ -94,17 +94,17 @@ class DummyAdvertisement(object):
     @staticmethod
     def setProvider():
         def _ShowRewardedAdvert(AdUnitName=None, **_):
-            DummyAdvertisement.showAdvert("Rewarded", AdUnitName)
+            return DummyAdvertisement.showAdvert("Rewarded", AdUnitName)
         def _CanOfferRewardedAdvert(AdUnitName=None, **_):
-            DummyAdvertisement.canOfferAdvert("Rewarded", AdUnitName)
+            return DummyAdvertisement.canOfferAdvert("Rewarded", AdUnitName)
         def _IsRewardedAdvertAvailable(AdUnitName=None, **_):
-            DummyAdvertisement.isAdvertAvailable("Rewarded", AdUnitName)
+            return DummyAdvertisement.isAdvertAvailable("Rewarded", AdUnitName)
         def _ShowInterstitialAdvert(AdUnitName=None, **_):
-            DummyAdvertisement.showAdvert("Interstitial", AdUnitName)
+            return DummyAdvertisement.showAdvert("Interstitial", AdUnitName)
         def _CanOfferInterstitialAdvert(AdUnitName=None, **_):
-            DummyAdvertisement.canOfferAdvert("Interstitial", AdUnitName)
+            return DummyAdvertisement.canOfferAdvert("Interstitial", AdUnitName)
         def _IsInterstitialAdvertAvailable(AdUnitName=None, **_):
-            DummyAdvertisement.isAdvertAvailable("Interstitial", AdUnitName)
+            return DummyAdvertisement.isAdvertAvailable("Interstitial", AdUnitName)
 
         methods = dict(
             # rewarded:
