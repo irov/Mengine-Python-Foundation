@@ -206,6 +206,10 @@ class SystemMonetization(System):
             balance = cls.getBalance()
             if balance < gold:
                 _Log("Not enough money: you have {} only, but you need {} (descr: {!r})".format(balance, gold, descr), err=True)
+
+                if MonetizationManager.getGeneralSetting("AllowPayGoldAfterPurchase", False) is False:
+                    Notification.notify(Notificator.onGameStorePayGoldFailed, descr)
+
                 Notification.notify(Notificator.onGameStoreNotEnoughGold, gold - balance, descr)
                 return False
 
