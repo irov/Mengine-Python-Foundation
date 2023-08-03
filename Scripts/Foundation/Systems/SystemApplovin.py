@@ -63,10 +63,10 @@ class SystemApplovin(System):
 
         def cleanUp(self):
             if _ANDROID:
-                Mengine.removeAndroidCallback(self.s_callbacks["onAdDisplayed"], self.cbDisplaySuccess)
-                Mengine.removeAndroidCallback(self.s_callbacks["onAdDisplayFailed"], self.cbDisplayFailed)
-                Mengine.removeAndroidCallback(self.s_callbacks["onAdClicked"], self.cbClicked)
-                Mengine.removeAndroidCallback(self.s_callbacks["onAdHidden"], self.cbHidden)
+                Mengine.removeAndroidCallback(PLUGIN_NAME, self.s_callbacks["onAdDisplayed"], self.cbDisplaySuccess)
+                Mengine.removeAndroidCallback(PLUGIN_NAME, self.s_callbacks["onAdDisplayFailed"], self.cbDisplayFailed)
+                Mengine.removeAndroidCallback(PLUGIN_NAME, self.s_callbacks["onAdClicked"], self.cbClicked)
+                Mengine.removeAndroidCallback(PLUGIN_NAME, self.s_callbacks["onAdHidden"], self.cbHidden)
 
         def canOffer(self):
             """ Call this method only once when you create rewarded button """
