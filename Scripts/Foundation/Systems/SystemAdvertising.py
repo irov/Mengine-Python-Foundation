@@ -110,7 +110,7 @@ class SystemAdvertising(System):
             return self._hasPermissionToViewAd(Mengine.getTime()) is True
 
     def _hasPermissionToViewAd(self, timestamp):
-        if AdvertisementProvider.canOfferAdvert("Interstitial") is False:
+        if AdvertisementProvider.isAdvertAvailable("Interstitial") is False:
             return False
 
         if self._start_delay_done is False:
@@ -229,7 +229,7 @@ class SystemAdvertising(System):
         if self.__checkTriggerCounter() is False:
             self._optionalNotifyNoPermission()
             return False
-        if AdvertisementProvider.canOfferAdvert("Interstitial") is False:
+        if AdvertisementProvider.isAdvertAvailable("Interstitial") is False:
             self._optionalNotifyNoPermission()
             return False
 
