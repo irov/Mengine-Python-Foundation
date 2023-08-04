@@ -145,7 +145,7 @@ class SystemMonetization(System):
     @staticmethod
     def _onProductAlreadyOwned(prod_id):
         if SystemMonetization.isProductPurchased(prod_id) is True:
-            _Log("Product {!r} already owned and applied for game".format(prod_id))
+            _Log("Product {!r} already owned and applied for game".format(prod_id), optional=True)
             return False
 
         _Log("Product {!r} already owned, but not applied - fix it".format(prod_id))
@@ -205,7 +205,7 @@ class SystemMonetization(System):
         if gold > 0:
             balance = cls.getBalance()
             if balance < gold:
-                _Log("Not enough money: you have {} only, but you need {} (descr: {!r})".format(balance, gold, descr), err=True)
+                _Log("Not enough money: you have {} only, but you need {} (descr: {!r})".format(balance, gold, descr), err=True, optional=True)
 
                 if MonetizationManager.getGeneralSetting("AllowPayGoldAfterPurchase", False) is False:
                     Notification.notify(Notificator.onGameStorePayGoldFailed, descr)
@@ -215,7 +215,7 @@ class SystemMonetization(System):
 
             cls.withdrawGold(gold)
         else:
-            _Log("gold wasn't withdrawn - current price for {} is 0".format(descr))
+            _Log("gold wasn't withdrawn - current price for {} is 0".format(descr), optional=True)
 
         Notification.notify(Notificator.onGameStorePayGoldSuccess, gold, descr)
 
@@ -307,7 +307,7 @@ class SystemMonetization(System):
 
     @classmethod
     def withdrawGold(cls, num, immediately_save=True):
-        _Log("withdrawGold num={}".format(num))
+        _Log("withdrawGold num={}".format(num), optional=True)
         cls.storage["gold"].subtractValue(num)
         if immediately_save is True:
             cls.saveData("gold")
@@ -316,7 +316,7 @@ class SystemMonetization(System):
 
     @classmethod
     def addGold(cls, num, immediately_save=True):
-        _Log("addGold num={}".format(num))
+        _Log("addGold num={}".format(num), optional=True)
         cls.storage["gold"].additiveValue(num)
         if immediately_save is True:
             cls.saveData("gold")
@@ -325,7 +325,7 @@ class SystemMonetization(System):
 
     @classmethod
     def setGold(cls, num, immediately_save=True):
-        _Log("set num={}".format(num))
+        _Log("set num={}".format(num), optional=True)
         cls.storage["gold"].setValue(num)
         if immediately_save is True:
             cls.saveData("gold")
@@ -432,11 +432,11 @@ class SystemMonetization(System):
             return
         SystemAdvertising = SystemManager.getSystem("SystemAdvertising")
         SystemAdvertising.disableForever()
-        _Log("disabled interstitial ads")
+        _Log("disabled interstitial ads", optional=True)
 
     @staticmethod
     def unlockScene(name):  # todo
-        _Log("DUMMY unlock scene '{}'".format(name))
+        _Log("DUMMY unlock scene '{}'".format(name), optional=True)
 
     # --- Advertisements -----------------------------------------------------------------------------------------------
 
@@ -598,7 +598,7 @@ class SystemMonetization(System):
         is_purchased = str(prod_id) in items
 
         if _DEVELOPMENT is True:
-            _Log("-- isProductPurchased {} in {}: {}".format(prod_id, items, is_purchased))
+            _Log("  isProductPurchased {} in {}: {}".format(prod_id, items, is_purchased), optional=True)
 
         return is_purchased
 
@@ -775,7 +775,7 @@ class SystemMonetization(System):
         items = raw_items.strip(", ").split(", ")
 
         if str(value) in items:
-            _Log("value {!r} is already in '{}': {}".format(value, key, items), err=True)
+            _Log("value {!r} is already in '{}': {}".format(value, key, items), err=True, optional=True)
             return
 
         raw_items += "{}, ".format(str(value))
@@ -783,7 +783,7 @@ class SystemMonetization(System):
 
         SystemMonetization.saveData(key)
 
-        _Log("successfully append {!r} to '{}' list: {}".format(value, key, raw_items))
+        _Log("successfully append {!r} to '{}' list: {}".format(value, key, raw_items), optional=True)
 
     @staticmethod
     def getStorageListValues(key):
@@ -818,7 +818,7 @@ class SystemMonetization(System):
         """
 
         if len(keys) == 0:
-            _Log("Saver: save all data on device...")
+            _Log("Saver: save all data on device...", optional=True)
             for key, value in SystemMonetization.storage.items():
                 save = value.getSave()
                 Mengine.changeCurrentAccountSetting(key, unicode(save))
@@ -826,10 +826,10 @@ class SystemMonetization(System):
         else:
             for key in keys:
                 if key not in SystemMonetization.storage:
-                    _Log("Saver: storage key {!r} not found".format(key), err=True)
+                    _Log("Saver: storage key {!r} not found".format(key), err=True, optional=True)
                     continue
                 save = SystemMonetization.storage[key].getSave()
-                _Log("Saver: save {!r} on device... [{}]".format(key, save))
+                _Log("Saver: save {!r} on device... [{}]".format(key, save), optional=True)
                 Mengine.changeCurrentAccountSetting(key, unicode(save))
 
         Mengine.saveAccounts()
@@ -851,7 +851,7 @@ class SystemMonetization(System):
 
         # calls only on Create Account
 
-        _Log("added storage settings to account {} params".format(account_id))
+        _Log("added storage settings to account {} params".format(account_id), optional=True)
 
     @staticmethod
     def loadData():
