@@ -550,15 +550,15 @@ class MonetizationManager(Manager, CurrencyManager):
 
     @staticmethod
     def getGeneralSetting(key, default=None):
-        return MonetizationManager.s_params.get(key) or default
+        return MonetizationManager.s_params.get(key, default)
 
     @staticmethod
     def getCardParamsById(card_id, default=None):
-        return MonetizationManager.s_cards.get(card_id) or default
+        return MonetizationManager.s_cards.get(card_id, default)
 
     @staticmethod
     def getImageParamsById(card_id, default=None):
-        return MonetizationManager.s_images.get(card_id) or default
+        return MonetizationManager.s_images.get(card_id, default)
 
     @staticmethod
     def hasProductInfo(prod_id):
@@ -634,8 +634,8 @@ class MonetizationManager(Manager, CurrencyManager):
     @staticmethod
     def getSpecialPromoById(prod_id, default=None):
         """ returns special promo by given REAL prod_id (not alias) """
-        params = MonetizationManager.s_specials.get(prod_id)
-        return params or default
+        params = MonetizationManager.s_specials.get(prod_id, default)
+        return params
 
     @staticmethod
     def selectProducts(Filter):
