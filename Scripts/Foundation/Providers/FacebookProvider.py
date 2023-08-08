@@ -18,6 +18,10 @@ class FacebookProvider(BaseProvider):
         DummyFacebook.setProvider()
 
     @staticmethod
+    def getConfigShareLink():
+        return Mengine.getConfigString("Facebook", "ShareLink", "https://www.wonderland-games.com")
+
+    @staticmethod
     def getAccessToken():
         return FacebookProvider._call("getAccessToken")
 
@@ -30,7 +34,9 @@ class FacebookProvider(BaseProvider):
         return FacebookProvider._call("performLogin", permissions, _cb_success, _cb_cancel, _cb_error)
 
     @staticmethod
-    def shareLink(link='www.wonderland-games.com', msg='', _cb_success=None, _cb_cancel=None, _cb_error=None):
+    def shareLink(link=None, msg='', _cb_success=None, _cb_cancel=None, _cb_error=None):
+        if link is None:
+            link = FacebookProvider.getConfigShareLink()
         return FacebookProvider._call("shareLink", link, msg, _cb_success, _cb_cancel, _cb_error)
 
     @staticmethod
@@ -91,7 +97,9 @@ class DummyFacebook(object):
             DummyFacebook._logged_in = True
 
     @staticmethod
-    def shareLink(link='www.wonderland-games.com', msg='', _cb_success=None, _cb_cancel=None, _cb_error=None):
+    def shareLink(link=None, msg='', _cb_success=None, _cb_cancel=None, _cb_error=None):
+        if link is None:
+            link = FacebookProvider.getConfigShareLink()
         # onFacebookShareSuccess
         if _cb_success:
             _cb_success(DummyFacebook.SHARE_POST_ID)

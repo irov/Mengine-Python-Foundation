@@ -77,8 +77,11 @@ class SystemFacebook(System):
         Mengine.androidMethod(PLUGIN_NAME, "performLogin", list(permissions))
 
     @staticmethod
-    def shareLink(link='www.wonderland-games.com', msg='',
+    def shareLink(link=None, msg='',
                   _cb_success=None, _cb_cancel=None, _cb_error=None):
+        if link is None:
+            link = FacebookProvider.getConfigShareLink()
+
         callbacks = {
             SystemFacebook.onShareSuccess: _cb_success,
             SystemFacebook.onShareCancel: _cb_cancel,
