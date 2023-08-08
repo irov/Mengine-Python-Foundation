@@ -377,9 +377,14 @@ class MonetizationManager(Manager, CurrencyManager):
 
     @classmethod
     def _onInitialize(cls, *args):
+        def _getQueryProductIds():
+            currency_products = cls.selectProducts(lambda product: product.getCurrency() == "Real")
+            query_ids = [product.id for product in currency_products]
+            return query_ids
+
         ProductsProvider.setProvider(cls.__name__, dict(
             getProductsInfo=cls.getProductsInfo,
-            getQueryProductIds=lambda: cls.getProductsInfo().keys(),
+            getQueryProductIds=_getQueryProductIds,
             getProductReward=cls.getProductReward,
             getProductPrice=cls.getProductPrice,
             getProductInfo=cls.getProductInfo,
