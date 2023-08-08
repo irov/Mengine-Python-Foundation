@@ -79,9 +79,6 @@ class SystemFacebook(System):
     @staticmethod
     def shareLink(link=None, msg='',
                   _cb_success=None, _cb_cancel=None, _cb_error=None):
-        if link is None:
-            link = FacebookProvider.getConfigShareLink()
-
         callbacks = {
             SystemFacebook.onShareSuccess: _cb_success,
             SystemFacebook.onShareCancel: _cb_cancel,
