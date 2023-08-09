@@ -6,6 +6,7 @@ class AdvertisementProvider(BaseProvider):
     Types of Advertisement (AdType):
         - Rewarded
         - Interstitial
+        - Banner
     """
 
     s_allowed_methods = [
@@ -15,6 +16,8 @@ class AdvertisementProvider(BaseProvider):
         "CanOfferInterstitialAdvert",
         "IsRewardedAdvertAvailable",
         "IsInterstitialAdvertAvailable",
+        "ShowBanner",
+        "HideBanner",
     ]
 
     @staticmethod
@@ -38,6 +41,14 @@ class AdvertisementProvider(BaseProvider):
         if AdUnitName is None:
             AdUnitName = AdType
         return AdvertisementProvider._call("Is{}AdvertAvailable".format(AdType), AdUnitName, **params)
+
+    @staticmethod
+    def showBanner(AdUnitName=None, **params):
+        return AdvertisementProvider._call("ShowBanner", AdUnitName, **params)
+
+    @staticmethod
+    def hideBanner(AdUnitName=None, **params):
+        return AdvertisementProvider._call("HideBanner", AdUnitName, **params)
 
 
 class DummyAdvertisement(object):
@@ -92,6 +103,36 @@ class DummyAdvertisement(object):
         return status
 
     @staticmethod
+    def showBanner(AdUnitName=None, **params):
+        AdType = "Banner"
+        if AdUnitName is None:
+            AdUnitName = params.get("AdUnitName", AdType)
+
+        DisplayFail = params.get("DisplayFail", "Random")
+
+        display_failed = Mengine.rand(20) < 5 if DisplayFail is "Random" else bool(DisplayFail)
+
+        Trace.msg("<DummyAdvertisement> show advert {}:{} (fail: {})...".format(
+            AdType, AdUnitName, display_failed))
+
+        if display_failed is True:
+            Notification.notify(Notificator.onAdvertDisplayFailed, AdType, AdUnitName)
+        else:
+            Notification.notify(Notificator.onAdvertDisplayed, AdType, AdUnitName)
+
+        return True
+
+    @staticmethod
+    def hideBanner(AdUnitName=None, **params):
+        AdType = "Banner"
+        if AdUnitName is None:
+            AdUnitName = params.get("AdUnitName", AdType)
+
+        Notification.notify(Notificator.onAdvertHidden, AdType, AdUnitName)
+
+        return True
+
+    @staticmethod
     def setProvider():
         def _ShowRewardedAdvert(AdUnitName=None, **_):
             return DummyAdvertisement.showAdvert("Rewarded", AdUnitName)
@@ -105,6 +146,10 @@ class DummyAdvertisement(object):
             return DummyAdvertisement.canOfferAdvert("Interstitial", AdUnitName)
         def _IsInterstitialAdvertAvailable(AdUnitName=None, **_):
             return DummyAdvertisement.isAdvertAvailable("Interstitial", AdUnitName)
+        def _ShowBanner(AdUnitName=None, **_):
+            return DummyAdvertisement.showBanner(AdUnitName)
+        def _HideBanner(AdUnitName=None, **_):
+            return DummyAdvertisement.hideBanner(AdUnitName)
 
         methods = dict(
             # rewarded:
@@ -115,6 +160,9 @@ class DummyAdvertisement(object):
             ShowInterstitialAdvert=_ShowInterstitialAdvert,
             CanOfferInterstitialAdvert=_CanOfferInterstitialAdvert,
             IsInterstitialAdvertAvailable=_IsInterstitialAdvertAvailable,
+            # banner:
+            ShowBanner=_ShowBanner,
+            HideBanner=_HideBanner,
         )
 
         AdvertisementProvider.setProvider("Dummy", methods)

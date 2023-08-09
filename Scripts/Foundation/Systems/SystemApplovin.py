@@ -94,12 +94,13 @@ class SystemApplovin(System):
                 _setAndroidCallback("onAdHidden", self.cbHidden)
             elif _IOS:
                 # we set callbacks in init for provider
-                return {
+                callbacks = {
                     self.s_callbacks["onAdDisplayed"]: self.cbDisplaySuccess,
                     self.s_callbacks["onAdDisplayFailed"]: self.cbDisplayFailed,
                     self.s_callbacks["onAdClicked"]: self.cbClicked,
                     self.s_callbacks["onAdHidden"]: self.cbHidden,
                 }
+                return callbacks
 
         def init(self):
             if bool(Mengine.getConfigBool('Advertising', self.ad_type, False)) is False:
@@ -109,11 +110,11 @@ class SystemApplovin(System):
                 return False
 
             _Log("[{}] call init".format(self.name))
-            if _ANDROID:
-                ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id)
-            elif _IOS:
+            if _IOS:
                 callbacks = self.setCallbacks()
                 ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, callbacks)
+            else:
+                ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id)
 
             self.inited = True
 
@@ -324,14 +325,18 @@ class SystemApplovin(System):
             self.rewarded = False
 
         def setCallbacks(self):
-            super(self.__class__, self).setCallbacks()
             if _ANDROID:
+                super(self.__class__, self).setCallbacks()
                 Mengine.addAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks["onUserRewarded"], self.cbUserRewarded)
+            elif _IOS:
+                callbacks = super(self.__class__, self).setCallbacks()
+                callbacks["onUserRewarded"] = self.cbUserRewarded   # noqa
+                return callbacks
 
         def cleanUp(self):
             super(self.__class__, self).cleanUp()
             if _ANDROID:
-                Mengine.removeAndroidCallback(self.s_callbacks["onUserRewarded"], self.cbUserRewarded)
+                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks["onUserRewarded"], self.cbUserRewarded)
 
         @ad_callback
         def cbUserRewarded(self, label, reward):
@@ -351,7 +356,112 @@ class SystemApplovin(System):
                 _Log("[{} cb] advert {!r} was skipped".format(self.ad_type, self.name))
             super(self.__class__, self).cbHidden(self.ad_unit_id)
 
-    # ---
+    class Banner(AdUnitMixin):
+        ad_type = "Banner"
+        if _ANDROID:
+            s_callbacks = {
+                "onAdDisplayed": "onApplovinBannerOnAdDisplayed",
+                "onAdDisplayFailed": "onApplovinBannerOnAdDisplayFailed",
+                "onAdHidden": "onApplovinBannerOnAdHidden",
+                "onAdClicked": "onApplovinBannerOnAdClicked",
+                "onAdExpanded": "onApplovinBannerOnAdExpanded",
+                "onAdCollapsed": "onApplovinBannerOnAdCollapsed",
+                # onApplovinBannerOnAdLoadFailed
+            }
+            s_methods = {
+                "init": "initBanner",
+                "show": "bannerVisible",
+                "hide": "bannerVisible",
+            }
+        elif _IOS:
+            s_callbacks = {
+                "onAdDisplayed": "onAppleAppLovinInterstitialDidDisplayAd",
+                "onAdDisplayFailed": "onAppleAppLovinBannerDidFailToDisplayAd",
+                "onAdClicked": "onAppleAppLovinBannerDidClickAd",
+                # onAdHidden empty
+                "onAdExpanded": "onAppleAppLovinBannerDidExpandAd",
+                "onAdCollapsed": "onAppleAppLovinBannerDidCollapseAd",
+                # onAppleAppLovinBannerDidStartAdRequestForAdUnitIdentifier
+                # onAppleAppLovinBannerDidLoadAd
+                # onAppleAppLovinBannerDidFailToLoadAdForAdUnitIdentifier
+                # onAppleAppLovinBannerDidPayRevenueForAd
+            }
+            s_methods = {
+                "init": "InitBanner",
+                "show": "ShowBanner",
+                "hide": "HideBanner",
+            }
+
+        def __init__(self, name):
+            super(self.__class__, self).__init__(name)
+            self.hidden = True
+
+        def show(self):
+            if self.hidden is False:
+                _Log("Banner {!r} is already shown!!".format(self.name), err=True)
+                # return True
+
+            if _ANDROID:
+                state = True
+                result = ApplovinMengineProvider.call(self.s_methods["show"], self.ad_unit_id, state, type="bool")
+            else:
+                result = ApplovinMengineProvider.call(self.s_methods["show"], self.ad_unit_id)
+
+            return result
+
+        def hide(self):
+            if self.hidden is True:
+                _Log("Banner {!r} is already hidden!!".format(self.name), err=True)
+                # return True
+
+            if _ANDROID:
+                state = False
+                result = ApplovinMengineProvider.call(self.s_methods["hide"], self.ad_unit_id, state, type="bool")
+            else:
+                result = ApplovinMengineProvider.call(self.s_methods["hide"], self.ad_unit_id)
+
+            return result
+
+        def setCallbacks(self):
+            if _ANDROID:
+                def _setAndroidCallback(name, cb):
+                    Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks[name], cb)
+
+                _setAndroidCallback("onAdDisplayed", self.cbDisplaySuccess)
+                _setAndroidCallback("onAdDisplayFailed", self.cbDisplayFailed)
+                _setAndroidCallback("onAdClicked", self.cbClicked)
+                _setAndroidCallback("onAdHidden", self.cbHidden)
+                _setAndroidCallback("onAdExpanded", self.cbExpanded)
+                _setAndroidCallback("onAdCollapsed", self.cbCollapsed)
+            elif _IOS:
+                # we set callbacks in init for provider
+                callbacks = {
+                    self.s_callbacks["onAdDisplayed"]: self.cbDisplaySuccess,
+                    self.s_callbacks["onAdDisplayFailed"]: self.cbDisplayFailed,
+                    self.s_callbacks["onAdClicked"]: self.cbClicked,
+                    self.s_callbacks["onAdExpanded"]: self.cbExpanded,
+                    self.s_callbacks["onAdCollapsed"]: self.cbCollapsed,
+                }
+                return callbacks
+
+        def cleanUp(self):
+            if _ANDROID:
+                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdDisplayed", self.cbDisplaySuccess)
+                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdDisplayFailed", self.cbDisplayFailed)
+                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdClicked", self.cbClicked)
+                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdHidden", self.cbHidden)
+                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdExpanded", self.cbExpanded)
+                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdCollapsed", self.cbCollapsed)
+
+        @ad_callback
+        def cbExpanded(self):
+            _Log("[{} cb] {} was expanded".format(self.ad_type, self.name))
+
+        @ad_callback
+        def cbCollapsed(self):
+            _Log("[{} cb] {} was collapsed".format(self.ad_type, self.name))
+
+    # ------------------------------------------------------------------------------------------------------------------
 
     is_plugin_active = False
     is_sdk_init = False
@@ -360,6 +470,7 @@ class SystemApplovin(System):
         super(SystemApplovin, self).__init__()
         self.interstitials = {}
         self.rewardeds = {}
+        self.banners = {}
 
     def _onInitialize(self):
         if _ANDROID:
@@ -373,6 +484,7 @@ class SystemApplovin(System):
         init_params = [
             ["RewardedUnitNames", ["Rewarded"], self.rewardeds, SystemApplovin.RewardedAd],
             ["InterstitialUnitNames", ["Interstitial"], self.interstitials, SystemApplovin.InterstitialAd],
+            ["BannerUnitNames", ["Banner"], self.banners, SystemApplovin.Banner],
         ]
 
         for config_key, default_values, storage, Type in init_params:
@@ -405,6 +517,7 @@ class SystemApplovin(System):
             ad_unit.cleanUp()
         self.rewardeds = None
         self.interstitials = None
+        self.banners = None
 
     # utils
 
@@ -418,6 +531,8 @@ class SystemApplovin(System):
             CanOfferRewardedAdvert=Functor(self.canOfferAdvert, self.rewardeds),
             IsRewardedAdvertAvailable=Functor(self.isAdvertAvailable, self.rewardeds),
             IsInterstitialAdvertAvailable=Functor(self.isAdvertAvailable, self.interstitials),
+            ShowBanner=Functor(self.showAdvert, self.banners),
+            HideBanner=Functor(self.hideBanner, self.banners),
         )
         AdvertisementProvider.setProvider(ANDROID_PLUGIN_NAME, provider_methods)
 
@@ -469,6 +584,14 @@ class SystemApplovin(System):
                 ad_unit_name, advert_dict.keys()))
             return False
         return advert.isAvailable()
+
+    def hideBanner(self, ad_unit_name, banners_dict):
+        banner = banners_dict.get(ad_unit_name)
+        if banner is None:
+            Trace.log("System", 0, "Banner {!r} not found for hideBanner in {}".format(
+                ad_unit_name, banners_dict.keys()))
+            return False
+        return banner.hide()
 
     # debug
 
