@@ -500,14 +500,13 @@ class SystemApplovin(System):
                 rewarded = Type(name)
                 storage[name] = rewarded
 
+        for ad_unit in self._getAllAdUnits():
+            ad_unit.setCallbacks()
+
         if _ANDROID:
-            # cb on init Applovin sdk
             Mengine.waitAndroidSemaphore("AppLovinSdkInitialized", self.__cbSdkInitialized)
         elif _IOS:
             self.__cbSdkInitialized()
-
-        for ad_unit in self._getAllAdUnits():
-            ad_unit.setCallbacks()
 
         # ads do init in `__cbSdkInitialized`
         self.__addDevToDebug()
