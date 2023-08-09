@@ -127,7 +127,7 @@ class SystemGoogleServices(System):
                 method_name = "onGoogleInAppReviews" + callback_name
                 Mengine.setAndroidCallback("GoogleInAppReviews", method_name, *callback)
 
-            setReviewsCallback("GettingReviewObject", self.__cbReviewsGettingReviewObject)
+            Mengine.waitAndroidSemaphore("onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
             setReviewsCallback("LaunchingTheReviewCompleted", self.__cbReviewsLaunchingComplete)
 
             RatingAppProvider.setProvider("Google", dict(rateApp=self.rateApp))
