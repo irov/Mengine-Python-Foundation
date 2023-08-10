@@ -47,6 +47,7 @@ class SystemAppleServices(System):
         if self.b_plugins["GameCenter"] is True:
             AchievementsProvider.setProvider("Apple", dict(
                 unlockAchievement=self.unlockAchievement,
+                setAchievementProgress=self.setAchievementProgress,
             ))
 
     def _onFinalize(self):
@@ -140,15 +141,18 @@ class SystemAppleServices(System):
         return SystemAppleServices._sendAchievementToGameCenter(achievement_name, percent_complete=100.0)
 
     @staticmethod
-    def incrementAchievement(achievement_name, current_step, total_steps):
+    def setAchievementProgress(achievement_name, current_step, total_steps):
         if current_step < 1 or total_steps < 1:
             Trace.log("System", 0, "current={}, total={} steps must be 1 or bigger".format(current_step, total_steps))
             return
+
         if current_step > total_steps:
             Trace.log("System", 0, "current={} must be equal or lower than total={}".format(current_step, total_steps))
             percent = 100.0
+        elif current_step == total_steps:
+            percent = 100.0
         else:
-            percent = round(current_step / total_steps, 1)
+            percent = round((float(current_step) / float(total_steps)) * 100.0, 1)
 
         return SystemAppleServices._sendAchievementToGameCenter(achievement_name, percent_complete=percent)
 
