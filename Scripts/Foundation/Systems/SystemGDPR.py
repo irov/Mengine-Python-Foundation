@@ -1,8 +1,10 @@
 from Foundation.AccountManager import AccountManager
 from Foundation.DefaultManager import DefaultManager
+from Foundation.Systems.SystemAnalytics import SystemAnalytics
 from Foundation.System import System
 
 GDPR_ACCOUNT_KEY = "AgreeWithGDPR"
+
 
 class SystemGDPR(System):
     """ General Data Protection Regulation """
@@ -44,6 +46,10 @@ class SystemGDPR(System):
     def _setUserAgreeWithGDPR(state):
         Mengine.changeCurrentAccountSettingBool(GDPR_ACCOUNT_KEY, state)
         Mengine.saveAccounts()
+        if state is True:
+            SystemAnalytics.sendCustomAnalytic("gdpr_agree", {})
+        else:
+            SystemAnalytics.sendCustomAnalytic("gdpr_disagree", {})
 
     def _onRun(self):
         if SystemGDPR.is_default_provider is False:
@@ -79,6 +85,11 @@ class SystemGDPR(System):
     def runTaskChain(self):
         alpha_time = 250.0
 
+        SystemAnalytics.sendCustomAnalytic("gdpr_request", {
+            "GroupName": self.gdpr_group_name,
+            "Link": self.privacy_policy_link,
+        })
+
         if self.existTaskChain(Name="GDPRCompliance"):
             self.removeTaskChain(Name="GDPRCompliance")
         with self.createTaskChain(Name="GDPRCompliance") as tc:
@@ -98,17 +109,19 @@ class SystemGDPR(System):
     def _scopeButtonsHandler(self, source, event_button_click):
         with source.addRaceTask(2) as (yes, no):
             yes.addTask("TaskMovie2ButtonClick", GroupName=self.gdpr_group_name, Movie2ButtonName="Movie2Button_Ok")
+            yes.addFunction(event_button_click)
             yes.addFunction(self._setUserAgreeWithGDPR, True)
 
             no.addTask("TaskMovie2ButtonClick", GroupName=self.gdpr_group_name, Movie2ButtonName="Movie2Button_No")
+            no.addFunction(event_button_click)
             no.addFunction(self._setUserAgreeWithGDPR, False)
             no.addTask("TaskQuitApplication")
-        source.addFunction(event_button_click)
 
     def _scopeLinkHandler(self, source, event_button_click):
         with source.addRepeatTask() as (repeat, until):
             repeat.addTask("TaskMovie2SocketClick", GroupName=self.gdpr_group_name,
                            Movie2Name="Movie2_Window", SocketName="link")
+            repeat.addFunction(SystemAnalytics.sendCustomAnalytic, "gdpr_read", {"link": self.privacy_policy_link})
             repeat.addFunction(Mengine.openUrlInDefaultBrowser, self.privacy_policy_link)
 
             until.addEvent(event_button_click)
