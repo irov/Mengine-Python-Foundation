@@ -87,7 +87,7 @@ class SystemGDPR(System):
 
         SystemAnalytics.sendCustomAnalytic("gdpr_request", {
             "GroupName": self.gdpr_group_name,
-            "Link": self.privacy_policy_link,
+            "Link": str(self.privacy_policy_link),
         })
 
         if self.existTaskChain(Name="GDPRCompliance"):
