@@ -187,17 +187,6 @@ class SceneManager(object):
         pass
 
     @staticmethod
-    def isDebugMenuBlocked(sceneName=None):
-        # used for SystemDebugMenu when DebugMenu occurs errors
-
-        if sceneName is None:
-            sceneName = SceneManager.getCurrentSceneName()
-
-        block = ["Menu", "PreIntro", "SplashScreen", "Dialog"]
-
-        return sceneName in block
-
-    @staticmethod
     def isCurrentSceneActive():
         if SceneManager.isTransitionProgress() is True:
             return False
@@ -940,7 +929,23 @@ class SceneManager(object):
         group = GroupManager.getGroup(groupName)
 
         return group
-        pass
+
+    @staticmethod
+    def isSceneLayerGroupEnable(SceneName, LayerName):
+        """ returns True if group is enabled on given (or current) Scene """
+
+        if SceneName is None:
+            SceneName = SceneManager.getCurrentSceneName()
+
+        layer_group = SceneManager.getSceneLayerGroup(SceneName, LayerName)
+
+        if layer_group is None:
+            Trace.log("Manager", 0, "Scene %s Layer %s Group is None" % (SceneName, LayerName))
+            return
+
+        enable = layer_group.getEnable()
+
+        return enable
 
     @staticmethod
     def enableSceneLayerGroup(SceneName, LayerName):
