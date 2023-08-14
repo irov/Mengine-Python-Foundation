@@ -33,9 +33,9 @@ class ApplovinMengineProvider(object):
         @staticmethod
         def call(func_name, *args, **kwargs):
             if kwargs.get("type") == "bool":
-                Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, func_name, *args)
+                return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, func_name, *args)
             else:
-                Mengine.androidMethod(ANDROID_PLUGIN_NAME, func_name, *args)
+                return Mengine.androidMethod(ANDROID_PLUGIN_NAME, func_name, *args)
 
     elif _IOS:
         @staticmethod
@@ -53,7 +53,7 @@ class ApplovinMengineProvider(object):
         @staticmethod
         def call(func_name, *args, **kwargs):
             Trace.log("System", 0, "!!!! No provider for method {!r} [args: {}]".format(func_name, args))
-            return
+            return False
 
 
 class SystemApplovin(System):
