@@ -8,24 +8,32 @@ ANDROID_PLUGIN_NAME = "AppLovin"
 APPLE_PLUGIN_NAME = "AppleAppLovin"
 APPLE_METHODS_PREFIX = "appleAppLovin"
 DEVDEBUGGER_TAB_NAME = "Applovin"
-# todo: add banners
 
 
 def ad_callback(bound_method):
     if _ANDROID:
         # I add callback, that returns an `ad_unit_id` as first argument
-        def wrap(self, ad_unit_id, *args, **kwargs):
+        def cb_wrapper(self, ad_unit_id, *args, **kwargs):
             if ad_unit_id != self.ad_unit_id:
                 return
             return bound_method(self, *args, **kwargs)
     elif _IOS:
         # each callback is bounded to a specific ad unit
-        def wrap(self, *args, **kwargs):
+        def cb_wrapper(self, *args, **kwargs):
             return bound_method(self, *args, **kwargs)
     else:
-        def wrap(self, *args, **kwargs):
+        def cb_wrapper(self, *args, **kwargs):
             return bound_method(self, *args, **kwargs)
-    return wrap
+    return cb_wrapper
+
+
+def _addAndroidCallback(self, name, cb):
+    if name in self._cbs:
+        Trace.log("System", 0, "[{}:{}] android callback {!r} already exists !!!".format(self.ad_type, self.name, name))
+        Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks, self._cbs[name])
+    identity = Mengine.addAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks[name], cb)
+    self._cbs[name] = identity
+    return identity
 
 
 class ApplovinMengineProvider(object):
@@ -45,7 +53,7 @@ class ApplovinMengineProvider(object):
 
             if func is None:
                 Trace.log("System", 0, "Apple applovin method {!r} - not found in Mengine".format(full_func_name))
-                return
+                return False
 
             return func(*args)
 
@@ -78,6 +86,7 @@ class SystemApplovin(System):
             return self.s_methods.get(name) is not None
 
         def __init__(self, name):
+            self._cbs = {}
             self.inited = False
             self.display = False
             self.name = name
@@ -85,13 +94,10 @@ class SystemApplovin(System):
 
         def setCallbacks(self):
             if _ANDROID:
-                def _setAndroidCallback(name, cb):
-                    Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks[name], cb)
-
-                _setAndroidCallback("onAdDisplayed", self.cbDisplaySuccess)
-                _setAndroidCallback("onAdDisplayFailed", self.cbDisplayFailed)
-                _setAndroidCallback("onAdClicked", self.cbClicked)
-                _setAndroidCallback("onAdHidden", self.cbHidden)
+                _addAndroidCallback(self, "onAdDisplayed", self.cbDisplaySuccess)
+                _addAndroidCallback(self, "onAdDisplayFailed", self.cbDisplayFailed)
+                _addAndroidCallback(self, "onAdClicked", self.cbClicked)
+                _addAndroidCallback(self, "onAdHidden", self.cbHidden)
             elif _IOS:
                 # we set callbacks in init for provider
                 callbacks = {
@@ -122,10 +128,9 @@ class SystemApplovin(System):
 
         def cleanUp(self):
             if _ANDROID:
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks["onAdDisplayed"], self.cbDisplaySuccess)
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks["onAdDisplayFailed"], self.cbDisplayFailed)
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks["onAdClicked"], self.cbClicked)
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks["onAdHidden"], self.cbHidden)
+                for cb_name, cb_id in self._cbs.items():
+                    Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, cb_name, cb_id)
+                self._cbs = {}
             elif _IOS:
                 pass    # auto remove
 
@@ -327,16 +332,11 @@ class SystemApplovin(System):
         def setCallbacks(self):
             if _ANDROID:
                 super(self.__class__, self).setCallbacks()
-                Mengine.addAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks["onUserRewarded"], self.cbUserRewarded)
+                _addAndroidCallback(self, "onUserRewarded", self.cbUserRewarded)
             elif _IOS:
                 callbacks = super(self.__class__, self).setCallbacks()
                 callbacks["onUserRewarded"] = self.cbUserRewarded   # noqa
                 return callbacks
-
-        def cleanUp(self):
-            super(self.__class__, self).cleanUp()
-            if _ANDROID:
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks["onUserRewarded"], self.cbUserRewarded)
 
         @ad_callback
         def cbUserRewarded(self, label, reward):
@@ -424,15 +424,12 @@ class SystemApplovin(System):
 
         def setCallbacks(self):
             if _ANDROID:
-                def _setAndroidCallback(name, cb):
-                    Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks[name], cb)
-
-                _setAndroidCallback("onAdDisplayed", self.cbDisplaySuccess)
-                _setAndroidCallback("onAdDisplayFailed", self.cbDisplayFailed)
-                _setAndroidCallback("onAdClicked", self.cbClicked)
-                _setAndroidCallback("onAdHidden", self.cbHidden)
-                _setAndroidCallback("onAdExpanded", self.cbExpanded)
-                _setAndroidCallback("onAdCollapsed", self.cbCollapsed)
+                _addAndroidCallback(self, "onAdDisplayed", self.cbDisplaySuccess)
+                _addAndroidCallback(self, "onAdDisplayFailed", self.cbDisplayFailed)
+                _addAndroidCallback(self, "onAdClicked", self.cbClicked)
+                _addAndroidCallback(self, "onAdHidden", self.cbHidden)
+                _addAndroidCallback(self, "onAdExpanded", self.cbExpanded)
+                _addAndroidCallback(self, "onAdCollapsed", self.cbCollapsed)
             elif _IOS:
                 # we set callbacks in init for provider
                 callbacks = {
@@ -443,15 +440,6 @@ class SystemApplovin(System):
                     self.s_callbacks["onAdCollapsed"]: self.cbCollapsed,
                 }
                 return callbacks
-
-        def cleanUp(self):
-            if _ANDROID:
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdDisplayed", self.cbDisplaySuccess)
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdDisplayFailed", self.cbDisplayFailed)
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdClicked", self.cbClicked)
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdHidden", self.cbHidden)
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdExpanded", self.cbExpanded)
-                Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, "onAdCollapsed", self.cbCollapsed)
 
         @ad_callback
         def cbExpanded(self):
