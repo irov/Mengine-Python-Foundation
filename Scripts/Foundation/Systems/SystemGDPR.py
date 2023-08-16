@@ -1,5 +1,6 @@
 from Foundation.AccountManager import AccountManager
 from Foundation.DefaultManager import DefaultManager
+from Foundation.GroupManager import GroupManager
 from Foundation.Systems.SystemAnalytics import SystemAnalytics
 from Foundation.System import System
 
@@ -83,6 +84,10 @@ class SystemGDPR(System):
         return False
 
     def runTaskChain(self):
+        if GroupManager.hasGroup(self.gdpr_group_name) is False:
+            Trace.log("System", 0, "Not found group %s to show GDPR message - skip" % self.gdpr_group_name)
+            return
+
         alpha_time = 250.0
 
         SystemAnalytics.sendCustomAnalytic("gdpr_request", {
