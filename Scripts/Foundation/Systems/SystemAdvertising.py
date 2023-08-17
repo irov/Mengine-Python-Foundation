@@ -1,6 +1,7 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.SceneManager import SceneManager
 from Foundation.DefaultManager import DefaultManager
+from Foundation.DemonManager import DemonManager
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
@@ -157,6 +158,10 @@ class SystemAdvertising(System):
 
         Mengine.changeCurrentAccountSetting(self.account_disable_setting_key, unicode(self.disable_key))
         Mengine.saveAccounts()  # then when observer triggers - we stop it (check __interstitialObserver)
+
+        if DemonManager.hasDemon("AdvertisingScene") is True:
+            AdvertisingScene = DemonManager.getDemon("AdvertisingScene")
+            AdvertisingScene.setParam("CacheNoAds", True)
 
     def isDisabledForever(self):
         return Mengine.getCurrentAccountSetting(self.account_disable_setting_key) == self.disable_key
