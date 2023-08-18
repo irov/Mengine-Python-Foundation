@@ -1,6 +1,7 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.SceneManager import SceneManager
 from Foundation.DefaultManager import DefaultManager
+from Foundation.PolicyManager import PolicyManager
 from Foundation.DemonManager import DemonManager
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
@@ -40,6 +41,7 @@ class SystemAdvertising(System):
         interstitial_params = {
             "transition": Mengine.getConfigBool('Advertising', "ShowOnTransition", False),
             "mg_reset": Mengine.getConfigBool('Advertising', "ShowOnResetMG", False),
+            "transition_scene": Mengine.getConfigBool("Advertising", "OverrideTransitionScene", False),
             "chapter_done": Mengine.getConfigBool('Advertising', "ShowOnChapterDone", False),
             "trigger": Mengine.getConfigBool('Advertising', "ShowOnTrigger", False),
             "manual_trigger": Mengine.getConfigBool('Advertising', "ManualTrigger", False),
@@ -77,10 +79,29 @@ class SystemAdvertising(System):
     def _onRun(self):
         self._first_enter_timestamp = Mengine.getTime()
 
-        if self.is_enable is False:
+        if self.is_enable is True:
+            self._onActivate()
+
+        return True
+
+    def _onActivate(self):
+        self.__addObservers()
+        self._setupAdvertisingTransitionScene()
+
+    def _setupAdvertisingTransitionScene(self):
+        if self.isInterstitialParamEnable("transition_scene") is False:
             return True
 
-        self.__addObservers()
+        advert_demon_name = DefaultManager.getDefault("AdvertisingDemonName", default="AdvertisingScene")
+
+        if DemonManager.hasDemon(advert_demon_name) is False:
+            Trace.log("System", 0, "Advertising demon {!r} not found - add or disable ShowOnAdvertisingScene config".format(advert_demon_name))
+            return False
+
+        transition_policy_name = DefaultManager.getDefault("AdvertisingTransitionPolicyName",
+                                                           default="PolicyTransitionAdvertising")
+
+        PolicyManager.setPolicy("Transition", transition_policy_name)
         return True
 
     def _onFinalize(self):
@@ -159,9 +180,13 @@ class SystemAdvertising(System):
         Mengine.changeCurrentAccountSetting(self.account_disable_setting_key, unicode(self.disable_key))
         Mengine.saveAccounts()  # then when observer triggers - we stop it (check __interstitialObserver)
 
-        if DemonManager.hasDemon("AdvertisingScene") is True:
-            AdvertisingScene = DemonManager.getDemon("AdvertisingScene")
-            AdvertisingScene.setParam("CacheNoAds", True)
+        advert_demon_name = DefaultManager.getDefault("AdvertisingDemonName", default="AdvertisingScene")
+        advert_no_ads_key = DefaultManager.getDefault("AdvertisingDemonNoAdsKey", default="CacheNoAds")
+
+        if DemonManager.hasDemon(advert_demon_name) is True:
+            advert_demon = DemonManager.getDemon(advert_demon_name)
+            if advert_demon.hasParam(advert_no_ads_key) is True:
+                advert_demon.setParam(advert_no_ads_key, True)
 
     def isDisabledForever(self):
         return Mengine.getCurrentAccountSetting(self.account_disable_setting_key) == self.disable_key
