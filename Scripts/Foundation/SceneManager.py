@@ -310,8 +310,6 @@ class SceneManager(object):
     def loadDefaultDescription(name, module, param):
         records = DatabaseManager.getDatabaseRecords(module, param)
 
-        content_edge_background_name = SceneManager.getAspectRatioContentEdgeModeGroupName()
-
         desc = {}
         for record in records:
             Platform = record.get("Platform")
@@ -324,13 +322,9 @@ class SceneManager(object):
             Enable = bool(record.get("Enable", 1))
             ObjectsEnable = bool(record.get("ObjectsEnable", 1))
 
-            if content_edge_background_name is not None and content_edge_background_name == Group:
-                Enable = True
-
             desc[Slot] = dict(Type=Type, Group=Group, Enable=Enable, ObjectsEnable=ObjectsEnable)
 
         SceneManager.s_defaultDescription[name] = desc
-        pass
 
     @staticmethod
     def changeDefaultSlotGroup(name, slotName, newGroup):
@@ -557,7 +551,11 @@ class SceneManager(object):
         description = SceneManager.s_scenes[name]
 
         return description
-        pass
+
+    @staticmethod
+    def visitSceneDescriptions(visitor):
+        for description in SceneManager.s_scenes.values():
+            visitor(description)
 
     @staticmethod
     def getSceneGroups(name):
@@ -860,16 +858,6 @@ class SceneManager(object):
         return SceneManager.s_currentSceneEntering
         pass
 
-    @staticmethod
-    def getAspectRatioContentEdgeModeGroupName():
-        aspect_ratio_mode = Mengine.getAspectRatioContentEdgeMode()
-
-        if aspect_ratio_mode == Mengine.ECEM_NONE:
-            return None
-        elif aspect_ratio_mode == Mengine.ECEM_HORIZONTAL_CONTENT_EDGE:
-            return "BackgroundHorizontal"
-        elif aspect_ratio_mode == Mengine.ECEM_VERTICAL_CONTENT_EDGE:
-            return "BackgroundVertical"
 
     @staticmethod
     def getCurrentDescription():
