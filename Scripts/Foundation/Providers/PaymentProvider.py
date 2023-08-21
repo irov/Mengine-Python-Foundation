@@ -42,12 +42,16 @@ class PaymentProvider(BaseProvider):
         return PaymentProvider._call("queryProducts", products_id)
 
     @staticmethod
-    def queryProductsNotFoundCb():
+    def _queryProductsNotFoundCb():
         Notification.notify(Notificator.onProductsUpdateDone)
 
     @staticmethod
     def canUserMakePurchases():
         return bool(PaymentProvider._call("canUserMakePurchases"))
+
+    @staticmethod
+    def _canUserMakePurchasesNotFoundCb():
+        return True
 
     @staticmethod
     def completeOrder(order_id):
