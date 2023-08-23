@@ -393,6 +393,7 @@ class SystemMonetization(System):
             "Chapter": cls.unlockChapter,
             "SceneUnlock": cls.unlockScene,
             "Energy": cls.addEnergy,
+            "EnergyInfinity": cls.setInfinityEnergy,
             "DisableInterstitialAds": cls.disableInterstitialAds
         }
         for reward_type, arg in reward.items():
@@ -408,6 +409,13 @@ class SystemMonetization(System):
     @staticmethod
     def addEnergy(energy):
         Notification.notify(Notificator.onEnergyIncrease, energy)
+
+    @staticmethod
+    def setInfinityEnergy(code):
+        if code == 1:
+            Notification.notify(Notificator.onEnergySet, "inf")
+        else:
+            _Log("Invalid infinity energy code {} - must be 1 to set infinity".format(code), err=True)
 
     @staticmethod
     def unlockChapter(chapter_id):
