@@ -52,7 +52,7 @@ class SystemGDPR(System):
             SystemAnalytics.sendCustomAnalytic("gdpr_agree", {})
 
             if _ANDROID and Mengine.isAvailablePlugin("GDPR") is True:
-                Mengine.androidMethod("GDPR", "setGDPRPass")
+                Mengine.androidMethod("GDPR", "setGDPRPass", True)
         else:
             SystemAnalytics.sendCustomAnalytic("gdpr_disagree", {})
 
@@ -85,7 +85,7 @@ class SystemGDPR(System):
 
             if _ANDROID and Mengine.isAvailablePlugin("GDPR") is True:
                 if Mengine.androidBooleanMethod("GDPR", "isGDPRPass") is False:
-                    Mengine.androidMethod("GDPR", "setGDPRPass")
+                    Mengine.androidMethod("GDPR", "setGDPRPass", True)
 
             return True
 
