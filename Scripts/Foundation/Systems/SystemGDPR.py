@@ -47,8 +47,12 @@ class SystemGDPR(System):
     def _setUserAgreeWithGDPR(state):
         Mengine.changeCurrentAccountSettingBool(GDPR_ACCOUNT_KEY, state)
         Mengine.saveAccounts()
+
         if state is True:
             SystemAnalytics.sendCustomAnalytic("gdpr_agree", {})
+
+            if _ANDROID and Mengine.isAvailablePlugin("GDPR") is True:
+                Mengine.androidMethod("GDPR", "setGDPRPass")
         else:
             SystemAnalytics.sendCustomAnalytic("gdpr_disagree", {})
 
@@ -78,6 +82,11 @@ class SystemGDPR(System):
             return False
 
         if self.isUserAgreeWithGDPR() is True:
+
+            if _ANDROID and Mengine.isAvailablePlugin("GDPR") is True:
+                if Mengine.androidBooleanMethod("GDPR", "isGDPRPass") is False:
+                    Mengine.androidMethod("GDPR", "setGDPRPass")
+
             return True
 
         self.runTaskChain()
