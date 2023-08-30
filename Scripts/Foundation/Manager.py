@@ -109,7 +109,7 @@ class Manager(object):
         pass
 
     @staticmethod
-    def getRecordValue(record, key, cast=None, default=None):
+    def getRecordValue(record, key, cast=None, default=None, required=False):
         """ Util for loadParams, that helps in records loading
 
             :returns: value from `record` with given `key`
@@ -128,6 +128,9 @@ class Manager(object):
             >>> for record in records:
             >>>     params = Param(record)  # one line - all params gathered
         """
+
+        if required is True and key not in required:
+            Trace.log("Manager", 0, "Manager.getRecordValue %s required value not found" % (key))
 
         value = record.get(key, default)
 
