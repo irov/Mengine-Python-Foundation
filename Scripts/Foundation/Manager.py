@@ -129,7 +129,7 @@ class Manager(object):
             >>>     params = Param(record)  # one line - all params gathered
         """
 
-        if required is True and key not in required:
+        if required is True and key not in record:
             Trace.log("Manager", 0, "Manager.getRecordValue %s required value not found" % (key))
 
         value = record.get(key, default)
