@@ -257,6 +257,9 @@ class MonetizationManager(Manager, CurrencyManager):
             key = record.get("Key")
             value = record.get(business_model)
 
+            if _DEVELOPMENT is True:
+                value = record.get("Dev", value)
+
             if isinstance(value, str):
                 if value.startswith("[") and value.endswith("]"):
                     value = value[1:-1].split(", ")
