@@ -62,11 +62,11 @@ class DummyFacebook(object):
     SHARE_POST_ID = "DUMMY_POST_ID"
 
     class User(object):
-        ACCESS_TOKEN = "EAAePSM9uFS4BACZAukJN8n35wZBiKgy09V1Ceg5SpvJDonqGvMdAdPMpiEPOB6hueO8ZAH0ZAZBZAUfDoUfHH6oKVDbRSDc8hTRwHwMp55larG8Cl4liVCmMmD7WcimnPvq5Nv9ySPetwaf2gyA4fmbQLCMtreDrS0ksTEHXdwbJH58sqYwhyOgF9tkM8IZAXNdarWmcNWwgwZDZD"
-        AVATAR_URL = "https://bluewaveboats.com/content/test/example-jpeg.jpg"
-        USER_ID = "880675035455483"
-        USER_EMAIL = "john.snow@gmail.com"
-        USER_NAME = "Анатолий Мещеряк"
+        ACCESS_TOKEN = Mengine.getConfigString("Facebook", "DebugAccessToken", "123456789token")
+        AVATAR_URL = Mengine.getConfigString("Facebook", "DebugAvatarUrl", "https://bluewaveboats.com/content/test/example-jpeg.jpg")
+        USER_ID = Mengine.getConfigString("Facebook", "DebugUserId", "123456789")
+        USER_EMAIL = Mengine.getConfigString("Facebook", "DebugUserEmail", "wonderland.playfab@gmail.com")
+        USER_NAME = Mengine.getConfigString("Facebook", "DebugUserName", "Test User")
 
     @staticmethod
     def setProvider():
