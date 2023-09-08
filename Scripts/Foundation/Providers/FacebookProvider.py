@@ -81,7 +81,7 @@ class DummyFacebook(object):
             getProfileUserPictureLink=DummyFacebook.getProfileUserPictureLink,
         ))
 
-        DummyFacebook._logged_in = Mengine.getConfigString("Facebook", "DebugStartLoggedIn", False)
+        DummyFacebook._logged_in = Mengine.getConfigBool("Facebook", "DebugStartLoggedIn", False)
 
     @staticmethod
     def getAccessToken():
