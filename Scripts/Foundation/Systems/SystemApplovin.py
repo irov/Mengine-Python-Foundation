@@ -89,7 +89,7 @@ class SystemApplovin(System):
             self._cbs = {}
             self.inited = False
             self.display = False
-            self.name = name
+            self.name = name    # placement
             self.ad_unit_id = Mengine.getConfigString(ANDROID_PLUGIN_NAME + "Plugin", "%sAdUnitId" % self.name, "")
 
         def setCallbacks(self):
@@ -116,15 +116,18 @@ class SystemApplovin(System):
                 return False
 
             _Log("[{}] call init".format(self.name))
+            self._initialize()
+
+            self.inited = True
+
+            return True
+
+        def _initialize(self):
             if _IOS:
                 callbacks = self.setCallbacks()
                 ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, callbacks)
             else:
                 ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id)
-
-            self.inited = True
-
-            return True
 
         def cleanUp(self):
             if _ANDROID:
@@ -143,7 +146,8 @@ class SystemApplovin(System):
                      .format(self.ad_type, self.name, status), err=True, force=True)
                 return status
 
-            status = ApplovinMengineProvider.call(self.s_methods["can_offer"], self.ad_unit_id, type="bool")
+            status = ApplovinMengineProvider.call(self.s_methods["can_offer"],
+                                                  self.ad_unit_id, self.getPlacementName(), type="bool")
             _Log("[{}:{}] available to offer is {}".format(self.ad_type, self.name, status))
 
             return status
@@ -157,7 +161,8 @@ class SystemApplovin(System):
                      .format(self.ad_type, self.name, status), err=True, force=True)
                 return status
 
-            status = ApplovinMengineProvider.call(self.s_methods["is_available"], self.ad_unit_id, type="bool")
+            status = ApplovinMengineProvider.call(self.s_methods["is_available"],
+                                                  self.ad_unit_id, self.getPlacementName(), type="bool")
             _Log("[{}:{}] available to show is {}".format(self.ad_type, self.name, status))
 
             return status
@@ -172,7 +177,8 @@ class SystemApplovin(System):
             _Log("[{}:{}] show advertisement...".format(self.ad_type, self.name))
 
             if self._hasMethod("show") is True:
-                status = ApplovinMengineProvider.call(self.s_methods["show"], self.ad_unit_id, type="bool")
+                status = ApplovinMengineProvider.call(self.s_methods["show"],
+                                                      self.ad_unit_id, self.getPlacementName(), type="bool")
 
             if status is False:
                 self.cbDisplayFailed(self.ad_unit_id)
@@ -198,6 +204,9 @@ class SystemApplovin(System):
 
             _Log(err_msg, err=True)
             return False
+
+        def getPlacementName(self):
+            return self.name
 
         # callbacks
 
@@ -395,6 +404,13 @@ class SystemApplovin(System):
         def __init__(self, name):
             super(self.__class__, self).__init__(name)
             self.hidden = True
+
+        def _initialize(self):
+            if _IOS:
+                callbacks = self.setCallbacks()
+                ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, self.getPlacementName(), callbacks)
+            else:
+                ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, self.getPlacementName())
 
         def show(self):
             if self.hidden is False:
