@@ -106,7 +106,7 @@ class SystemTiming(System):
 
         self.textNode = layer.createChild("TextField")
         self.textNode.setTextId("__ID_TIMING")
-        self.textNode.setFontName("__CONSOLE_FONT__")
+        # self.textNode.setFontName("__CONSOLE_FONT__")
         self.textNode.setTextFormatArgs(round(factor, 2))
         self.textNode.enable()
         self.textNode.setWorldPosition((5.0, 20.0))
