@@ -96,7 +96,7 @@ class DummyFacebook(object):
         # onFacebookLoginSuccess
         if _cb_success:
             _cb_success(DummyFacebook.User.ACCESS_TOKEN)
-            DummyFacebook._logged_in = True
+        DummyFacebook._logged_in = True
 
     @staticmethod
     def shareLink(link=None, msg='', _cb_success=None, _cb_cancel=None, _cb_error=None):
@@ -110,7 +110,7 @@ class DummyFacebook(object):
     def logout(_cb_success=None, _cb_cancel=None):
         if _cb_success:
             _cb_success()
-            DummyFacebook._logged_in = False
+        DummyFacebook._logged_in = False
 
     @staticmethod
     def getUser(_cb=None):
