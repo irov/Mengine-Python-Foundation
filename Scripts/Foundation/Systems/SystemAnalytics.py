@@ -282,6 +282,10 @@ class SystemAnalytics(System):
                                            check_method=check_method, params_method=params_method)
 
     @staticmethod
+    def eventFlush():
+        Mengine.analyticsEventFlush()
+
+    @staticmethod
     def addIgnoreLogEventKey(event_key):
         if event_key not in SystemAnalytics.__ignore_log_events:
             SystemAnalytics.__ignore_log_events.append(event_key)
