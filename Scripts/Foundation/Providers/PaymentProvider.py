@@ -71,11 +71,28 @@ class DummyPayment(object):
 
     @staticmethod
     def pay(product_id):
+        from Foundation.TaskManager import TaskManager
+
+        if TaskManager.existTaskChain("DummyPaymentProcessing_{}".format(product_id)) is True:
+            Trace.log("Provider", 0, "Payment {} already in processing...".format(product_id))
+            return True
+
         prod_params = ProductsProvider.getProductInfo(product_id)
 
-        Trace.msg("DUMMY success pay {} ({})".format(product_id, prod_params))
-        Notification.notify(Notificator.onPaySuccess, product_id)
-        Notification.notify(Notificator.onPayComplete, product_id)
+        success = Mengine.rand(100) >= 15    # 85% chance
+
+        with TaskManager.createTaskChain(Name="DummyPaymentProcessing_{}".format(product_id)) as tc:
+            tc.addPrint("DUMMY payment processing {!r} 3s... ({})".format(product_id, prod_params))
+            tc.addDelay(3000)
+
+            if success is True:
+                tc.addPrint("DUMMY payment {!r} OK".format(product_id))
+                tc.addNotify(Notificator.onPaySuccess, product_id)
+            else:
+                tc.addNotify(Notificator.onPayFailed, product_id)
+            tc.addNotify(Notificator.onPayComplete, product_id)
+
+        return True
 
     @staticmethod
     def restorePurchases():
@@ -89,6 +106,7 @@ class DummyPayment(object):
 
     @staticmethod
     def canUserMakePurchases():
+        Trace.msg("DUMMY user CAN make purchases")
         return True
 
     @staticmethod
