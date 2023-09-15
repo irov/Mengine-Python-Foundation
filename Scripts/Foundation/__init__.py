@@ -749,6 +749,9 @@ def onInitialize():
         , "onAppRated"
         , "onGetRemoteConfig"
 
+        , "onUserLoggedIn"
+        , "onUserLoggedOut"
+
     ]
 
     Notificator.addIdentities(notifiers)
@@ -843,6 +846,7 @@ def onInitialize():
         , "ProductsProvider"
         , "FacebookProvider"
         , "AchievementsProvider"
+        , "AuthProvider"   # main account
     ]
     from Foundation.ProviderManager import ProviderManager
     ProviderManager.importProviders("Foundation.Providers", providers)

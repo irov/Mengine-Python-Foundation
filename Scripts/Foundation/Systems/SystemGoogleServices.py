@@ -4,6 +4,7 @@ from Foundation.Providers.RatingAppProvider import RatingAppProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.Providers.ProductsProvider import ProductsProvider
+from Foundation.Providers.AuthProvider import AuthProvider
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
@@ -72,7 +73,12 @@ class SystemGoogleServices(System):
                 unlockAchievement=self.unlockAchievement,
                 incrementAchievement=self.incrementAchievement,
             ))
-            PolicyManager.setPolicy("Authorize", "PolicyAuthGoogleService")
+            AuthProvider.setProvider("Google", dict(
+                login=self.signIn,
+                logout=self.signOut,
+                isLoggedIn=self.isLoggedIn,
+            ))
+            PolicyManager.setPolicy("Authorize", "PolicyAuthGoogleService")    # deprecated
 
         if self.b_plugins["GooglePlayBilling"] is True:
             def setBillingCallback(callback_name, *callback):
@@ -236,6 +242,7 @@ class SystemGoogleServices(System):
 
         SystemGoogleServices.login_data = account_id
         SystemGoogleServices.login_event(True)
+        Notification.notify(Notificator.onUserLoggedIn)
 
         SystemGoogleServices.__cbRestoreTasks()
         _Log("[Auth cb] successfully logged in: id={!r}".format(account_id))
@@ -270,6 +277,7 @@ class SystemGoogleServices(System):
     def __cbSignOutComplete():
         SystemGoogleServices.login_data = None
         SystemGoogleServices.logout_event(True)
+        Notification.notify(Notificator.onUserLoggedOut)
         _Log("[Auth cb] logout complete", force=True)
 
     @staticmethod
