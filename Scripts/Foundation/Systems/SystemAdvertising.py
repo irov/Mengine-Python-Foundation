@@ -12,6 +12,7 @@ DEFAULT_IGNORE_SCENES = [
     "CutScene", "Menu", "Bonus", "SplashScreen", "Intro", "PreIntro",
     "DebugMenu", "Store", "Guides", "Map", "MapBonusChapter", "Options"
 ]
+AD_TYPE = "Interstitial"
 
 
 class SystemAdvertising(System):
@@ -35,7 +36,7 @@ class SystemAdvertising(System):
     def _onInitialize(self):
         if Mengine.hasTouchpad() is False:
             return
-        if Mengine.getConfigBool('Advertising', "Interstitial", False) is False:
+        if Mengine.getConfigBool('Advertising', AD_TYPE, False) is False:
             return
 
         interstitial_params = {
@@ -58,6 +59,7 @@ class SystemAdvertising(System):
             "trigger_count_start": Mengine.getConfigInt('Advertising', "TriggerCountStart", 0),
             "trigger_count_show": Mengine.getConfigInt('Advertising', "TriggerCountShow", 1),
             "scenes_to_view": Mengine.getConfigString('Advertising', "ScenesToView", "").split(", "),
+            "ad_unit_name": Mengine.getConfigString('Advertising', "InterstitialSystemAdUnitName", AD_TYPE),
         }
 
         if Mengine.getConfigBool('Advertising', "NoPermissionsNotify", False) is True:
@@ -118,11 +120,14 @@ class SystemAdvertising(System):
         return cls.s_general_params.get(key)
 
     def showInterstitial(self, descr=None):
+        ad_unit_name = self.getGeneralParam("ad_unit_name")
+
         def _cb(*args, **kwargs):
-            _Log("show interstitial advert using {} [action={!r}]".format(AdvertisementProvider.getName(), descr))
+            _Log("show {}:{} advert using {} [action={!r}]".format(
+                AD_TYPE, ad_unit_name, AdvertisementProvider.getName(), descr))
             self.updateViewedTime(Mengine.getTime())
 
-        TaskManager.runAlias("AliasShowAdvert", _cb, AdType="Interstitial")
+        TaskManager.runAlias("AliasShowAdvert", _cb, AdType=AD_TYPE, AdUnitName=ad_unit_name)
 
     def isReadyToView(self):
         """ for manual check if interstitial is ready to view """
@@ -132,7 +137,7 @@ class SystemAdvertising(System):
             return self._hasPermissionToViewAd(Mengine.getTime()) is True
 
     def _hasPermissionToViewAd(self, timestamp):
-        if AdvertisementProvider.isAdvertAvailable("Interstitial") is False:
+        if AdvertisementProvider.isAdvertAvailable(AD_TYPE) is False:
             return False
 
         if self._start_delay_done is False:
@@ -259,7 +264,7 @@ class SystemAdvertising(System):
         if self.__checkTriggerCounter() is False:
             self._optionalNotifyNoPermission()
             return False
-        if AdvertisementProvider.isAdvertAvailable("Interstitial") is False:
+        if AdvertisementProvider.isAdvertAvailable(AD_TYPE) is False:
             self._optionalNotifyNoPermission()
             return False
 
