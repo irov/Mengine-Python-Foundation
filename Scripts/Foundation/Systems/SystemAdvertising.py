@@ -157,6 +157,18 @@ class SystemAdvertising(System):
             return True
         return False
 
+    def canViewAdOnScene(self, scene_name):
+        if self.isInterstitialParamEnable("only_specific_scenes") is True:
+            if scene_name not in self.getGeneralParam("scenes_to_view"):
+                return False
+            return True
+
+        if self.isInterstitialParamEnable("only_game_scenes") is True and SceneManager.isGameScene(scene_name) is False:
+            return False
+        if scene_name in self.s_ignore_scenes:
+            return False
+        return True
+
     def _optionalNotifyNoPermission(self):
         if self._no_permission_identity is not None:
             Notification.notify(self._no_permission_identity)
@@ -244,14 +256,7 @@ class SystemAdvertising(System):
         return True
 
     def __cbTransitionBegin(self, scene_from, scene_to, zoom_name, action=None):
-        if self.isInterstitialParamEnable("only_specific_scenes") is True:
-            if scene_to not in self.getGeneralParam("scenes_to_view"):
-                return False
-            return self.__interstitialObserver(action=action)
-
-        if self.isInterstitialParamEnable("only_game_scenes") is True and SceneManager.isGameScene(scene_to) is False:
-            return False
-        if scene_to in self.s_ignore_scenes:
+        if self.canViewAdOnScene(scene_to) is False:
             return False
 
         return self.__interstitialObserver(action=action)
