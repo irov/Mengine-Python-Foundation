@@ -107,8 +107,8 @@ class SystemGDPR(System):
         alpha_time = 250.0
 
         SystemAnalytics.sendCustomAnalytic("gdpr_request", {
-            "GroupName": self.gdpr_group_name,
-            "Link": str(self.privacy_policy_link),
+            "group_name": self.gdpr_group_name,
+            "link": str(self.privacy_policy_link),
         })
 
         if self.existTaskChain(Name="GDPRCompliance"):
