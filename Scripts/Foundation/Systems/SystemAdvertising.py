@@ -206,6 +206,8 @@ class SystemAdvertising(System):
                 advert_demon.setParam(advert_no_ads_key, True)
 
     def isDisabledForever(self):
+        if Mengine.hasCurrentAccountSetting(self.account_disable_setting_key) is False:
+            return True
         return Mengine.getCurrentAccountSetting(self.account_disable_setting_key) == self.disable_key
 
     def __addObservers(self):
