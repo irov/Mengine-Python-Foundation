@@ -78,7 +78,7 @@ class SystemAnalytics(System):
         def send(self, params):
             """ finally send event with name from `self.key` and params from `params` dict """
             SystemAnalytics._sendDebugLog(self.key, params)
-            Mengine.analyticsCustomEvent(self._service_key, None, params)
+            Mengine.analyticsEvent(self._service_key, None, params)
 
         def clean(self):
             if self._observer is not None:
@@ -180,7 +180,7 @@ class SystemAnalytics(System):
         params.update(send_params)
 
         SystemAnalytics._sendDebugLog(event_key, params)
-        Mengine.analyticsCustomEvent(ANALYTIC_PREFIX_NAME+event_key, None, params)
+        Mengine.analyticsEvent(ANALYTIC_PREFIX_NAME+event_key, None, params)
 
     def addDefaultAnalytics(self):
         """ create default analytics and run them """
