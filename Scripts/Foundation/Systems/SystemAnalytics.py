@@ -89,6 +89,15 @@ class SystemAnalytics(System):
             self.identity = None
             self.key = None
 
+    class ScreenViewAnalytic(AnalyticUnit):
+        def send(self, params):
+            screen_type = params["screen_type"]   # str
+            screen_name = params["screen_name"]   # str
+            _params = {"screen_type": screen_type, "screen_name": screen_name}
+
+            SystemAnalytics._sendDebugLog(self.key, _params)
+            Mengine.analyticsScreenView(screen_type, screen_name)
+
     def _onInitialize(self):
         self.addDefaultAnalytics()
 
@@ -143,6 +152,28 @@ class SystemAnalytics(System):
         return True
 
     @staticmethod
+    def addSpecificAnalytic(event_type, event_key, identity, check_method=None, params_method=None):
+        specific_analytics = {
+            "screen_view": SystemAnalytics.ScreenViewAnalytic,
+        }
+
+        if event_type not in specific_analytics:
+            Trace.log("System", 0, "SystemAnalytics unknown event type '%s'" % event_type)
+            return False
+
+        if SystemAnalytics.hasAnalytic(event_key) is True:
+            Trace.log("System", 1, "SystemAnalytics already has analytic with event key '%s'" % event_key)
+            return False
+
+        event_class = specific_analytics[event_type]
+
+        analytics_unit = event_class(event_type, identity,
+                                     check_method=check_method, create_params_method=params_method)
+
+        SystemAnalytics.s_active_analytics[event_key] = analytics_unit
+        return True
+
+    @staticmethod
     def sendCustomAnalytic(event_key, send_params):
         """ force sends analytic event to analytic service """
         params = SystemAnalytics.getExtraAnalyticParams()
@@ -153,7 +184,7 @@ class SystemAnalytics(System):
 
     def addDefaultAnalytics(self):
         """ create default analytics and run them """
-        self.addAnalytic("scene_open", Notificator.onSceneActivate, service_key="screen_view",
+        self.addAnalytic("screen_view", "scene_open", Notificator.onSceneActivate,
                          params_method=lambda name: {"screen_type": "MengineScene", "screen_name": name})
 
         self._addDefaultAnalytics()
