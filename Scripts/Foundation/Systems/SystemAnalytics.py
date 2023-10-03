@@ -1,7 +1,7 @@
 from Foundation.System import System
 from Notification import Notification
 
-ANALYTIC_PREFIX_NAME = "mng_"
+ANALYTIC_PREFIX_NAME = "mpy_"
 
 
 class SystemAnalytics(System):
@@ -12,9 +12,14 @@ class SystemAnalytics(System):
     class AnalyticUnit(object):
         allowed_types = (int, str, float, bool)
 
-        def __init__(self, event_key, identity, check_method=None, create_params_method=None):
+        def __init__(self, event_key, identity, check_method=None, create_params_method=None, service_key=None):
             self.key = event_key
-            self._service_key = ANALYTIC_PREFIX_NAME + event_key
+
+            if service_key is None:
+                self._service_key = ANALYTIC_PREFIX_NAME + event_key
+            else:
+                self._service_key = ANALYTIC_PREFIX_NAME + service_key
+
             self.identity = identity
 
             self._check = None
@@ -84,87 +89,6 @@ class SystemAnalytics(System):
             self.identity = None
             self.key = None
 
-    class EarnCurrencyAnalytic(AnalyticUnit):
-        def send(self, params):
-            currency_name = params["name"]  # str
-            amount = params["amount"]   # float
-            _params = {"name": currency_name, "amount": amount}
-
-            SystemAnalytics._sendDebugLog(self.key, _params)
-            Mengine.analyticsEarnVirtualCurrencyEvent(currency_name, amount)
-
-    class SpentCurrencyAnalytic(AnalyticUnit):
-        def send(self, params):
-            currency_name = params["name"]  # str
-            amount = params["amount"]   # float
-            descr = params["description"]   # str
-            _params = {"name": currency_name, "amount": amount, "description": descr}
-
-            SystemAnalytics._sendDebugLog(self.key, _params)
-            Mengine.analyticsSpendVirtualCurrencyEvent(descr, currency_name, amount)
-
-    class UnlockAchievementAnalytic(AnalyticUnit):
-        def send(self, params):
-            achievement_id = params["achievement_id"]   # str
-            _params = {"achievement_id": achievement_id}
-
-            SystemAnalytics._sendDebugLog(self.key, _params)
-            Mengine.analyticsUnlockAchievementEvent(achievement_id)
-
-    class LevelUpAnalytic(AnalyticUnit):
-        def send(self, params):
-            name = params["name"] + "_level"    # str
-            level = params["level"]     # int
-            _params = {"name": name, "level": level}
-
-            SystemAnalytics._sendDebugLog(self.key, _params)
-            Mengine.analyticsLevelUp(name, level)
-
-    class LevelStartAnalytic(AnalyticUnit):
-        def send(self, params):
-            name = params["name"]   # str
-            _params = {"name": name}
-
-            SystemAnalytics._sendDebugLog(self.key, _params)
-            Mengine.analyticsLevelStart(name)
-
-    class LevelEndAnalytic(AnalyticUnit):
-        def send(self, params):
-            name = params["name"]   # str
-            successful = params["successful"]   # bool
-            _params = {"name": name, "successful": successful}
-
-            SystemAnalytics._sendDebugLog(self.key, _params)
-            Mengine.analyticsLevelEnd(name, successful)
-
-    class SelectItemAnalytic(AnalyticUnit):
-        def send(self, params):
-            category = params["category"]   # str
-            item_id = params["item_id"]   # str
-            _params = {"category": category, "item_id": item_id}
-
-            SystemAnalytics._sendDebugLog(self.key, _params)
-            Mengine.analyticsSelectItem(category, item_id)
-
-    class TutorialBeginAnalytic(AnalyticUnit):
-        def send(self, params):
-            SystemAnalytics._sendDebugLog(self.key, {})
-            Mengine.analyticsTutorialBegin()
-
-    class TutorialCompleteAnalytic(AnalyticUnit):
-        def send(self, params):
-            SystemAnalytics._sendDebugLog(self.key, {})
-            Mengine.analyticsTutorialComplete()
-
-    class ScreenViewAnalytic(AnalyticUnit):
-        def send(self, params):
-            screen_type = params["screen_type"]   # str
-            screen_name = params["screen_name"]   # str
-            _params = {"screen_type": screen_type, "screen_name": screen_name}
-
-            SystemAnalytics._sendDebugLog(self.key, _params)
-            Mengine.analyticsScreenView(screen_type, screen_name)
-
     def _onInitialize(self):
         self.addDefaultAnalytics()
 
@@ -199,53 +123,23 @@ class SystemAnalytics(System):
         return event_key in SystemAnalytics.s_active_analytics
 
     @staticmethod
-    def addAnalytic(event_key, identity, check_method=None, params_method=None):
+    def addAnalytic(event_key, identity, check_method=None, params_method=None, service_key=None):
         """ create and run new analytic unit with name `ANALYTIC_PREFIX_NAME + event_key` into analytic service
 
             @param event_key: event id without service prefix (ANALYTIC_PREFIX_NAME)
             @param identity: Notificator identity id that triggers analytic
             @param check_method: should get same args as notificator sends: returns bool, if True - send event
             @param params_method: should get same args as notificator sends: returns dict
+            @param service_key: real event key that will be sent to service (if None - use `event_key`)
         """
         if SystemAnalytics.hasAnalytic(event_key) is True:
             Trace.log("System", 1, "SystemAnalytics already has analytic with event key '%s'" % event_key)
             return False
 
-        analytics_unit = SystemAnalytics.AnalyticUnit(event_key, identity,
+        analytics_unit = SystemAnalytics.AnalyticUnit(event_key, identity, service_key=service_key,
                                                       check_method=check_method, create_params_method=params_method)
 
         SystemAnalytics.s_active_analytics[analytics_unit.key] = analytics_unit
-        return True
-
-    @staticmethod
-    def addSpecificAnalytic(event_type, event_key, identity, check_method=None, params_method=None):
-        specific_analytics = {
-            "earn_currency": SystemAnalytics.EarnCurrencyAnalytic,
-            "spent_currency": SystemAnalytics.SpentCurrencyAnalytic,
-            "unlock_achievement": SystemAnalytics.UnlockAchievementAnalytic,
-            "level_up": SystemAnalytics.LevelUpAnalytic,
-            "level_start": SystemAnalytics.LevelStartAnalytic,
-            "level_end": SystemAnalytics.LevelEndAnalytic,
-            "select_item": SystemAnalytics.SelectItemAnalytic,
-            "tutorial_begin": SystemAnalytics.TutorialBeginAnalytic,
-            "tutorial_complete": SystemAnalytics.TutorialCompleteAnalytic,
-            "screen_view": SystemAnalytics.ScreenViewAnalytic,
-        }
-
-        if event_type not in specific_analytics:
-            Trace.log("System", 0, "SystemAnalytics unknown event type '%s'" % event_type)
-            return False
-
-        if SystemAnalytics.hasAnalytic(event_key) is True:
-            Trace.log("System", 1, "SystemAnalytics already has analytic with event key '%s'" % event_key)
-            return False
-
-        event_class = specific_analytics[event_type]
-
-        analytics_unit = event_class(event_type, identity,
-                                     check_method=check_method, create_params_method=params_method)
-
-        SystemAnalytics.s_active_analytics[event_key] = analytics_unit
         return True
 
     @staticmethod
@@ -259,8 +153,8 @@ class SystemAnalytics(System):
 
     def addDefaultAnalytics(self):
         """ create default analytics and run them """
-        self.addSpecificAnalytic("screen_view", "scene_open", Notificator.onSceneActivate,
-                                 params_method=lambda name: {"screen_type": "MengineScene", "screen_name": name})
+        self.addAnalytic("scene_open", Notificator.onSceneActivate, service_key="screen_view",
+                         params_method=lambda name: {"screen_type": "MengineScene", "screen_name": name})
 
         self._addDefaultAnalytics()
 

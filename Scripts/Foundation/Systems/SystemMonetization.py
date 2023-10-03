@@ -694,10 +694,12 @@ class SystemMonetization(System):
 
         advert_prod_id = MonetizationManager.getGeneralSetting("AdvertProductID")
 
-        SystemAnalytics.addSpecificAnalytic("earn_currency", "purchase", Notificator.onGameStoreSentRewards,
-                                            lambda _, rewards: 'Gold' in rewards or 'Energy' in rewards, _cbEarnCurrency)
-        SystemAnalytics.addSpecificAnalytic("spent_currency", "spent_gold", Notificator.onGameStorePayGoldSuccess,
-                                            None, lambda gold, descr: {'amount': gold, 'description': descr, 'name': 'gold'})
+        SystemAnalytics.addAnalytic("earn_currency_by_purchase", Notificator.onGameStoreSentRewards,
+                                    service_key="earn_currency", params_method=_cbEarnCurrency,
+                                    check_method=lambda _, rewards: 'Gold' in rewards or 'Energy' in rewards)
+        SystemAnalytics.addAnalytic("spent_currency_gold", Notificator.onGameStorePayGoldSuccess,
+                                    service_key="spent_currency",
+                                    params_method=lambda gold, descr: {'amount': gold, 'description': descr, 'name': 'gold'})
 
         SystemAnalytics.addAnalytic("got_promocode_reward", Notificator.onGiftExchangeRedeemResult, None,
                                     lambda label, result: {'type': label, 'result': result})
