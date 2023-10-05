@@ -276,7 +276,7 @@ def oniOSApplicationWillResignActive():
 def oniOSApplicationWillTerminate():
     Notification.notify(Notificator.oniOSApplicationWillTerminate)
 
-def onAnalyticsEvent(type, name, timestamp, params):
-    Notification.notify(Notificator.onAnalyticsEvent, type, name, timestamp, params)
+def onAnalyticsEvent(name, timestamp, params):
+    Notification.notify(Notificator.onAnalyticsEvent, name, timestamp, params)
     pass
 
