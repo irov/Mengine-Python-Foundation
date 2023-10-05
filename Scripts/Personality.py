@@ -280,3 +280,9 @@ def onAnalyticsEvent(name, timestamp, params):
     Notification.notify(Notificator.onAnalyticsEvent, name, timestamp, params)
     pass
 
+def onAnalyticsScreenView(screen_type, screen_name):
+    pass
+
+def onAnalyticsFlush():
+    pass
+
