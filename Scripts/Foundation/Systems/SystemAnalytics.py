@@ -184,8 +184,8 @@ class SystemAnalytics(System):
 
     def addDefaultAnalytics(self):
         """ create default analytics and run them """
-        self.addAnalytic("screen_view", "scene_open", Notificator.onSceneActivate,
-                         params_method=lambda name: {"screen_type": "MengineScene", "screen_name": name})
+        self.addSpecificAnalytic("screen_view", "scene_open", Notificator.onSceneActivate,
+                                 params_method=lambda name: {"screen_type": "MengineScene", "screen_name": name})
 
         self._addDefaultAnalytics()
 
