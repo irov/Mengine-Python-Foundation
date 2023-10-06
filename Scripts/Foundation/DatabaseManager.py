@@ -54,6 +54,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def getDatabase(module, name):
+        """ returns database that matches given module:name """
         if name in DatabaseManager.s_cache_databases:
             return DatabaseManager.s_cache_databases[name]
 
@@ -69,19 +70,21 @@ class DatabaseManager(object):
         return Database
 
     @staticmethod
-    def getDatabaseRecords(module, param):
-        database = DatabaseManager.getDatabase(module, param)
+    def getDatabaseRecords(module, name):
+        """ returns list of database records of given db """
+        database = DatabaseManager.getDatabase(module, name)
 
         if database is None:
-            Trace.log("Manager", 0, "DatabaseManager.getDatabaseRecords: invalid param %s" % (param))
+            Trace.log("Manager", 0, "DatabaseManager.getDatabaseRecords: module %s invalid name %s" % (module, name))
             return None
 
         records = database.getRecords()
         return records
 
     @staticmethod
-    def getDatabaseRecordsFilterBy(module, param, **keys):
-        records = DatabaseManager.getDatabaseRecords(module, param)
+    def getDatabaseRecordsFilterBy(module, name, **keys):
+        """ returns list of database records of given db that match given keys """
+        records = DatabaseManager.getDatabaseRecords(module, name)
 
         filter_records = []
         for record in records:
@@ -92,19 +95,21 @@ class DatabaseManager(object):
         return filter_records
 
     @staticmethod
-    def getDatabaseORMs(module, param):
-        database = DatabaseManager.getDatabase(module, param)
+    def getDatabaseORMs(module, name):
+        """ returns the list of ORM, module='Database' as usual """
+        database = DatabaseManager.getDatabase(module, name)
 
         if database is None:
-            Trace.log("Manager", 0, "DatabaseManager.getDatabaseRecords: invalid param %s" % (param))
+            Trace.log("Manager", 0, "DatabaseManager.getDatabaseRecords: module %s invalid name %s" % (module, name))
             return None
 
         ORMs = database.getORMs()
         return ORMs
 
     @staticmethod
-    def findDatabaseORM(module, param, **keys):
-        ORMs = DatabaseManager.getDatabaseORMs(module, param)
+    def findDatabaseORM(module, name, **keys):
+        """ returns the first ORM that matches the keys if exists in given db """
+        ORMs = DatabaseManager.getDatabaseORMs(module, name)
         if ORMs == []:
             return None
 
@@ -112,17 +117,18 @@ class DatabaseManager(object):
         return ORM
 
     @staticmethod
-    def filterDatabaseORM(module, param, filter):
-        ORMs = DatabaseManager.getDatabaseORMs(module, param)
+    def filterDatabaseORM(module, name, filter):
+        """ returns the list of ORM that match the filter """
+        ORMs = DatabaseManager.getDatabaseORMs(module, name)
         return [orm for orm in ORMs if filter(orm) is True]
 
     @staticmethod
-    def validDatabaseORMs(param, *legends):
+    def validDatabaseORMs(name, *legends):
         module = "Database"
-        database = DatabaseManager.getDatabase(module, param)
+        database = DatabaseManager.getDatabase(module, name)
 
         if database is None:
-            Trace.log("Manager", 0, "DatabaseManager.validDatabaseORMs: invalid param %s" % (param))
+            Trace.log("Manager", 0, "DatabaseManager.validDatabaseORMs: module %s invalid name %s" % (module, name))
             return []
 
         database_legends = database.getLegends()
@@ -130,13 +136,13 @@ class DatabaseManager(object):
         successful = True
         for key in database_legends:
             if key not in legends:
-                Trace.log("Manager", 0, "DatabaseManager.validDatabaseORMs: database %s has over param %s" % (param, key))
+                Trace.log("Manager", 0, "DatabaseManager.validDatabaseORMs: database %s has over name %s" % (name, key))
                 successful = False
 
             legends.remove(key)
 
         for key in legends:
-            Trace.log("Manager", 0, "DatabaseManager.validDatabaseORMs: database %s has missing param %s" % (param, key))
+            Trace.log("Manager", 0, "DatabaseManager.validDatabaseORMs: database %s has missing name %s" % (name, key))
             successful = False
 
         return successful
@@ -163,6 +169,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def find(orm, **keys):
+        """ returns the first ORM record that matches the keys """
         keys_items = keys.items()
 
         for record in orm:
@@ -210,6 +217,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def getUniqueORMValues(orm, key):
+        """ returns list of records with unique values for the given key """
         unique_values = []
         for record in orm:
             if hasattr(record, key) is False:
@@ -225,6 +233,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def getLowValueFromUniques(orm, key, value):
+        """ returns the lowest unique value for the given key """
         unique_values = DatabaseManager.getUniqueORMValues(orm, key)
 
         low_value = None
@@ -267,6 +276,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def select(orm, **keys):
+        """ returns list of all records that match the keys """
         keys_items = keys.items()
 
         result = []
@@ -279,6 +289,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def unselect(orm, **keys):
+        """ returns list of all records that DON'T match the keys """
         result = []
         for record in orm:
             if DatabaseManager.__equal(record, keys) is True:
@@ -289,6 +300,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def count(orm, **keys):
+        """ returns int that represents the number of records that match the keys """
         keys_items = keys.items()
 
         result = 0
@@ -301,6 +313,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def exist(orm, **keys):
+        """ returns True if there is at least one record that matches the keys """
         keys_items = keys.items()
 
         for record in orm:
@@ -312,6 +325,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def getValueFromEntityDefaults(key, entity, tag=None):
+        """ returns ORM's `Value` from db 'EntityDefaults' that matches Entity=entity, Key=key and Tag=tag if given """
         entityDefaultORMs = DatabaseManager.getDatabaseORMs('Database', 'EntityDefaults')
         defaultORMs = DatabaseManager.select(entityDefaultORMs, Entity=entity)
         if tag is None:
