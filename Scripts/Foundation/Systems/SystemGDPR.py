@@ -13,6 +13,7 @@ class SystemGDPR(System):
     privacy_policy_link = None
     gdpr_group_name = None
     is_default_provider = True
+    _read_counter = 0
 
     def __initAccountParam(self):
         def __addExtraAccountSettings(accountID, isGlobal):
@@ -139,10 +140,15 @@ class SystemGDPR(System):
             no.addTask("TaskQuitApplication")
 
     def _scopeLinkHandler(self, source, event_button_click):
+        def _sendReadAnalytic():
+            SystemGDPR._read_counter += 1
+            if SystemGDPR._read_counter == 1:
+                SystemAnalytics.sendCustomAnalytic("gdpr_read", {"link": self.privacy_policy_link})
+
         with source.addRepeatTask() as (repeat, until):
             repeat.addTask("TaskMovie2SocketClick", GroupName=self.gdpr_group_name,
                            Movie2Name="Movie2_Window", SocketName="link")
-            repeat.addFunction(SystemAnalytics.sendCustomAnalytic, "gdpr_read", {"link": self.privacy_policy_link})
+            repeat.addFunction(_sendReadAnalytic)
             repeat.addFunction(Mengine.openUrlInDefaultBrowser, self.privacy_policy_link)
 
             until.addEvent(event_button_click)
