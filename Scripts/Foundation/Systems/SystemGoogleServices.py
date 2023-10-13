@@ -138,7 +138,7 @@ class SystemGoogleServices(System):
 
             RatingAppProvider.setProvider("Google", dict(rateApp=self.rateApp))
 
-        if self.b_plugins["GoogleGameSocial"] is True and Mengine.getGameParamBool("GoogleAutoLogin", False) is True:
+        if self.b_plugins["GoogleGameSocial"] is True and Mengine.getGameParamBool("GoogleAutoLogin", True) is True:
             self.signIn()
 
         self.__addDevToDebug()
