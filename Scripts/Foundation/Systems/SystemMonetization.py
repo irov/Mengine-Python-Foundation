@@ -702,7 +702,7 @@ class SystemMonetization(System):
                                     params_method=lambda gold, descr: {'amount': gold, 'description': descr, 'name': 'gold'})
 
         SystemAnalytics.addAnalytic("got_promocode_reward", Notificator.onGiftExchangeRedeemResult, None,
-                                    lambda label, result: {'type': label, 'result': result})
+                                    lambda label, result: {'type': str(label), 'result': str(result)})
         SystemAnalytics.addAnalytic("got_purchase_reward", Notificator.onGameStoreSentRewards,
                                     lambda prod_id, *_: prod_id != advert_prod_id, _cbSentRewardParams)
         SystemAnalytics.addAnalytic("got_ad_reward", Notificator.onGameStoreSentRewards,
