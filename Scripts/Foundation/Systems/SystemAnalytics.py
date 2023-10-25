@@ -1,7 +1,7 @@
 from Foundation.System import System
 from Notification import Notification
 
-ANALYTIC_PREFIX_NAME = "mpy_"
+ANALYTIC_PREFIX_NAME = "mpr_"
 
 
 class SystemAnalytics(System):
