@@ -14,6 +14,7 @@ class SystemGDPR(System):
     gdpr_group_name = None
     is_default_provider = True
     _read_counter = 0
+    _global_agree_state = False
 
     def __initAccountParam(self):
         def __addExtraAccountSettings(accountID, isGlobal):
@@ -49,8 +50,10 @@ class SystemGDPR(System):
         Mengine.changeCurrentAccountSettingBool(GDPR_ACCOUNT_KEY, state)
         Mengine.saveAccounts()
 
+        analytics_data = {"gdpr_read_times": SystemGDPR._read_counter}
+
         if state is True:
-            SystemAnalytics.sendCustomAnalytic("gdpr_agree", {})
+            SystemAnalytics.sendCustomAnalytic("gdpr_agree", analytics_data)
 
             if _ANDROID and Mengine.isAvailablePlugin("GDPR") is True:
                 Mengine.androidMethod("GDPR", "setGDPRPass", True)
@@ -58,7 +61,9 @@ class SystemGDPR(System):
                 Mengine.appleSetGDPRPass(True)
 
         else:
-            SystemAnalytics.sendCustomAnalytic("gdpr_disagree", {})
+            SystemAnalytics.sendCustomAnalytic("gdpr_disagree", analytics_data)
+
+        SystemGDPR._global_agree_state = state
 
     def _onRun(self):
         if SystemGDPR.is_default_provider is False:
@@ -66,7 +71,14 @@ class SystemGDPR(System):
 
         self.addObserver(Notificator.onSceneActivate, self._cbSceneActivate)
         self.addObserver(Notificator.onGetRemoteConfig, self._cbGetRemoteConfig)
+        self.addObserver(Notificator.onSelectAccount, self._cbSelectAccount)
         return True
+
+    def _cbSelectAccount(self, account_id):
+        if SystemGDPR._global_agree_state is True and self.isUserAgreeWithGDPR() is False:
+            Mengine.changeCurrentAccountSettingBool(GDPR_ACCOUNT_KEY, True)
+            Mengine.saveAccounts()
+        return False
 
     def _cbGetRemoteConfig(self, key, url):
         if key != "privacy_policy_link":
@@ -94,6 +106,8 @@ class SystemGDPR(System):
             if _IOS and Mengine.isAvailablePlugin("AppleGeneralDataProtectionRegulation") is True:
                 if Mengine.appleIsGDPRPass() is False:
                     Mengine.appleSetGDPRPass(True)
+
+            SystemGDPR._global_agree_state = True
 
             return True
 
