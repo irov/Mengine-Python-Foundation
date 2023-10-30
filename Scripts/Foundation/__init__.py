@@ -717,14 +717,6 @@ def onInitialize():
         , 'onAdvertHidden'
         , 'onDisableInterstitialAds'
 
-        , "onAndroidActivityResumed"
-        , "onAndroidActivityPaused"
-        , "onAndroidActivityStarted"
-        , "onAndroidActivityStopped"
-        , "onAndroidActivityDestroyed"
-        , "onAndroidActivityCreated"
-        , "onAndroidActivitySaveInstanceState"
-
         , "onAvailableAdsEnded"
         , "onAvailableAdsNew"
 

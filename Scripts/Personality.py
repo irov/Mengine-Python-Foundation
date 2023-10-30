@@ -55,11 +55,11 @@ def onPreparation(isDebug):
         , "onVoiceVolume"
         , "onUserEvent"
 
-        , "oniOSApplicationDidEnterBackground"
-        , "oniOSApplicationDidBecomeActive"
-        , "oniOSApplicationWillEnterForeground"
-        , "oniOSApplicationWillResignActive"
-        , "oniOSApplicationWillTerminate"
+        , "onApplicationDidEnterBackground"
+        , "onApplicationDidBecomeActive"
+        , "onApplicationWillEnterForeground"
+        , "onApplicationWillResignActive"
+        , "onApplicationWillTerminate"
 
         , "onAnalyticsEvent"
     ]
@@ -256,25 +256,25 @@ def onOverFillrate(fillrate, limit):
 def onUserEvent(event, params):
     Notification.notify(Notificator.onUserEvent, event, params)
 
-# ios app is now in the background
-def oniOSApplicationDidEnterBackground():
-    Notification.notify(Notificator.oniOSApplicationDidEnterBackground)
+# app is now in the background
+def onApplicationDidEnterBackground():
+    Notification.notify(Notificator.onApplicationDidEnterBackground)
 
-# ios app has become active
-def oniOSApplicationDidBecomeActive():
-    Notification.notify(Notificator.oniOSApplicationDidBecomeActive)
+# app has become active
+def onApplicationDidBecomeActive():
+    Notification.notify(Notificator.onApplicationDidBecomeActive)
 
-# ios app is about to enter the foreground
-def oniOSApplicationWillEnterForeground():
-    Notification.notify(Notificator.oniOSApplicationWillEnterForeground)
+# app is about to enter the foreground
+def onApplicationWillEnterForeground():
+    Notification.notify(Notificator.onApplicationWillEnterForeground)
 
-# ios app is about to become inactive
-def oniOSApplicationWillResignActive():
-    Notification.notify(Notificator.oniOSApplicationWillResignActive)
+# app is about to become inactive
+def onApplicationWillResignActive():
+    Notification.notify(Notificator.onApplicationWillResignActive)
 
-# ios app is about to terminate
-def oniOSApplicationWillTerminate():
-    Notification.notify(Notificator.oniOSApplicationWillTerminate)
+# app is about to terminate
+def onApplicationWillTerminate():
+    Notification.notify(Notificator.onApplicationWillTerminate)
 
 def onAnalyticsEvent(name, timestamp, params):
     Notification.notify(Notificator.onAnalyticsEvent, name, timestamp, params)

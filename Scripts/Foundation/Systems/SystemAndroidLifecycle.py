@@ -1,5 +1,7 @@
 from Foundation.System import System
 
+
+# todo: delete system
 class SystemAndroidLifecycle(System):
 
     def _onInitialize(self):
@@ -9,17 +11,7 @@ class SystemAndroidLifecycle(System):
         self.__setCallbacks()
 
     def __setCallbacks(self):
-        plugins_callbacks = {
-            "MengineActivityLifecycle": {
-                "onActivityLifecycleResumed": Notificator.onAndroidActivityResumed,
-                "onActivityLifecyclePaused": Notificator.onAndroidActivityPaused,
-                "onActivityLifecycleStarted": Notificator.onAndroidActivityStarted,
-                "onActivityLifecycleStopped": Notificator.onAndroidActivityStopped,
-                "onActivityLifecycleDestroyed": Notificator.onAndroidActivityDestroyed,
-                "onActivityLifecycleCreated": Notificator.onAndroidActivityCreated,
-                "onActivityLifecycleSaveInstanceState": Notificator.onAndroidActivitySaveInstanceState
-            }
-        }
+        plugins_callbacks = {}
 
         for plugin, plugin_callbacks in plugins_callbacks.items():
             for method, notificator in plugin_callbacks.items():
