@@ -1,3 +1,6 @@
+from Foundation.DefaultManager import DefaultManager
+
+
 class CurrencyManager(object):
     s_current_currency = None
 
@@ -57,6 +60,9 @@ class CurrencyManager(object):
             @param code_if_none: (bool) return code if symbol is not setup """
 
         cur_currency = CurrencyManager.getCurrentCurrencyCode()
+
+        if DefaultManager.getDefaultBool("MonetizationShowCurrencySymbol", True) is False:
+            return cur_currency
 
         currency_text_ids = CurrencyManager._getCurrencyTextIds()
         symbol_text_id = currency_text_ids.get(cur_currency, None)
