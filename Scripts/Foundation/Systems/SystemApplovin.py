@@ -501,8 +501,8 @@ class SystemApplovin(System):
                     _Log("Duplicate name {} in {}".format(name, Type.ad_type), err=True)
                     continue
 
-                rewarded = Type(name)
-                storage[name] = rewarded
+                ad_unit = Type(name)
+                storage[name] = ad_unit
 
         for ad_unit in self._getAllAdUnits():
             ad_unit.setCallbacks()
@@ -551,7 +551,7 @@ class SystemApplovin(System):
             Mengine.appleAppLovinShowMediationDebugger()
 
     def _getAllAdUnits(self):
-        return self.rewardeds.values() + self.interstitials.values()
+        return self.rewardeds.values() + self.interstitials.values() + self.banners.values()
 
     # callbacks
 
