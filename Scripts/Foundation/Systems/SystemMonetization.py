@@ -912,7 +912,9 @@ class SystemMonetization(System):
         for name, save in save_data.items():
             component = self.components.get(name)
             if component is None:
-                Trace.log("System", 0, "Not found component {!r} for load save".format(name))
+                _Log("[loadComponents] ERROR while load component {!r} saves: not found in components list {}."
+                     " Please check your save files and game configurations.".format(
+                      name, self.components.keys() if _DEVELOPMENT else len(self.components)), err=True, force=True)
                 continue
             component.load(save)
 
