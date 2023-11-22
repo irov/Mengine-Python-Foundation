@@ -131,8 +131,8 @@ class SystemApplovin(System):
 
         def cleanUp(self):
             if _ANDROID:
-                for cb_name, cb_id in self._cbs.items():
-                    Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, cb_name, cb_id)
+                for name, cb_id in self._cbs.items():
+                    Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, self.s_callbacks[name], cb_id)
                 self._cbs = {}
             elif _IOS:
                 pass    # auto remove
