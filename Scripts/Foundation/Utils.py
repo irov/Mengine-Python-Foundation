@@ -1213,6 +1213,14 @@ def calcTime2(time_in_sec):
 
     return hours, min, sec
 
+def calcTimeMs(time_ms):
+    """ :returns: minutes, seconds, milliseconds """
+    total_seconds = time_ms // 1000
+    minutes = total_seconds // 60
+    seconds = total_seconds % 60
+    milliseconds = time_ms % 1000
+    return minutes, seconds, milliseconds
+
 def benchmark(func):
     def wrapper(*args, **kwargs):
         start = Mengine.getTimeMs()
