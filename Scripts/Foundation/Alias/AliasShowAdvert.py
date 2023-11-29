@@ -12,6 +12,7 @@ class AliasShowAdvert(TaskAlias):
         self.SuccessCallback = params.get("SuccessCallback")  # starts after show success (not rewarded, just shown)
         self.FailCallback = params.get("FailCallback")  # starts after show if show failed
         self.WhileShowScope = params.get("WhileShowScope")  # runs in parallel with showAdvert
+        self.Bypass = params.get("Bypass", False)
         self._ad_displayed = False
         self._ad_display_failed = False
 
@@ -69,9 +70,14 @@ class AliasShowAdvert(TaskAlias):
 
     def _onGenerate(self, source):
         if self.in_processing is True:
-            Trace.log("Task", 0, "AliasShowAdvert failed - already in processing")
-            source.addDummy()
-            return
+            if self.Bypass is True:
+                Trace.msg_err("AliasShowAdvert warning [{}:{}] [{}] - already in processing, but Bypass is True"
+                              .format(self.AdType, self.AdUnitName, AdvertisementProvider.getName()))
+            else:
+                Trace.log("Task", 0, "AliasShowAdvert failed [{}:{}] [{}] - already in processing"
+                          .format(self.AdType, self.AdUnitName, AdvertisementProvider.getName()))
+                source.addDummy()
+                return
 
         if _DEVELOPMENT is True:
             Trace.msg("AliasShowAdvert [{}:{}] display [{}]".format(
