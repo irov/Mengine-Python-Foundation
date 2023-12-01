@@ -1,6 +1,7 @@
 # coding=utf-8
-from Foundation.Bootstrapper import checkBuildMode
+from Foundation.Bootstrapper import checkBuildMode, checkPlatform
 from Foundation.DatabaseManager import DatabaseManager
+
 
 class GroupManager(object):
     class EmptyGroup(object):
@@ -107,8 +108,9 @@ class GroupManager(object):
             Survey = int(record.get("Survey", 0))
             CE = int(record.get("CE", 0))
             BuildModeTags = record.get("BuildModeTags", [])
+            Platform = record.get("Platform", None)
 
-            if GroupManager.addGroup(groupName, ParentGroupName, Tag, Save, OffsetY, Survey, CE, BuildModeTags) is False:
+            if GroupManager.addGroup(groupName, ParentGroupName, Tag, Save, OffsetY, Survey, CE, BuildModeTags, Platform) is False:
                 Trace.log("Manager", 0, "GroupManager.loadParams: load params %s invalid add group %s" % (param, groupName))
                 return False
                 pass
@@ -133,12 +135,13 @@ class GroupManager(object):
         Survey = int(record.get("Survey", 0))
         CE = int(record.get("CE", 0))
         BuildModeTags = int(record.get("BuildMode", 0))
+        Platform = record.get("Platform", None)
 
-        GroupManager.addGroup(groupName, ParentGroupName, Tag, Save, OffsetY, Survey, CE, BuildModeTags)
+        GroupManager.addGroup(groupName, ParentGroupName, Tag, Save, OffsetY, Survey, CE, BuildModeTags, Platform)
         pass
 
     @staticmethod
-    def addGroup(groupName, ParentGroupName, Tag, Save, OffsetY, Survey, CE, BuildModeTags):
+    def addGroup(groupName, ParentGroupName, Tag, Save, OffsetY, Survey, CE, BuildModeTags, Platform):
         if groupName in GroupManager.s_groups:
             Trace.log("Manager", 0, "GroupManage.addGroup group %s already exist" % groupName)
             return False
@@ -146,6 +149,11 @@ class GroupManager(object):
 
         if checkBuildMode(groupName, Survey, CE, BuildModeTags) is True:
             GroupManager.s_groups[groupName] = GroupManager.EmptyGroup()
+            return True
+
+        if checkPlatform(Platform) is False:
+            GroupManager.s_groups[groupName] = GroupManager.EmptyGroup()
+            Trace.msg_dev("[GroupManager] Platform '%s' Group '%s' not match current platform" % (Platform, groupName))
             return True
 
         group = GroupManager.__createGroup(groupName)
@@ -253,21 +261,15 @@ class GroupManager(object):
     @staticmethod
     def __createGroup(name):
         if name not in GroupManager.s_groupsType:
-            Trace.log("GroupManager", 0, "GroupManager.createGroup: group type %s not found)" % (name))
-
+            Trace.log("GroupManager", 0, "GroupManager.createGroup: group type %s not found" % name)
             return None
-            pass
 
         GroupType = GroupManager.s_groupsType[name]
-
         group = GroupType()
-
         group.setName(name)
-
         group.onLoader()
 
         return group
-        pass
 
     @staticmethod
     def hasGroup(name):
