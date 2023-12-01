@@ -3,13 +3,15 @@ from Foundation.DatabaseManager import DatabaseManager
 from Foundation.Manager import Manager
 from Foundation.SystemManager import SystemManager
 
+
 def checkBuildMode(Name, Survey, CE, BuildModeTags):
+    """ :returns: True if build mode not match """
     BuildModeVersion = Mengine.getGameParamUnicode("BuildModeCheckVersion")
     BuildMode = Mengine.getGameParamUnicode("BuildMode")
 
-    def printBuildMode(Mode, Name):
-        if _DEVELOPMENT is True:
-            Trace.msg("-=| BuildMode {} {}: disable {}".format(BuildModeVersion, Mode, Name))
+    def _reportFail(build_mode, object_name):
+        Trace.msg_dev("[Bootstrapper] (BuildModeCheckVersion {}, BuildMode {!r}) FAIL {!r}"
+                      .format(BuildModeVersion, build_mode, object_name))
 
     # New version of builds resources separations for any type of BuildMode
     # Check BuildModeCheckVersion in Configs.json
@@ -23,27 +25,24 @@ def checkBuildMode(Name, Survey, CE, BuildModeTags):
 
         # Checking for intersection of sets between [ResourceTags] (BuildModes.xlsx) and [BuildModeTags] (__Any.xlsx)
         if len(set(resources_tags) & set(BuildModeTags)) == 0:
-            printBuildMode(BuildMode, Name)
+            _reportFail(BuildMode, Name)
             return True
 
     # Old version of builds resources separations for Survey & CollectorEdition
     else:
-        survey_build = Mengine.getGameParamBool("Survey", False)
-        ce_build = Mengine.getGameParamBool("CollectorEdition", False)
-
-        # For Survey
-        if survey_build is True and Survey == 0:
-            printBuildMode("Survey", Name)
+        if Mengine.getGameParamBool("Survey", False) is True and Survey == 0:
+            _reportFail("Survey", Name)
             return True
-
-        # For StandartEdition
-        if ce_build is False and CE == 1:
-            printBuildMode("StandartEdition", Name)
+        if Mengine.getGameParamBool("CollectorEdition", False) is False and CE == 1:
+            _reportFail("StandardEdition", Name)
             return True
+        # other cases (CE) are OK (returns False)
 
     return False
 
+
 def checkPlatform(platform):
+    """ :returns: True if platform is supported """
     if platform is None:
         return True
 
@@ -57,6 +56,7 @@ def checkPlatform(platform):
         return True
 
     return False
+
 
 class Bootstrapper(object):
     s_sessionSystems = []
