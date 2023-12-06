@@ -5,7 +5,8 @@ from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Notification import Notification
 
-_Log = SimpleLogger("SystemAppleServices")
+
+_Log = SimpleLogger("SystemAppleServices", option="apple")
 
 
 class SystemAppleServices(System):
@@ -16,13 +17,14 @@ class SystemAppleServices(System):
         "InAppPurchase": _PLUGINS.get("AppleStoreInAppPurchase", False),
     }
 
-    b_GameCenter_authenticate = False
-    b_GameCenter_synchronizate = False
-    b_provider = False
-    b_tracking = False
+    _GameCenter_authenticate = False
+    _GameCenter_synchronizate = False
+    _GameCenter_provider_status = False
+    _InAppPurchase_provider_status = False
+    _Tracking_status = False
+    _can_use_payment = False
 
     _products = {}
-    b_can_pay = False
     EVENT_PRODUCTS_RESPONDED = Event("AppleInAppPurchaseProductsResponded")
 
     # How to connect to GameCenter:
@@ -30,10 +32,9 @@ class SystemAppleServices(System):
     # 2. connectToGameCenter()
 
     def _onInitialize(self):
-        self.__addDevToDebug()
-
         if self.b_plugins["InAppPurchase"] is True:
             if self.canUserMakePurchases() is True:
+                SystemAppleServices._can_use_payment = True
                 self.setInAppPurchaseProvider()
 
                 if Mengine.getConfigBool("Monetization", "AutoQueryProducts", True) is True:
@@ -45,44 +46,51 @@ class SystemAppleServices(System):
             RatingAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
 
         if self.b_plugins["GameCenter"] is True:
+            SystemAppleServices.setGameCenterConnectProvider()
+            SystemAppleServices.connectToGameCenter()
+
             AchievementsProvider.setProvider("Apple", dict(
                 unlockAchievement=self.unlockAchievement,
                 setAchievementProgress=self.setAchievementProgress,
             ))
 
+        if self.b_plugins["Tracking"] is True:
+            SystemAppleServices.appTrackingAuthorization()
+
+        self.__addDevToDebug()
+
     def _onFinalize(self):
         self.__remDevToDebug()
 
-    def _onStop(self):
-        self.removeGameCenterConnectProvider()
-        self.removeInAppPurchaseProvider()
+        if SystemAppleServices._GameCenter_provider_status is True:
+            self.removeGameCenterConnectProvider()
+        if SystemAppleServices._InAppPurchase_provider_status is True:
+            self.removeInAppPurchaseProvider()
 
     # --- AppleGameCenter - connection ---------------------------------------------------------------------------------
 
     @staticmethod
     def setGameCenterConnectProvider():
-        if SystemAppleServices.b_plugins["GameCenter"] is True:
-            b_status = Mengine.appleGameCenterSetProvider({
-                "onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate,
-                "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronizate
-            })
-            SystemAppleServices.b_provider = True
-            _Log("GAME CENTER: set provider - {}".format("wait response!" if b_status else "not initialized"))
-        else:
-            _Log("GAME CENTER: set provider - plugin 'AppleGameCenter' not active")
+        if SystemAppleServices.b_plugins["GameCenter"] is False:
+            _Log("[GameCenter] set provider - plugin 'AppleGameCenter' not active", err=True, force=True)
+            return False
+
+        b_status = Mengine.appleGameCenterSetProvider({
+            "onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate,
+            "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronizate
+        })
+        SystemAppleServices._GameCenter_provider_status = b_status
+        _Log("[GameCenter] set provider - {}".format("wait response!" if b_status else "not initialized"))
 
     @staticmethod
     def removeGameCenterConnectProvider():
-        if SystemAppleServices.b_plugins["GameCenter"] is True:
-            if SystemAppleServices.b_provider is True:
-                Mengine.appleGameCenterRemoveProvider()
-                SystemAppleServices.b_provider = False
-                _Log("GAME CENTER: removed provider")
-            else:
-                _Log("GAME CENTER: provider doesn't active")
-        else:
-            _Log("GAME CENTER: remove provider - plugin 'AppleGameCenter' not active")
+        if SystemAppleServices._GameCenter_provider_status is False:
+            _Log("[GameCenter] can't remove provider - not active", err=True)
+            return
 
+        Mengine.appleGameCenterRemoveProvider()
+        SystemAppleServices._GameCenter_provider_status = False
+        _Log("[GameCenter] removed provider")
 
     @staticmethod
     def connectToGameCenter():
@@ -101,25 +109,25 @@ class SystemAppleServices(System):
     def __cbGameCenterAuthenticate(status, *args):
         descr = lambda b: "successful" if b else "failed"
 
-        log_message = "GAME CENTER - cb AUTHENTICATE: {} [{}]".format(descr(status), status)
+        log_message = "[GameCenter] (callback) AUTHENTICATE: {} [{}]".format(descr(status), status)
         log_message += " | args: {}".format(args) if args else ""
         _Log(log_message)
 
-        SystemAppleServices.b_GameCenter_authenticate = status
+        SystemAppleServices._GameCenter_authenticate = status
 
     @staticmethod
     def __cbGameCenterSynchronizate(status, *args):
         descr = lambda b: "successful" if b else "failed"
 
-        log_message = "GAME CENTER - cb SYNCHRONIZATE: {} [{}]".format(descr(status), status)
+        log_message = "[GameCenter] (callback) SYNCHRONIZE: {} [{}]".format(descr(status), status)
         log_message += " | args: {}".format(args) if args else ""
         _Log(log_message)
 
-        SystemAppleServices.b_GameCenter_synchronizate = status
+        SystemAppleServices._GameCenter_synchronizate = status
 
     @staticmethod
     def isGameCenterConnected(report=False, on_status=False):
-        b_status = SystemAppleServices.b_GameCenter_authenticate
+        b_status = SystemAppleServices._GameCenter_authenticate
 
         if report is True and on_status is b_status:
             _Log("GAME CENTER CONNECT STATUS: {}".format(b_status), err=not b_status)
@@ -130,8 +138,9 @@ class SystemAppleServices(System):
 
     @staticmethod
     def __cbGameCenterAchievementReporter(status, achievement_name, percent_complete, *args):
-        descr = lambda b: "success {!r} (complete {}%%)".format(achievement_name, percent_complete) if b else "game center not received last achievement"
-        log_message = "GAME CENTER - cb ACHIEVEMENTS: {} [{}]".format(descr(status), status)
+        descr = lambda b: "success {!r} (complete {}%%)".format(
+            achievement_name, percent_complete) if b else "game center not received last achievement"
+        log_message = "[GameCenter] (callback) ACHIEVEMENTS: {} [{}]".format(descr(status), status)
         log_message += " | args: {}".format(args) if args else ""
         _Log(log_message)
         return status
@@ -158,23 +167,26 @@ class SystemAppleServices(System):
 
     @staticmethod
     def _sendAchievementToGameCenter(achievement_name, percent_complete):
-        SystemAppleServices.isGameCenterConnected(report=True)
+        _Log("[GameCenter] SEND ACHIEVEMENT {!r} (complete {}%%)...".format(achievement_name, percent_complete), force=True)
 
-        _Log("GAME CENTER: SEND ACHIEVEMENT {!r} (complete {}%%)...".format(achievement_name, percent_complete), force=True)
-        if SystemAppleServices.b_plugins["GameCenter"] is False:
+        if SystemAppleServices.isGameCenterConnected(report=True) is False:
+            Trace.log("System", 0, "Apple Service plugin 'GameCenter' fail to send achievement - Game Center is not connected!")
             return
+
         Mengine.appleGameCenterReportAchievement(achievement_name, percent_complete,
                                                  SystemAppleServices.__cbGameCenterAchievementReporter,
                                                  achievement_name, percent_complete)
 
     @staticmethod
     def checkGameCenterAchievement(achievement_name):
-        SystemAppleServices.isGameCenterConnected(report=True)
         if SystemAppleServices.b_plugins["GameCenter"] is False:
-            return True
+            Trace.log("System", 0, "Apple Service plugin 'GameCenter' is not active to check achievement {!r}".format(achievement_name))
+            return False
+        if SystemAppleServices.isGameCenterConnected(report=True) is False:
+            return False
 
         b_check = Mengine.appleGameCenterCheckAchievement(achievement_name)
-        _Log("GAME CENTER: CHECK ACHIEVEMENT {!r} RESULT: {}".format(achievement_name, b_check), force=True)
+        _Log("[GameCenter] CHECK ACHIEVEMENT {!r} RESULT: {}".format(achievement_name, b_check), force=True)
         return b_check
 
     # --- AppleAppTracking ---------------------------------------------------------------------------------------------
@@ -184,15 +196,12 @@ class SystemAppleServices(System):
         log_message = "cbAppTrackingAuth : status={} idfa={}".format(_status, _idfa)
         log_message += " | args: {}".format(args) if len(args) > 0 else ""
         _Log(log_message)
-        SystemAppleServices.b_tracking = _status
+        SystemAppleServices._Tracking_status = _status
 
     @staticmethod
     def appTrackingAuthorization():
-        if SystemAppleServices.b_plugins["Tracking"] is True:
-            Mengine.appleAppTrackingAuthorization(SystemAppleServices.__cbAppTrackingAuth)
-            _Log("Apple app tracking authorization...")
-            return True
-        return False
+        _Log("Apple app tracking authorization...")
+        Mengine.appleAppTrackingAuthorization(SystemAppleServices.__cbAppTrackingAuth)
 
     # --- Rate us ------------------------------------------------------------------------------------------------------
 
@@ -201,59 +210,73 @@ class SystemAppleServices(System):
         if SystemAppleServices.b_plugins["Review"] is False:
             Trace.log("System", 0, "SystemAppleServices try to rateApp, but plugin 'AppleStoreReview' is not active")
             return
+        _Log("[Reviews] rateApp...", force=True)
         Mengine.appleStoreReviewLaunchTheInAppReview()
         Notification.notify(Notificator.onAppRated)
-        _Log("[Reviews] rateApp...", force=True)
 
     # --- In-App Purchases ---------------------------------------------------------------------------------------------
 
     @staticmethod
     def canUserMakePurchases():
         """ returns True if user could do purchases (not a child) or False, if not """
-        if SystemAppleServices.b_plugins["InAppPurchase"] is False:
-            return False
-        return Mengine.appleStoreInAppPurchaseCanMakePayments()
+        status = Mengine.appleStoreInAppPurchaseCanMakePayments()
+        SystemAppleServices._can_use_payment = status
+        return status
 
     @staticmethod
     def setInAppPurchaseProvider():
         """ setup payment callbacks """
         Mengine.appleStoreInAppPurchaseSetPaymentTransactionProvider({
-            "onProductResponse": SystemAppleServices._cbProductResponse,
-            "onProductFinish": SystemAppleServices._cbProductFinish,
-            "onProductFail": SystemAppleServices._cbProductFail,
-            "onPaymentUpdatedTransactionPurchasing": SystemAppleServices._cbPaymentPurchasing,
-            "onPaymentUpdatedTransactionPurchased": SystemAppleServices._cbPaymentPurchased,
-            "onPaymentUpdatedTransactionFailed": SystemAppleServices._cbPaymentFailed,
-            "onPaymentUpdatedTransactionRestored": SystemAppleServices._cbPaymentRestored,
-            "onPaymentUpdatedTransactionDeferred": SystemAppleServices._cbPaymentDeferred
+            "onPaymentQueueUpdatedTransactionPurchasing": SystemAppleServices._cbPaymentPurchasing,
+            "onPaymentQueueUpdatedTransactionPurchased": SystemAppleServices._cbPaymentPurchased,
+            "onPaymentQueueUpdatedTransactionFailed": SystemAppleServices._cbPaymentFailed,
+            "onPaymentQueueUpdatedTransactionRestored": SystemAppleServices._cbPaymentRestored,
+            "onPaymentQueueUpdatedTransactionDeferred": SystemAppleServices._cbPaymentDeferred,
+            "onPaymentQueueShouldShowPriceConsent": SystemAppleServices._cbPaymentQueueShouldShowPriceConsent,
+            "onPaymentQueueShouldContinueTransaction": SystemAppleServices._cbPaymentQueueShouldContinueTransaction,
         })
         PaymentProvider.setProvider("Apple", dict(
             pay=SystemAppleServices.pay,
             canUserMakePurchases=SystemAppleServices.canUserMakePurchases,
-            requestProducts=SystemAppleServices.requestProducts,
+            queryProducts=SystemAppleServices.requestProducts,
+            restorePurchases=SystemAppleServices.restorePurchases,
         ))
+        SystemAppleServices._InAppPurchase_provider_status = True
 
     @staticmethod
     def removeInAppPurchaseProvider():
-        """ finish callbacks """
-        if SystemAppleServices.b_plugins["InAppPurchase"] is False:
-            return
+        """ finish InAppPurchase callbacks provider """
+
+        if SystemAppleServices._InAppPurchase_provider_status is False:
+            _Log("[InAppPurchase] can't remove provider - not active", err=True)
+            return False
+
         Mengine.appleStoreInAppPurchaseRemovePaymentTransactionProvider()
+        SystemAppleServices._InAppPurchase_provider_status = False
+        _Log("[InAppPurchase] removed provider")
 
     @staticmethod
     def requestProducts(products_ids):
-        Mengine.appleStoreInAppPurchaseRequestProducts(products_ids)
+        _Log("[InAppPurchase] request product details for {}".format(products_ids), optional=True)
+        Mengine.appleStoreInAppPurchaseRequestProducts(products_ids, {
+            "onProductResponse": SystemAppleServices._cbProductResponse,
+            "onProductFinish": SystemAppleServices._cbProductFinish,
+            "onProductFail": SystemAppleServices._cbProductFail,
+        })
 
     @staticmethod
     def restorePurchases():
         """ returns list of purchased products via cb _cbPaymentRestored """
+        _Log("[InAppPurchase] restore purchases...", optional=True)
         Mengine.appleStoreInAppPurchaseRestoreCompletedTransactions()
         Notification.notify(Notificator.onRestorePurchasesDone)
         # TODO: it would be better to know when we complete all _cbPaymentRestored
 
     @staticmethod
     def pay(product_id):
-        if SystemAppleServices.b_can_pay is False:
+        _Log("[InAppPurchase] pay {!r}...".format(product_id), optional=True)
+
+        if SystemAppleServices._can_use_payment is False:
             Notification.notify(Notificator.onPayFailed, product_id)
             Notification.notify(Notificator.onPayComplete, product_id)
             Trace.log("System", 0, "This user can't use payment (product_id={})".format(product_id))
@@ -272,23 +295,48 @@ class SystemAppleServices(System):
 
     @staticmethod
     def _cbProductResponse(products):
+        """
+            input: AppleStoreInAppPurchaseProductInterface[]
+
+            .def( "getProductIdentifier", &AppleStoreInAppPurchaseProductInterface::getProductIdentifier )
+            .def( "getProductTitle", &AppleStoreInAppPurchaseProductInterface::getProductTitle )
+            .def( "getProductDescription", &AppleStoreInAppPurchaseProductInterface::getProductDescription )
+            .def( "getProductCurrencyCode", &AppleStoreInAppPurchaseProductInterface::getProductCurrencyCode )
+            .def( "getProductPriceFormatted", &AppleStoreInAppPurchaseProductInterface::getProductPriceFormatted )
+            .def( "getProductPrice", &AppleStoreInAppPurchaseProductInterface::getProductPrice )
+
+        """
+
         _Log("(CALLBACK) Product Response: {}".format([p.getProductIdentifier() for p in products]))
+
+        game_products = {}
 
         for product in products:
             product_id = product.getProductIdentifier()
+
+            params = {
+                "price": round(product.getProductPriceFormatted(), 2),
+                "descr": str(product.getProductDescription()),
+                "name": str(product.getProductTitle())
+            }
+            game_products[product_id] = params
+
             SystemAppleServices._products[product_id] = product
+
+        currency = products[0].getProductCurrencyCode()
+        Notification.notify(Notificator.onProductsUpdate, game_products, currency)
 
     @staticmethod
     def _cbProductFinish():
-        _Log("(CALLBACK) Product Response Finish")
+        """ (CALLBACK) Product Response Finish"""
+        _Log("(callback) Product Response Finish")
         SystemAppleServices.EVENT_PRODUCTS_RESPONDED(True)
-        SystemAppleServices.b_can_pay = True
 
     @staticmethod
     def _cbProductFail():
-        _Log("(CALLBACK) Product Response Fail", err=True)
+        """ (CALLBACK) Product Response Fail"""
+        _Log("(callback) Product Response Fail", err=True)
         SystemAppleServices.EVENT_PRODUCTS_RESPONDED(False)
-        SystemAppleServices.b_can_pay = False
 
     @staticmethod
     def _cbPaymentPurchasing(transaction):
@@ -332,6 +380,23 @@ class SystemAppleServices(System):
         """ (CALLBACK) something went wrong during purchase """
         product_id = transaction.getProductIndetifier()
         _Log("(callback) Payment Deferred {}".format(product_id))
+
+    @staticmethod
+    def _cbPaymentQueueShouldShowPriceConsent(transaction):
+        """
+            Sent if there is a pending price consent confirmation from the App Store for the current user.
+        Return YES to immediately show the price consent UI.
+        Return NO if you intend to show it at a later time. Defaults to YES.
+            This may be called at any time that you have transaction observers on the payment queue,
+        so make sure to set the delegate before adding any transaction observers
+        if you intend to implement this method.
+        """
+        _Log("(callback) _cbPaymentQueueShouldShowPriceConsent: {}".format(transaction))
+
+    @staticmethod
+    def _cbPaymentQueueShouldContinueTransaction():
+        """ Sent when the storefront changes while a payment is processing. """
+        _Log("(callback) _cbPaymentQueueShouldContinueTransaction")
 
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 
