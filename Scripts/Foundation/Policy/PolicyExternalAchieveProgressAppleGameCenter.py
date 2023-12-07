@@ -1,6 +1,7 @@
 from Foundation.Systems.SystemAppleServices import SystemAppleServices
 from Foundation.Task.TaskAlias import TaskAlias
 
+
 class PolicyExternalAchieveProgressAppleGameCenter(TaskAlias):
 
     def _onParams(self, params):
@@ -18,7 +19,8 @@ class PolicyExternalAchieveProgressAppleGameCenter(TaskAlias):
             self.initializeFailed("Percents must be positive float from 0 to 1")
 
     def action(self):
-        SystemAppleServices.sendAchievementToGameCenter(self.AchieveId, self.Percents)
+        Trace.msg_err("DEPRECATED direct call SystemAppleServices._sendAchievementToGameCenter - use AchievementProvider instead")
+        SystemAppleServices._sendAchievementToGameCenter(self.AchieveId, self.Percents)
 
     def _onGenerate(self, source):
         source.addFunction(self.action)
