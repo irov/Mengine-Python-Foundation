@@ -324,7 +324,7 @@ class SystemAppleServices(System):
             product_id = product.getProductIdentifier()
 
             params = {
-                "price": round(float(product.getProductPriceFormatted())/100.0, 2),
+                "price": product.getProductPrice(),
                 "descr": str(product.getProductDescription()),
                 "name": str(product.getProductTitle())
             }
