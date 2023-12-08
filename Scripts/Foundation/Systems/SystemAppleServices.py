@@ -350,13 +350,13 @@ class SystemAppleServices(System):
     @staticmethod
     def _cbPaymentPurchasing(transaction):
         """ (CALLBACK) start purchase process """
-        product_id = transaction.getProductIndetifier()
+        product_id = transaction.getProductIdentifier()
         _Log("[InAppPurchase] (callback) Payment Purchasing start {}".format(product_id))
 
     @staticmethod
     def _cbPaymentPurchased(transaction):
         """ (CALLBACK) payment complete """
-        product_id = transaction.getProductIndetifier()
+        product_id = transaction.getProductIdentifier()
         _Log("[InAppPurchase] (callback) Payment Purchased (success) {}".format(product_id))
 
         Notification.notify(Notificator.onPaySuccess, product_id)
@@ -366,7 +366,7 @@ class SystemAppleServices(System):
     @staticmethod
     def _cbPaymentFailed(transaction):
         """ (CALLBACK) payment failed """
-        product_id = transaction.getProductIndetifier()
+        product_id = transaction.getProductIdentifier()
         _Log("[InAppPurchase] (callback) Payment purchase Failed {}".format(product_id))
 
         Notification.notify(Notificator.onPayFailed, product_id)
@@ -376,7 +376,7 @@ class SystemAppleServices(System):
     @staticmethod
     def _cbPaymentRestored(transaction):
         """ (CALLBACK) purchased product """
-        product_id = transaction.getProductIndetifier()
+        product_id = transaction.getProductIdentifier()
         _Log("[InAppPurchase] (callback) Payment Restored {}".format(product_id))
 
         Notification.notify(Notificator.onPaySuccess, product_id)
@@ -387,7 +387,7 @@ class SystemAppleServices(System):
     @staticmethod
     def _cbPaymentDeferred(transaction):
         """ (CALLBACK) something went wrong during purchase """
-        product_id = transaction.getProductIndetifier()
+        product_id = transaction.getProductIdentifier()
         _Log("[InAppPurchase] (callback) Payment Deferred {}".format(product_id))
 
     @staticmethod
