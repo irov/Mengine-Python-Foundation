@@ -114,7 +114,7 @@ class SystemAppleServices(System):
 
         log_message = "[GameCenter] (callback) AUTHENTICATE: {} [{}]".format(describe(status), status)
         log_message += " | args: {}".format(args) if args else ""
-        _Log(log_message)
+        _Log(log_message, force=True)
 
         SystemAppleServices._GameCenter_authenticate = status
 
@@ -124,7 +124,7 @@ class SystemAppleServices(System):
 
         log_message = "[GameCenter] (callback) SYNCHRONIZE: {} [{}]".format(describe(status), status)
         log_message += " | args: {}".format(args) if args else ""
-        _Log(log_message)
+        _Log(log_message, force=True)
 
         SystemAppleServices._GameCenter_synchronizate = status
 
@@ -173,7 +173,7 @@ class SystemAppleServices(System):
         _Log("[GameCenter] SEND ACHIEVEMENT {!r} (complete {}%%)...".format(achievement_name, percent_complete),force=True)
 
         if SystemAppleServices.isGameCenterConnected(report=True) is False:
-            Trace.log("System", 0, "Plugin'GameCenter' fail to send achievement - Game Center is not connected!")
+            Trace.log("System", 0, "Plugin '{}' fail to send achievement - Game Center is not connected!".format(PLUGIN_GAME_CENTER))
             return
 
         Mengine.appleGameCenterReportAchievement(achievement_name, percent_complete,
