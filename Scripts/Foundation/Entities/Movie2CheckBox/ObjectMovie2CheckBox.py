@@ -55,3 +55,9 @@ class ObjectMovie2CheckBox(DemonObject):
             current_button = button_false if button_false.getEnable() else button_true
 
             return current_button.getCurrentMovieSocketCenter()
+
+    def getCompositionBounds(self):
+        return self.getEntity().getCompositionBounds()
+
+    def hasCompositionBounds(self):
+        return self.getEntity().hasCompositionBounds()

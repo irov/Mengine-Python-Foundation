@@ -3,7 +3,9 @@ from Foundation.Entity.BaseEntity import BaseEntity
 from Foundation.ObjectManager import ObjectManager
 from Foundation.TaskManager import TaskManager
 
+
 class Movie2CheckBox(BaseEntity):
+
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
@@ -24,7 +26,6 @@ class Movie2CheckBox(BaseEntity):
         Type.addAction(Type, "CompositionNameFalse_Leave")
 
         Type.addAction(Type, "BlockState")
-        pass
 
     def __init__(self):
         super(Movie2CheckBox, self).__init__()
@@ -32,7 +33,6 @@ class Movie2CheckBox(BaseEntity):
 
         self.MovieButtonFalse = None
         self.MovieButtonTrue = None
-        pass
 
     def _onInitialize(self, obj):
         super(Movie2CheckBox, self)._onInitialize(obj)
@@ -61,7 +61,6 @@ class Movie2CheckBox(BaseEntity):
 
         button_true_entity_node = self.MovieButtonTrue.getEntityNode()
         self.addChild(button_true_entity_node)
-        pass
 
     def setBlock(self, value):
         self.MovieButtonFalse.setBlock(value)
@@ -74,14 +73,12 @@ class Movie2CheckBox(BaseEntity):
         else:
             self.MovieButtonFalse.setEnable(True)
             self.MovieButtonTrue.setEnable(False)
-        pass
 
     def _onPreparation(self):
         super(Movie2CheckBox, self)._onPreparation()
 
         self.MovieButtonFalse.setEnable(False)
         self.MovieButtonTrue.setEnable(False)
-        pass
 
     def __resolveClick(self, holder):
         if self.BlockState is True:
@@ -113,8 +110,6 @@ class Movie2CheckBox(BaseEntity):
                 source_btn_false.addFunction(click_holder.set, self.MovieButtonFalse)
 
             source.addFunction(self.__resolveClick, click_holder)
-            pass
-        pass
 
     def _onDeactivate(self):
         super(Movie2CheckBox, self)._onDeactivate()
@@ -122,8 +117,6 @@ class Movie2CheckBox(BaseEntity):
         if self.tc is not None:
             self.tc.cancel()
             self.tc = None
-            pass
-        pass
 
     def _onFinalize(self):
         super(Movie2CheckBox, self)._onFinalize()
@@ -131,10 +124,21 @@ class Movie2CheckBox(BaseEntity):
         if self.MovieButtonFalse is not None:
             self.MovieButtonFalse.onDestroy()
             self.MovieButtonFalse = None
-            pass
 
         if self.MovieButtonTrue is not None:
             self.MovieButtonTrue.onDestroy()
             self.MovieButtonTrue = None
-            pass
-        pass
+
+    def getCurrentMovie(self):
+        if self.Value is True:
+            return self.MovieButtonTrue
+        else:
+            return self.MovieButtonFalse
+
+    def getCompositionBounds(self):
+        current_movie = self.getCurrentMovie()
+        return current_movie.getCompositionBounds()
+
+    def hasCompositionBounds(self):
+        current_movie = self.getCurrentMovie()
+        return current_movie.hasCompositionBounds()
