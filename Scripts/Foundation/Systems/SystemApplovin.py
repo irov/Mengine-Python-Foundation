@@ -171,7 +171,7 @@ class SystemApplovin(System):
             status = False
 
             if self.__checkInit() is False:
-                self.cbDisplayFailed(self.ad_unit_id)
+                self._cbDisplayFailed()
                 return status
 
             _Log("[{}:{}] show advertisement...".format(self.ad_type, self.name))
@@ -181,7 +181,7 @@ class SystemApplovin(System):
                                                       self.ad_unit_id, self.getPlacementName(), type="bool")
 
             if status is False:
-                self.cbDisplayFailed(self.ad_unit_id)
+                self._cbDisplayFailed()
 
             return status
 
@@ -202,7 +202,7 @@ class SystemApplovin(System):
                 err_msg += ". Try init..."
                 self.init()
 
-            _Log(err_msg, err=True)
+            _Log(err_msg, err=True, force=True)
             return False
 
         def getPlacementName(self):
@@ -212,23 +212,35 @@ class SystemApplovin(System):
 
         @ad_callback
         def cbDisplaySuccess(self):
+            self._cbDisplaySuccess()
+
+        def _cbDisplaySuccess(self):
             self.display = True
             Notification.notify(Notificator.onAdvertDisplayed, self.ad_type, self.name)
             _Log("[{} cb] displayed".format(self.name))
 
         @ad_callback
         def cbDisplayFailed(self):
+            self._cbDisplayFailed()
+
+        def _cbDisplayFailed(self):
             Notification.notify(Notificator.onAdvertDisplayFailed, self.ad_type, self.name)
             _Log("[{} cb] !!! display failed".format(self.name), err=True, force=True)
 
         @ad_callback
         def cbHidden(self):
+            self._cbHidden()
+
+        def _cbHidden(self):
             self.display = False
             Notification.notify(Notificator.onAdvertHidden, self.ad_type, self.name)
             _Log("[{} cb] hidden".format(self.name))
 
         @ad_callback
         def cbClicked(self):
+            self._cbClicked()
+
+        def _cbClicked(self):
             Notification.notify(Notificator.onAdvertClicked, self.ad_type, self.name)
             _Log("[{} cb] clicked".format(self.name))
 
@@ -349,21 +361,22 @@ class SystemApplovin(System):
 
         @ad_callback
         def cbUserRewarded(self, label, reward):
+            self._cbUserRewarded(label, reward)
+
+        def _cbUserRewarded(self, label, reward):
             self.rewarded = True
             Notification.notify(Notificator.onAdvertRewarded, self.name, label, reward)
             _Log("[{} cb] user rewarded: label={!r}, amount={!r}".format(self.name, label, reward))
 
-        @ad_callback
-        def cbDisplaySuccess(self):
+        def _cbDisplaySuccess(self):
             self.rewarded = False
-            super(self.__class__, self).cbDisplaySuccess(self.ad_unit_id)
+            super(self.__class__, self)._cbDisplaySuccess()
 
-        @ad_callback
-        def cbHidden(self):
+        def _cbHidden(self):
             if self.rewarded is False:
                 Notification.notify(Notificator.onAdvertSkipped, self.ad_type, self.name)
                 _Log("[{} cb] advert {!r} was skipped".format(self.ad_type, self.name))
-            super(self.__class__, self).cbHidden(self.ad_unit_id)
+            super(self.__class__, self)._cbHidden()
 
     class Banner(AdUnitMixin):
         ad_type = "Banner"
@@ -459,10 +472,16 @@ class SystemApplovin(System):
 
         @ad_callback
         def cbExpanded(self):
+            self._cbExpanded()
+
+        def _cbExpanded(self):
             _Log("[{} cb] {} was expanded".format(self.ad_type, self.name))
 
         @ad_callback
         def cbCollapsed(self):
+            self._cbCollapsed()
+
+        def _cbCollapsed(self):
             _Log("[{} cb] {} was collapsed".format(self.ad_type, self.name))
 
     # ------------------------------------------------------------------------------------------------------------------
