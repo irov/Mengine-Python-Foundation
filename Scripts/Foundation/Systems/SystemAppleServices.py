@@ -105,7 +105,7 @@ class SystemAppleServices(System):
             status = False
 
         describe = lambda result: "wait response" if result else "request sent failed!!"
-        _Log("GAME CENTER CONNECT STATUS: {}".format(describe(status)))
+        _Log("[GameCenter] CONNECT STATUS: {}".format(describe(status)))
         return status
 
     @staticmethod
