@@ -1,26 +1,24 @@
 import math
 
+
 class RPGFormules(object):
+
     def __init__(self):
         self.formules = {}
-        pass
 
     def addFormula(self, name, code):
         f = self.__makeFormulaCode(name, code)
 
         self.formules[name] = f
-        pass
 
     def hasFormula(self, name):
         return name in self.formules
-        pass
 
     def calcFormula(self, name, Value=None, Global=None, **Other):
         f = self.formules.get(name)
 
         if f is None:
             return None
-            pass
 
         def __rand(value):
             return Mengine.randf(value)
@@ -38,13 +36,14 @@ class RPGFormules(object):
             return math.ceil(value)
         def __floor(value):
             return math.floor(value)
+        def __exp(value):
+            return math.exp(value)
 
         sandbox = dict(Value=Value, rand=__rand, fibo=__fibo, log10=__log10, Resist=__resist, Evade=__evade, sum=__sum,
-                       ceil=__ceil, floor=__floor)
+                       ceil=__ceil, floor=__floor, exp=__exp)
 
         if Global is not None:
             sandbox.update(Global)
-            pass
 
         sandbox.update(Other)
 
@@ -52,14 +51,11 @@ class RPGFormules(object):
             exec(f, sandbox)
         except Exception as ex:
             Trace.log("Utils", 0, "ex: function %s error: %s" % (name, ex))
-
             return None
-            pass
 
         result = sandbox["Result"]
 
         return result
-        pass
 
     def __makeFormulaCode(self, name, code):
         true_code = "Result = %s" % (code)
@@ -67,5 +63,3 @@ class RPGFormules(object):
         c = compile(true_code, '<string>', 'exec')
 
         return c
-        pass
-    pass
