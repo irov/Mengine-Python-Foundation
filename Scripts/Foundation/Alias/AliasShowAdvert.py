@@ -8,25 +8,22 @@ class AliasShowAdvert(TaskAlias):
     def _onParams(self, params):
         self.AdType = params.get("AdType", "Rewarded")
         self.AdUnitName = params.get("AdUnitName", self.AdType)
-        self.Timeout = params.get("TimeoutInSeconds", 30) * 1000
+        self.Timeout = params.get("TimeoutInSeconds", 30) * 1000.0
         self.SuccessCallback = params.get("SuccessCallback")  # starts after show success (not rewarded, just shown)
         self.FailCallback = params.get("FailCallback")  # starts after show if show failed
         self.WhileShowScope = params.get("WhileShowScope")  # runs in parallel with showAdvert
         self.Bypass = params.get("Bypass", False)
-        self._ad_displayed = False
-        self._ad_display_failed = False
+        self._semaphore_ad_display_ok = Semaphore(False, "AdvertDisplaySuccess")
+        self._semaphore_ad_display_fail = Semaphore(False, "AdvertDisplayFailed")
 
     @staticmethod
     def setInProcessing(state):
         AliasShowAdvert.in_processing = bool(state)
 
-    def _setAdDisplayed(self, state):
-        self._ad_displayed = bool(state)
-
     def _displayRespondError(self, msg):
         Trace.msg_err("AliasShowAdvert [{}:{}] display [{}] respond failed: {}".format(
             self.AdType, self.AdUnitName, AdvertisementProvider.getName(), msg))
-        self._ad_display_failed = True
+        self._semaphore_ad_display_fail.setValue(True)
 
     def _showAd(self):
         AdvertisementProvider.showAdvert(AdType=self.AdType, AdUnitName=self.AdUnitName)
@@ -37,14 +34,14 @@ class AliasShowAdvert(TaskAlias):
             with display_respond.addRaceTask(4) as (ok, fail, timeout, reached_limit):
                 with ok.addParallelTask(2) as (ok_display, ok_hide):
                     ok_display.addListener(Notificator.onAdvertDisplayed)
-                    ok_display.addFunction(self._setAdDisplayed, True)
+                    ok_display.addSemaphore(self._semaphore_ad_display_ok, To=True)
                     ok_hide.addListener(Notificator.onAdvertHidden)
 
                 fail.addListener(Notificator.onAdvertDisplayFailed)
                 fail.addFunction(self._displayRespondError, "display failed")
 
                 timeout.addDelay(self.Timeout)
-                with timeout.addIfTask(lambda: self._ad_displayed is False) as (error, _):
+                with timeout.addIfSemaphore(self._semaphore_ad_display_ok, True) as (_, error):
                     # if after timeout delay ad not displayed - send error
                     error.addFunction(self._displayRespondError, "timeout {} seconds".format(self.Timeout / 1000))
 
@@ -54,13 +51,16 @@ class AliasShowAdvert(TaskAlias):
             show.addFunction(self._showAd)
 
     def _scopeWhileShow(self, source):
-        if callable(self.WhileShowScope) is True:
-            source.addScope(self.WhileShowScope)
-        else:
+        if callable(self.WhileShowScope) is False:
             source.addDummy()
+            return
+
+        with source.addRaceTask(2) as (tc_while, tc_skip):
+            tc_while.addScope(self.WhileShowScope)
+            tc_skip.addSemaphore(self._semaphore_ad_display_fail, From=True)
 
     def _runCallback(self):
-        if self._ad_display_failed is True:
+        if self._semaphore_ad_display_fail.getValue() is True:
             cb = self.FailCallback
         else:
             cb = self.SuccessCallback
@@ -79,15 +79,14 @@ class AliasShowAdvert(TaskAlias):
                 source.addDummy()
                 return
 
-        if _DEVELOPMENT is True:
-            Trace.msg("AliasShowAdvert [{}:{}] display [{}]".format(
-                self.AdType, self.AdUnitName, AdvertisementProvider.getName()))
+        Trace.msg_dev("AliasShowAdvert [{}:{}] display [{}]".format(
+            self.AdType, self.AdUnitName, AdvertisementProvider.getName()))
 
         source.addFunction(self.setInProcessing, True)
 
-        with source.addParallelTask(2) as (extra, show):
-            extra.addScope(self._scopeWhileShow)
-            show.addScope(self._scopeShowAdvert)
+        with source.addParallelTask(2) as (tc_extra, tc_main):
+            tc_extra.addScope(self._scopeWhileShow)
+            tc_main.addScope(self._scopeShowAdvert)
 
         source.addFunction(self._runCallback)
 
