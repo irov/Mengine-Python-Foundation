@@ -137,6 +137,8 @@ def onInitialize():
     build_alias_id, build_text_id = "$AliasBuildVersion", "ID_TEXT_BUILD_VERSION"
     if Mengine.existText(build_text_id) is True:
         Mengine.setTextAlias("", build_alias_id, build_text_id)
+        if _DEBUG or _DEVELOPMENT is True:
+            Mengine.setTextAliasArguments("", build_alias_id, "{} ({})".format(_BUILD_VERSION, _BUILD_NUMBER))
         if Mengine.getGameParamBool("ShowBuildVersion", True) is True:
             Mengine.setTextAliasArguments("", build_alias_id, _BUILD_VERSION)
         else:
