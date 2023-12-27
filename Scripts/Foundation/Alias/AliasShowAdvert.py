@@ -79,7 +79,7 @@ class AliasShowAdvert(TaskAlias):
                 source.addDummy()
                 return
 
-        Trace.msg_dev("AliasShowAdvert [{}:{}] display [{}]".format(
+        source.addPrint("AliasShowAdvert [{}:{}] display start [{}]".format(
             self.AdType, self.AdUnitName, AdvertisementProvider.getName()))
 
         source.addFunction(self.setInProcessing, True)
@@ -89,5 +89,8 @@ class AliasShowAdvert(TaskAlias):
             tc_main.addScope(self._scopeShowAdvert)
 
         source.addFunction(self._runCallback)
+
+        source.addPrint("AliasShowAdvert [{}:{}] display complete [{}]".format(
+            self.AdType, self.AdUnitName, AdvertisementProvider.getName()))
 
         source.addFunction(self.setInProcessing, False)
