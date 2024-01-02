@@ -569,6 +569,13 @@ class SystemApplovin(System):
         elif _IOS:
             Mengine.appleAppLovinShowMediationDebugger()
 
+    @staticmethod
+    def showConsentFlow():
+        if _ANDROID:
+            Mengine.androidMethod(ANDROID_PLUGIN_NAME, "showConsentFlow")
+        elif _IOS:
+            _Log("[IOS] `showConsentFlow` not realized yet")
+
     def _getAllAdUnits(self):
         return self.rewardeds.values() + self.interstitials.values() + self.banners.values()
 
@@ -649,6 +656,11 @@ class SystemApplovin(System):
         w_debug.setTitle("Show Mediation Debugger")
         w_debug.setClickEvent(self.showMediationDebugger)
         widgets.append(w_debug)
+
+        w_consent = Mengine.createDevToDebugWidgetButton("show_consent_flow")
+        w_consent.setTitle("Show Consent Flow")
+        w_consent.setClickEvent(self.showConsentFlow)
+        widgets.append(w_consent)
 
         for ad_unit in self._getAllAdUnits():
             widgets.extend(ad_unit._getDevToDebugWidgets())
