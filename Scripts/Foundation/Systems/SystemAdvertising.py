@@ -153,6 +153,10 @@ class SystemAdvertising(System):
             return True
 
         view_delay = self.getGeneralParam("view_delay")
+        if view_delay is None:
+            Trace.log("System", 0, "view_delay is None (no -touchpad or config 'Advertising' 'Interstitial' is OFF)")
+            return False
+
         if (timestamp - self._last_view_timestamp) > view_delay:
             return True
         return False
