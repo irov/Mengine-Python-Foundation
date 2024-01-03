@@ -555,6 +555,7 @@ class SystemApplovin(System):
             IsInterstitialAdvertAvailable=Functor(self.isAdvertAvailable, self.interstitials),
             ShowBanner=Functor(self.showAdvert, self.banners),
             HideBanner=Functor(self.hideBanner, self.banners),
+            ShowConsentFlow=self.showConsentFlow,
         )
         AdvertisementProvider.setProvider(ANDROID_PLUGIN_NAME, provider_methods)
 

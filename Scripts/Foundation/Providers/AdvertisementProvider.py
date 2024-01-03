@@ -18,6 +18,7 @@ class AdvertisementProvider(BaseProvider):
         "IsInterstitialAdvertAvailable",
         "ShowBanner",
         "HideBanner",
+        "ShowConsentFlow",
     ]
 
     @staticmethod
@@ -49,6 +50,10 @@ class AdvertisementProvider(BaseProvider):
     @staticmethod
     def hideBanner(AdUnitName=None, **params):
         return AdvertisementProvider._call("HideBanner", AdUnitName, **params)
+
+    @staticmethod
+    def showConsentFlow():
+        return AdvertisementProvider._call("ShowConsentFlow")
 
 
 class DummyAdvertisement(object):
