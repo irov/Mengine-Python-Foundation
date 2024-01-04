@@ -240,6 +240,34 @@ class ObjectMovie2(ObjectAnimatable):
 
         return True
 
+    def setupMovieTextFont(self, TextName, Font):
+        if Mengine.hasFont(Font) is False:
+            Trace.log("Object", 0, "setupMovieTextColor - font {!r} is not found!".format(Font))
+            return False
+
+        if self.isActive() is False:
+            return False
+
+        Entity = self.getEntity()
+
+        Text = Entity.getMovieText(TextName)
+
+        if Text is None:
+            return False
+
+        print("")
+        print(dir(Text))
+        print("")
+        print(Text.getFont())
+        print(Text.getFontName())
+        print("")
+        print("SETUP FONT: {!r}".format(Font))
+        print("")
+
+        Text.setFontName(Font)
+
+        return True
+
     def getMovie(self):
         if self.isActive() is False:
             return None
