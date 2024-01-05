@@ -255,15 +255,6 @@ class ObjectMovie2(ObjectAnimatable):
         if Text is None:
             return False
 
-        print("")
-        print(dir(Text))
-        print("")
-        print(Text.getFont())
-        print(Text.getFontName())
-        print("")
-        print("SETUP FONT: {!r}".format(Font))
-        print("")
-
         Text.setFontName(Font)
 
         return True
