@@ -3,6 +3,7 @@ from Foundation.DefaultManager import DefaultManager
 from Foundation.GroupManager import GroupManager
 from Foundation.Systems.SystemAnalytics import SystemAnalytics
 from Foundation.System import System
+from Foundation.Systems.SystemApplovin import ANDROID_PLUGIN_NAME, APPLE_PLUGIN_NAME
 
 GDPR_ACCOUNT_KEY = "AgreeWithGDPR"
 
@@ -25,6 +26,9 @@ class SystemGDPR(System):
         AccountManager.addCreateAccountExtra(__addExtraAccountSettings)
 
     def _onInitialize(self):
+        if Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME) or Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME):
+            return
+
         SystemGDPR.is_default_provider = DefaultManager.getDefaultBool("UseDefaultGDPRProvider", True)
 
         if SystemGDPR.is_default_provider is False:
@@ -66,6 +70,10 @@ class SystemGDPR(System):
         SystemGDPR._global_agree_state = state
 
     def _onRun(self):
+        if Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME) or Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME):
+            # applovin has own GDPR consent flow
+            return True
+
         if SystemGDPR.is_default_provider is False:
             return True
 
