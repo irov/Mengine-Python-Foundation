@@ -280,10 +280,10 @@ class SystemApplovin(System):
         ad_type = "Interstitial"
         if _ANDROID:
             s_callbacks = {
-                "onAdDisplayed": "onApplovinInterstitialOnAdDisplayed",
-                "onAdDisplayFailed": "onApplovinInterstitialOnAdDisplayFailed",
-                "onAdClicked": "onApplovinInterstitialOnAdClicked",
-                "onAdHidden": "onApplovinInterstitialOnAdHidden",
+                "onAdDisplayed": "onAppLovinInterstitialOnAdDisplayed",
+                "onAdDisplayFailed": "onAppLovinInterstitialOnAdDisplayFailed",
+                "onAdClicked": "onAppLovinInterstitialOnAdClicked",
+                "onAdHidden": "onAppLovinInterstitialOnAdHidden",
             }
             s_methods = {
                 "init": "initInterstitial",
@@ -313,11 +313,11 @@ class SystemApplovin(System):
         ad_type = "Rewarded"
         if _ANDROID:
             s_callbacks = {
-                "onAdDisplayed": "onApplovinRewardedOnAdDisplayed",
-                "onAdDisplayFailed": "onApplovinRewardedOnAdDisplayFailed",
-                "onAdClicked": "onApplovinRewardedOnAdClicked",
-                "onAdHidden": "onApplovinRewardedOnAdHidden",
-                "onUserRewarded": "onApplovinRewardedOnUserRewarded",
+                "onAdDisplayed": "onAppLovinRewardedOnAdDisplayed",
+                "onAdDisplayFailed": "onAppLovinRewardedOnAdDisplayFailed",
+                "onAdClicked": "onAppLovinRewardedOnAdClicked",
+                "onAdHidden": "onAppLovinRewardedOnAdHidden",
+                "onUserRewarded": "onAppLovinRewardedOnUserRewarded",
             }
             s_methods = {
                 "init": "initRewarded",
@@ -382,13 +382,13 @@ class SystemApplovin(System):
         ad_type = "Banner"
         if _ANDROID:
             s_callbacks = {
-                "onAdDisplayed": "onApplovinBannerOnAdDisplayed",
-                "onAdDisplayFailed": "onApplovinBannerOnAdDisplayFailed",
-                "onAdHidden": "onApplovinBannerOnAdHidden",
-                "onAdClicked": "onApplovinBannerOnAdClicked",
-                "onAdExpanded": "onApplovinBannerOnAdExpanded",
-                "onAdCollapsed": "onApplovinBannerOnAdCollapsed",
-                # onApplovinBannerOnAdLoadFailed
+                "onAdDisplayed": "onAppLovinBannerOnAdDisplayed",
+                "onAdDisplayFailed": "onAppLovinBannerOnAdDisplayFailed",
+                "onAdHidden": "onAppLovinBannerOnAdHidden",
+                "onAdClicked": "onAppLovinBannerOnAdClicked",
+                "onAdExpanded": "onAppLovinBannerOnAdExpanded",
+                "onAdCollapsed": "onAppLovinBannerOnAdCollapsed",
+                # onAppLovinBannerOnAdLoadFailed
             }
             s_methods = {
                 "init": "initBanner",
@@ -422,8 +422,10 @@ class SystemApplovin(System):
             if _IOS:
                 callbacks = self.setCallbacks()
                 ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, self.getPlacementName(), callbacks)
+            elif _ANDROID:
+                ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, self.getPlacementName(), type="bool")
             else:
-                ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, self.getPlacementName())
+                Trace.log("System", 0, "initialize fail: Unsupported platform")
 
         def show(self):
             if self.hidden is False:
@@ -526,10 +528,7 @@ class SystemApplovin(System):
         for ad_unit in self._getAllAdUnits():
             ad_unit.setCallbacks()
 
-        if _ANDROID:
-            Mengine.waitAndroidSemaphore("AppLovinSdkInitialized", self.__cbSdkInitialized)
-        elif _IOS:
-            self.__cbSdkInitialized()
+        Mengine.waitSemaphore("AppLovinSdkInitialized", self.__cbSdkInitialized)
 
         # ads do init in `__cbSdkInitialized`
         self.__addDevToDebug()
@@ -583,7 +582,7 @@ class SystemApplovin(System):
     # callbacks
 
     def __cbSdkInitialized(self):
-        _Log("[SDK cb] onApplovinPluginOnSdkInitialized")
+        _Log("[SDK cb] onAppLovinPluginOnSdkInitialized")
         SystemApplovin.is_sdk_init = True
         self.initAds()
 
