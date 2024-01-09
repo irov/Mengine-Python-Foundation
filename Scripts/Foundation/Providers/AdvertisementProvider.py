@@ -19,6 +19,7 @@ class AdvertisementProvider(BaseProvider):
         "ShowBanner",
         "HideBanner",
         "ShowConsentFlow",
+        "IsConsentFlow",
     ]
 
     @staticmethod
@@ -51,9 +52,19 @@ class AdvertisementProvider(BaseProvider):
     def hideBanner(AdUnitName=None, **params):
         return AdvertisementProvider._call("HideBanner", AdUnitName, **params)
 
+    # GDPR
+
     @staticmethod
     def showConsentFlow():
         return AdvertisementProvider._call("ShowConsentFlow")
+
+    @staticmethod
+    def isConsentFlow():
+        return AdvertisementProvider._call("IsConsentFlow")
+
+    @staticmethod
+    def _isConsentFlowNotFoundCb():
+        return False
 
 
 class DummyAdvertisement(object):

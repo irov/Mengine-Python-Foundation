@@ -555,6 +555,7 @@ class SystemApplovin(System):
             ShowBanner=Functor(self.showAdvert, self.banners),
             HideBanner=Functor(self.hideBanner, self.banners),
             ShowConsentFlow=self.showConsentFlow,
+            isConsentFlow=self.isConsentFlow,
         )
         AdvertisementProvider.setProvider(ANDROID_PLUGIN_NAME, provider_methods)
 
@@ -569,12 +570,21 @@ class SystemApplovin(System):
         elif _IOS:
             Mengine.appleAppLovinShowMediationDebugger()
 
-    @staticmethod
-    def showConsentFlow():
+    def showConsentFlow(self):
         if _ANDROID:
             Mengine.androidMethod(ANDROID_PLUGIN_NAME, "showConsentFlow")
         elif _IOS:
-            _Log("[IOS] `showConsentFlow` not realized yet")
+            Mengine.appleAppLovinLoadAndShowCMPFlow({
+                "onAppleAppLovinConsentFlowShowSuccessful": self.__cbConsentFlowShowSuccessful,
+                "onAppleAppLovinConsentFlowShowFailed": self.__cbConsentFlowShowFailed,
+            })
+
+    def isConsentFlow(self):
+        if _ANDROID:
+            return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "isConsentFlowUserGeographyGDPR")
+        elif _IOS:
+            return Mengine.appleAppLovinIsConsentFlowUserGeographyGDPR()
+        return False
 
     def _getAllAdUnits(self):
         return self.rewardeds.values() + self.interstitials.values() + self.banners.values()
@@ -587,6 +597,12 @@ class SystemApplovin(System):
         self.initAds()
 
         self.__disableDevToDebugInitButton()
+
+    def __cbConsentFlowShowSuccessful(self):
+        _Log("[cb] Consent Flow Show Successful")
+
+    def __cbConsentFlowShowFailed(self):
+        _Log("[cb] Consent Flow Show Failed", err=True, force=True)
 
     # provider handling
 
@@ -658,7 +674,7 @@ class SystemApplovin(System):
         widgets.append(w_debug)
 
         w_consent = Mengine.createDevToDebugWidgetButton("show_consent_flow")
-        w_consent.setTitle("Show Consent Flow")
+        w_consent.setTitle("Show Consent Flow (isConsentFlow={})".format(self.isConsentFlow()))
         w_consent.setClickEvent(self.showConsentFlow)
         widgets.append(w_consent)
 
