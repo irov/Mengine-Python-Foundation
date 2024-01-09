@@ -127,7 +127,7 @@ class SystemApplovin(System):
                 callbacks = self.setCallbacks()
                 ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, callbacks)
             else:
-                ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id)
+                ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, type="bool")
 
         def cleanUp(self):
             if _ANDROID:
