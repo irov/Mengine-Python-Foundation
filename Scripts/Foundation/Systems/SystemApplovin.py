@@ -126,8 +126,10 @@ class SystemApplovin(System):
             if _IOS:
                 callbacks = self.setCallbacks()
                 ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, callbacks)
-            else:
+            elif _ANDROID:
                 ApplovinMengineProvider.call(self.s_methods["init"], self.ad_unit_id, type="bool")
+            else:
+                Trace.log("System", 0, "initialize fail: Unsupported platform")
 
         def cleanUp(self):
             if _ANDROID:
@@ -555,7 +557,7 @@ class SystemApplovin(System):
             ShowBanner=Functor(self.showAdvert, self.banners),
             HideBanner=Functor(self.hideBanner, self.banners),
             ShowConsentFlow=self.showConsentFlow,
-            isConsentFlow=self.isConsentFlow,
+            IsConsentFlow=self.isConsentFlow,
         )
         AdvertisementProvider.setProvider(ANDROID_PLUGIN_NAME, provider_methods)
 
