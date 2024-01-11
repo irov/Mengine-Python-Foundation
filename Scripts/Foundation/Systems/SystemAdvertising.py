@@ -137,7 +137,9 @@ class SystemAdvertising(System):
             return self._hasPermissionToViewAd(Mengine.getTime()) is True
 
     def _hasPermissionToViewAd(self, timestamp):
-        if AdvertisementProvider.isAdvertAvailable(AD_TYPE) is False:
+        ad_unit_name = self.getGeneralParam("ad_unit_name")
+
+        if AdvertisementProvider.isAdvertAvailable(AD_TYPE, ad_unit_name) is False:
             return False
 
         if self._start_delay_done is False:
@@ -275,7 +277,9 @@ class SystemAdvertising(System):
         if self.__checkTriggerCounter() is False:
             self._optionalNotifyNoPermission()
             return False
-        if AdvertisementProvider.isAdvertAvailable(AD_TYPE) is False:
+
+        ad_unit_name = self.getGeneralParam("ad_unit_name")
+        if AdvertisementProvider.isAdvertAvailable(AD_TYPE, ad_unit_name) is False:
             self._optionalNotifyNoPermission()
             return False
 
