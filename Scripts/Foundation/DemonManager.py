@@ -1,13 +1,13 @@
 from Foundation.DatabaseManager import DatabaseManager
 from Foundation.GroupManager import GroupManager
 
+
 class DemonManager(object):
     s_demons = {}
 
     @staticmethod
     def onFinalize():
         DemonManager.s_demons = {}
-        pass
 
     @staticmethod
     def loadParams(module, param):
@@ -22,11 +22,8 @@ class DemonManager(object):
                 Trace.log("Manager", 0, "DemonManager.loadParams not found demon %s:%s name %s" % (GroupName, ObjectName, DemonName))
 
                 return False
-                pass
-            pass
 
         return True
-        pass
 
     @staticmethod
     def addDemon(DemonName, GroupName, ObjectName):
@@ -38,28 +35,24 @@ class DemonManager(object):
             Trace.log("Manager", 0, "DemonManager.addDemon not found demon %s:%s name %s" % (GroupName, ObjectName, DemonName))
 
             return False
-            pass
 
         Demon = GroupManager.getObject(GroupName, ObjectName)
 
         DemonManager.s_demons[DemonName] = Demon
         return True
-        pass
 
     @staticmethod
     def hasDemon(name):
         if name not in DemonManager.s_demons:
             return False
-            pass
 
         return True
 
     @staticmethod
     def getDemon(name):
         if DemonManager.hasDemon(name) is False:
-            Trace.log("Manager", 0, "DemonManager.getDemon: not found demon '%s'" % (name))
+            Trace.log("Manager", 0, "DemonManager.getDemon: not found demon '%s'" % name)
             return None
-            pass
 
         Demon = DemonManager.s_demons[name]
 
@@ -92,7 +85,7 @@ class DemonManager(object):
     @staticmethod
     def getObject(demon_name, object_name):
         if DemonManager.hasObject(demon_name, object_name) is False:
-            Trace.log("Manager", 0, "DemonManager.getObject: not found object '%s' in '%s'" % (object_name, demon_name))
+            Trace.log("Manager", 0, "DemonManager.getObject: not found demon '%s' or object '%s' inside" % (demon_name, object_name))
             return None
 
         # we know, that demon and object exist
