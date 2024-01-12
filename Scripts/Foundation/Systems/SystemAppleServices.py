@@ -3,6 +3,7 @@ from Foundation.Utils import SimpleLogger
 from Foundation.Providers.RatingAppProvider import RatingAppProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider
+from Foundation.TaskManager import TaskManager
 from Notification import Notification
 
 
@@ -321,7 +322,7 @@ class SystemAppleServices(System):
         game_products = {}
 
         for product in products:
-            product_id = product.getProductIdentifier()
+            product_id = str(product.getProductIdentifier())
 
             params = {
                 "price": product.getProductPrice(),
@@ -350,23 +351,21 @@ class SystemAppleServices(System):
     @staticmethod
     def _cbPaymentPurchasing(transaction):
         """ (CALLBACK) start purchase process """
-        product_id = transaction.getProductIdentifier()
+        product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment Purchasing start {}".format(product_id))
 
     @staticmethod
     def _cbPaymentPurchased(transaction):
         """ (CALLBACK) payment complete """
-        product_id = transaction.getProductIdentifier()
+        product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment Purchased (success) {}".format(product_id))
 
-        Notification.notify(Notificator.onPaySuccess, product_id)
-        Notification.notify(Notificator.onPayComplete, product_id)
-        transaction.finish()
+        SystemAppleServices._waitForPaymentFinish(transaction, product_id)
 
     @staticmethod
     def _cbPaymentFailed(transaction):
         """ (CALLBACK) payment failed """
-        product_id = transaction.getProductIdentifier()
+        product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment purchase Failed {}".format(product_id))
 
         Notification.notify(Notificator.onPayFailed, product_id)
@@ -376,18 +375,15 @@ class SystemAppleServices(System):
     @staticmethod
     def _cbPaymentRestored(transaction):
         """ (CALLBACK) purchased product """
-        product_id = transaction.getProductIdentifier()
+        product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment Restored {}".format(product_id))
 
-        Notification.notify(Notificator.onPaySuccess, product_id)
-        Notification.notify(Notificator.onPayComplete, product_id)
-
-        transaction.finish()
+        SystemAppleServices._waitForPaymentFinish(transaction, product_id)
 
     @staticmethod
     def _cbPaymentDeferred(transaction):
         """ (CALLBACK) something went wrong during purchase """
-        product_id = transaction.getProductIdentifier()
+        product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment Deferred {}".format(product_id))
 
     @staticmethod
@@ -406,6 +402,16 @@ class SystemAppleServices(System):
     def _cbPaymentQueueShouldContinueTransaction():
         """ Sent when the storefront changes while a payment is processing. """
         _Log("[InAppPurchase] (callback) _cbPaymentQueueShouldContinueTransaction")
+
+    @staticmethod
+    def _waitForPaymentFinish(transaction, product_id):
+        with TaskManager.createTaskChain(Name="ApplePlaymentFinisher_%s" % product_id) as tc:
+            with tc.addParallelTask(2) as (reward, complete):
+                reward.addListener(Notificator.onGameStoreSentRewards, Filter=lambda prod_id: prod_id == product_id)
+                complete.addNotify(Notificator.onPaySuccess, product_id)
+                complete.addNotify(Notificator.onPayComplete, product_id)
+
+            tc.addFunction(transaction.finish)
 
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 
