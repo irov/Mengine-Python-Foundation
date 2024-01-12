@@ -407,7 +407,7 @@ class SystemAppleServices(System):
     def _waitForPaymentFinish(transaction, product_id):
         with TaskManager.createTaskChain(Name="ApplePlaymentFinisher_%s" % product_id) as tc:
             with tc.addParallelTask(2) as (reward, complete):
-                reward.addListener(Notificator.onGameStoreSentRewards, Filter=lambda prod_id: prod_id == product_id)
+                reward.addListener(Notificator.onGameStoreSentRewards, Filter=lambda prod_id, _: prod_id == product_id)
                 complete.addNotify(Notificator.onPaySuccess, product_id)
                 complete.addNotify(Notificator.onPayComplete, product_id)
 
