@@ -59,7 +59,7 @@ class SystemAppleServices(System):
                 setAchievementProgress=self.setAchievementProgress,
             ))
 
-        if self.b_plugins["Tracking"] is True:
+        if self.b_plugins["Tracking"] is True and Mengine.getGameParamBool("AppleAppTrackingTransparency", False) is True:
             SystemAppleServices.appTrackingAuthorization()
 
         self.__addDevToDebug()
