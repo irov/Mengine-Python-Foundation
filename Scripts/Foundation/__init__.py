@@ -748,6 +748,16 @@ def onInitialize():
 
     Notificator.addIdentities(notifiers)
 
+    from Foundation.AccountManager import AccountManager
+
+    def accountSetuper(accountID, isGlobal):
+        if isGlobal is True:
+            return
+
+        Mengine.addCurrentAccountSetting("InvalidLoad", u"False", None)
+
+    AccountManager.addCreateAccountExtra(accountSetuper)
+
     from ObjectManager import ObjectManager
     from EntityManager import EntityManager
 
