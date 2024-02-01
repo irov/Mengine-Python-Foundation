@@ -114,7 +114,7 @@ class DummyAdvertisement(object):
     def isAdvertAvailable(AdType, AdUnitName=None, **params):
         if AdUnitName is None:
             AdUnitName = AdType
-        status = True
+        status = Mengine.rand(100) <= 90
         Trace.msg("<DummyAdvertisement> isAdvertAvailable {}:{} result = {}".format(AdType, AdUnitName, status))
         return status
 
