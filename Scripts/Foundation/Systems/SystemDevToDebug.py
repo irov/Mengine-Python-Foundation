@@ -1,6 +1,9 @@
 from Foundation.System import System
 
+
 class SystemDevToDebug(System):
+
+    """ https://wonderland-games.atlassian.net/wiki/spaces/FRW2/pages/1853849603/DevToDebug """
 
     def __init__(self):
         super(SystemDevToDebug, self).__init__()
@@ -14,7 +17,10 @@ class SystemDevToDebug(System):
         # self.createSpamTabs()
         # self.createGroupedButtons()
         # self.createTextInputTab()
-        self.createDebugExamples()
+        # self.createDebugExamples()
+        # self.createCheckbox()
+        # self.createRadioButtons()
+        # self.createSelector()
 
         return True
 
@@ -93,8 +99,7 @@ class SystemDevToDebug(System):
         widget_text2 = Mengine.createDevToDebugWidgetText("test_2")
 
         def __get_coin():
-            # print("__get_coin {}".format(self.coin))
-            return "Coin: {}".format(self.coin)
+            return "Coins: {}".format(self.coin)
 
         widget_text2.setText(__get_coin)
 
@@ -105,11 +110,27 @@ class SystemDevToDebug(System):
 
         def __add_coins():
             self.coin += 1
-            print("cb __add_coins works")
 
         widget_btn.setClickEvent(__add_coins)
 
         tab.addWidget(widget_btn)
+
+        widget_line = Mengine.createDevToDebugWidgetButton("test_4")
+        widget_line.setTitle("Set coins")
+
+        def __set_coins(text):
+            try:
+                value = int(text)
+                if value < 0:
+                    raise ValueError("value must be positive")
+            except ValueError as e:
+                Trace.msg_dev("wrong input {}: {}".format(text, e))
+                return
+            self.coins = value
+
+        widget_line.setClickEvent(__set_coins)
+
+        tab.addWidget(widget_line)
 
     def createDebugExamples(self):
         tab = Mengine.getDevToDebugTab("Debug") or Mengine.addDevToDebugTab("Debug")
@@ -164,5 +185,64 @@ class SystemDevToDebug(System):
                 continue
             tab.addWidget(widget)
 
+    def createCheckbox(self):
+        semaphore = Semaphore(False, "CheckboxState")
+        tab = Mengine.getDevToDebugTab("Debug") or Mengine.addDevToDebugTab("Debug")
+
+        def _cb(state):
+            Trace.msg("checkbox update from {} to {}".format(semaphore.getValue(), state))
+            semaphore.setValue(state)
+
+        w_checkbox = Mengine.createDevToDebugWidgetCheckbox("test_checkbox")
+        w_checkbox.setTitle("Test checkbox")
+        w_checkbox.setValue(semaphore.getValue())
+        w_checkbox.setChangeEvent(_cb)
+
+        tab.addWidget(w_checkbox)
+
+    def createRadioButtons(self):
+        states = [
+            "yes",
+            "not sure",
+            "no",
+        ]
+        holder = Holder(states[0])
+
+        tab = Mengine.getDevToDebugTab("Debug") or Mengine.addDevToDebugTab("Debug")
+
+        def _cb(value):
+            Trace.msg("radiobutton update from {} to {}".format(holder.get(), value))
+            holder.set(value)
+
+        w_radio = Mengine.createDevToDebugWidgetRadioButton("test_radiobutton")
+        w_radio.setTitle("[Radiobutton] Do you like cats?")
+        for i, state in enumerate(states):
+            w_radio.addState(str(i), state)
+        w_radio.setChangeEvent(_cb)
+
+        tab.addWidget(w_radio)
+
+    def createSelector(self):
+        states = [
+            "yes",
+            "not sure",
+            "no",
+        ]
+        holder = Holder(states[0])
+
+        tab = Mengine.getDevToDebugTab("Debug") or Mengine.addDevToDebugTab("Debug")
+
+        def _cb(value):
+            Trace.msg("selector update from {} to {}".format(holder.get(), value))
+            holder.set(value)
+
+        w_selector = Mengine.createDevToDebugWidgetSelector("test_selector")
+        w_selector.setTitle("[Selector] Do you like cats?")
+        for i, state in enumerate(states):
+            w_selector.addState(str(i), state)
+        w_selector.setChangeEvent(_cb)
+
+        tab.addWidget(w_selector)
+
     def _onStop(self):
-        return True  # clean
+        return True
