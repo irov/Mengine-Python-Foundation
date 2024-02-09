@@ -30,6 +30,11 @@ class FacebookProvider(BaseProvider):
         return FacebookProvider._call("isLoggedIn")
 
     @staticmethod
+    def _isLoggedInNotFoundCb():
+        Trace.log("Provider", 0, "No provider for isLoggedIn!!!!")
+        return False
+
+    @staticmethod
     def performLogin(permissions=('email', 'public_profile'), _cb_success=None, _cb_cancel=None, _cb_error=None):
         return FacebookProvider._call("performLogin", permissions, _cb_success, _cb_cancel, _cb_error)
 
