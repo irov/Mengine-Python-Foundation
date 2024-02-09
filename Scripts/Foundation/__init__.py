@@ -195,6 +195,7 @@ def onInitialize():
         , "TaskObjectAnimatablePlay"
         , "TaskObjectAnimatableStop"
         , "TaskObjectAnimatablePause"
+        , "TaskObjectAnimatableResume"
         , "TaskObjectAnimatableEnd"
         , "TaskObjectAnimatableInterrupt"
 
@@ -206,7 +207,7 @@ def onInitialize():
         , "TaskMoviePlay"
         , "TaskSubMoviePlay"
         , "TaskSubMovie2Play"
-        , "TaskMoviePause"
+        , "TaskMoviePause"      # resume only for Movie2, because Movie is deprecated
         , "TaskMovieEnd"
         , "TaskMovieLastFrame"
         , "TaskMovieSocketClick"
@@ -220,6 +221,7 @@ def onInitialize():
         , "TaskMovie2Stop"
         , "TaskMovie2Play"
         , "TaskMovie2Pause"
+        , "TaskMovie2Resume"
         , "TaskMovie2End"
         , "TaskMovie2Rewind"
         , "TaskMovie2Interrupt"
