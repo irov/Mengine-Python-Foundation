@@ -72,6 +72,7 @@ class SystemGoogleServices(System):
             AchievementsProvider.setProvider("Google", dict(
                 unlockAchievement=self.unlockAchievement,
                 incrementAchievement=self.incrementAchievement,
+                showAchievements=self.showAchievements,
             ))
             AuthProvider.setProvider("Google", dict(
                 login=self.signIn,
