@@ -80,7 +80,7 @@ class DummyAdvertisement(object):
         if AdUnitName is None:
             AdUnitName = params.get("AdUnitName", AdType)
 
-        display_failed = Mengine.rand(20) < 5 if DisplayFail is "Random" else bool(DisplayFail)
+        display_failed = Mengine.rand(20) < 5 if DisplayFail == "Random" else bool(DisplayFail)
 
         with TaskManager.createTaskChain(Name="DummyShow{}Advert".format(AdType)) as source:
             source.addPrint("<DummyAdvertisement> watch advertisement {}:{}, delay {}s (fail: {})...".format(
@@ -126,7 +126,7 @@ class DummyAdvertisement(object):
 
         DisplayFail = params.get("DisplayFail", "Random")
 
-        display_failed = Mengine.rand(20) < 5 if DisplayFail is "Random" else bool(DisplayFail)
+        display_failed = Mengine.rand(20) < 5 if DisplayFail == "Random" else bool(DisplayFail)
 
         Trace.msg("<DummyAdvertisement> show advert {}:{} (fail: {})...".format(
             AdType, AdUnitName, display_failed))
