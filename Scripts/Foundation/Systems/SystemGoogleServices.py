@@ -526,25 +526,19 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def incrementAchievement(achievement_id, steps):
-        if SystemGoogleServices.__checkAuthForAchievements("increment", achievement_id, steps) is False:
-            return
+        # auth is not required
         _Log("[Achievements] try incrementAchievement {!r} for {} steps".format(achievement_id, steps), force=True)
         Mengine.androidBooleanMethod("GoogleGameSocial", "incrementAchievement", achievement_id, steps)
 
     @staticmethod
     def unlockAchievement(achievement_id):
-        if SystemGoogleServices.__checkAuthForAchievements("unlock", achievement_id) is False:
-            return
+        # auth is not required
         _Log("[Achievements] try unlockAchievement: {!r}".format(achievement_id), force=True)
         Mengine.androidBooleanMethod("GoogleGameSocial", "unlockAchievement", achievement_id)
 
     @staticmethod
     def showAchievements():
-        if SystemGoogleServices.isLoggedIn() is False:
-            _Log("[Achievements error] showAchievements failed: not authorized, try auth...", err=True)
-            SystemGoogleServices.__on_auth_cbs["showAchievements"] = True
-            SystemGoogleServices.signIn(only_intent=True)
-            return
+        # auth is not required
         _Log("[Achievements] try showAchievements...", force=True)
         Mengine.androidBooleanMethod("GoogleGameSocial", "showAchievements")
 
