@@ -59,6 +59,7 @@ class SystemGoogleServices(System):
             # auth:
             setSocialCallback("OnSign", self.__cbSignSuccess)
             setSocialCallback("OnSignError", self.__cbSignError)
+            setSocialCallback("NeedIntentSign", self.__cbNeedIntentSign)
             setSocialCallback("OnSignFailed", self.__cbSignFail)
             setSocialCallback("SignOutSuccess", self.__cbSignOutSuccess)
             setSocialCallback("SignOutCanceled", self.__cbSignOutCanceled)
@@ -144,8 +145,10 @@ class SystemGoogleServices(System):
 
             RatingAppProvider.setProvider("Google", dict(rateApp=self.rateApp))
 
-        if self.b_plugins["GoogleGameSocial"] is True and Mengine.getGameParamBool("GoogleAutoLogin", True) is True:
-            self.signIn()
+        if self.b_plugins["GoogleGameSocial"] is True:
+            # google do auto login on create app, so we don't need to do it manually here
+            if Mengine.getGameParamBool("GoogleAutoLogin", False) is True:
+                self.signIn()
 
         self.__addDevToDebug()
 
@@ -189,13 +192,18 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def isLoggedIn():
-        b_login = SystemGoogleServices.login_data is not None
-        return b_login
+        # fixme
+        # return SystemGoogleServices.login_data is not None
+        return True
 
     @staticmethod
-    def signIn(only_intent=False):
+    def signIn(only_intent=False, force=False):
         if SystemGoogleServices.b_plugins["GoogleGameSocial"] is False:
             _Log("[Auth] plugin {!r} is not active for signIn".format(GOOGLE_GAME_SOCIAL_PLUGIN))
+            return
+
+        if force is False and SystemGoogleServices.isLoggedIn() is True:
+            _Log("[Auth] signIn canceled - user already logged in")
             return
 
         if only_intent is True:
@@ -262,6 +270,11 @@ class SystemGoogleServices(System):
     def __cbSignError():
         SystemGoogleServices.login_event(False)
         _Log("[Auth cb] login error", err=True, force=True)
+
+    @staticmethod
+    def __cbNeedIntentSign():
+        _Log("[Auth cb] silent login error - call intent login this time", err=True)
+        SystemGoogleServices._signInIntent()
 
     @staticmethod
     def __cbSignOutSuccess():
@@ -680,6 +693,16 @@ class SystemGoogleServices(System):
             w_logout.setTitle("Sign OUT -->")
             w_logout.setClickEvent(self.signOut)
             widgets.append(w_logout)
+
+            w_sign_in_silence = Mengine.createDevToDebugWidgetButton("sign_in_silence")
+            w_sign_in_silence.setTitle("Sign In [Silence]")
+            w_sign_in_silence.setClickEvent(self._signInSilently)
+            widgets.append(w_sign_in_silence)
+
+            w_sign_in_intent = Mengine.createDevToDebugWidgetButton("sign_in_intent")
+            w_sign_in_intent.setTitle("Sign In [Intent]")
+            w_sign_in_intent.setClickEvent(self._signInIntent)
+            widgets.append(w_sign_in_intent)
 
         # payment
         if self.b_plugins["GooglePlayBilling"] is True:
