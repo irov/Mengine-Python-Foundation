@@ -3,7 +3,7 @@ from Foundation.Providers.FacebookProvider import FacebookProvider
 from Event import Event
 
 
-PLUGIN_NAME = "Facebook"
+PLUGIN_NAME = "MengineFacebook"
 
 
 class SystemFacebook(System):

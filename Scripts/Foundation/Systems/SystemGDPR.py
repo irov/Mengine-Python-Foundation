@@ -1,11 +1,13 @@
+from Foundation.System import System
 from Foundation.AccountManager import AccountManager
 from Foundation.DefaultManager import DefaultManager
 from Foundation.GroupManager import GroupManager
 from Foundation.Systems.SystemAnalytics import SystemAnalytics
-from Foundation.System import System
-from Foundation.Systems.SystemApplovin import ANDROID_PLUGIN_NAME, APPLE_PLUGIN_NAME
+from Foundation.Systems.SystemApplovin import ANDROID_PLUGIN_NAME as APPLOVIN_ANDROID_PLUGIN_NAME
+from Foundation.Systems.SystemApplovin import APPLE_PLUGIN_NAME as APPLOVIN_APPLE_PLUGIN_NAME
 
 GDPR_ACCOUNT_KEY = "AgreeWithGDPR"
+ANDROID_PLUGIN_NAME = "MengineGDPR"
 
 
 class SystemGDPR(System):
@@ -26,7 +28,7 @@ class SystemGDPR(System):
         AccountManager.addCreateAccountExtra(__addExtraAccountSettings)
 
     def _onInitialize(self):
-        if Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME) or Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME):
+        if Mengine.isAvailablePlugin(APPLOVIN_ANDROID_PLUGIN_NAME) or Mengine.isAvailablePlugin(APPLOVIN_APPLE_PLUGIN_NAME):
             return
 
         SystemGDPR.is_default_provider = DefaultManager.getDefaultBool("UseDefaultGDPRProvider", True)
@@ -59,8 +61,8 @@ class SystemGDPR(System):
         if state is True:
             SystemAnalytics.sendCustomAnalytic("gdpr_agree", analytics_data)
 
-            if _ANDROID and Mengine.isAvailablePlugin("GDPR") is True:
-                Mengine.androidMethod("GDPR", "setGDPRPass", True)
+            if _ANDROID and Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME) is True:
+                Mengine.androidMethod(ANDROID_PLUGIN_NAME, "setGDPRPass", True)
             if _IOS and Mengine.isAvailablePlugin("AppleGeneralDataProtectionRegulation") is True:
                 Mengine.appleSetGDPRPass(True)
 
@@ -70,7 +72,7 @@ class SystemGDPR(System):
         SystemGDPR._global_agree_state = state
 
     def _onRun(self):
-        if Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME) or Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME):
+        if Mengine.isAvailablePlugin(APPLOVIN_ANDROID_PLUGIN_NAME) or Mengine.isAvailablePlugin(APPLOVIN_APPLE_PLUGIN_NAME):
             # applovin has own GDPR consent flow
             return True
 
@@ -107,9 +109,9 @@ class SystemGDPR(System):
 
         if self.isUserAgreeWithGDPR() is True:
 
-            if _ANDROID and Mengine.isAvailablePlugin("GDPR") is True:
-                if Mengine.androidBooleanMethod("GDPR", "isGDPRPass") is False:
-                    Mengine.androidMethod("GDPR", "setGDPRPass", True)
+            if _ANDROID and Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME) is True:
+                if Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "isGDPRPass") is False:
+                    Mengine.androidMethod(ANDROID_PLUGIN_NAME, "setGDPRPass", True)
 
             if _IOS and Mengine.isAvailablePlugin("AppleGeneralDataProtectionRegulation") is True:
                 if Mengine.appleIsGDPRPass() is False:

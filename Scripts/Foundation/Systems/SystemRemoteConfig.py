@@ -1,12 +1,13 @@
 from Foundation.System import System
 
+
 class SystemRemoteConfig(System):
-    PLUGIN_NAME = "FirebaseRemoteConfig"
+    PLUGIN_NAME = "MengineFBPMonitoring"
     s_configs = {}
 
     @staticmethod
     def isPluginEnable():
-        return _PLUGINS.get(SystemRemoteConfig.PLUGIN_NAME, False) is True
+        return Mengine.isAvailablePlugin(SystemRemoteConfig.PLUGIN_NAME) is True
 
     def _onInitialize(self):
         if self.isPluginEnable():

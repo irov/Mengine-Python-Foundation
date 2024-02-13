@@ -16,6 +16,11 @@ BILLING_CLIENT_STATUS_NOT_CONNECTED = 0
 BILLING_CLIENT_STATUS_OK = 1
 BILLING_CLIENT_STATUS_FAIL = 2
 
+GOOGLE_GAME_SOCIAL_PLUGIN = "MengineGGameSocial"
+GOOGLE_PLAY_BILLING_PLUGIN = "MengineGGameSocial"
+GOOGLE_IN_APP_REVIEWS_PLUGIN = "MengineGGameSocial"
+FIREBASE_CRASHLYTICS_PLUGIN = "MengineGGameSocial"
+
 
 class SystemGoogleServices(System):
     """ Google service that provides
@@ -28,10 +33,10 @@ class SystemGoogleServices(System):
     __lastProductId = None
 
     b_plugins = {
-        "GoogleGameSocial": _PLUGINS.get("GoogleGameSocial", False),
-        "GooglePlayBilling": _PLUGINS.get("GooglePlayBilling", False),
-        "GoogleInAppReviews": _PLUGINS.get("GoogleInAppReviews", False),
-        "FirebaseCrashlytics": _PLUGINS.get("FirebaseCrashlytics", False)
+        "GoogleGameSocial": Mengine.isAvailablePlugin(GOOGLE_GAME_SOCIAL_PLUGIN),
+        "GooglePlayBilling": Mengine.isAvailablePlugin(GOOGLE_PLAY_BILLING_PLUGIN),
+        "GoogleInAppReviews": Mengine.isAvailablePlugin(GOOGLE_IN_APP_REVIEWS_PLUGIN),
+        "FirebaseCrashlytics": Mengine.isAvailablePlugin(FIREBASE_CRASHLYTICS_PLUGIN),
     }
 
     login_event = Event("GoogleGameSocialLoginEvent")
@@ -49,7 +54,7 @@ class SystemGoogleServices(System):
         if self.b_plugins["GoogleGameSocial"] is True:
             def setSocialCallback(callback_name, *callback):
                 method_name = "onGoogleGameSocial" + callback_name
-                Mengine.setAndroidCallback("GoogleGameSocial", method_name, *callback)
+                Mengine.setAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
 
             # auth:
             setSocialCallback("OnSign", self.__cbSignSuccess)
@@ -84,7 +89,7 @@ class SystemGoogleServices(System):
         if self.b_plugins["GooglePlayBilling"] is True:
             def setBillingCallback(callback_name, *callback):
                 method_name = "onGooglePlayBilling" + callback_name
-                Mengine.setAndroidCallback("GooglePlayBilling", method_name, *callback)
+                Mengine.setAndroidCallback(GOOGLE_PLAY_BILLING_PLUGIN, method_name, *callback)
 
             # purchase status
             setBillingCallback("PurchasesUpdatedServiceTimeout", self.__cbBillingPurchaseError, "ServiceTimeout")
@@ -132,7 +137,7 @@ class SystemGoogleServices(System):
         if self.b_plugins["GoogleInAppReviews"] is True:
             def setReviewsCallback(callback_name, *callback):
                 method_name = "onGoogleInAppReviews" + callback_name
-                Mengine.setAndroidCallback("GoogleInAppReviews", method_name, *callback)
+                Mengine.setAndroidCallback(GOOGLE_IN_APP_REVIEWS_PLUGIN, method_name, *callback)
 
             Mengine.waitSemaphore("onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
             setReviewsCallback("LaunchingTheReviewCompleted", self.__cbReviewsLaunchingComplete)
@@ -190,7 +195,7 @@ class SystemGoogleServices(System):
     @staticmethod
     def signIn(only_intent=False):
         if SystemGoogleServices.b_plugins["GoogleGameSocial"] is False:
-            _Log("[Auth] plugin GoogleGameSocial is not active for signIn")
+            _Log("[Auth] plugin {!r} is not active for signIn".format(GOOGLE_GAME_SOCIAL_PLUGIN))
             return
 
         if only_intent is True:
@@ -218,20 +223,20 @@ class SystemGoogleServices(System):
     @staticmethod
     def _signInIntent():
         _Log("[Auth] startSignIn Intent...", force=True)
-        Mengine.androidMethod("GoogleGameSocial", "startSignInIntent")
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "startSignInIntent")
 
     @staticmethod
     def _signInSilently():
         _Log("[Auth] signIn Silently...", force=True)
-        Mengine.androidMethod("GoogleGameSocial", "signInSilently")
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "signInSilently")
 
     @staticmethod
     def signOut():
         if SystemGoogleServices.b_plugins["GoogleGameSocial"] is False:
-            _Log("[Auth] plugin GoogleGameSocial is not active for signOut")
+            _Log("[Auth] plugin {!r} is not active for signOut".format(GOOGLE_GAME_SOCIAL_PLUGIN))
             return
         _Log("[Auth] signOut...", force=True)
-        Mengine.androidMethod("GoogleGameSocial", "signOut")
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "signOut")
 
     # callbacks
 
@@ -310,7 +315,7 @@ class SystemGoogleServices(System):
             __cbBillingClientSetupFinishedSuccess   - OK
         """
         _Log("Start connect to the billing client...")
-        Mengine.androidMethod("GooglePlayBilling", "billingConnect")
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "billingConnect")
 
     @staticmethod
     def getBillingClientStatus():
@@ -329,7 +334,7 @@ class SystemGoogleServices(System):
 
         query_list = filter(lambda x: isinstance(x, str), product_ids)
         _Log("[Billing] queryProducts: query_list={!r}".format(query_list))
-        Mengine.androidMethod("GooglePlayBilling", "queryProducts", query_list)
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts", query_list)
         return True
 
     @staticmethod
@@ -358,13 +363,13 @@ class SystemGoogleServices(System):
 
         _Log("[Billing] buy {!r}".format(product_id))
         SystemGoogleServices.__lastProductId = product_id
-        if Mengine.androidBooleanMethod("GooglePlayBilling", "buyInApp", product_id) is False:
+        if Mengine.androidBooleanMethod(GOOGLE_PLAY_BILLING_PLUGIN, "buyInApp", product_id) is False:
             SystemGoogleServices.__cbBillingPurchaseError("BuyInApp return False")
 
     @staticmethod
     def restorePurchases():
         _Log("[Billing] restore purchases...")
-        Mengine.androidMethod("GooglePlayBilling", "queryPurchases")
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryPurchases")
 
     @staticmethod
     def responseProducts():
@@ -528,19 +533,19 @@ class SystemGoogleServices(System):
     def incrementAchievement(achievement_id, steps):
         # auth is not required
         _Log("[Achievements] try incrementAchievement {!r} for {} steps".format(achievement_id, steps), force=True)
-        Mengine.androidBooleanMethod("GoogleGameSocial", "incrementAchievement", achievement_id, steps)
+        Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "incrementAchievement", achievement_id, steps)
 
     @staticmethod
     def unlockAchievement(achievement_id):
         # auth is not required
         _Log("[Achievements] try unlockAchievement: {!r}".format(achievement_id), force=True)
-        Mengine.androidBooleanMethod("GoogleGameSocial", "unlockAchievement", achievement_id)
+        Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "unlockAchievement", achievement_id)
 
     @staticmethod
     def showAchievements():
         # auth is not required
         _Log("[Achievements] try showAchievements...", force=True)
-        Mengine.androidBooleanMethod("GoogleGameSocial", "showAchievements")
+        Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "showAchievements")
 
     # utils
 
@@ -589,9 +594,9 @@ class SystemGoogleServices(System):
     def rateApp():
         """ starts rate app process """
         if SystemGoogleServices.b_plugins["GoogleInAppReviews"] is False:
-            Trace.log("System", 0, "SystemGoogleServices try to rateApp, but plugin 'GoogleInAppReviews' is not active")
+            Trace.log("System", 0, "SystemGoogleServices try to rateApp, but plugin '{}' is not active".format(GOOGLE_IN_APP_REVIEWS_PLUGIN))
             return
-        Mengine.androidMethod("GoogleInAppReviews", "launchTheInAppReview")
+        Mengine.androidMethod(GOOGLE_IN_APP_REVIEWS_PLUGIN, "launchTheInAppReview")
         _Log("[Reviews] rateApp...")
 
     # callbacks
@@ -612,10 +617,10 @@ class SystemGoogleServices(System):
     @staticmethod
     def testCrash():
         if SystemGoogleServices.b_plugins["FirebaseCrashlytics"] is False:
-            Trace.log("System", 0, "try to testCrash, but plugin 'FirebaseCrashlytics' is not active")
+            Trace.log("System", 0, "try to testCrash, but plugin '{}' is not active".format(FIREBASE_CRASHLYTICS_PLUGIN))
             return
         _Log("[FirebaseCrashlytics] testCrash...")
-        Mengine.androidMethod("FirebaseCrashlytics", "testCrash")
+        Mengine.androidMethod(FIREBASE_CRASHLYTICS_PLUGIN, "testCrash")
 
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 

@@ -4,7 +4,7 @@ from Foundation.Utils import SimpleLogger
 from Notification import Notification
 
 _Log = SimpleLogger("SystemApplovin")
-ANDROID_PLUGIN_NAME = "AppLovin"
+ANDROID_PLUGIN_NAME = "MengineAppLovin"
 APPLE_PLUGIN_NAME = "AppleAppLovin"
 APPLE_METHODS_PREFIX = "appleAppLovin"
 DEVDEBUGGER_TAB_NAME = "Applovin"
