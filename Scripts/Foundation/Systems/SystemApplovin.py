@@ -517,6 +517,10 @@ class SystemApplovin(System):
         ]
 
         for config_key, default_values, storage, Type in init_params:
+            if Mengine.getConfigBool("Advertising", Type.ad_type, False) is False:
+                # this ad type is not active - enable in Configs.json
+                continue
+
             unit_names = Mengine.getConfigStrings("Advertising", config_key)
             if len(unit_names) == 0:
                 unit_names = default_values
