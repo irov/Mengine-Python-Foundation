@@ -4,6 +4,7 @@ from Foundation.Utils import SimpleLogger
 from Notification import Notification
 
 _Log = SimpleLogger("SystemApplovin")
+CREDENTIALS_CONFIG_KEY = "AppLovinPlugin"
 ANDROID_PLUGIN_NAME = "MengineAppLovin"
 APPLE_PLUGIN_NAME = "AppleAppLovin"
 APPLE_METHODS_PREFIX = "appleAppLovin"
@@ -90,7 +91,7 @@ class SystemApplovin(System):
             self.inited = False
             self.display = False
             self.name = name    # placement
-            self.ad_unit_id = Mengine.getConfigString(ANDROID_PLUGIN_NAME + "Plugin", "%sAdUnitId" % self.name, "")
+            self.ad_unit_id = Mengine.getConfigString(CREDENTIALS_CONFIG_KEY, "%sAdUnitId" % self.name, "")
 
         def setCallbacks(self):
             if _ANDROID:
@@ -112,7 +113,7 @@ class SystemApplovin(System):
             if bool(Mengine.getConfigBool('Advertising', self.ad_type, False)) is False:
                 return False
             if self.ad_unit_id == "":
-                _Log("[{}] call init failed: ad unit id is not configured or wrong ({})!".format(self.name, self.ad_unit_id), err=True)
+                _Log("[{}] call init failed: ad unit id is not configured or wrong ({})!".format(self.name, self.ad_unit_id), err=True, force=True)
                 return False
 
             _Log("[{}] call init".format(self.name))
