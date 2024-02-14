@@ -203,7 +203,8 @@ class SystemApplovin(System):
 
             if init_if_no is True:
                 err_msg += ". Try init..."
-                self.init()
+                status = self.init()
+                err_msg += " Status {}".format(status)
 
             _Log(err_msg, err=True, force=True)
             return False
@@ -547,7 +548,8 @@ class SystemApplovin(System):
 
     def initAds(self):
         for ad_unit in self._getAllAdUnits():
-            ad_unit.init()
+            if ad_unit.init() is False:
+                Trace.log("System", 0, "Failed to init advert [{}:{}]".format(ad_unit.ad_type, ad_unit.name))
 
         provider_methods = dict(
             ShowRewardedAdvert=Functor(self.showAdvert, self.rewardeds),
