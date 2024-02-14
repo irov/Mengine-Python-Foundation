@@ -16,10 +16,10 @@ PLUGIN_IN_APP_PURCHASE = "AppleStoreInAppPurchase"
 
 class SystemAppleServices(System):
     b_plugins = {
-        "GameCenter": _PLUGINS.get(PLUGIN_GAME_CENTER, False),
-        "Review": _PLUGINS.get(PLUGIN_STORE_REVIEW, False),
-        "Tracking": _PLUGINS.get(PLUGIN_APP_TRACKING, False),
-        "InAppPurchase": _PLUGINS.get(PLUGIN_IN_APP_PURCHASE, False),
+        "GameCenter": Mengine.isAvailablePlugin(PLUGIN_GAME_CENTER),
+        "Review": Mengine.isAvailablePlugin(PLUGIN_STORE_REVIEW),
+        "Tracking": Mengine.isAvailablePlugin(PLUGIN_APP_TRACKING),
+        "InAppPurchase": Mengine.isAvailablePlugin(PLUGIN_IN_APP_PURCHASE),
     }
 
     _GameCenter_authenticate = False
