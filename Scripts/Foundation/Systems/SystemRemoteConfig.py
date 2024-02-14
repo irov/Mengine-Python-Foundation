@@ -2,7 +2,7 @@ from Foundation.System import System
 
 
 class SystemRemoteConfig(System):
-    PLUGIN_NAME = "MengineFBPMonitoring"
+    PLUGIN_NAME = "MegineFBRemoteConfig"
     s_configs = {}
 
     @staticmethod
