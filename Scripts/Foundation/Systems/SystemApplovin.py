@@ -360,11 +360,11 @@ class SystemApplovin(System):
                 _addAndroidCallback(self, "onUserRewarded", self.cbUserRewarded)
             elif _IOS:
                 callbacks = super(self.__class__, self).setCallbacks()
-                callbacks["onUserRewarded"] = self.cbUserRewarded   # noqa
+                callbacks[self.s_callbacks["onUserRewarded"]] = self.cbUserRewarded   # noqa
                 return callbacks
 
         @ad_callback
-        def cbUserRewarded(self, label, reward):
+        def cbUserRewarded(self, label="", reward=1):
             self._cbUserRewarded(label, reward)
 
         def _cbUserRewarded(self, label, reward):
