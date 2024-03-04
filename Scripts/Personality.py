@@ -136,12 +136,24 @@ def onInitialize():
     # setup build version text for production user
     build_alias_id, build_text_id = "$AliasBuildVersion", "ID_TEXT_BUILD_VERSION"
     if Mengine.existText(build_text_id) is True:
+        build_version = ""
+
+        # show all info for debug
+        if _DEBUG is True or _DEVELOPMENT is True:
+            build_version += "{} ({}) [{}]".format(_BUILD_VERSION, _BUILD_NUMBER, _ENGINE_GITSHA1[:6])
+        # else only if parameter is set
+        elif Mengine.getGameParamBool("ShowBuildVersion", True) is True:
+            build_version += "{}".format(_BUILD_VERSION)
+
+            if Mengine.getGameParamBool("ShowBuildVersionExt", True) is True:
+                build_version += " ({}) [{}]".format(_BUILD_NUMBER, _ENGINE_GITSHA1[:6])
+
+        # add build type info
+        if _DEBUG is True or _DEVELOPMENT is True:
+            build_version += " dev"
+
         Mengine.setTextAlias("", build_alias_id, build_text_id)
-        if _DEBUG is True or _DEVELOPMENT is True or Mengine.getGameParamBool("ShowBuildVersion", True) is True:
-            Mengine.setTextAliasArguments("", build_alias_id, "{} ({}) [{}]"
-                                          .format(_BUILD_VERSION, _BUILD_NUMBER, _ENGINE_GITSHA1[:6]))
-        else:
-            Mengine.setTextAliasArguments("", build_alias_id, "")
+        Mengine.setTextAliasArguments("", build_alias_id, build_version)
 
     return True
 
