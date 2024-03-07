@@ -149,6 +149,15 @@ class DummyAdvertisement(object):
         return True
 
     @staticmethod
+    def showConsentFlow():
+        Trace.msg("<DummyAdvertisement> DUMMY show consent flow...")
+        return
+
+    @staticmethod
+    def isConsentFlow():
+        return Mengine.getConfigBool("Advertising", "DummyConsentFlow", False) is True
+
+    @staticmethod
     def setProvider():
         def _ShowRewardedAdvert(AdUnitName=None, **_):
             return DummyAdvertisement.showAdvert("Rewarded", AdUnitName)
@@ -166,6 +175,10 @@ class DummyAdvertisement(object):
             return DummyAdvertisement.showBanner(AdUnitName)
         def _HideBanner(AdUnitName=None, **_):
             return DummyAdvertisement.hideBanner(AdUnitName)
+        def _ShowConsentFlow():
+            return DummyAdvertisement.showConsentFlow()
+        def _IsConsentFlow():
+            return DummyAdvertisement.isConsentFlow()
 
         methods = dict(
             # rewarded:
@@ -179,6 +192,9 @@ class DummyAdvertisement(object):
             # banner:
             ShowBanner=_ShowBanner,
             HideBanner=_HideBanner,
+            # consent flow:
+            ShowConsentFlow=_ShowConsentFlow,
+            IsConsentFlow=_IsConsentFlow,
         )
 
         AdvertisementProvider.setProvider("Dummy", methods)
