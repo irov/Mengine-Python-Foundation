@@ -75,6 +75,9 @@ class SystemApplovin(System):
             "onAdDisplayFailed": None,
             "onAdClicked": None,
             "onAdHidden": None,
+            "onAdLoadSuccess": None,
+            "onAdLoadFailed": None,
+            "onAdPayRevenue": None,
         }
         s_methods = {
             "init": None,
@@ -99,6 +102,9 @@ class SystemApplovin(System):
                 _addAndroidCallback(self, "onAdDisplayFailed", self.cbDisplayFailed)
                 _addAndroidCallback(self, "onAdClicked", self.cbClicked)
                 _addAndroidCallback(self, "onAdHidden", self.cbHidden)
+                _addAndroidCallback(self, "onAdLoadSuccess", self.cbLoadSuccess)
+                _addAndroidCallback(self, "onAdLoadFailed", self.cbLoadFailed)
+                _addAndroidCallback(self, "onAdPayRevenue", self.cbPayRevenue)
             elif _IOS:
                 # we set callbacks in init for provider
                 callbacks = {
@@ -106,6 +112,9 @@ class SystemApplovin(System):
                     self.s_callbacks["onAdDisplayFailed"]: self.cbDisplayFailed,
                     self.s_callbacks["onAdClicked"]: self.cbClicked,
                     self.s_callbacks["onAdHidden"]: self.cbHidden,
+                    self.s_callbacks["onAdLoadSuccess"]: self.cbLoadSuccess,
+                    self.s_callbacks["onAdLoadFailed"]: self.cbLoadFailed,
+                    self.s_callbacks["onAdPayRevenue"]: self.cbPayRevenue,
                 }
                 return callbacks
 
@@ -248,6 +257,30 @@ class SystemApplovin(System):
             Notification.notify(Notificator.onAdvertClicked, self.ad_type, self.name)
             _Log("[{} cb] clicked".format(self.name))
 
+        @ad_callback
+        def cbLoadSuccess(self):
+            self._cbLoadSuccess()
+
+        def _cbLoadSuccess(self):
+            Notification.notify(Notificator.onAdvertLoadSuccess, self.ad_type, self.name)
+            _Log("[{} cb] load success".format(self.name))
+
+        @ad_callback
+        def cbLoadFailed(self):
+            self._cbLoadFailed()
+
+        def _cbLoadFailed(self):
+            Notification.notify(Notificator.onAdvertLoadFail, self.ad_type, self.name)
+            _Log("[{} cb] !!! load failed".format(self.name), err=True, force=True)
+
+        @ad_callback
+        def cbPayRevenue(self):
+            self._cbPayRevenue()
+
+        def _cbPayRevenue(self):
+            Notification.notify(Notificator.onAdvertPayRevenue, self.ad_type, self.name)
+            _Log("[{} cb] pay revenue".format(self.name))
+
         # devtodebug
 
         def _getDevToDebugWidgets(self):
@@ -288,6 +321,9 @@ class SystemApplovin(System):
                 "onAdDisplayFailed": "onAppLovinInterstitialOnAdDisplayFailed",
                 "onAdClicked": "onAppLovinInterstitialOnAdClicked",
                 "onAdHidden": "onAppLovinInterstitialOnAdHidden",
+                "onAdLoadSuccess": "onAppLovinInterstitialOnAdLoaded",
+                "onAdLoadFailed": "onAppLovinInterstitialOnAdLoadFailed",
+                "onAdPayRevenue": "onAppLovinInterstitialOnAdRevenuePaid",
             }
             s_methods = {
                 "init": "initInterstitial",
@@ -300,10 +336,10 @@ class SystemApplovin(System):
                 "onAdDisplayFailed": "onAppleAppLovinInterstitialDidFailToDisplayAd",
                 "onAdClicked": "onAppleAppLovinInterstitialDidClickAd",
                 "onAdHidden": "onAppleAppLovinInterstitialDidHideAd",
+                "onAdLoadSuccess": "onAppleAppLovinInterstitialDidLoadAd",
+                "onAdLoadFailed": "onAppleAppLovinInterstitialDidFailToLoadAdForAdUnitIdentifier",
+                "onAdPayRevenue": "onAppleAppLovinInterstitialDidPayRevenueForAd",
                 # onAppleAppLovinInterstitialDidStartAdRequestForAdUnitIdentifier
-                # onAppleAppLovinInterstitialDidLoadAd
-                # onAppleAppLovinInterstitialDidFailToLoadAdForAdUnitIdentifier
-                # onAppleAppLovinInterstitialDidPayRevenueForAd
             }
             s_methods = {
                 "init": "InitInterstitial",
@@ -322,6 +358,9 @@ class SystemApplovin(System):
                 "onAdClicked": "onAppLovinRewardedOnAdClicked",
                 "onAdHidden": "onAppLovinRewardedOnAdHidden",
                 "onUserRewarded": "onAppLovinRewardedOnUserRewarded",
+                "onAdLoadSuccess": "onAppLovinRewardedOnAdLoaded",
+                "onAdLoadFailed": "onAppLovinRewardedOnAdLoadFailed",
+                "onAdPayRevenue": "onAppLovinRewardedOnAdRevenuePaid",
             }
             s_methods = {
                 "init": "initRewarded",
@@ -336,12 +375,12 @@ class SystemApplovin(System):
                 "onAdClicked": "onAppleAppLovinRewardedDidClickAd",
                 "onAdHidden": "onAppleAppLovinRewardedDidHideAd",
                 "onUserRewarded": "onAppleAppLovinRewardedDidRewardUserForAd",
+                "onAdLoadSuccess": "onAppleAppLovinRewardedDidLoadAd",
+                "onAdLoadFailed": "onAppleAppLovinRewardedDidFailToLoadAdForAdUnitIdentifier",
+                "onAdPayRevenue": "onAppleAppLovinRewardedDidPayRevenueForAd",
                 # onAppleAppLovinRewardedDidStartAdRequestForAdUnitIdentifier
-                # onAppleAppLovinRewardedDidLoadAd
-                # onAppleAppLovinRewardedDidFailToLoadAdForAdUnitIdentifier
                 # onAppleAppLovinRewardedDidStartRewardedVideoForAd
                 # onAppleAppLovinRewardedDidCompleteRewardedVideoForAd
-                # onAppleAppLovinRewardedDidPayRevenueForAd
             }
             s_methods = {
                 "init": "InitRewarded",
@@ -392,7 +431,9 @@ class SystemApplovin(System):
                 "onAdClicked": "onAppLovinBannerOnAdClicked",
                 "onAdExpanded": "onAppLovinBannerOnAdExpanded",
                 "onAdCollapsed": "onAppLovinBannerOnAdCollapsed",
-                # onAppLovinBannerOnAdLoadFailed
+                "onAdLoadSuccess": "onAppLovinBannerOnAdLoaded",
+                "onAdLoadFailed": "onAppLovinBannerOnAdLoadFailed",
+                "onAdPayRevenue": "onAppLovinBannerOnAdRevenuePaid",
             }
             s_methods = {
                 "init": "initBanner",
@@ -407,10 +448,10 @@ class SystemApplovin(System):
                 # onAdHidden empty
                 "onAdExpanded": "onAppleAppLovinBannerDidExpandAd",
                 "onAdCollapsed": "onAppleAppLovinBannerDidCollapseAd",
+                "onAdLoadSuccess": "onAppleAppLovinBannerDidLoadAd",
+                "onAdLoadFailed": "onAppleAppLovinBannerDidFailToLoadAdForAdUnitIdentifier",
+                "onAdPayRevenue": "onAppleAppLovinBannerDidPayRevenueForAd",
                 # onAppleAppLovinBannerDidStartAdRequestForAdUnitIdentifier
-                # onAppleAppLovinBannerDidLoadAd
-                # onAppleAppLovinBannerDidFailToLoadAdForAdUnitIdentifier
-                # onAppleAppLovinBannerDidPayRevenueForAd
             }
             s_methods = {
                 "init": "InitBanner",
@@ -465,6 +506,9 @@ class SystemApplovin(System):
                 _addAndroidCallback(self, "onAdHidden", self.cbHidden)
                 _addAndroidCallback(self, "onAdExpanded", self.cbExpanded)
                 _addAndroidCallback(self, "onAdCollapsed", self.cbCollapsed)
+                _addAndroidCallback(self, "onAdLoadSuccess", self.cbLoadSuccess)
+                _addAndroidCallback(self, "onAdLoadFailed", self.cbLoadFailed)
+                _addAndroidCallback(self, "onAdPayRevenue", self.cbPayRevenue)
             elif _IOS:
                 # we set callbacks in init for provider
                 callbacks = {
@@ -473,6 +517,9 @@ class SystemApplovin(System):
                     self.s_callbacks["onAdClicked"]: self.cbClicked,
                     self.s_callbacks["onAdExpanded"]: self.cbExpanded,
                     self.s_callbacks["onAdCollapsed"]: self.cbCollapsed,
+                    self.s_callbacks["onAdLoadSuccess"]: self.cbLoadSuccess,
+                    self.s_callbacks["onAdLoadFailed"]: self.cbLoadFailed,
+                    self.s_callbacks["onAdPayRevenue"]: self.cbPayRevenue,
                 }
                 return callbacks
 

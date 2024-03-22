@@ -715,6 +715,7 @@ def onInitialize():
         , 'onAdvertDisplayFailed'
         , 'onAdvertClicked'
         , 'onAdvertRewarded'
+        , 'onAdvertPayRevenue'
         , 'onAdvertSkipped'
         , 'onAdvertHidden'
         , 'onDisableInterstitialAds'
