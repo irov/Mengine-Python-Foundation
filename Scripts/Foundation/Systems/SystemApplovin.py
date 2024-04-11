@@ -72,7 +72,7 @@ class SystemApplovin(System):
 
     def initAds(self):
         for ad_unit in self._getAllAdUnits():
-            if ad_unit.init() is False:
+            if ad_unit.initialize() is False:
                 Trace.log("System", 0, "Failed to init advert [{}:{}]".format(ad_unit.ad_type, ad_unit.name))
 
         provider_methods = dict(
