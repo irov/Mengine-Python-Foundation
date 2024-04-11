@@ -26,6 +26,7 @@ class BaseAdUnit(object):
     ad_type = None
 
     def __init__(self, name):
+        super(BaseAdUnit, self).__init__(name)
         self.inited = False
         self.display = False
         self.name = name    # placement
@@ -214,8 +215,8 @@ class BaseAdUnit(object):
 class AndroidAdUnitCallbacks(object):
     ANDROID_PLUGIN_NAME = "MengineAppLovin"
 
-    def __init__(self, name):
-        super(AndroidAdUnitCallbacks, self).__init__(name)
+    def __init__(self):
+        super(AndroidAdUnitCallbacks, self).__init__()
         self._cbs = {}
 
     def _addAndroidCallback(self, name, cb):
