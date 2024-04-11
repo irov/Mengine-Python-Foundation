@@ -26,7 +26,7 @@ class BaseAdUnit(object):
     ad_type = None
 
     def __init__(self, name):
-        super(BaseAdUnit, self).__init__(name)
+        super(BaseAdUnit, self).__init__()
         self.inited = False
         self.display = False
         self.name = name    # placement
