@@ -3,6 +3,7 @@ from Foundation.Systems.AppLovin.BaseAdUnit import ad_callback
 
 
 class AndroidRewardedAd(BaseAdUnit, AndroidAdUnitCallbacks):
+    ad_type = "Rewarded"
 
     def _setCallbacks(self):
         self._addAndroidCallback("onAppLovinRewardedOnAdDisplayed", self.cbDisplaySuccess)

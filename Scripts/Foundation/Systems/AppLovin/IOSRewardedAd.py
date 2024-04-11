@@ -3,6 +3,7 @@ from Foundation.Systems.AppLovin.BaseAdUnit import ad_callback
 
 
 class IOSRewardedAd(BaseAdUnit):
+    ad_type = "Rewarded"
 
     def _initialize(self):
         callbacks = {

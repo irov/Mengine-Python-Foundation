@@ -3,6 +3,7 @@ from Foundation.Systems.AppLovin.BaseAdUnit import ad_callback
 
 
 class AndroidBanner(BaseAdUnit, AndroidAdUnitCallbacks):
+    ad_type = "Banner"
 
     def _setCallbacks(self):
         self._addAndroidCallback("onAppLovinBannerOnAdDisplayed", self.cbDisplaySuccess)

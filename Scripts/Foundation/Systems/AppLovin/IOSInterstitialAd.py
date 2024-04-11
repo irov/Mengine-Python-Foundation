@@ -2,6 +2,7 @@ from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit
 
 
 class IOSInterstitialAd(BaseAdUnit):
+    ad_type = "Interstitial"
 
     def _initialize(self):
         callbacks = {

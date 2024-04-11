@@ -2,6 +2,7 @@ from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit, ad_callback
 
 
 class IOSBanner(BaseAdUnit):
+    ad_type = "Banner"
 
     def _initialize(self):
         callbacks = {

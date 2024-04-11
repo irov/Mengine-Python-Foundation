@@ -2,6 +2,7 @@ from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit, AndroidAdUnitCall
 
 
 class AndroidInterstitialAd(BaseAdUnit, AndroidAdUnitCallbacks):
+    ad_type = "Interstitial"
 
     def _setCallbacks(self):
         self._addAndroidCallback("onAppLovinInterstitialOnAdDisplayed", self.cbDisplaySuccess)
