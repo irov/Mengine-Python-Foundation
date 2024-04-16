@@ -129,16 +129,16 @@ class BaseAdUnit(object):
 
     def _cbDisplaySuccess(self):
         self.display = True
-        Notification.notify(Notificator.onAdvertDisplayed, self.ad_type, self.name)
         self._log("[{} cb] displayed".format(self.name))
+        Notification.notify(Notificator.onAdvertDisplayed, self.ad_type, self.name)
 
     @ad_callback
     def cbDisplayFailed(self):
         self._cbDisplayFailed()
 
     def _cbDisplayFailed(self):
-        Notification.notify(Notificator.onAdvertDisplayFailed, self.ad_type, self.name)
         self._log("[{} cb] !!! display failed".format(self.name), err=True, force=True)
+        Notification.notify(Notificator.onAdvertDisplayFailed, self.ad_type, self.name)
 
     @ad_callback
     def cbHidden(self):
@@ -146,40 +146,42 @@ class BaseAdUnit(object):
 
     def _cbHidden(self):
         self.display = False
-        Notification.notify(Notificator.onAdvertHidden, self.ad_type, self.name)
         self._log("[{} cb] hidden".format(self.name))
+        Notification.notify(Notificator.onAdvertHidden, self.ad_type, self.name)
 
     @ad_callback
     def cbClicked(self):
         self._cbClicked()
 
     def _cbClicked(self):
-        Notification.notify(Notificator.onAdvertClicked, self.ad_type, self.name)
         self._log("[{} cb] clicked".format(self.name))
+        Notification.notify(Notificator.onAdvertClicked, self.ad_type, self.name)
 
     @ad_callback
     def cbLoadSuccess(self):
         self._cbLoadSuccess()
 
     def _cbLoadSuccess(self):
-        Notification.notify(Notificator.onAdvertLoadSuccess, self.ad_type, self.name)
         self._log("[{} cb] load success".format(self.name))
+        Notification.notify(Notificator.onAdvertLoadSuccess, self.ad_type, self.name)
 
     @ad_callback
     def cbLoadFailed(self):
         self._cbLoadFailed()
 
     def _cbLoadFailed(self):
-        Notification.notify(Notificator.onAdvertLoadFail, self.ad_type, self.name)
         self._log("[{} cb] !!! load failed".format(self.name), err=True, force=True)
+        Notification.notify(Notificator.onAdvertLoadFail, self.ad_type, self.name)
 
     @ad_callback
-    def cbPayRevenue(self):
-        self._cbPayRevenue()
+    def cbPayRevenue(self, revenue_data):
+        """ revenue_data = {'revenue': float} """
+        self._cbPayRevenue(revenue_data)
 
-    def _cbPayRevenue(self):
-        Notification.notify(Notificator.onAdvertPayRevenue, self.ad_type, self.name)
-        self._log("[{} cb] pay revenue".format(self.name))
+    def _cbPayRevenue(self, revenue_data):
+        self._log("[{} cb] pay revenue {}".format(self.name, revenue_data))
+        revenue = revenue_data.get('revenue', 0.0)
+        Notification.notify(Notificator.onAdvertPayRevenue, self.ad_type, self.name, revenue)
 
     # devtodebug
 

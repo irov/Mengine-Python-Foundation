@@ -6,13 +6,13 @@ class IOSInterstitialAd(BaseAdUnit):
 
     def _initialize(self):
         callbacks = {
-            "onAppLovinInterstitialOnAdDisplayed": self.cbDisplaySuccess,
-            "onAppLovinInterstitialOnAdDisplayFailed": self.cbDisplayFailed,
-            "onAppLovinInterstitialOnAdClicked": self.cbClicked,
-            "onAppLovinInterstitialOnAdHidden": self.cbHidden,
-            "onAppLovinInterstitialOnAdLoaded": self.cbLoadSuccess,
-            "onAppLovinInterstitialOnAdLoadFailed": self.cbLoadFailed,
-            "onAppLovinInterstitialOnAdRevenuePaid": self.cbPayRevenue,
+            "onAppleAppLovinInterstitialDidDisplayAd": self.cbDisplaySuccess,
+            "onAppleAppLovinInterstitialDidFailToDisplayAd": self.cbDisplayFailed,
+            "onAppleAppLovinInterstitialDidClickAd": self.cbClicked,
+            "onAppleAppLovinInterstitialDidHideAd": self.cbHidden,
+            "onAppleAppLovinInterstitialDidLoadAd": self.cbLoadSuccess,
+            "onAppleAppLovinInterstitialDidFailToLoadAdForAdUnitIdentifier": self.cbLoadFailed,
+            "onAppleAppLovinInterstitialDidPayRevenueForAd": self.cbPayRevenue,
         }
         return Mengine.appleAppLovinInitInterstitial(self.ad_unit_id, callbacks)
 

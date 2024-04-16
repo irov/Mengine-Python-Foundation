@@ -82,6 +82,13 @@ class DummyAdvertisement(object):
 
         display_failed = Mengine.rand(20) < 5 if DisplayFail == "Random" else bool(DisplayFail)
 
+        dummy_revenue = {
+            "Banner": 0.005,
+            "Rewarded": 0.05,
+            "Interstitial": 0.02,
+        }
+        revenue = dummy_revenue[AdType]
+
         with TaskManager.createTaskChain(Name="DummyShow{}Advert".format(AdType)) as source:
             source.addPrint("<DummyAdvertisement> watch advertisement {}:{}, delay {}s (fail: {})...".format(
                 AdType, AdUnitName, round(float(FakeWatchDelay) / 1000, 1), display_failed))
@@ -97,6 +104,7 @@ class DummyAdvertisement(object):
                     source.addNotify(Notificator.onAdvertRewarded, AdUnitName, "gold", GoldReward)
 
                 source.addNotify(Notificator.onAdvertHidden, AdType, AdUnitName)
+                source.addNotify(Notificator.onAdvertPayRevenue, AdType, AdUnitName, revenue)
 
     @staticmethod
     def canOfferAdvert(AdType, AdUnitName=None, **params):
