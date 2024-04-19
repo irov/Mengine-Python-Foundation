@@ -174,8 +174,10 @@ class BaseAdUnit(object):
         Notification.notify(Notificator.onAdvertLoadFail, self.ad_type, self.name)
 
     @ad_callback
-    def cbPayRevenue(self, revenue_data):
+    def cbPayRevenue(self, revenue_data=None):
         """ revenue_data = {'revenue': float} """
+        if revenue_data is None:    # fixme
+            revenue_data = {}
         self._cbPayRevenue(revenue_data)
 
     def _cbPayRevenue(self, revenue_data):
