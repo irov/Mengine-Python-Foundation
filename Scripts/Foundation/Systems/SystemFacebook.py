@@ -1,9 +1,11 @@
 from Foundation.System import System
 from Foundation.Providers.FacebookProvider import FacebookProvider
-from Event import Event
+from Foundation.Systems.Facebook.AppleFacebook import AppleFacebook
+from Foundation.Systems.Facebook.AndroidFacebook import AndroidFacebook
 
 
-PLUGIN_NAME = "MengineFacebook"
+ANDROID_PLUGIN_NAME = "MengineFacebook"
+APPLE_PLUGIN_NAME = "AppleFacebook"
 
 
 class SystemFacebook(System):
@@ -24,41 +26,95 @@ class SystemFacebook(System):
 
     callbacks = {}
 
+    def __init__(self):
+        super(SystemFacebook, self).__init__()
+        self.provider = None
+
     def _onInitialize(self):
-        if Mengine.isAvailablePlugin(PLUGIN_NAME) is False:
+        if _ANDROID:
+            self._initializeAndroid()
+        elif _IOS:
+            self._initializeIOS()
+
+        # if _ANDROID:
+        #     self.provider = AppleFacebook()
+        # elif _IOS:
+        #     self.provider = AndroidFacebook()
+        #
+        # if self.provider is None:
+        #     return
+        #
+        # self.provider.onInitialize()
+        #
+        # FacebookProvider.setProvider(self.provider.name, self.provider.getProviderMethods())
+
+    def _onFinalize(self):
+        if self.provider is not None:
+            self.provider.onFinalize()
+            self.provider = None
+
+    def _initializeAndroid(self):
+        if Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME) is False:
             return
 
-        if _ANDROID:
-            Mengine.setAndroidCallback(PLUGIN_NAME, "onFacebookLoginSuccess", self.onLoginSuccess)
-            Mengine.setAndroidCallback(PLUGIN_NAME, "onFacebookLoginCancel", self.onLoginCancel)
-            Mengine.setAndroidCallback(PLUGIN_NAME, "onFacebookLoginError", self.onLoginError)
-            Mengine.setAndroidCallback(PLUGIN_NAME, "onFacebookLogoutCancel", self.onLogoutCancel)
-            Mengine.setAndroidCallback(PLUGIN_NAME, "onFacebookLogoutSuccess", self.onLogoutSuccess)
-            Mengine.setAndroidCallback(PLUGIN_NAME, "onFacebookUserFetchSuccess", self.onUserFetchSuccess)
-            Mengine.setAndroidCallback(PLUGIN_NAME, "onFacebookShareSuccess", self.onShareSuccess)
-            Mengine.setAndroidCallback(PLUGIN_NAME, "onFacebookShareCancel", self.onShareCancel)
-            Mengine.setAndroidCallback(PLUGIN_NAME, "onFacebookShareError", self.onShareError)
-            Mengine.setAndroidCallback(PLUGIN_NAME, "onFacebookProfilePictureLinkGet", self.onProfilePictureLinkGet)
+        Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, "onFacebookLoginSuccess", self.onLoginSuccess)
+        Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, "onFacebookLoginCancel", self.onLoginCancel)
+        Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, "onFacebookLoginError", self.onLoginError)
+        Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, "onFacebookLogoutCancel", self.onLogoutCancel)
+        Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, "onFacebookLogoutSuccess", self.onLogoutSuccess)
+        Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, "onFacebookUserFetchSuccess", self.onUserFetchSuccess)
+        Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, "onFacebookShareSuccess", self.onShareSuccess)
+        Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, "onFacebookShareCancel", self.onShareCancel)
+        Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, "onFacebookShareError", self.onShareError)
+        Mengine.setAndroidCallback(ANDROID_PLUGIN_NAME, "onFacebookProfilePictureLinkGet", self.onProfilePictureLinkGet)
 
-            FacebookProvider.setProvider("Android", dict(
-                getAccessToken=SystemFacebook.getAccessToken,
-                isLoggedIn=SystemFacebook.isLoggedIn,
-                performLogin=SystemFacebook.performLogin,
-                shareLink=SystemFacebook.shareLink,
-                logout=SystemFacebook.logout,
-                getUser=SystemFacebook.getUser,
-                getProfilePictureLink=SystemFacebook.getProfilePictureLink,
-                getProfileUserPictureLink=SystemFacebook.getProfileUserPictureLink,
-            ))
+        FacebookProvider.setProvider("Android", dict(
+            getAccessToken=SystemFacebook.getAccessToken,
+            isLoggedIn=SystemFacebook.isLoggedIn,
+            performLogin=SystemFacebook.performLogin,
+            shareLink=SystemFacebook.shareLink,
+            logout=SystemFacebook.logout,
+            getUser=SystemFacebook.getUser,
+            getProfilePictureLink=SystemFacebook.getProfilePictureLink,
+            getProfileUserPictureLink=SystemFacebook.getProfileUserPictureLink,
+        ))
+
+    def _initializeIOS(self):
+        if Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME) is False:
+            return
+        callbacks = {
+            "onAppleFacebookLoginSuccess": self.onLoginSuccess,
+            "onAppleFacebookLoginCancel": self.onLoginCancel,
+            "onAppleFacebookError": self.onLoginError,
+            # "onAppleFacebookLogoutCancel": ...,
+            # "onAppleFacebookLogoutSuccess": ...,
+            # "onAppleFacebookUserFetchSuccess": ...,
+            "onAppleFacebookShareSuccess": self.onShareSuccess,
+            "onAppleFacebookShareCancel": self.onShareCancel,
+            "onAppleFacebookShareError": self.onShareError,
+            "onAppleFacebookProfilePictureLinkGet": self.onProfilePictureLinkGet,
+        }
+        Mengine.appleFacebookSetProvider(callbacks)
+
+        FacebookProvider.setProvider("Apple", dict(
+            getAccessToken=SystemFacebook.getAccessToken,
+            isLoggedIn=SystemFacebook.isLoggedIn,
+            performLogin=SystemFacebook.performLogin,
+            shareLink=SystemFacebook.shareLink,
+            logout=SystemFacebook.logout,
+            getUser=SystemFacebook.getUser,
+            getProfilePictureLink=SystemFacebook.getProfilePictureLink,
+            getProfileUserPictureLink=SystemFacebook.getProfileUserPictureLink,
+        ))
 
     @staticmethod
     def isLoggedIn():
-        is_logged = Mengine.androidBooleanMethod(PLUGIN_NAME, "isLoggedIn")
+        is_logged = Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "isLoggedIn")
         return is_logged
 
     @staticmethod
     def getAccessToken():
-        token = Mengine.androidStringMethod(PLUGIN_NAME, "getAccessToken")
+        token = Mengine.androidStringMethod(ANDROID_PLUGIN_NAME, "getAccessToken")
         return token
 
     @staticmethod
@@ -74,7 +130,7 @@ class SystemFacebook(System):
             if _cb is not None:
                 SystemFacebook.addCallback(_event, _cb)
 
-        Mengine.androidMethod(PLUGIN_NAME, "performLogin", list(permissions))
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "performLogin", list(permissions))
 
     @staticmethod
     def shareLink(link=None, msg='',
@@ -88,7 +144,7 @@ class SystemFacebook(System):
         for _event, _cb in callbacks.iteritems():
             if _cb is not None:
                 SystemFacebook.addCallback(_event, _cb)
-        Mengine.androidMethod(PLUGIN_NAME, "shareLink", link, '', msg)
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "shareLink", link, '', msg)
 
     @staticmethod
     def logout(_cb_success=None, _cb_cancel=None):
@@ -100,25 +156,25 @@ class SystemFacebook(System):
         for _event, _cb in callbacks.iteritems():
             if _cb is not None:
                 SystemFacebook.addCallback(_event, _cb)
-        Mengine.androidMethod(PLUGIN_NAME, "logout")
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "logout")
 
     @staticmethod
     def getUser(_cb=None):
         if _cb is not None:
             SystemFacebook.addCallback(SystemFacebook.onUserFetchSuccess, _cb)
-        Mengine.androidMethod(PLUGIN_NAME, "getUser")
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getUser")
 
     @staticmethod
     def getProfilePictureLink(type_parameter="?type=large", _cb=None):
         if _cb is not None:
             SystemFacebook.addCallback(SystemFacebook.onProfilePictureLinkGet, _cb)
-        Mengine.androidMethod(PLUGIN_NAME, "getProfilePictureLink", type_parameter)
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getProfilePictureLink", type_parameter)
 
     @staticmethod
     def getProfileUserPictureLink(user_id, type_parameter="?type=large", _cb=None):
         if _cb is not None:
             SystemFacebook.addCallback(SystemFacebook.onProfilePictureLinkGet, _cb)
-        Mengine.androidMethod(PLUGIN_NAME, "getProfileUserPictureLink", user_id, type_parameter)
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getProfileUserPictureLink", user_id, type_parameter)
 
     # utils
 
