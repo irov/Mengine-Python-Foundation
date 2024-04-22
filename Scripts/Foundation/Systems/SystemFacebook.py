@@ -34,7 +34,7 @@ class SystemFacebook(System):
         else:
             return
 
-        self.provider.onInitialize()
+        self.provider.onInitialize(self)
 
         FacebookProvider.setProvider(self.provider.name, dict(
             getAccessToken=self.getAccessToken,
@@ -57,7 +57,7 @@ class SystemFacebook(System):
         return is_logged
 
     def getAccessToken(self):
-        token = self.provider.getAccessTocken()
+        token = self.provider.getAccessToken()
         return token
 
     def performLogin(self, permissions=('email', 'public_profile'),

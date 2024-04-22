@@ -72,7 +72,9 @@ class AppleFacebook(BaseFacebook):
         Mengine.appleFacebookShareLink(link, msg)
 
     def _logout(self):
+        access_token = self.getAccessToken()
         Mengine.appleFacebookLogout()
+        self.system.onLogoutSuccess(access_token)
 
     def _getUser(self):
         Trace.log("Provider", 0, "AppleFacebook getUser not exists")
