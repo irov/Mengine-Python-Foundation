@@ -34,9 +34,9 @@ class BaseFacebook(Initializer):
         raise NotImplementedError
 
     def performLogin(self, permissions=('email', 'public_profile')):
-        return self._performLogin(permissions)
+        return self._login(permissions)
 
-    def _performLogin(self, permissions):
+    def _login(self, permissions):
         raise NotImplementedError
 
     def shareLink(self, link=None, msg=''):

@@ -37,7 +37,8 @@ class AppleFacebook(BaseFacebook):
             "onAppleFacebookShareSuccess": self._cbShareSuccess,
             "onAppleFacebookShareCancel": self._cbShareCancel,
             "onAppleFacebookShareError": self._cbShareError,
-            "onAppleFacebookProfilePictureLinkGet": self._cbProfilePictureLinkGet,
+            "onAppleFacebookProfilePictureLinkGetSuccess": self._cbProfilePictureLinkGetSuccess,
+            "onAppleFacebookProfilePictureLinkGetError": self._cbProfilePictureLinkGetError,
         }
 
         Mengine.appleFacebookSetProvider(callbacks)
@@ -65,8 +66,9 @@ class AppleFacebook(BaseFacebook):
         is_logged = Mengine.appleFacebookIsLoggedIn()
         return is_logged
 
-    def _performLogin(self, permissions):
-        Mengine.appleFacebookLogin(permissions)
+    def _login(self, permissions):
+        is_limited = Mengine.getConfigBool("Facebook", "LimitedLogin", True)
+        Mengine.appleFacebookLogin(is_limited, permissions)
 
     def _shareLink(self, link, msg):
         Mengine.appleFacebookShareLink(link, msg)
@@ -87,10 +89,18 @@ class AppleFacebook(BaseFacebook):
 
     # callbacks
 
-    def _cbLoginSuccess(self, access_token):
+    def _cbLoginSuccess(self, params):
+        Trace.msg_dev("[Facebook cb] login success: {!r}".format(params))
+
+        access_token = params.get("accessToken")
+        auth_token = params.get("authenticationToken")
+        fb_id = params.get("profile.userID")
+        picture_url = params.get("profile.imageURL")
+
         self.system.onLoginSuccess(access_token)
 
     def _cbLoginCancel(self):
+        Trace.msg_dev("[Facebook cb] login cancel")
         self.system.onLoginCancel()
 
     def _cbFacebookError(self, code, message):
@@ -98,12 +108,15 @@ class AppleFacebook(BaseFacebook):
             ERROR_LOGIN_TOKEN_FAIL = -1
             ERROR_LOGIN_ERROR = -2
         """
+        Mengine.logError("[Facebook] error [{}]: {}".format(code, message))
         self.system.onLoginError(message)
 
     def _cbShareSuccess(self, post_id):
+        Trace.msg_dev("[Facebook cb] share success post_id={}".format(post_id))
         self.system.onShareSuccess(post_id)
 
     def _cbShareCancel(self):
+        Trace.msg_dev("[Facebook cb] share cancel")
         self.system.onShareCancel()
 
     def _cbShareError(self, code, message):
@@ -114,7 +127,12 @@ class AppleFacebook(BaseFacebook):
             ERROR_PICTURE_CONVERT = -4
         """
 
+        Mengine.logError("[Facebook] Share error [{}]: {}".format(code, message))
         self.system.onShareError(message)
 
-    def _cbProfilePictureLinkGet(self, user_id, is_logged, picture_url):
-        self.system.onProfilePictureLinkGet(user_id, is_logged, picture_url)
+    def _cbProfilePictureLinkGetSuccess(self, user_id, is_success, picture_url):
+        Trace.msg_dev("[Facebook cb] ProfilePictureLinkGet success [{}] {}: {}".format(user_id, is_success, picture_url))
+        self.system.onProfilePictureLinkGet(user_id, is_success, picture_url)
+
+    def _cbProfilePictureLinkGetError(self, code, message):
+        Mengine.logError("[Facebook] ProfilePictureLinkGet error [{}]: {}".format(code, message))

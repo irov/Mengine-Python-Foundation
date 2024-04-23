@@ -75,7 +75,7 @@ class AndroidFacebook(BaseFacebook):
         is_logged = Mengine.androidBooleanMethod(self.plugin_name, "isLoggedIn")
         return is_logged
 
-    def _performLogin(self, permissions):
+    def _login(self, permissions):
         Mengine.androidMethod(self.plugin_name, "performLogin", list(permissions))
 
     def _shareLink(self, link, msg):
