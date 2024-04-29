@@ -4,7 +4,7 @@ from TraceManager import TraceManager
 
 
 def msg(text, *args):
-    assert type(text) == str
+    assert type(text) == str, "Message must be string, not %s" % type(text)
 
     try:
         print(text % args)
@@ -13,7 +13,7 @@ def msg(text, *args):
 
 
 def msg_err(text, *args):
-    assert type(text) == str
+    assert type(text) == str, "Message must be string, not %s" % type(text)
 
     if _PYTHON_VERSION < 300:
         try:
@@ -33,10 +33,10 @@ def msg_dev(text, *args):
 
 
 def log(category, level, text, *args):
-    assert type(text) == str
+    assert type(text) == str, "Message must be string, not %s" % type(text)
 
     if TraceManager.existIn(category) is False:
-        print("trace log no category %s" % (category))
+        print("trace log no category %s" % category)
         return
 
     if level <= TraceManager.getLevel(category):
