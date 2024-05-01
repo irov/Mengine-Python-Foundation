@@ -288,6 +288,12 @@ class DatabaseManager(object):
         return result
 
     @staticmethod
+    def selectByLowBound(orm, key, value):
+        """ returns list of orms that have closest and lowest own key value to `value` """
+        closest_value = DatabaseManager.getLowValueFromUniques(orm, key, value)
+        return DatabaseManager.select(orm, **{key: closest_value})
+
+    @staticmethod
     def unselect(orm, **keys):
         """ returns list of all records that DON'T match the keys """
         result = []

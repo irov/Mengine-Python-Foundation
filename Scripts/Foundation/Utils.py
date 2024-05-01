@@ -374,7 +374,16 @@ def rand_circle_element(Radius, Count, ElementRadius, TestCount=25):
         pass
 
     return elements
-    pass
+
+def rand_with_step(minimum, maximum, step):
+    if minimum > maximum:
+        Trace.log("Utils", 0, "Utils.rand_with_step error: min=%d > max=%d" % (minimum, maximum))
+        return None
+
+    steps_count = int((maximum - minimum) / step) + 1
+    rand_step = Mengine.range_rand(0, steps_count)
+
+    return min(minimum + rand_step * step, maximum)
 
 def calculateBoundedSize(orgSize, frameSize):
     """Calculates maximum size of item, inscribed in frame, keeping aspect.
@@ -1280,4 +1289,17 @@ def getWeightedRandomByKey(records, key):
     return element
 
 def getTimeStamp():
-    return Mengine.getTimeMs() / 1000
+    return Mengine.getTime()
+
+def makeId(id=None):
+    if id is None:
+        id = Mengine.rand(100)
+
+    text = ""
+    possible = "QjVGEOLeKUXPNp0iFy7l1TYoIDAd3usH8wgWf5nChtqvbaZScBm2JM6rkR4xz9"
+
+    for i in range(8):
+        text += possible[((id >> (i * 4)) & 0xF) + i]
+        text += possible[Mengine.rand(len(possible))]
+
+    return text
