@@ -16,6 +16,10 @@ class GroupManager(object):
             Trace.log("Group", 0, "You try to find prototype {} in EmptyGroup!!".format(name))
             return False
 
+        def getEnable(self):
+            Trace.log("Group", 0, "You try to check enable in EmptyGroup!!")
+            return False
+
     s_groups = {}
     s_groupsType = {}
     s_groupsDynamicInfos = {}
@@ -372,6 +376,14 @@ class GroupManager(object):
                 pass
 
             group.onLoader()
+
+    @staticmethod
+    def isEnableGroup(groupName):
+        if GroupManager.hasGroup(groupName) is False:
+            return False
             pass
-        pass
-    pass
+
+        group = GroupManager.getGroup(groupName)
+        is_enable = group.getEnable()
+
+        return is_enable is True
