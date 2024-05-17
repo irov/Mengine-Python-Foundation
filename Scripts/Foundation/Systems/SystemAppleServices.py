@@ -4,7 +4,6 @@ from Foundation.Providers.RatingAppProvider import RatingAppProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Foundation.TaskManager import TaskManager
-from Notification import Notification
 
 
 _Log = SimpleLogger("SystemAppleServices", option="apple")
@@ -15,6 +14,13 @@ PLUGIN_IN_APP_PURCHASE = "AppleStoreInAppPurchase"
 
 
 class SystemAppleServices(System):
+
+    """
+        How to connect to the GameCenter:
+            1. setGameCenterConnectProvider()
+            2. connectToGameCenter()
+    """
+
     b_plugins = {
         "GameCenter": Mengine.isAvailablePlugin(PLUGIN_GAME_CENTER),
         "Review": Mengine.isAvailablePlugin(PLUGIN_STORE_REVIEW),
@@ -22,8 +28,8 @@ class SystemAppleServices(System):
         "InAppPurchase": Mengine.isAvailablePlugin(PLUGIN_IN_APP_PURCHASE),
     }
 
-    _GameCenter_authenticate = False
-    _GameCenter_synchronizate = False
+    _GameCenter_authenticated = False
+    _GameCenter_synchronized = False
     _GameCenter_provider_status = False
     _InAppPurchase_provider_status = False
     _Tracking_status = False
@@ -31,10 +37,6 @@ class SystemAppleServices(System):
 
     _products = {}
     EVENT_PRODUCTS_RESPONDED = Event("AppleInAppPurchaseProductsResponded")
-
-    # How to connect to GameCenter:
-    # 1. setGameCenterConnectProvider()
-    # 2. connectToGameCenter()
 
     def _onInitialize(self):
         if self.b_plugins["InAppPurchase"] is True:
@@ -83,7 +85,7 @@ class SystemAppleServices(System):
         _Log("[GameCenter] set provider...", optional=True)
         Mengine.appleGameCenterSetProvider({
             "onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate,
-            "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronizate
+            "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronize
         })
         SystemAppleServices._GameCenter_provider_status = True
 
@@ -111,27 +113,29 @@ class SystemAppleServices(System):
 
     @staticmethod
     def __cbGameCenterAuthenticate(status, *args):
+        """ callback for onAppleGameCenterAuthenticate """
         describe = lambda b: "successful" if b else "failed"
 
         log_message = "[GameCenter] (callback) AUTHENTICATE: {} [{}]".format(describe(status), status)
         log_message += " | args: {}".format(args) if args else ""
         _Log(log_message, force=True)
 
-        SystemAppleServices._GameCenter_authenticate = status
+        SystemAppleServices._GameCenter_authenticated = status
 
     @staticmethod
-    def __cbGameCenterSynchronizate(status, *args):
+    def __cbGameCenterSynchronize(status, *args):
+        """ callback for onAppleGameCenterSynchronizate """
         describe = lambda b: "successful" if b else "failed"
 
         log_message = "[GameCenter] (callback) SYNCHRONIZE: {} [{}]".format(describe(status), status)
         log_message += " | args: {}".format(args) if args else ""
         _Log(log_message, force=True)
 
-        SystemAppleServices._GameCenter_synchronizate = status
+        SystemAppleServices._GameCenter_synchronized = status
 
     @staticmethod
     def isGameCenterConnected(report=False, on_status=False):
-        b_status = SystemAppleServices._GameCenter_authenticate
+        b_status = SystemAppleServices._GameCenter_authenticated
 
         if report is True and on_status is b_status:
             _Log("[GameCenter] CONNECT STATUS: {}".format(b_status), err=not b_status)
@@ -171,7 +175,7 @@ class SystemAppleServices(System):
 
     @staticmethod
     def _sendAchievementToGameCenter(achievement_name, percent_complete):
-        _Log("[GameCenter] SEND ACHIEVEMENT {!r} (complete {}%%)...".format(achievement_name, percent_complete),force=True)
+        _Log("[GameCenter] SEND ACHIEVEMENT {!r} (complete {}%%)...".format(achievement_name, percent_complete), force=True)
 
         if SystemAppleServices.isGameCenterConnected(report=True) is False:
             Trace.log("System", 0, "Plugin '{}' fail to send achievement - Game Center is not connected!".format(PLUGIN_GAME_CENTER))
@@ -350,21 +354,21 @@ class SystemAppleServices(System):
 
     @staticmethod
     def _cbPaymentPurchasing(transaction):
-        """ (CALLBACK) start purchase process """
+        """ (CALLBACK onPaymentQueueUpdatedTransactionPurchasing) start purchase process """
         product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment Purchasing start {}".format(product_id))
 
     @staticmethod
     def _cbPaymentPurchased(transaction):
-        """ (CALLBACK) payment complete """
+        """ (CALLBACK onPaymentQueueUpdatedTransactionPurchased) payment complete """
         product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment Purchased (success) {}".format(product_id))
 
-        SystemAppleServices._waitForPaymentFinish(transaction, product_id)
+        SystemAppleServices._finishPaymentTransaction(transaction, product_id)
 
     @staticmethod
     def _cbPaymentFailed(transaction):
-        """ (CALLBACK) payment failed """
+        """ (CALLBACK onPaymentQueueUpdatedTransactionFailed) payment failed """
         product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment purchase Failed {}".format(product_id))
 
@@ -374,21 +378,22 @@ class SystemAppleServices(System):
 
     @staticmethod
     def _cbPaymentRestored(transaction):
-        """ (CALLBACK) purchased product """
+        """ (CALLBACK onPaymentQueueUpdatedTransactionRestored) purchased product """
         product_id = str(transaction.getProductIdentifier())
-        _Log("[InAppPurchase] (callback) Payment Restored {}".format(product_id))
+        _Log("[InAppPurchase] (callback) Product Restored {}".format(product_id))
 
-        SystemAppleServices._waitForPaymentFinish(transaction, product_id)
+        SystemAppleServices._finishProductRestoreTransaction(transaction, product_id)
 
     @staticmethod
     def _cbPaymentDeferred(transaction):
-        """ (CALLBACK) something went wrong during purchase """
+        """ (CALLBACK onPaymentQueueUpdatedTransactionDeferred) something went wrong during purchase """
         product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment Deferred {}".format(product_id))
 
     @staticmethod
     def _cbPaymentQueueShouldShowPriceConsent(transaction):
         """
+            (CALLBACK onPaymentQueueShouldShowPriceConsent)
             Sent if there is a pending price consent confirmation from the App Store for the current user.
         Return YES to immediately show the price consent UI.
         Return NO if you intend to show it at a later time. Defaults to YES.
@@ -400,15 +405,26 @@ class SystemAppleServices(System):
 
     @staticmethod
     def _cbPaymentQueueShouldContinueTransaction():
-        """ Sent when the storefront changes while a payment is processing. """
+        """ (CALLBACK onPaymentQueueShouldContinueTransaction)
+            Sent when the storefront changes while a payment is processing. """
         _Log("[InAppPurchase] (callback) _cbPaymentQueueShouldContinueTransaction")
 
     @staticmethod
-    def _waitForPaymentFinish(transaction, product_id):
-        with TaskManager.createTaskChain(Name="ApplePlaymentFinisher_%s" % product_id) as tc:
+    def _finishPaymentTransaction(transaction, product_id):
+        with TaskManager.createTaskChain(Name="ApplePaymentFinisher_%s" % product_id) as tc:
             with tc.addParallelTask(2) as (reward, complete):
                 reward.addListener(Notificator.onGameStoreSentRewards, Filter=lambda prod_id, _: prod_id == product_id)
                 complete.addNotify(Notificator.onPaySuccess, product_id)
+                complete.addNotify(Notificator.onPayComplete, product_id)
+
+            tc.addFunction(transaction.finish)
+
+    @staticmethod
+    def _finishProductRestoreTransaction(transaction, product_id):
+        with TaskManager.createTaskChain(Name="AppleProductRestoreFinisher_%s" % product_id) as tc:
+            with tc.addParallelTask(2) as (reward, complete):
+                reward.addListener(Notificator.onGameStoreSentRewards, Filter=lambda prod_id, _: prod_id == product_id)
+                complete.addNotify(Notificator.onProductAlreadyOwned, product_id)
                 complete.addNotify(Notificator.onPayComplete, product_id)
 
             tc.addFunction(transaction.finish)
