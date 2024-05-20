@@ -423,7 +423,7 @@ class SystemAppleServices(System):
     def _finishProductRestoreTransaction(transaction, product_id):
         with TaskManager.createTaskChain(Name="AppleProductRestoreFinisher_%s" % product_id) as tc:
             with tc.addParallelTask(2) as (response, request):
-                response.addListener(Notificator.onPayComplete, Filter=lambda prod_id, _: prod_id == product_id)
+                response.addListener(Notificator.onPayComplete, Filter=lambda prod_id: prod_id == product_id)
                 # SystemMonetization sends onPayComplete when done
                 request.addNotify(Notificator.onProductAlreadyOwned, product_id)
 
