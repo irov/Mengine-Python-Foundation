@@ -471,7 +471,7 @@ class SystemGoogleServices(System):
         _Log("[Billing cb] purchase non-consumable already acknowledged: {!r}".format(products))
         for prod_id in products:
             Notification.notify(Notificator.onProductAlreadyOwned, prod_id)
-            Notification.notify(Notificator.onPayComplete, prod_id)
+            # SystemMonetization sends onPayComplete when done
         Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod

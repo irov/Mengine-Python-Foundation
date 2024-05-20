@@ -145,11 +145,13 @@ class SystemMonetization(System):
     @staticmethod
     def _onProductAlreadyOwned(prod_id):
         if SystemMonetization.isProductPurchased(prod_id) is True:
-            _Log("Product {!r} already owned and applied for game".format(prod_id), optional=True)
+            _Log("Product {!r} already owned and applied for game".format(prod_id))
+            Notification.notify(Notificator.onPayComplete, prod_id)
             return False
 
         _Log("Product {!r} already owned, but not applied - fix it".format(prod_id))
         Notification.notify(Notificator.onPaySuccess, prod_id)
+        Notification.notify(Notificator.onPayComplete, prod_id)
         return False
 
     @staticmethod
