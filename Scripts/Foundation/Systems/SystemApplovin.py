@@ -85,6 +85,7 @@ class SystemApplovin(System):
             HideBanner=Functor(self.hideBanner, self.banners),
             ShowConsentFlow=self.showConsentFlow,
             IsConsentFlow=self.isConsentFlow,
+            GetBannerViewport=self.getBannerViewport,
         )
         AdvertisementProvider.setProvider(ANDROID_PLUGIN_NAME, provider_methods)
 
@@ -114,6 +115,13 @@ class SystemApplovin(System):
         elif _IOS:
             return Mengine.appleAppLovinIsConsentFlowUserGeographyGDPR()
         return False
+
+    def getBannerViewport(self):
+        if _IOS:
+            return Mengine.appleAppLovinGetBannerViewport()
+        elif _ANDROID:
+            return Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getBannerViewport")
+        return None
 
     def _getAllAdUnits(self):
         return self.rewardeds.values() + self.interstitials.values() + self.banners.values()

@@ -20,6 +20,7 @@ class AdvertisementProvider(BaseProvider):
         "HideBanner",
         "ShowConsentFlow",
         "IsConsentFlow",
+        "GetBannerViewport",
     ]
 
     @staticmethod
@@ -65,6 +66,12 @@ class AdvertisementProvider(BaseProvider):
     @staticmethod
     def _isConsentFlowNotFoundCb():
         return False
+
+    # OTHER
+
+    @staticmethod
+    def getBannerViewport():
+        return AdvertisementProvider._call("GetBannerViewport")
 
 
 class DummyAdvertisement(object):
