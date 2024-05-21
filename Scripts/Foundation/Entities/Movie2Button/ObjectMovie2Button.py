@@ -1,5 +1,6 @@
 from Foundation.Object.DemonObject import DemonObject
 
+
 class ObjectMovie2Button(DemonObject):
     @staticmethod
     def declareORM(Type):
@@ -62,7 +63,6 @@ class ObjectMovie2Button(DemonObject):
 
         self.initParam("BlockKeys", params, False)
         self.initParam("Synchronize", params, False)
-        pass
 
     def hasSlot(self, slot_name):
         return self.getEntity().hasSlot(slot_name)
@@ -104,6 +104,10 @@ class ObjectMovie2Button(DemonObject):
     def setTextAliasEnvironment(self, env_name):
         for movie in self.eachMovies():
             movie.setTextAliasEnvironment(env_name)
+
+    def setTextColor(self, text_id, color_rgba):
+        for movie in self.eachMovies():
+            movie.setupMovieTextColor(text_id, color_rgba)
 
     def getCurrentMovieSocketCenter(self):
         entity = self.getEntity()
