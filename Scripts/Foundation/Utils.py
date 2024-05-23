@@ -1269,15 +1269,33 @@ def getWeightedRandomIndex(weights):
             return i
 
 def getWeightedRandomByKey(records, key):
+    """ returns random element from `records` weighted by `key`:
+        1) `records` is a list of objects - output is object
+        2) `records` is a dict - output is dict-key
+        3) nothing found or error - output is None
+    """
     if len(records) == 0:
         return None
 
     elements, weights = [], []
-    for record in records:
-        if hasattr(record, key) is False:
-            continue
-        elements.append(record)
-        weights.append(getattr(record, key))
+    if isinstance(records, list):
+        # ORM-type records in list, we'll get object as output
+        for record in records:
+            if hasattr(record, key) is False:
+                continue
+            elements.append(record)
+            weights.append(getattr(record, key))
+    else:
+        # dict-type records, we'll get key as output
+        for name, record in records.items():
+            if key not in record:
+                continue
+            elements.append(name)
+            weights.append(record[key])
+
+    if len(elements) == 0:
+        Trace.log("Utils", 0, "getWeightedRandomByKey: no elements with key '{}': {}".format(key, records))
+        return None
 
     lookup_index = getWeightedRandomIndex(weights)
 
