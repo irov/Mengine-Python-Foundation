@@ -103,24 +103,24 @@ class DatabaseManager(object):
             Trace.log("Manager", 0, "DatabaseManager.getDatabaseRecords: module %s invalid name %s" % (module, name))
             return None
 
-        ORMs = database.getORMs()
-        return ORMs
+        orms = database.getORMs()
+        return orms
 
     @staticmethod
     def findDatabaseORM(module, name, **keys):
         """ returns the first ORM that matches the keys if exists in given db """
-        ORMs = DatabaseManager.getDatabaseORMs(module, name)
-        if ORMs == []:
+        orms = DatabaseManager.getDatabaseORMs(module, name)
+        if len(orms) == 0:
             return None
 
-        ORM = DatabaseManager.find(ORMs, **keys)
-        return ORM
+        orm = DatabaseManager.find(orms, **keys)
+        return orm
 
     @staticmethod
     def filterDatabaseORM(module, name, filter):
         """ returns the list of ORM that match the filter """
-        ORMs = DatabaseManager.getDatabaseORMs(module, name)
-        return [orm for orm in ORMs if filter(orm) is True]
+        orms = DatabaseManager.getDatabaseORMs(module, name)
+        return [orm for orm in orms if filter(orm) is True]
 
     @staticmethod
     def validDatabaseORMs(name, *legends):
@@ -276,7 +276,7 @@ class DatabaseManager(object):
 
     @staticmethod
     def select(orm, **keys):
-        """ returns list of all records that match the keys """
+        """ returns list of all records that exactly match the keys """
         keys_items = keys.items()
 
         result = []
@@ -286,6 +286,20 @@ class DatabaseManager(object):
             result.append(record)
 
         return result
+
+    @staticmethod
+    def selectNonNull(orm, **keys):
+        """ returns list of all records that exactly match the keys if they have non-None values
+
+            Example: selectNonNull(orm, Type="Resource", Rarity=None)
+
+            `Rarity` is None, so we remove key `Rarity` from search and ignore it.
+        """
+        keys_items = {key: value for key, value in keys.items() if value is not None}
+        if len(keys_items) == 0:
+            Trace.log("Manager", 0, "Can't select records with None keys {}".format(keys.keys()))
+            return orm
+        return DatabaseManager.select(orm, **keys_items)
 
     @staticmethod
     def selectByLowBound(orm, key, value):
