@@ -1277,14 +1277,25 @@ def getWeightedRandomByKey(records, key):
     if len(records) == 0:
         return None
 
+    if isinstance(records, list) and isinstance(records[0], dict):
+        def _has(record, key):
+            return key in record
+        def _get(record, key):
+            return record[key]
+    else:
+        def _has(record, key):
+            return hasattr(record, key)
+        def _get(record, key):
+            return getattr(record, key)
+
     elements, weights = [], []
     if isinstance(records, list):
         # ORM-type records in list, we'll get object as output
         for record in records:
-            if hasattr(record, key) is False:
+            if _has(record, key) is False:
                 continue
             elements.append(record)
-            weights.append(getattr(record, key))
+            weights.append(_get(record, key))
     else:
         # dict-type records, we'll get key as output
         for name, record in records.items():
