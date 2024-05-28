@@ -84,6 +84,8 @@ class BaseObject(Params, Initializer):
         self.entity.onRestore()
 
     def isEntityActivate(self):
+        if self.hasEntity() is False:
+            return False
         return self.entity.isActivate() is True
 
     def hasEntity(self):
