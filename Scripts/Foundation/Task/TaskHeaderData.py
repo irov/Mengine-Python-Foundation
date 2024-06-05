@@ -35,6 +35,10 @@ def print_response(response_handler):
 
 class TaskHeaderData(Task):
 
+    __debug_force_response_code = None
+    if _DEVELOPMENT and Mengine.hasOption("forceresponsecode"):
+        __debug_force_response_code = int(Mengine.getOptionValue("forceresponsecode"))
+
     def _onParams(self, params):
         super(TaskHeaderData, self)._onParams(params)
 
@@ -87,6 +91,8 @@ class TaskHeaderData(Task):
             self.log("{}".format(error))
 
         if self.cb is not None:
+            if self.__debug_force_response_code is not None:
+                code = self.__debug_force_response_code
             self.cb(status, error, response, code, successful)
 
         self.id = None
