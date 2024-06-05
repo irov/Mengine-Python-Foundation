@@ -720,6 +720,8 @@ def onInitialize():
         , 'onAdvertHidden'
         , 'onDisableInterstitialAds'
 
+        , "onRequestPromoCodeResult"
+
         , "onAvailableAdsEnded"
         , "onAvailableAdsNew"
 

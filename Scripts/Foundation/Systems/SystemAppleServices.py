@@ -64,6 +64,8 @@ class SystemAppleServices(System):
         if self.b_plugins["Tracking"] is True and Mengine.getGameParamBool("AppleAppTrackingTransparency", False) is True:
             SystemAppleServices.appTrackingAuthorization()
 
+        # todo: promocodes handling in onRequestPromoCodeResult
+
         self.__addDevToDebug()
 
     def _onFinalize(self):

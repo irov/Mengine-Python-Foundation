@@ -150,6 +150,8 @@ class SystemGoogleServices(System):
             if Mengine.getGameParamBool("GoogleAutoLogin", False) is True:
                 self.signIn()
 
+        # todo: promocodes handling in onRequestPromoCodeResult
+
         self.__addDevToDebug()
 
     def _onFinalize(self):
