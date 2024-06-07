@@ -741,17 +741,16 @@ class SystemMonetization(System):
 
         SystemMonetization.storage = storage
 
-    @staticmethod
-    def _setupParams():
+    def _setupParams(self):
         SystemMonetization.__initStorage()
 
         SystemMonetization._setDebugCurrency()
 
-        for name, new in MonetizationManager.getComponentsType().items():
-            component = new()
-            if component.initialize() is True:
+        for name, ComponentType in MonetizationManager.getComponentsType().items():
+            component = ComponentType()
+            if component.initialize(self) is True:
                 component.run()
-                SystemMonetization.components[name] = component
+                SystemMonetization.components[component.component_id] = component
 
     @staticmethod
     def _setDebugCurrency():
