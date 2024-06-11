@@ -1,6 +1,6 @@
 from Foundation.Entity.BaseEntity import BaseEntity
 from Foundation.TaskManager import TaskManager
-from Notification import Notification
+
 
 class EditBox(BaseEntity):
     @staticmethod
@@ -114,8 +114,10 @@ class EditBox(BaseEntity):
             pass
         else:
             Notification.notify(Notificator.EditBoxChange, self.object)
-            pass
-        pass
+
+    def _onPreparation(self):
+        super(EditBox, self)._onPreparation()
+        self._SceneRestartBeginID = Notification.addObserver(Notificator.onSceneRestartBegin, self._onSceneRestartBegin)
 
     def _onActivate(self):
         super(EditBox, self)._onActivate()
@@ -134,9 +136,16 @@ class EditBox(BaseEntity):
         self.Sprite_Carriage.setPosition(self.pos)
         self.text = u""
 
-        Mengine.removeGlobalHandler(self.KeyHandlerID)
-        Mengine.removeGlobalHandler(self.TextHandlerID)
-        pass
+        if self._SceneRestartBeginID is not None:
+            Notification.removeObserver(self._SceneRestartBeginID)
+            self._SceneRestartBeginID = None
+
+        if self.KeyHandlerID is not None:
+            Mengine.removeGlobalHandler(self.KeyHandlerID)
+            self.KeyHandlerID = None
+        if self.TextHandlerID is not None:
+            Mengine.removeGlobalHandler(self.TextHandlerID)
+            self.TextHandlerID = None
 
     def setValueByDefault(self, value):
         self.valueByDefault = value
@@ -163,7 +172,10 @@ class EditBox(BaseEntity):
         Notification.notify(Notificator.EditBoxFocus, self.object)
 
         return True
-        pass
+
+    def _onSceneRestartBegin(self):
+        self.showKeyboard(False)
+        return False
 
     def __onGlobalHandleKeyEvent(self, event):
         if event.isDown is False:
