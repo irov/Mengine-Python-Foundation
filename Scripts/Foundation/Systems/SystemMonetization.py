@@ -335,7 +335,7 @@ class SystemMonetization(System):
         return True
 
     @classmethod
-    def rollbackGold(cls, prod_id=None, component_tag=None):
+    def rollbackCurrency(cls, prod_id=None, component_tag=None):
         _prod_id = None
 
         if prod_id is not None:
@@ -346,8 +346,20 @@ class SystemMonetization(System):
         if _prod_id is None:
             return False
 
-        price = MonetizationManager.getProductPrice(_prod_id)
-        return cls.addGold(price)
+        product = MonetizationManager.getProductInfo(_prod_id)
+        if product is None:
+            return False
+
+        currency = product.getCurrency()
+        if currency == "Gold":
+            return cls.addGold(product.price)
+        elif currency == "Energy":
+            return cls.addEnergy(product.price)
+
+    @classmethod
+    def rollbackGold(cls, prod_id=None, component_tag=None):    # DEPRECATED
+        _Log("DEPRECATED warning: `rollbackGold` is deprecated, use `rollbackCurrency` instead", err=True)
+        return cls.rollbackCurrency(prod_id, component_tag)
 
     @staticmethod
     def getBalance():
