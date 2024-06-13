@@ -217,6 +217,7 @@ class SystemAdvertising(System):
         return Mengine.getCurrentAccountSetting(self.account_disable_setting_key) == self.disable_key
 
     def __addObservers(self):
+        self.addObserver(Notificator.onGetRemoteConfig, self._cbGetRemoteConfig)
         self.addObserver(Notificator.onDisableInterstitialAds, self._cbDisableInterstitialAds)
 
         def _setObserver(action, notificator):
@@ -299,3 +300,19 @@ class SystemAdvertising(System):
         self._current_trigger_count = 0
         self.showInterstitial(descr="trigger")
         return True
+
+    def _cbGetRemoteConfig(self, key, value):
+        """ expected format: ad_{group}_{param}, where `group` is 'general' or 'inter' """
+        if key.startswith("ad_") is False:
+            return False
+
+        details = key.split("_")
+        group = details[1]
+        param = details[2]
+
+        if group == "inter":
+            self.s_interstitial_params[param] = value
+        elif group == "general":
+            self.s_general_params[param] = value
+
+        return False
