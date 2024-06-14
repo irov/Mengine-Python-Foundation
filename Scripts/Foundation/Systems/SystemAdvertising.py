@@ -1,4 +1,5 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
+from Foundation.Providers.RemoteConfigProvider import RemoteConfigProvider
 from Foundation.SceneManager import SceneManager
 from Foundation.DefaultManager import DefaultManager
 from Foundation.PolicyManager import PolicyManager
@@ -87,6 +88,7 @@ class SystemAdvertising(System):
         return True
 
     def _onActivate(self):
+        self._updateWithRemoteConfig()
         self.__addObservers()
         self._setupAdvertisingTransitionScene()
 
@@ -217,7 +219,6 @@ class SystemAdvertising(System):
         return Mengine.getCurrentAccountSetting(self.account_disable_setting_key) == self.disable_key
 
     def __addObservers(self):
-        self.addObserver(Notificator.onGetRemoteConfig, self._cbGetRemoteConfig)
         self.addObserver(Notificator.onDisableInterstitialAds, self._cbDisableInterstitialAds)
 
         def _setObserver(action, notificator):
@@ -301,18 +302,19 @@ class SystemAdvertising(System):
         self.showInterstitial(descr="trigger")
         return True
 
-    def _cbGetRemoteConfig(self, key, value):
-        """ expected format: ad_{group}_{param}, where `group` is 'general' or 'inter' """
-        if key.startswith("ad_") is False:
-            return False
+    def _updateWithRemoteConfig(self):
+        remote_params = RemoteConfigProvider.getRemoteConfigValueJSON("ad_interstitial_system", {})
 
-        details = key.split("_")
-        group = details[1]
-        param = details[2]
-
-        if group == "inter":
-            self.s_interstitial_params[param] = value
-        elif group == "general":
+        general_params = remote_params.get("general", {})
+        for param, value in general_params.items():
+            if param not in self.s_general_params:
+                continue
             self.s_general_params[param] = value
+
+        inter_params = remote_params.get("inter", {})
+        for param, value in inter_params.items():
+            if param not in self.s_interstitial_params:
+                continue
+            self.s_interstitial_params[param] = value
 
         return False
