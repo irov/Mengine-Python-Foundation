@@ -54,16 +54,16 @@ class BaseProvider(object):
 
         if fn is None:
             Trace.log("Provider", 1, "Not found method {}".format(name))
-            return cls.__callNotFoundCb(name)
+            return cls.__callNotFoundCb(name, *args, **kwargs)
 
         return fn(*args, **kwargs)
 
     @classmethod
-    def __callNotFoundCb(cls, name):
+    def __callNotFoundCb(cls, name, *args, **kwargs):
         fail_cb_name = "_{}NotFoundCb".format(name)
         if fail_cb_name in dir(cls):
             fail_cb = getattr(cls, fail_cb_name)
-            return fail_cb()
+            return fail_cb(*args, **kwargs)
 
     @classmethod
     def hasMethod(cls, name):

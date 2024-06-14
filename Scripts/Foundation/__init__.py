@@ -854,6 +854,7 @@ def onInitialize():
         , "FacebookProvider"
         , "AchievementsProvider"
         , "AuthProvider"   # main account
+        , "RemoteConfigProvider"
     ]
     from Foundation.ProviderManager import ProviderManager
     ProviderManager.importProviders("Foundation.Providers", providers)

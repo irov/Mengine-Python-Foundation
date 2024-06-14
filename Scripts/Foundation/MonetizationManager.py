@@ -455,13 +455,19 @@ class MonetizationManager(Manager, CurrencyManager):
         return False
 
     @staticmethod
-    def _cbGetRemoteConfig(prod_id, json_string):
+    def _cbGetRemoteConfig(key, json_string):
         """ Observer that updates product details:
             - discount
             - id
             - reward
         """
+        if key.startswith("product_") is False:
+            return False
+
+        prod_id = key.replace("product_", "")
+
         if prod_id not in MonetizationManager.s_products:
+            Trace.msg_dev("[MonetizationManager RemoteConfig] {!r} error: can't patch unknown product {!r}".format(key, prod_id))
             return False
 
         whitelist = {
