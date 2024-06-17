@@ -246,7 +246,7 @@ class SystemMonetization(System):
             return cls.isPriceAccepted(descr) is True
 
         if price != 0 and should_accept_price is True:
-            source.addScope(cls._scopePGAcceptPrice, gold=price, descr=descr)
+            source.addScope(cls.scopeTryAcceptPrice, amount=price, currency="Gold", descr=descr)
 
         with source.addIfTask(_isPriceAccepted) as (true, false):
             with true.addParallelTask(2) as (response, pay):
@@ -256,28 +256,47 @@ class SystemMonetization(System):
         return True
 
     @classmethod
-    def _scopePGAcceptPrice(cls, source, gold, descr):
-        """ Used for scopePayGold - shows DialogWindow 'AcceptPrice', if cancel - no payment """
+    def scopeTryAcceptPrice(cls, source, amount, currency, descr):
+        if cls.isPriceAccepted(descr) is True:
+            return
+
         if DemonManager.hasDemon("DialogWindow") is False:
-            _Log("_scopePGAcceptPrice demon DialogWindow not found", err=True, force=True)
+            _Log("scopeTryAcceptPrice demon DialogWindow not found", err=True, force=True)
             return
 
         GameStore = DemonManager.getDemon(SystemMonetization.game_store_name)
         DialogWindow = DemonManager.getDemon("DialogWindow")
 
-        icon = GameStore.generateObjectUnique("Movie2_Coin", "Movie2_Coin_{}".format(getCurrentPublisher()), Enable=True)
-        icon.setTextAliasEnvironment("DialogWindowIcon")
-        Mengine.setTextAlias("DialogWindowIcon", "$AliasCoinUsePrice", "ID_EMPTY")
-        text_args = dict(icon_value=[gold])
+        # ----------------------------------------
+        # setup icon
+        prototype_template = {
+            "Gold": "Movie2_Coin_{publisher}",
+            "default": "Movie2_{currency}_{publisher}",
+        }
+        prototype_name = prototype_template.get(currency, prototype_template["default"]).format(
+            publisher=getCurrentPublisher(),
+            currency=currency
+        )
+        icon = GameStore.generateIcon("Icon", prototype_name, Enable=True)
 
-        if cls.isPriceAccepted(descr) is True:
+        # setup text
+        text_args = dict(icon_value=[amount])
+
+        # find and setup preset
+        preset_names = [
+            "{}AcceptPrice_{}".format(descr, currency),
+            "{}AcceptPrice".format(descr),
+            "AcceptPrice_{}".format(currency),
+            "AcceptPrice"
+        ]
+        preset_name = next((name for name in preset_names if DialogWindow.hasPreset(name)), None)
+        if preset_name is None:
+            _Log("Not found any presets for AcceptPrice. Looked for: {!r}".format(preset_names), err=True, force=True)
             return
+        # ----------------------------------------
 
-        preset_name = "{}AcceptPrice".format(descr)
-        if DialogWindow.hasPreset(preset_name) is False:
-            preset_name = "AcceptPrice"
-
-        source.addFunction(DialogWindow.runPreset, preset_name, content_style="icon", icon_obj=icon, text_args=text_args)
+        source.addFunction(DialogWindow.runPreset, preset_name,
+                           content_style="icon", icon_obj=icon, text_args=text_args)
 
         with source.addRaceTask(2) as (confirm, cancel):
             confirm.addListener(Notificator.onDialogWindowConfirm)
