@@ -7,6 +7,7 @@ from Foundation.DemonManager import DemonManager
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
+from Foundation.Systems.Advertising.AdPoint import AdPoint
 
 _Log = SimpleLogger("SystemAdvertising")
 DEFAULT_IGNORE_SCENES = [
@@ -14,6 +15,7 @@ DEFAULT_IGNORE_SCENES = [
     "DebugMenu", "Store", "Guides", "Map", "MapBonusChapter", "Options"
 ]
 AD_TYPE = "Interstitial"
+DEFAULT_REMOTE_CONFIG_KEY = "ad_interstitial_system"
 
 
 class SystemAdvertising(System):
@@ -33,6 +35,8 @@ class SystemAdvertising(System):
         self._last_view_timestamp = None
         self._current_trigger_count = 0
         self._no_permission_identity = None
+
+        self._ad_points = {}
 
     def _onInitialize(self):
         if Mengine.hasTouchpad() is False:
@@ -79,6 +83,8 @@ class SystemAdvertising(System):
 
         self._initDisableAccountParam()
 
+        self._initAdPoints()
+
     def _onRun(self):
         self._first_enter_timestamp = Mengine.getTime()
 
@@ -91,6 +97,50 @@ class SystemAdvertising(System):
         self._updateWithRemoteConfig()
         self.__addObservers()
         self._setupAdvertisingTransitionScene()
+
+    def _onFinalize(self):
+        SystemAdvertising.is_enable = False
+
+        for ad_point in self._ad_points.values():
+            ad_point.onFinalize()
+        self._ad_points = {}
+
+    # AD POINTS
+
+    def _initAdPoints(self):
+        ad_point_names = Mengine.getConfigStrings("Advertising", "AdPoints")
+        if len(ad_point_names) == 0:
+            ad_point_names = [DEFAULT_REMOTE_CONFIG_KEY]
+
+        default_params = {
+            "enable": self.is_enable,
+            "ad_type": "interstitial",
+            "trigger": {
+                "enable": self.isInterstitialParamEnable("trigger"),
+                "release_value": self.getGeneralParam("trigger_count_show"),
+                "start_value": self.getGeneralParam("trigger_count_start")
+            },
+            "time": {
+                "enable": self.isInterstitialParamEnable("trigger") is False,
+                "view_delay": self.getGeneralParam("view_delay"),
+                "delay_on_start": self.getGeneralParam("delay_on_start")
+            }
+        }
+
+        for ad_point_name in ad_point_names:
+            ad_point = AdPoint()
+
+            params = default_params.copy()
+
+            remote_config_params = RemoteConfigProvider.getRemoteConfigValueJSON(ad_point_name, {})
+            params.update(remote_config_params)
+
+            params["name"] = ad_point_name
+
+            ad_point.onInitialize(params)
+            self._ad_points[ad_point_name] = ad_point
+
+    # ------------------------------------------------------------------------------------------------------------------
 
     def _setupAdvertisingTransitionScene(self):
         if self.isInterstitialParamEnable("transition_scene") is False:
@@ -107,9 +157,6 @@ class SystemAdvertising(System):
 
         PolicyManager.setPolicy("Transition", transition_policy_name)
         return True
-
-    def _onFinalize(self):
-        SystemAdvertising.is_enable = False
 
     @classmethod
     def isInterstitialParamEnable(cls, key):
@@ -303,7 +350,7 @@ class SystemAdvertising(System):
         return True
 
     def _updateWithRemoteConfig(self):
-        remote_params = RemoteConfigProvider.getRemoteConfigValueJSON("ad_interstitial_system", {})
+        remote_params = RemoteConfigProvider.getRemoteConfigValueJSON(DEFAULT_REMOTE_CONFIG_KEY, {})
 
         general_params = remote_params.get("general", {})
         for param, value in general_params.items():
