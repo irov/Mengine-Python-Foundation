@@ -6,6 +6,7 @@ class AdPointParams(object):
         self.name = params["name"]
         self.enable = params.get("enable", True)
         self.ad_type = params.get("ad_type", "Interstitial")
+        self.ad_unit_name = params.get("ad_unit_name", self.ad_type)
 
         # triggering
         trigger_params = params.get("trigger", {})
@@ -28,17 +29,37 @@ class AdPoint(Initializer):
 
     def __init__(self):
         super(AdPoint, self).__init__()
+        self.name = None
         self.params = None
+        self.active = False
 
     def _onInitialize(self, params):
         self.params = AdPointParams(params)
+        self.name = self.params.name
+
+        self.params.validate()
+
+    def onActivate(self):  # todo
+        self.active = True
+        return
 
     def _onFinalize(self):
-        self.params = None
+        if self.active is False:
+            Trace.log("System", 0, "AdPoint '{}' finalize before activate".format(self.name))
 
-    @property
-    def name(self):
-        return self.params.name
+        self.params = None
+        self.name = None
+        self.active = False
+
+    def check(self):  # todo
+        return False
+
+    def trigger(self):  # todo
+        return False
+
+    def start(self):  # todo
+        return False
+
 
 
 

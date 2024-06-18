@@ -1,5 +1,6 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.Providers.RemoteConfigProvider import RemoteConfigProvider
+from Foundation.Providers.AdPointProvider import AdPointProvider
 from Foundation.SceneManager import SceneManager
 from Foundation.DefaultManager import DefaultManager
 from Foundation.PolicyManager import PolicyManager
@@ -98,6 +99,9 @@ class SystemAdvertising(System):
         self.__addObservers()
         self._setupAdvertisingTransitionScene()
 
+        for ad_point in self._ad_points.values():
+            ad_point.onActivate()
+
     def _onFinalize(self):
         SystemAdvertising.is_enable = False
 
@@ -105,7 +109,7 @@ class SystemAdvertising(System):
             ad_point.onFinalize()
         self._ad_points = {}
 
-    # AD POINTS
+    # AD POINTS --------------------------------------------------------------------------------------------------------
 
     def _initAdPoints(self):
         ad_point_names = Mengine.getConfigStrings("Advertising", "AdPoints")
@@ -128,8 +132,6 @@ class SystemAdvertising(System):
         }
 
         for ad_point_name in ad_point_names:
-            ad_point = AdPoint()
-
             params = default_params.copy()
 
             remote_config_params = RemoteConfigProvider.getRemoteConfigValueJSON(ad_point_name, {})
@@ -137,8 +139,36 @@ class SystemAdvertising(System):
 
             params["name"] = ad_point_name
 
+            ad_point = AdPoint()
             ad_point.onInitialize(params)
+
             self._ad_points[ad_point_name] = ad_point
+
+        AdPointProvider.setProvider("SystemAdvertising", dict(
+            hasAdPoint=self.hasAdPoint,
+            getAdPoint=self.getAdPoint,
+            checkAdPoint=self.checkAdPoint,
+            triggerAdPoint=self.triggerAdPoint,
+            startAdPoint=self.startAdPoint,
+        ))
+
+    def hasAdPoint(self, ad_point_name):
+        return ad_point_name in self._ad_points
+
+    def getAdPoint(self, ad_point_name):
+        return self._ad_points[ad_point_name]
+
+    def checkAdPoint(self, ad_point_name):
+        ad_point = self.getAdPoint(ad_point_name)
+        return ad_point.check()
+
+    def triggerAdPoint(self, ad_point_name):
+        ad_point = self.getAdPoint(ad_point_name)
+        return ad_point.trigger()
+
+    def startAdPoint(self, ad_point_name):
+        ad_point = self.getAdPoint(ad_point_name)
+        return ad_point.start()
 
     # ------------------------------------------------------------------------------------------------------------------
 
