@@ -403,6 +403,16 @@ class SystemMonetization(System):
     # --- Rewards ------------------------------------------------------------------------------------------------------
 
     @classmethod
+    def _getPossibleRewards(cls):
+        rewards = {
+            "Gold": cls.addGold,
+            "Energy": cls.addEnergy,
+            "EnergyInfinity": cls.setInfinityEnergy,
+            "DisableInterstitialAds": cls.disableInterstitialAds
+        }
+        return rewards
+
+    @classmethod
     def sendReward(cls, rew_dict=None, prod_id=None):
         """ sends reward according to custom dict or product reward info. Select one: `rew_dict` or `prod_id`.
             @param rew_dict: dict with reward info, allowed keys:
@@ -421,14 +431,7 @@ class SystemMonetization(System):
                 Trace.log("System", 0, "SystemMonetization.sendReward wrong reward dict {!r} (your input: {!r}, id={!r})".format(reward, rew_dict, prod_id))
             return False
 
-        rewards = {
-            "Gold": cls.addGold,
-            "Chapter": cls.unlockChapter,
-            "SceneUnlock": cls.unlockScene,
-            "Energy": cls.addEnergy,
-            "EnergyInfinity": cls.setInfinityEnergy,
-            "DisableInterstitialAds": cls.disableInterstitialAds
-        }
+        rewards = cls._getPossibleRewards()
         for reward_type, arg in reward.items():
             fn = rewards.get(reward_type)
             if callable(fn):
@@ -474,10 +477,6 @@ class SystemMonetization(System):
         SystemAdvertising = SystemManager.getSystem("SystemAdvertising")
         SystemAdvertising.disableForever()
         _Log("disabled interstitial ads", optional=True)
-
-    @staticmethod
-    def unlockScene(name):  # todo
-        _Log("DUMMY unlock scene '{}'".format(name), optional=True)
 
     # --- Advertisements -----------------------------------------------------------------------------------------------
 
