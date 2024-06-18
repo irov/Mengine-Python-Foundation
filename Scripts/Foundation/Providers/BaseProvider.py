@@ -2,6 +2,7 @@ class BaseProvider(object):
     s_name = None
     s_methods = {}
     s_allowed_methods = []
+    trace_level = 1
 
     @classmethod
     def _isMethodsValid(cls, methods):
@@ -53,7 +54,7 @@ class BaseProvider(object):
         fn = cls.s_methods.get(name)
 
         if fn is None:
-            Trace.log("Provider", 1, "Not found method {}".format(name))
+            Trace.log("Provider", cls.trace_level, "Not found method {}".format(name))
             return cls.__callNotFoundCb(name, *args, **kwargs)
 
         return fn(*args, **kwargs)
