@@ -134,7 +134,7 @@ class SystemRemoteConfig(System):
         """ returns dict value """
         value = None
         if _ANDROID:
-            value = Mengine.androidObjectMethod(SystemRemoteConfig.ANDROID_PLUGIN_NAME, "getRemoteConfigValueLong", key)
+            value = Mengine.androidObjectMethod(SystemRemoteConfig.ANDROID_PLUGIN_NAME, "getRemoteConfigValueJSON", key)
         elif _IOS:
             value = Mengine.appleFirebaseRemoteConfigGetValueJSON(key)
         else:

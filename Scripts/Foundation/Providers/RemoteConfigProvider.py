@@ -3,11 +3,11 @@ from Foundation.Providers.BaseProvider import BaseProvider
 
 class RemoteConfigProvider(BaseProvider):
     s_allowed_methods = [
-        "getRemoteConfigValueString"
-        "getRemoteConfigValueBoolean"
-        "getRemoteConfigValueFloat"
-        "getRemoteConfigValueInt"
-        "getRemoteConfigValueJSON"
+        "getRemoteConfigValueString",
+        "getRemoteConfigValueBoolean",
+        "getRemoteConfigValueFloat",
+        "getRemoteConfigValueInt",
+        "getRemoteConfigValueJSON",
     ]
 
     @staticmethod
