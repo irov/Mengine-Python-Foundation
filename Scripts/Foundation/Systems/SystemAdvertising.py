@@ -120,7 +120,7 @@ class SystemAdvertising(System):
         default_params = {
             "enable": False,
             "ad_type": "Interstitial",
-            "ad_unit_name": self.getGeneralParam("InterstitialSystemAdUnitName"),
+            "ad_unit_name": self.getGeneralParam("ad_unit_name"),
             "trigger_action_offset": self.getGeneralParam("trigger_count_start"),
             "trigger_action_cooldown": self.getGeneralParam("trigger_count_show"),
             "trigger_time_offset": self.getGeneralParam("delay_on_start"),
