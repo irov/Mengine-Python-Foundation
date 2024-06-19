@@ -118,18 +118,17 @@ class SystemAdvertising(System):
 
         default_params = {
             "enable": self.is_enable,
-            "ad_type": "interstitial",
-            "trigger": {
-                "enable": self.isInterstitialParamEnable("trigger"),
-                "release_value": self.getGeneralParam("trigger_count_show"),
-                "start_value": self.getGeneralParam("trigger_count_start")
-            },
-            "time": {
-                "enable": self.isInterstitialParamEnable("trigger") is False,
-                "view_delay": self.getGeneralParam("view_delay"),
-                "delay_on_start": self.getGeneralParam("delay_on_start")
-            }
+            "ad_type": "Interstitial",
+            "ad_unit_name": self.getGeneralParam("InterstitialSystemAdUnitName"),
+            "trigger_action_offset": self.getGeneralParam("trigger_count_start"),
+            "trigger_action_cooldown": self.getGeneralParam("trigger_count_show"),
+            "trigger_time_offset": self.getGeneralParam("delay_on_start"),
+            "trigger_time_cooldown": self.getGeneralParam("view_delay"),
         }
+        if self.isInterstitialParamEnable("trigger") is True:
+            default_params["trigger_time_cooldown"] = -1
+        else:
+            default_params["trigger_action_cooldown"] = -1
 
         for ad_point_name in ad_point_names:
             params = default_params.copy()

@@ -1,65 +1,182 @@
 from Foundation.Initializer import Initializer
+from Foundation.TaskManager import TaskManager
+from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
+
+SCHEDULE_ID_EMPTY = 0
+STATE_COOLDOWN_DISABLE = -1
 
 
-class AdPointParams(object):
+class TriggerParams(object):
+
     def __init__(self, params):
         self.name = params["name"]
         self.enable = params.get("enable", True)
         self.ad_type = params.get("ad_type", "Interstitial")
         self.ad_unit_name = params.get("ad_unit_name", self.ad_type)
 
-        # triggering
-        trigger_params = params.get("trigger", {})
-        self.is_triggerable = trigger_params.get("enable", False)
-        self.trigger_release_value = min(trigger_params.get("release_value", 0), 1)
-        self.trigger_start_value = min(trigger_params.get("start_value", 0), 0)
+        self.action_offset = params.get("trigger_action_offset", 0)
+        self.action_cooldown = params.get("trigger_action_cooldown", STATE_COOLDOWN_DISABLE)
+        self.time_offset = params.get("trigger_time_offset", 0)
+        self.time_cooldown = params.get("trigger_time_cooldown", STATE_COOLDOWN_DISABLE)
 
-        time_params = params.get("time", {})
-        self.is_time_based = time_params.get("enable", False)
-        self.time_view_delay = time_params.get("view_delay", 0)
-        self.time_delay_on_start = time_params.get("delay_on_start", self.time_view_delay)
+        self.group = params.get("cooldown_group", None)
 
     def validate(self):
         def _error(message):
             Trace.msg_err("[AdPoint {}] validation error: {}".format(self.name, message))
         pass
 
+    def isActionBased(self):
+        return self.action_cooldown != STATE_COOLDOWN_DISABLE
+
+    def isTimeBased(self):
+        return self.time_cooldown != STATE_COOLDOWN_DISABLE
+
+    def isEnable(self):
+        return self.enable is True
+
 
 class AdPoint(Initializer):
 
     def __init__(self):
         super(AdPoint, self).__init__()
-        self.name = None
-        self.params = None
+        self.params = None  # type: TriggerParams  # noqa
         self.active = False
 
-    def _onInitialize(self, params):
-        self.params = AdPointParams(params)
-        self.name = self.params.name
+        self._last_view_timestamp = None
 
-        self.params.validate()
+        # action based
+        self._action_counter = 0
 
-    def onActivate(self):  # todo
+        # time based
+        self._time_ready = False
+        self._schedule_id = SCHEDULE_ID_EMPTY
+
+        # trigger group resets this trigger if one of group members started
+        self._cooldown_group_observer = None
+
+    @property
+    def name(self):
+        return self.params.name
+
+    def _onInitialize(self, trigger_params):
+        self.params = TriggerParams(trigger_params)
+
+        if self.params.validate() is False:
+            return False
+        return True
+
+    def onActivate(self):
+        if self.active is True:
+            Trace.log("System", 0, "AdPoint '{}' is already activated".format(self.name))
+            return False
+
+        if self.params.isTimeBased() is True:
+            self._createSchedule(self.params.time_offset)
+        if self.params.isActionBased() is True:
+            self._action_counter -= self.params.action_offset
+        if self.params.group is not None:
+            self._cooldown_group_observer = Notification.addObserver(Notificator.onAdPointStart, self._cbAdPointStart)
+
         self.active = True
-        return
+        return True
 
     def _onFinalize(self):
         if self.active is False:
-            Trace.log("System", 0, "AdPoint '{}' finalize before activate".format(self.name))
+            Trace.log("System", 1, "AdPoint '{}' finalize before activate".format(self.name))
+
+        self._removeSchedule()
+        if self._cooldown_group_observer is not None:
+            Notification.removeObserver(self._cooldown_group_observer)
+            self._cooldown_group_observer = None
 
         self.params = None
-        self.name = None
         self.active = False
 
-    def check(self):  # todo
+    def check(self):
+        """ returns True if trigger conditions are met and ad is available to view """
+        if self._checkTrigger() is False:
+            return False
+
+        # trigger is ok, check if ad is available
+        if AdvertisementProvider.isAdvertAvailable(self.params.ad_type, self.params.ad_unit_name) is False:
+            return False
+
+        # ad is ready to view, allow to start!
+        return True
+
+    def _checkTrigger(self):
+        """ returns True if at least one of trigger conditions is met """
+        if self._time_ready is True:
+            return True
+        if self.params.isActionBased() is True and self._action_counter >= self.params.action_cooldown:
+            return True
         return False
 
-    def trigger(self):  # todo
+    def trigger(self):
+        """ increase action counter """
+        self._action_counter += 1
+        Trace.msg_dev("[AdPoint {}] triggered, action counter = {}".format(self.name, self._action_counter))
         return False
 
-    def start(self):  # todo
+    def start(self):
+        def _cb(*args, **kwargs):
+            Trace.msg("[AdPoint {}] show {}:{} advert using {}".format(
+                self.name, self.params.ad_type, self.params.ad_unit_name, AdvertisementProvider.getName()))
+            self.updateViewedTime(Mengine.getTime())
+
+        Notification.notify(Notificator.onAdPointStart, self.params)
+        TaskManager.runAlias("AliasShowAdvert", _cb,
+                             AdType=self.params.ad_type, AdUnitName=self.params.ad_unit_name)
+        self._resetTrigger()
+
         return False
 
+    def _resetTrigger(self):
+        self._removeSchedule()
+        self._createSchedule()
+        self._action_counter = 0
+        Trace.msg_dev("[AdPoint {}] reset trigger".format(self.name))
+
+    # general utils
+
+    def updateViewedTime(self, timestamp):
+        if _DEVELOPMENT is True:
+            _seconds_passed = (timestamp - self._last_view_timestamp) if self._last_view_timestamp else None
+            Trace.msg("[AdPoint {}] updateViewedTime to {} ({} seconds from last view)".format(
+                self.name, timestamp, _seconds_passed))
+        self._last_view_timestamp = timestamp
+
+    # time based trigger
+
+    def __onSchedule(self, schedule_id, is_complete):
+        if self._schedule_id != schedule_id:
+            return
+        self._schedule_id = SCHEDULE_ID_EMPTY
+
+        self._time_ready = True
+        Trace.msg_dev("[AdPoint {}] time based trigger is ready".format(self.name))
+
+    def _createSchedule(self, offset=0):
+        cooldown = self.params.time_cooldown + offset
+        self._schedule_id = Mengine.scheduleGlobal(cooldown, self.__onSchedule)
+
+    def _removeSchedule(self):
+        if self._schedule_id != SCHEDULE_ID_EMPTY:
+            Mengine.scheduleGlobalRemove(self._schedule_id)
+            self._schedule_id = SCHEDULE_ID_EMPTY
+
+    # cooldown group
+
+    def _cbAdPointStart(self, ad_point_params):
+        if ad_point_params == self.params:
+            return False
+
+        if ad_point_params.group == self.params.group:
+            Trace.msg_dev("[AdPoint {}] one of member ({}) of cooldown group '{}' is started"
+                          .format(self.name, ad_point_params.name, self.params.group))
+            self._resetTrigger()
+        return False
 
 
 

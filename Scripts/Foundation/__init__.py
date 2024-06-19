@@ -709,6 +709,7 @@ def onInitialize():
         , 'onDisableSceneLayerGroup'
         , 'onGameSceneChange'
 
+        , 'onAdPointStart'
         , 'onAdvertLoadSuccess'
         , 'onAdvertLoadFail'
         , 'onAdvertDisplayed'
