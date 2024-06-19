@@ -133,8 +133,9 @@ class AdPoint(Initializer):
         return False
 
     def _resetTrigger(self):
-        self._removeSchedule()
-        self._createSchedule()
+        if self.params.isTimeBased() is True:
+            self._removeSchedule()
+            self._createSchedule()
         self._action_counter = 0
         Trace.msg_dev("[AdPoint {}] reset trigger".format(self.name))
 

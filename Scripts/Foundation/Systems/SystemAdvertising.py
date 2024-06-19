@@ -115,9 +115,10 @@ class SystemAdvertising(System):
         ad_point_names = Mengine.getConfigStrings("Advertising", "AdPoints")
         if len(ad_point_names) == 0:
             ad_point_names = [DEFAULT_REMOTE_CONFIG_KEY]
+        enabled_ad_points = Mengine.getConfigStrings("Advertising", "DefaultEnabledAdPoints")
 
         default_params = {
-            "enable": self.is_enable,
+            "enable": False,
             "ad_type": "Interstitial",
             "ad_unit_name": self.getGeneralParam("InterstitialSystemAdUnitName"),
             "trigger_action_offset": self.getGeneralParam("trigger_count_start"),
@@ -132,6 +133,9 @@ class SystemAdvertising(System):
 
         for ad_point_name in ad_point_names:
             params = default_params.copy()
+
+            if ad_point_name in enabled_ad_points or ad_point_name == DEFAULT_REMOTE_CONFIG_KEY:
+                params["enable"] = True
 
             remote_config_params = RemoteConfigProvider.getRemoteConfigValueJSON(ad_point_name, {})
             params.update(remote_config_params)

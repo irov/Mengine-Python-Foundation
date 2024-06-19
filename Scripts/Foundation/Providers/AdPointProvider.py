@@ -45,7 +45,6 @@ class AdPointProvider(BaseProvider):
     @staticmethod
     def startAdPoint(ad_point_name):
         """ reset trigger counter, update time view, starts ad point
-            (!) check if AdvertisementProvider.isAdvertAvailable returns True before call this method
         """
         return AdPointProvider._call("startAdPoint", ad_point_name)
 
