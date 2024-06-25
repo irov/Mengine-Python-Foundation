@@ -8,23 +8,49 @@ STATE_COOLDOWN_DISABLE = -1
 
 class TriggerParams(object):
 
+    """
+        action tips:
+            0) counter formula: `cooldown - offset`
+            1) Show ad every 3 games (play 3 games without ads, then show ad)
+                > trigger_action_offset = 3
+                > trigger_action_cooldown = 3
+            2) Show ad every 3 games, but on start no ad for next 10 games, then every 3 games as planned
+                > trigger_action_offset = 10
+                > trigger_action_cooldown = 3
+            3) Show ad every 3 games, but on start show ad immediately, then every 3 games as planned
+                > trigger_action_offset = 0
+                > trigger_action_cooldown = 3
+
+        time tips:
+            0) at first runs schedule for `trigger_time_offset` minutes, then `trigger_time_cooldown` minutes always
+            1) Show ad every 10 min, but on start show ad immediately
+                > trigger_time_offset = 0
+                > trigger_time_cooldown = 10
+            2) Show ad every 10 min, but on start no ad for next 10 min, then every 10 min as planned
+                > trigger_time_offset = 10
+                > trigger_time_cooldown = 10
+    """
+
     def __init__(self, params):
         self.name = params["name"]
         self.enable = params.get("enable", True)
         self.ad_type = params.get("ad_type", "Interstitial")
         self.ad_unit_name = params.get("ad_unit_name", self.ad_type)
 
-        self.action_offset = params.get("trigger_action_offset", 0)
+        self.action_offset = max(params.get("trigger_action_offset", 0), 0)
         self.action_cooldown = params.get("trigger_action_cooldown", STATE_COOLDOWN_DISABLE)
-        self.time_offset = params.get("trigger_time_offset", 0)
+
+        self.time_offset = max(params.get("trigger_time_offset", 0), 0)
         self.time_cooldown = params.get("trigger_time_cooldown", STATE_COOLDOWN_DISABLE)
+        if self.time_cooldown != STATE_COOLDOWN_DISABLE:
+            self.time_cooldown *= 1000.0
+            self.time_offset *= 1000.0
 
         self.group = params.get("cooldown_group", None)
 
     def validate(self):
         def _error(message):
             Trace.msg_err("[AdPoint {}] validation error: {}".format(self.name, message))
-        pass
 
     def isActionBased(self):
         return self.action_cooldown != STATE_COOLDOWN_DISABLE
@@ -74,7 +100,7 @@ class AdPoint(Initializer):
         if self.params.isTimeBased() is True:
             self._createSchedule(self.params.time_offset)
         if self.params.isActionBased() is True:
-            self._action_counter -= self.params.action_offset
+            self._action_counter = self.params.action_cooldown - self.params.action_offset
         if self.params.group is not None:
             self._cooldown_group_observer = Notification.addObserver(Notificator.onAdPointStart, self._cbAdPointStart)
 
@@ -158,8 +184,9 @@ class AdPoint(Initializer):
         self._time_ready = True
         Trace.msg_dev("[AdPoint {}] time based trigger is ready".format(self.name))
 
-    def _createSchedule(self, offset=0):
-        cooldown = self.params.time_cooldown + offset
+    def _createSchedule(self, cooldown=None):
+        if cooldown is None:
+            cooldown = self.params.time_cooldown
         self._schedule_id = Mengine.scheduleGlobal(cooldown, self.__onSchedule)
 
     def _removeSchedule(self):
