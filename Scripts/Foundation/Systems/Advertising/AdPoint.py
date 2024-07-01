@@ -4,6 +4,7 @@ from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 
 SCHEDULE_ID_EMPTY = 0
 STATE_COOLDOWN_DISABLE = -1
+AD_TYPES = ["Interstitial", "Rewarded"]
 
 
 class TriggerParams(object):
@@ -38,10 +39,10 @@ class TriggerParams(object):
         self.ad_unit_name = params.get("ad_unit_name", self.ad_type)
 
         self.action_offset = max(params.get("trigger_action_offset", 0), 0)
-        self.action_cooldown = params.get("trigger_action_cooldown", STATE_COOLDOWN_DISABLE)
+        self.action_cooldown = max(STATE_COOLDOWN_DISABLE, params.get("trigger_action_cooldown", STATE_COOLDOWN_DISABLE))
 
         self.time_offset = max(params.get("trigger_time_offset", 0), 0)
-        self.time_cooldown = params.get("trigger_time_cooldown", STATE_COOLDOWN_DISABLE)
+        self.time_cooldown = max(STATE_COOLDOWN_DISABLE, params.get("trigger_time_cooldown", STATE_COOLDOWN_DISABLE))
         if self.time_cooldown != STATE_COOLDOWN_DISABLE:
             self.time_cooldown *= 1000.0
             self.time_offset *= 1000.0
@@ -51,6 +52,16 @@ class TriggerParams(object):
     def validate(self):
         def _error(message):
             Trace.msg_err("[AdPoint {}] validation error: {}".format(self.name, message))
+
+        if self.ad_type not in AD_TYPES:
+            _error("invalid ad_type '{}' should be one of {}".format(self.ad_type, AD_TYPES))
+            return False
+
+        if self.ad_unit_name not in Mengine.getConfigStrings("Advertising", "{}UnitNames".format(self.ad_type)):
+            _error("invalid ad_unit_name '{}', not registered in config".format(self.ad_unit_name))
+            return False
+
+        return True
 
     def isActionBased(self):
         return self.action_cooldown != STATE_COOLDOWN_DISABLE
@@ -205,6 +216,3 @@ class AdPoint(Initializer):
                           .format(self.name, ad_point_params.name, self.params.group))
             self._resetTrigger()
         return False
-
-
-
