@@ -511,8 +511,9 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbBillingPurchaseItemAlreadyOwned():
-        _Log("[Billing cb] purchase process error: ItemAlreadyOwned - start restore purchases", force=True, err=True)
-        PaymentProvider.restorePurchases()
+        product_id = SystemGoogleServices.__lastProductId
+        _Log("[Billing cb] purchase process error: ItemAlreadyOwned".format(product_id), force=True, err=True)
+        SystemGoogleServices.handlePurchased([product_id], True)
 
     @staticmethod
     def __cbBillingPurchaseOk():
