@@ -103,7 +103,7 @@ class SystemGoogleServices(System):
             setBillingCallback("PurchasesUpdatedError", self.__cbBillingPurchaseError, "Error")
             setBillingCallback("PurchasesUpdatedItemAlreadyOwned", self.__cbBillingPurchaseItemAlreadyOwned)
             setBillingCallback("PurchasesUpdatedItemNotOwned", self.__cbBillingPurchaseError, "ItemNotOwned")
-            setBillingCallback("PurchasesUpdatedUnknown", self.__cbBillingPurchaseError, "Unknown")
+            setBillingCallback("PurchasesUpdatedUnknown", self.__cbBillingPurchaseError)
             setBillingCallback("PurchasesUpdatedUserCanceled", self.__cbBillingPurchaseError, "UserCanceled")
             setBillingCallback("PurchasesUpdatedOk", self.__cbBillingPurchaseOk)
             # query products & purchases (for restore)
@@ -499,12 +499,14 @@ class SystemGoogleServices(System):
             Notification.notify(Notificator.onPayComplete, prod_id)
 
     @staticmethod
-    def __cbBillingPurchaseError(details):
+    def __cbBillingPurchaseError(response_code):
         """  error while purchase """
-        Notification.notify(Notificator.onPayFailed, SystemGoogleServices.__lastProductId)
-        Notification.notify(Notificator.onPayComplete, SystemGoogleServices.__lastProductId)
-        _Log("[Billing cb] purchase process error: {}".format(details), force=True, err=True)
-        if details == "BillingClientUnavailable":
+        product_id = SystemGoogleServices.__lastProductId
+        _Log("[Billing cb] purchase process error, product {!r}: {}".format(product_id, response_code), force=True, err=True)
+
+        SystemGoogleServices.handlePurchased([product_id], False)
+
+        if response_code == "BillingClientUnavailable":
             SystemGoogleServices.startBillingClient()
 
     @staticmethod
