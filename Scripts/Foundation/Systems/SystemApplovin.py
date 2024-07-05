@@ -2,7 +2,6 @@ from Foundation.System import System
 from Foundation.Utils import SimpleLogger
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.Systems.AppLovin.AppLovinAdFactory import AppLovinAdFactory
-from Foundation.Systems.SystemAnalytics import SystemAnalytics
 
 
 _Log = SimpleLogger("SystemApplovin")
@@ -26,8 +25,6 @@ class SystemApplovin(System):
         self.banners = {}
 
     def _onInitialize(self):
-        self.__addAnalytics()
-
         if _ANDROID:
             SystemApplovin.is_plugin_active = Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME)
         elif _IOS:
@@ -72,10 +69,6 @@ class SystemApplovin(System):
         self.banners = None
 
     # utils
-
-    def __addAnalytics(self):
-        SystemAnalytics.addAnalytic("ad_point_started", Notificator.onAdPointStart,
-                                    params_method=lambda params: {"name": params.name})
 
     def initAds(self):
         for ad_unit in self._getAllAdUnits():

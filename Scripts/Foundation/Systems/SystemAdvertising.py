@@ -9,6 +9,8 @@ from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
 from Foundation.Systems.Advertising.AdPoint import AdPoint
+from Foundation.Systems.SystemAnalytics import SystemAnalytics
+
 
 _Log = SimpleLogger("SystemAdvertising")
 DEFAULT_IGNORE_SCENES = [
@@ -86,6 +88,8 @@ class SystemAdvertising(System):
 
         self._initAdPoints()
 
+        self.__addAnalytics()
+
     def _onRun(self):
         self._first_enter_timestamp = Mengine.getTime()
 
@@ -108,6 +112,10 @@ class SystemAdvertising(System):
         for ad_point in self._ad_points.values():
             ad_point.onFinalize()
         self._ad_points = {}
+
+    def __addAnalytics(self):
+        SystemAnalytics.addAnalytic("ad_point_started", Notificator.onAdPointStart,
+                                    params_method=lambda params: {"name": params.name})
 
     # AD POINTS --------------------------------------------------------------------------------------------------------
 
