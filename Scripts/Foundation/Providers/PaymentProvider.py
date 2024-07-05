@@ -24,7 +24,9 @@ class PaymentProvider(BaseProvider):
 
     @staticmethod
     def restorePurchases():
-        """ check player previous non-consumable purchases and call onPaySuccess for each of them """
+        """ check player previous non-consumable purchases and call onPaySuccess for each of them
+            when restore completed - sends onRestorePurchasesDone
+        """
         return PaymentProvider._call("restorePurchases")
 
     @staticmethod

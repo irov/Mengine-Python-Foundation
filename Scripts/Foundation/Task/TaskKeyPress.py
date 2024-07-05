@@ -1,6 +1,7 @@
 from Foundation.Task.MixinObserver import MixinObserver
 from Foundation.Task.Task import Task
 
+
 class TaskKeyPress(MixinObserver, Task):
 
     def onParams(self, params):
@@ -28,8 +29,8 @@ class TaskKeyPress(MixinObserver, Task):
         return False
 
     def __onKeyEvent(self, key, x, y, isDown, isRepeating):
-        for adkey in self.add_keys:
-            if Mengine.isKeyDown(adkey) is False:
+        for add_key in self.add_keys:
+            if Mengine.isKeyDown(add_key) is False:
                 return False
 
         if isDown is not self.isDown:
