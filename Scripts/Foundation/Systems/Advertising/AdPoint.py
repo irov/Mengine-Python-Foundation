@@ -58,8 +58,9 @@ class TriggerParams(object):
             return False
 
         if self.ad_unit_name not in Mengine.getConfigStrings("Advertising", "{}UnitNames".format(self.ad_type)):
-            _error("invalid ad_unit_name '{}', not registered in config".format(self.ad_unit_name))
-            return False
+            if self.ad_type != self.ad_unit_name:   # probably default type
+                _error("invalid ad_unit_name '{}', not registered in config".format(self.ad_unit_name))
+                return False
 
         return True
 
