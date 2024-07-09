@@ -136,6 +136,7 @@ def createBBSpriteHotspot(name, sprite):
     imageSize = sprite.getSurfaceSize()
 
     BBHotspot = Mengine.createNode("HotSpotPolygon")
+    BBHotspot.setName(name)
 
     polygon = []
     polygon.append((0.0, 0.0))
