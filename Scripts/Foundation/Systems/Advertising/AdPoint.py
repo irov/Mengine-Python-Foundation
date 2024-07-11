@@ -172,6 +172,7 @@ class AdPoint(Initializer):
 
     def _resetTrigger(self):
         if self.params.isTimeBased() is True:
+            self._time_ready = False
             self._removeSchedule()
             self._createSchedule()
         self._action_counter = 0
