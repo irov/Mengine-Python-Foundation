@@ -6,19 +6,15 @@ from TraceManager import TraceManager
 def msg(text, *args):
     assert type(text) == str, "Message must be string, not %s" % type(text)
 
-    try:
-        Mengine.logWarning(text % args)
-    except Exception as ex:
-        Mengine.logWarning("'{} % {}' | Exception = {}".format(text, args, ex))
+    message = __tryFormatMessage(text, *args)
+    Mengine.logWarning(message)
 
 
 def msg_err(text, *args):
     assert type(text) == str, "Message must be string, not %s" % type(text)
 
-    try:
-        Mengine.logError(text % args)
-    except Exception as ex:
-        Mengine.logError("'{} % {}' | Exception = {}".format(text, args, ex))
+    message = __tryFormatMessage(text, *args)
+    Mengine.logError(message)
 
 
 def msg_dev(text, *args):
@@ -39,26 +35,24 @@ def log(category, level, text, *args):
         return
 
     if level <= TraceManager.getLevel(category):
-        error_msg = "\n-----------------------------------------------"
-        error_msg += "\nError:"
-        try:
-            error_msg += "\n" + (text % args)
-        except Exception as ex:
-            error_msg += "\n" + "'{} % {}' | Exception = {}".format(text, args, ex)
-        error_msg += "\n-----------------------------------------------"
-
-        Mengine.logError(error_msg)
+        message = "\n-----------------------------------------------"
+        message += "\nError:"
+        message += "\n-----------------------------------------------"
+        message += "\n" + __tryFormatMessage(text, *args)
 
         if level == 0:
-            pass# __print_traceback()
+            message += __getTraceback()
+
+        Mengine.logError(message)
 
 
 def trace():
-    __print_traceback()
+    message = __getTraceback()
+    Mengine.logError(message)
 
 
 def caller(deep=0):
-    frame = sys._getframe()
+    frame = sys._getframe()  # fixme
 
     for index in range(2 + deep):
         frame = frame.f_back
@@ -69,11 +63,19 @@ def caller(deep=0):
     return info
 
 
-def __print_traceback():
-    trace_msg = "\n-----------------------------------------------"
-    trace_msg += "\nTrace:"
-    trace_msg += "\n-----------------------------------------------"
-    trace_msg += "\nTraceback (most recent call last):"
-    for (filename, line_number, function_name, text) in traceback.extract_stack():
-        trace_msg += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
-    Mengine.logError(trace_msg)
+def __getTraceback():
+    message = "\n-----------------------------------------------"
+    message += "\nTrace:"
+    message += "\n-----------------------------------------------"
+    message += "\nTraceback (most recent call last):"
+    for (filename, line_number, function_name, text) in traceback.extract_stack()[:-2]:
+        message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
+    return message
+
+
+def __tryFormatMessage(text, *args):
+    try:
+        message = text % args
+    except Exception as ex:
+        message = "{} % {}, Exception: {}".format(text, args, ex)
+    return message
