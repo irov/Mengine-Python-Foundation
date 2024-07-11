@@ -75,7 +75,8 @@ def __getTraceback():
 
 def __tryFormatMessage(text, *args):
     try:
-        message = text % args
+        # message = text % args
+        message = Mengine.logError(text % args)    # fixme: engine crash repr for @irov
     except Exception as ex:
         message = "{} % {}, Exception: {}".format(text, args, ex)
     return message
