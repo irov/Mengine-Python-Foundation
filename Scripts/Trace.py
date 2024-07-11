@@ -4,14 +4,14 @@ from TraceManager import TraceManager
 
 
 def msg(text, *args):
-    assert type(text) == str, "Message must be string, not %s" % type(text)
+    __validateMessage(text)
 
     message = __tryFormatMessage(text, *args)
     Mengine.logWarning(message)
 
 
 def msg_err(text, *args):
-    assert type(text) == str, "Message must be string, not %s" % type(text)
+    __validateMessage(text)
 
     message = __tryFormatMessage(text, *args)
     Mengine.logError(message)
@@ -27,8 +27,15 @@ def msg_dev_err(text, *args):
         msg_err(text, *args)
 
 
+def msg_release(text, *args):
+    __validateMessage(text)
+
+    message = __tryFormatMessage(text, *args)
+    Mengine.logMessageRelease(message)
+
+
 def log(category, level, text, *args):
-    assert type(text) == str, "Message must be string, not %s" % type(text)
+    __validateMessage(text)
 
     if TraceManager.existIn(category) is False:
         Mengine.logWarning("trace log unknown category '%s'" % category)
@@ -75,8 +82,11 @@ def __getTraceback():
 
 def __tryFormatMessage(text, *args):
     try:
-        # message = text % args
-        message = Mengine.logError(text % args)    # fixme: engine crash repr for @irov
+        message = text % args
     except Exception as ex:
         message = "{} % {}, Exception: {}".format(text, args, ex)
     return message
+
+
+def __validateMessage(text):
+    assert type(text) == str, "Message must be string, not %s" % type(text)
