@@ -7,24 +7,18 @@ def msg(text, *args):
     assert type(text) == str, "Message must be string, not %s" % type(text)
 
     try:
-        print(text % args)
+        Mengine.logWarning(text % args)
     except Exception as ex:
-        print(text, args, ex)
+        Mengine.logWarning("'{} % {}' | Exception = {}".format(text, args, ex))
 
 
 def msg_err(text, *args):
     assert type(text) == str, "Message must be string, not %s" % type(text)
 
-    if _PYTHON_VERSION < 300:
-        try:
-            print >> sys.stderr, text % args
-        except Exception as ex:
-            print >> sys.stderr, text, args, ex
-    else:
-        try:
-            print(text % args)
-        except Exception as ex:
-            print(text, args, ex)
+    try:
+        Mengine.logError(text % args)
+    except Exception as ex:
+        Mengine.logError("'{} % {}' | Exception = {}".format(text, args, ex))
 
 
 def msg_dev(text, *args):
@@ -32,43 +26,35 @@ def msg_dev(text, *args):
         msg(text, *args)
 
 
+def msg_dev_err(text, *args):
+    if _DEVELOPMENT is True:
+        msg_err(text, *args)
+
+
 def log(category, level, text, *args):
     assert type(text) == str, "Message must be string, not %s" % type(text)
 
     if TraceManager.existIn(category) is False:
-        print("trace log no category %s" % category)
+        Mengine.logWarning("trace log unknown category '%s'" % category)
         return
 
     if level <= TraceManager.getLevel(category):
-        if _PYTHON_VERSION < 300:
-            print >> sys.stderr, "-----------------------------------------------"
-            print >> sys.stderr, "Error:"
-            print >> sys.stderr, "-----------------------------------------------"
+        error_msg = "\n-----------------------------------------------"
+        error_msg += "\nError:"
+        try:
+            error_msg += "\n" + (text % args)
+        except Exception as ex:
+            error_msg += "\n" + "'{} % {}' | Exception = {}".format(text, args, ex)
+        error_msg += "\n-----------------------------------------------"
 
-            try:
-                print >> sys.stderr, text % args
-            except Exception as ex:
-                print >> sys.stderr, text, args, ex
-        else:
-            try:
-                print(text % args)
-            except Exception as ex:
-                print(text, args, ex)
+        Mengine.logError(error_msg)
 
         if level == 0:
-            if _PYTHON_VERSION < 300:
-                print >> sys.stderr, "-----------------------------------------------"
-                print >> sys.stderr, "Trace:"
-                print >> sys.stderr, "-----------------------------------------------"
-
-            traceback.print_stack()
+            pass# __print_traceback()
 
 
 def trace():
-    print >> sys.stderr, "-----------------------------------------------"
-    print >> sys.stderr, "Trace:"
-    print >> sys.stderr, "-----------------------------------------------"
-    traceback.print_stack()
+    __print_traceback()
 
 
 def caller(deep=0):
@@ -81,3 +67,13 @@ def caller(deep=0):
     info = (code.co_filename, frame.f_lineno)
 
     return info
+
+
+def __print_traceback():
+    trace_msg = "\n-----------------------------------------------"
+    trace_msg += "\nTrace:"
+    trace_msg += "\n-----------------------------------------------"
+    trace_msg += "\nTraceback (most recent call last):"
+    for (filename, line_number, function_name, text) in traceback.extract_stack():
+        trace_msg += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
+    Mengine.logError(trace_msg)
