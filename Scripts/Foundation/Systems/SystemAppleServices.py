@@ -323,6 +323,10 @@ class SystemAppleServices(System):
 
         """
 
+        if len(products) == 0:
+            _Log("[InAppPurchase] (callback) Product Response Empty", err=True, force=True)
+            return
+
         _Log("[InAppPurchase] (CALLBACK) Product Response: {}".format([p.getProductIdentifier() for p in products]))
 
         game_products = {}
