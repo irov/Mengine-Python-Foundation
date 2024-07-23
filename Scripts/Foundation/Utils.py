@@ -1255,21 +1255,24 @@ def replace_last(string, old, new, n, already_reverted_substrings=False):
     replaced = string[::-1].replace(_old, _new, n)[::-1]
     return replaced
 
-def getWeightedRandomIndex(weights):
+def getWeightedRandomIndex(weights, randomizer=None):
     if len(weights) == 0:
         return None
     if len(weights) == 1:
         return 0
 
     total_weight = sum(weights)
-    random_weight = Mengine.range_randf(0, total_weight)
+    if randomizer is None:
+        random_weight = Mengine.range_randf(0, total_weight)
+    else:
+        random_weight = randomizer.getRandomRangef(0, total_weight)
 
     for i, weight in enumerate(weights):
         random_weight -= weight
         if random_weight <= 0:
             return i
 
-def getWeightedRandomByKey(records, key):
+def getWeightedRandomByKey(records, key, randomizer=None):
     """ returns random element from `records` weighted by `key`:
         1) `records` is a list of objects - output is object
         2) `records` is a dict - output is dict-key
@@ -1309,7 +1312,7 @@ def getWeightedRandomByKey(records, key):
         Trace.log("Utils", 0, "getWeightedRandomByKey: no elements with key '{}': {}".format(key, records))
         return None
 
-    lookup_index = getWeightedRandomIndex(weights)
+    lookup_index = getWeightedRandomIndex(weights, randomizer=randomizer)
 
     if lookup_index is None:
         return None
