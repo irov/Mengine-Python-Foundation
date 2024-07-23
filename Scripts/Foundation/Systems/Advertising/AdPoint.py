@@ -2,6 +2,7 @@ from Foundation.Initializer import Initializer
 from Foundation.TaskManager import TaskManager
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 
+
 SCHEDULE_ID_EMPTY = 0
 STATE_COOLDOWN_DISABLE = -1
 AD_TYPES = ["Interstitial", "Rewarded"]
@@ -109,6 +110,9 @@ class AdPoint(Initializer):
             Trace.log("System", 0, "AdPoint '{}' is already activated".format(self.name))
             return False
 
+        if self.params.isEnable() is False:
+            return True
+
         if self.params.isTimeBased() is True:
             self._createSchedule(self.params.time_offset)
         if self.params.isActionBased() is True:
@@ -120,7 +124,7 @@ class AdPoint(Initializer):
         return True
 
     def _onFinalize(self):
-        if self.active is False:
+        if self.active is False and self.params.isEnable() is True:
             Trace.log("System", 1, "AdPoint '{}' finalize before activate".format(self.name))
 
         self._removeSchedule()
