@@ -19,9 +19,6 @@ class SystemRemoteConfig(System):
         if self.isPluginEnable() is False:
             return
 
-        SystemRemoteConfig.s_configs = self._getRemoteConfig()
-        Trace.msg_dev("* SystemRemoteConfig config: %s" % SystemRemoteConfig.s_configs)
-
         RemoteConfigProvider.setProvider("Firebase", dict(
             getRemoteConfigValueString=SystemRemoteConfig.getRemoteConfigValueString,
             getRemoteConfigValueBoolean=SystemRemoteConfig.getRemoteConfigValueBoolean,
@@ -31,13 +28,6 @@ class SystemRemoteConfig(System):
         ))
 
     def _onRun(self):
-        def _releaseRemoteConfig():
-            for key, value in SystemRemoteConfig.s_configs.items():
-                Notification.notify(Notificator.onGetRemoteConfig, key, value)
-
-        with self.createTaskChain(Name="RemoteConfig") as tc:
-            tc.addListener(Notificator.onRun)
-            tc.addFunction(_releaseRemoteConfig)
         return True
 
     @staticmethod
@@ -49,6 +39,7 @@ class SystemRemoteConfig(System):
             default: default value if lookup field not exists
             cast_to (object|None): cast to input type or do nothing
         """
+        Trace.msg_err("DEPRECATED, use getRemoteConfigValue<Type>({}) instead".format(key))
 
         if key not in SystemRemoteConfig.s_configs:
             return default
@@ -63,25 +54,6 @@ class SystemRemoteConfig(System):
             return value
 
     @staticmethod
-    def _getRemoteConfig():
-        """ returns all remote configs, all values are strings (!) """
-
-        if SystemRemoteConfig.isPluginEnable() is False:
-            Trace.log("System", 0, "Plugin RemoteConfig is not enable to fetch remote config")
-            return {}
-
-        config = {}
-
-        if _ANDROID:
-            config = Mengine.androidObjectMethod(SystemRemoteConfig.ANDROID_PLUGIN_NAME, "getRemoteConfig")
-        elif _IOS:
-            config = Mengine.appleGetRemoteConfig()
-        else:
-            SystemRemoteConfig.__errorNotSupportedOS()
-
-        return config
-
-    @staticmethod
     def getRemoteConfigValueString(key):
         """ returns str value """
         value = None
@@ -90,7 +62,7 @@ class SystemRemoteConfig(System):
         elif _IOS:
             value = Mengine.appleFirebaseRemoteConfigGetValueConstString(key)
         else:
-            SystemRemoteConfig.__errorNotSupportedOS()
+            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValueString")
         return value
 
     @staticmethod
@@ -102,7 +74,7 @@ class SystemRemoteConfig(System):
         elif _IOS:
             value = Mengine.appleFirebaseRemoteConfigGetValueBoolean(key)
         else:
-            SystemRemoteConfig.__errorNotSupportedOS()
+            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValueBoolean")
         return value
 
     @staticmethod
@@ -114,7 +86,7 @@ class SystemRemoteConfig(System):
         elif _IOS:
             value = Mengine.appleFirebaseRemoteConfigGetValueInteger(key)
         else:
-            SystemRemoteConfig.__errorNotSupportedOS()
+            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValueInt")
         return value
 
     @staticmethod
@@ -126,7 +98,7 @@ class SystemRemoteConfig(System):
         elif _IOS:
             value = Mengine.appleFirebaseRemoteConfigGetValueDouble(key)
         else:
-            SystemRemoteConfig.__errorNotSupportedOS()
+            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValueFloat")
         return value
 
     @staticmethod
@@ -138,10 +110,10 @@ class SystemRemoteConfig(System):
         elif _IOS:
             value = Mengine.appleFirebaseRemoteConfigGetValueJSON(key)
         else:
-            SystemRemoteConfig.__errorNotSupportedOS()
+            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValueJSON")
         return value
 
     @staticmethod
-    def __errorNotSupportedOS():
-        Trace.log("System", 0, "RemoteConfig do not work on this OS")
+    def __errorNotSupportedOS(caller_name):
+        Trace.log("System", 0, "RemoteConfig {} do not work on this OS".format(caller_name))
 
