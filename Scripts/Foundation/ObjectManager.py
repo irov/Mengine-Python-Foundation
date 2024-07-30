@@ -39,9 +39,7 @@ class ObjectManager(object):
                 Module = __import__(ModuleName, fromlist=[module])
                 pass
         except ImportError as ex:
-            traceback.print_exc()
-
-            Trace.log("Manager", 0, "ObjectManager.__importDemainObject %s:%s error import '%s'" % (module, type, ex))
+            Trace.log("Manager", 0, "ObjectManager.__importDemainObject %s:%s error import '%s'\n%s" % (module, type, ex, traceback.format_exc()))
 
             return None
             pass
@@ -49,9 +47,7 @@ class ObjectManager(object):
         try:
             Type = getattr(Module, type)
         except AttributeError as ex:
-            traceback.print_exc()
-
-            Trace.log("Manager", 0, "ObjectManager.__importDemainObject %s:%s module not found type '%s'" % (module, type, ex))
+            Trace.log("Manager", 0, "ObjectManager.__importDemainObject %s:%s module not found type '%s'\n%s" % (module, type, ex, traceback.format_exc()))
 
             return None
             pass

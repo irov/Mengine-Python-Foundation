@@ -63,9 +63,7 @@ class Manager(object):
         try:
             cls._onLoad(dict_save)
         except Exception as ex:
-            traceback.print_exc()
-
-            Trace.log("Manager", 0, "Manager.__onSessionLoad %s invalid load: %s" % (cls, str(ex)))
+            Trace.log("Manager", 0, "Manager.__onSessionLoad %s invalid load: %s\n%s" % (cls, str(ex), traceback.format_exc()))
 
             Mengine.changeCurrentAccountSetting("InvalidLoad", u"True")
 

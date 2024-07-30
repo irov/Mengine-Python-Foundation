@@ -27,9 +27,7 @@ class Initializer(object):
         try:
             self._onInitialize(*args, **kwds)
         except Exception as ex:
-            traceback.print_exc()
-
-            self.onInitializeFailed("onInitialize exception %s" % (ex))
+            self.onInitializeFailed("onInitialize exception %s\n%s" % (ex, traceback.format_exc()))
 
             return False
             pass
@@ -46,9 +44,7 @@ class Initializer(object):
         try:
             self._onInitializeFailed(msg)
         except Exception as ex:
-            traceback.print_exc()
-
-            Trace.log("Object", 0, "Initialize.onInitializeFailed %s exception %s" % (msg, ex))
+            Trace.log("Object", 0, "Initialize.onInitializeFailed %s exception %s\n%s" % (msg, ex, traceback.format_exc()))
             pass
         pass
 
@@ -80,9 +76,7 @@ class Initializer(object):
         try:
             self._onFinalize()
         except Exception as ex:
-            traceback.print_exc()
-
-            self.onFinalizeFailed("onFinalize exception %s" % (ex))
+            self.onFinalizeFailed("onFinalize exception %s\n%s" % (ex, traceback.format_exc()))
             return
         pass
 
@@ -93,9 +87,7 @@ class Initializer(object):
         try:
             self._onFinalizeFailed(msg)
         except Exception as ex:
-            traceback.print_exc()
-
-            Trace.log("Object", 0, "Initialize.onFinalizeFailed %s exception %s" % (msg, ex))
+            Trace.log("Object", 0, "Initialize.onFinalizeFailed %s exception %s\n%s" % (msg, ex, traceback.format_exc()))
             pass
         pass
 

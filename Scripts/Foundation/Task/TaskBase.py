@@ -174,9 +174,7 @@ class TaskBase(Initializer):
         try:
             isCheck = self.task._onCheck()
         except Exception as ex:
-            traceback.print_exc()
-
-            self._onTaskCheckFailed(ex)
+            self._onTaskCheckFailed("%s\n%s" % (ex, traceback.format_exc()))
 
             return False
             pass
@@ -200,9 +198,7 @@ class TaskBase(Initializer):
         try:
             self.task._onCheckSkip()
         except Exception as ex:
-            traceback.print_exc()
-
-            self._onTaskCheckSkipFailed(ex)
+            self._onTaskCheckSkipFailed("%s\n%s" % (ex, traceback.format_exc()))
 
             return
             pass
@@ -212,9 +208,7 @@ class TaskBase(Initializer):
         try:
             isComplete = task._onRun()
         except TaskException as ex:
-            traceback.print_exc()
-
-            self._onTaskRunFailed(ex)
+            self._onTaskRunFailed("%s\n%s" % (ex, traceback.format_exc()))
 
             return False, False
             pass
@@ -234,9 +228,7 @@ class TaskBase(Initializer):
         try:
             task._onSkip()
         except Exception as ex:
-            traceback.print_exc()
-
-            self._onTaskSkipFailed(ex)
+            self._onTaskSkipFailed("%s\n%s" % (ex, traceback.format_exc()))
 
             return False
             pass

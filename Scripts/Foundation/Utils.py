@@ -959,15 +959,11 @@ def importType(module, type):
             Module = __import__(ModuleName, fromlist=[module])
             pass
     except ImportError as se:
-        traceback.print_exc()
-
-        Trace.log("Manager", 0, "Utils.importType %s:%s import error: '%s'" % (module, type, se))
+        Trace.log("Manager", 0, "Utils.importType %s:%s import error: '%s'\n%s" % (module, type, se, traceback.format_exc()))
 
         return None
     except Exception as se:
-        traceback.print_exc()
-
-        Trace.log("Manager", 0, "Utils.importType %s:%s some error: '%s'" % (module, type, se))
+        Trace.log("Manager", 0, "Utils.importType %s:%s some error: '%s'\n%s" % (module, type, se, traceback.format_exc()))
 
         return None
         pass

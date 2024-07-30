@@ -42,9 +42,7 @@ class System(Params, Initializer):
         try:
             successful = self._onRun()
         except Exception as ex:
-            traceback.print_exc()
-
-            Trace.log("System", 0, "System.run %s except '%s'" % (self.name, ex))
+            Trace.log("System", 0, "System.run %s except '%s'\n%s" % (self.name, ex, traceback.format_exc()))
             return False
 
         if isinstance(successful, bool) is False:

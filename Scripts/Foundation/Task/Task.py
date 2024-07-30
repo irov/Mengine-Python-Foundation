@@ -112,9 +112,7 @@ class Task(Params, Initializer):
         try:
             self._onValidate()
         except Exception as ex:
-            traceback.print_exc()
-
-            self._onValidateFailed(ex)
+            self._onValidateFailed("%s\n%s" % (ex, traceback.format_exc()))
 
             return False
             pass
