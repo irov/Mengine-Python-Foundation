@@ -146,7 +146,7 @@ class SystemAdvertising(System):
                 params["enable"] = True
 
             remote_config_params = RemoteConfigProvider.getRemoteConfigValueJSON(ad_point_name, {})
-            Trace.msg("[AdPoint {}] Remote config data: {}".format(ad_point_name, remote_config_params))
+            Trace.msg_dev("[AdPoint {}] Remote config data: {}".format(ad_point_name, remote_config_params))
             params.update(remote_config_params)
 
             params["name"] = ad_point_name
