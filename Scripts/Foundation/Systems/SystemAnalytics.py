@@ -1,5 +1,5 @@
 from Foundation.System import System
-from Notification import Notification
+from Foundation.Providers.AnalyticsProvider import AnalyticsProvider
 
 ANALYTIC_PREFIX_NAME = "mpr_"
 
@@ -101,6 +101,15 @@ class SystemAnalytics(System):
     def _onInitialize(self):
         self.addDefaultAnalytics()
 
+        # todo: replace all direct usages SystemAnalytics with AnalyticsProvider
+        AnalyticsProvider.setProvider("Mengine", dict(
+            sendAnalytic=self.sendCustomAnalytic,
+            addAnalytic=self.addAnalytic,
+            hasAnalytic=self.hasAnalytic,
+            addRelatedAnalytic=self.addRelatedAnalytics,
+            eventFlush=self.eventFlush
+        ))
+
     def _onFinalize(self):
         # clean up
         for analytics_unit in SystemAnalytics.s_active_analytics.values():
@@ -193,7 +202,11 @@ class SystemAnalytics(System):
         return
 
     @staticmethod
-    def addRelatedAnalytics(this_event_key, related_event_key, Filter=None, Params=None):
+    def addRelatedAnalytic(this_event_key, related_event_key, Filter=None, Params=None):
+        return SystemAnalytics.addRelatedAnalytics(this_event_key, related_event_key, Filter=Filter, Params=Params)
+
+    @staticmethod
+    def addRelatedAnalytics(this_event_key, related_event_key, Filter=None, Params=None):   # deprecated
         """ Creates analytics based on analytic with key `related_event_key`.
             Sends this event if Filter is True.
             For specific params input Params as function <- related_event_params_dict

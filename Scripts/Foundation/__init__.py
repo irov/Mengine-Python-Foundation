@@ -857,6 +857,7 @@ def onInitialize():
         , "AuthProvider"   # main account
         , "RemoteConfigProvider"
         , "AdPointProvider"
+        , "AnalyticsProvider"
     ]
     from Foundation.ProviderManager import ProviderManager
     ProviderManager.importProviders("Foundation.Providers", providers)
