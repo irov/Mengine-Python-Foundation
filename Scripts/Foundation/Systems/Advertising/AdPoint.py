@@ -111,17 +111,17 @@ class AdPoint(Initializer):
             return False
 
         if self.params.isEnable() is False:
-            Trace.msg_release("[AdPoint {}] disabled".format(self.name))
+            # Trace.msg_dev("[AdPoint {}] disabled".format(self.name))
             return True
 
         if self.params.isTimeBased() is True:
-            Trace.msg_release("[AdPoint {}] (time-based) first ad will be in {} seconds, next each {} seconds"
-                              .format(self.name, self.params.time_offset, self.params.time_cooldown))
+            Trace.msg_dev("[AdPoint {}] (time-based) first ad will be in {} seconds, next each {} seconds"
+                          .format(self.name, self.params.time_offset, self.params.time_cooldown))
             self._createSchedule(self.params.time_offset)
         if self.params.isActionBased() is True:
             self._action_counter = self.params.action_cooldown - self.params.action_offset
-            Trace.msg_release("[AdPoint {}] (action-based) offset = {}, cooldown = {}"
-                              .format(self.name, self.params.action_offset, self.params.action_cooldown))
+            Trace.msg_dev("[AdPoint {}] (action-based) offset = {}, cooldown = {}"
+                          .format(self.name, self.params.action_offset, self.params.action_cooldown))
         if self.params.group is not None:
             self._cooldown_group_observer = Notification.addObserver(Notificator.onAdPointStart, self._cbAdPointStart)
 
