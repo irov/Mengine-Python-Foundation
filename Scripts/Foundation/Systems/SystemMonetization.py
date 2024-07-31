@@ -144,6 +144,11 @@ class SystemMonetization(System):
 
     @staticmethod
     def _onProductAlreadyOwned(prod_id):
+        product = MonetizationManager.getProductInfo(prod_id)
+        if product.isConsumable() is True:
+            _Log("Product {!r} is consumable and can't be restored".format(prod_id), err=True, force=True)
+            return False
+
         if SystemMonetization.isProductPurchased(prod_id) is True:
             _Log("Product {!r} already owned and applied for game".format(prod_id))
             Notification.notify(Notificator.onPayComplete, prod_id)
