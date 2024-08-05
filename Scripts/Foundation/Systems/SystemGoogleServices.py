@@ -57,20 +57,14 @@ class SystemGoogleServices(System):
                 Mengine.setAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
 
             # auth:
-            setSocialCallback("OnSign", self.__cbSignSuccess)
-            setSocialCallback("OnSignError", self.__cbSignError)
-            setSocialCallback("NeedIntentSign", self.__cbNeedIntentSign)
-            setSocialCallback("OnSignFailed", self.__cbSignFail)
-            setSocialCallback("SignOutSuccess", self.__cbSignOutSuccess)
-            setSocialCallback("SignOutCanceled", self.__cbSignOutCanceled)
-            setSocialCallback("SignOutFailure", self.__cbSignOutFailure)
-            setSocialCallback("SignOutComplete", self.__cbSignOutComplete)
+            setSocialCallback("OnAuthenticatedSuccess", self.__cbSignSuccess)
+            setSocialCallback("OnAuthenticatedError", self.__cbSignError)
             # incrementAchievement:
-            setSocialCallback("AchievementIncrementError", self.__cbAchievementIncError)
             setSocialCallback("AchievementIncrementSuccess", self.__cbAchievementIncSuccess)
+            setSocialCallback("AchievementIncrementError", self.__cbAchievementIncError)
             # unlockAchievement:
-            setSocialCallback("AchievementSuccess", self.__cbAchievementUnlockSuccess)
-            setSocialCallback("AchievementError", self.__cbAchievementUnlockError)
+            setSocialCallback("UnlockAchievementSuccess", self.__cbAchievementUnlockSuccess)
+            setSocialCallback("UnlockAchievementError", self.__cbAchievementUnlockError)
             # showAchievements:
             setSocialCallback("ShowAchievementSuccess", self.__cbAchievementShowSuccess)
             setSocialCallback("ShowAchievementError", self.__cbAchievementShowError)
