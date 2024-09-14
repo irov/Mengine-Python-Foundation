@@ -8,7 +8,8 @@ class TaskArrowHide(Task):
 
     def _onRun(self):
         arrow = Mengine.getArrow()
-        arrow.localHide(self.Value)
+        node = arrow.getNode()
+        node.localHide(self.Value)
 
         if self.Value is False:
             Mengine.setCursorMode(True)

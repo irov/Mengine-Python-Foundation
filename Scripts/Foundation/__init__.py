@@ -57,8 +57,6 @@ def onInitialize():
 
     Arrows = ["Default"]
 
-    ArrowManager.importArrows("Foundation.Arrows", Arrows)
-
     from Foundation.SceneManager import SceneManager
 
     Scenes = ["Main"]

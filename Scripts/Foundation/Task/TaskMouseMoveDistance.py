@@ -12,8 +12,9 @@ class TaskMouseMoveDistance(Task):
         pass
 
     def _onRun(self):
-        arrow = ArrowManager.getArrow()
-        arrowPosition = arrow.node.getLocalPosition()
+        arrow = Mengine.getArrow()
+        node = arrow.getNode()
+        arrowPosition = node.getLocalPosition()
         self.oldXY = (arrowPosition.x, arrowPosition.y)
 
         self.onMouseMoveID = Mengine.addMouseMoveHandler(self._onMouseMove)

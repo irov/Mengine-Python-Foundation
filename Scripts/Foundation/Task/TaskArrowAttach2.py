@@ -30,7 +30,8 @@ class TaskArrowAttach2(MixinObject, Task):
             pass
 
         ArrowManager.attachArrow(self.Object)
-        arrow = ArrowManager.getArrow()
+        arrow = Mengine.getArrow()
+        node = arrow.getNode()
 
         if self.Origin is True:
             Image = ItemEntity.getSprite()
@@ -39,7 +40,7 @@ class TaskArrowAttach2(MixinObject, Task):
             itemPos = self.Object.getPosition()
             self.Object.setOrigin(origin)
 
-            arrowPos = arrow.getLocalPosition()
+            arrowPos = node.getLocalPosition()
 
             position = (itemPos[0] - arrowPos.x, itemPos[1] - arrowPos.y)
             pass
@@ -47,7 +48,7 @@ class TaskArrowAttach2(MixinObject, Task):
         self.Object.setParam("Enable", True)
         self.Object.setPosition(position)
 
-        arrow.addChildFront(ItemEntity)
+        node.addChildFront(ItemEntity)
         return True
         pass
     pass

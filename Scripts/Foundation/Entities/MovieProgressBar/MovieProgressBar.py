@@ -170,7 +170,7 @@ class MovieProgressBar(BaseEntity):
             idle.setEnable(True)
         self.Movies['Progress'].setEnable(True)
 
-        self.scheduler = Mengine.createScheduler("MovieProgressBar")
+        self.scheduler = Mengine.createScheduler()
         return True
 
     def increase_smoothly_value(self, source, value, time, func=None, smooth_delta=50.0):

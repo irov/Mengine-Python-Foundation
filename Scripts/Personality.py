@@ -124,14 +124,13 @@ def onInitialize():
         return False
         pass
 
-    arrow = Mengine.getArrow()
-
     if Mengine.hasTouchpad() is True:
         DefaultArrowRadius = DefaultManager.getDefaultFloat("DefaultMobileArrowRadius", 15.0)
     else:
         DefaultArrowRadius = DefaultManager.getDefaultFloat("DefaultArrowRadius", 10.0)
 
-    arrow.node.setRadius(DefaultArrowRadius)
+    arrow = Mengine.getArrow()
+    arrow.setRadius(DefaultArrowRadius)
 
     # setup build version text for production user
     build_alias_id, build_text_id = "$AliasBuildVersion", "ID_TEXT_BUILD_VERSION"

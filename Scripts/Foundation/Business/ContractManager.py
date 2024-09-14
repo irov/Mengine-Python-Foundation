@@ -9,7 +9,7 @@ class ContractManager(object):
 
     @staticmethod
     def onInitialize():
-        ContractManager.s_scheduler = Mengine.createScheduler("ContractManager")
+        ContractManager.s_scheduler = Mengine.createScheduler()
 
         return True
         pass
