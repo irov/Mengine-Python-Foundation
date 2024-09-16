@@ -2,9 +2,6 @@ from Foundation.Notificator import Notificator
 from Notification import Notification
 
 class ArrowManager(object):
-    s_arrowType = {}
-
-    s_arrow = None
     s_attach = None
 
     @staticmethod
@@ -13,7 +10,6 @@ class ArrowManager(object):
 
     @staticmethod
     def onFinalize():
-        ArrowManager.s_arrow = None
         ArrowManager.s_attach = None
 
     @staticmethod
