@@ -43,18 +43,21 @@ def log(category, level, text, *args):
 
     if level <= TraceManager.getLevel(category):
         message = "\n-----------------------------------------------"
-        message += "\nError:"
+        message += "\nError: " + __tryFormatMessage(text, *args)
         message += "\n-----------------------------------------------"
-        message += "\n" + __tryFormatMessage(text, *args)
 
         if level == 0:
             message += __getTraceback()
 
         Mengine.logError(message)
-
+        pass
+    pass
 
 def trace():
-    message = __getTraceback()
+    message = "\n-----------------------------------------------"
+    message += "\nTrace:"
+    message += "\n-----------------------------------------------"
+    message += __getTraceback()
     Mengine.logError(message)
 
 
@@ -71,10 +74,7 @@ def caller(deep=0):
 
 
 def __getTraceback():
-    message = "\n-----------------------------------------------"
-    message += "\nTrace:"
-    message += "\n-----------------------------------------------"
-    message += "\nTraceback (most recent call last):"
+    message = "\nTraceback (most recent call last):"
     for (filename, line_number, function_name, text) in traceback.extract_stack()[:-2]:
         message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
     return message
