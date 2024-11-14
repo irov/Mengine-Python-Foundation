@@ -57,13 +57,13 @@ class BaseFacebook(Initializer):
     def _getUser(self, ):
         raise NotImplementedError
 
-    def getProfilePictureLink(self, type_parameter="?type=large"):
+    def getProfilePictureLink(self, type_parameter="large"):
         return self._getProfilePictureLink(type_parameter)
 
     def _getProfilePictureLink(self, type_parameter):
         raise NotImplementedError
 
-    def getProfileUserPictureLink(self, user_id, type_parameter="?type=large"):
+    def getProfileUserPictureLink(self, user_id, type_parameter="large"):
         return self._getProfileUserPictureLink(user_id, type_parameter)
 
     def _getProfileUserPictureLink(self, user_id, type_parameter):

@@ -45,20 +45,20 @@ class FacebookProvider(BaseProvider):
         return FacebookProvider._call("shareLink", link, msg, _cb_success, _cb_cancel, _cb_error)
 
     @staticmethod
-    def logout(_cb_success=None, _cb_cancel=None):
-        return FacebookProvider._call("logout", _cb_success, _cb_cancel)
+    def logout(_cb_success=None, _cb_error=None):
+        return FacebookProvider._call("logout", _cb_success, _cb_error)
 
     @staticmethod
     def getUser(_cb=None):
         return FacebookProvider._call("getUser", _cb)
 
     @staticmethod
-    def getProfilePictureLink(type_parameter="?type=large", _cb=None):
-        return FacebookProvider._call("getProfilePictureLink", type_parameter, _cb)
+    def getProfilePictureLink(type_parameter="large", _cb_success=None, _cb_error=None):
+        return FacebookProvider._call("getProfilePictureLink", type_parameter, _cb_success, _cb_error)
 
     @staticmethod
-    def getProfileUserPictureLink(user_id, type_parameter="?type=large", _cb=None):
-        return FacebookProvider._call("getProfileUserPictureLink", user_id, type_parameter, _cb)
+    def getProfileUserPictureLink(user_id, type_parameter="large", _cb_success=None, _cb_error=None):
+        return FacebookProvider._call("getProfileUserPictureLink", user_id, type_parameter, _cb_success, _cb_error)
 
 
 class DummyFacebook(object):
@@ -140,14 +140,13 @@ class DummyFacebook(object):
             _cb(response, "")
 
     @staticmethod
-    def getProfilePictureLink(type_parameter="?type=large", _cb=None):
-        # onFacebookProfilePictureLinkGet
-        if _cb:
-            _cb("", False, DummyFacebook.User.AVATAR_URL)
+    def getProfilePictureLink(type_parameter="large", _cb_success=None, _cb_error=None):
+        if _cb_error:
+            _cb_error(-1, "dummy")
 
     @staticmethod
-    def getProfileUserPictureLink(user_id, type_parameter="?type=large", _cb=None):
-        if _cb:
-            _cb("", False, DummyFacebook.User.AVATAR_URL)
+    def getProfileUserPictureLink(user_id, type_parameter="large", _cb_success=None, _cb_error=None):
+        if _cb_error:
+            _cb_error(-1, "dummy")
 
 
