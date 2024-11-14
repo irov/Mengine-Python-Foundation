@@ -44,7 +44,7 @@ class AndroidFacebook(BaseFacebook):
         _setCallback("ShareError", self._cbShareError)
         _setCallback("UserFetchSuccess", self._cbUserFetchSuccess)
         _setCallback("UserFetchError", self._cbUserFetchError)
-        _setCallback("ProfilePictureLinkGetSuccess", self._cbProfilePictureLinkGet)
+        _setCallback("ProfilePictureLinkGetSuccess", self._cbProfilePictureLinkGetSuccess)
         _setCallback("ProfilePictureLinkGetError", self._cbProfilePictureLinkGetError)
         _setCallback("CurrentAccessTokenChanged", self._cbAccessTokenChanged)
         _setCallback("CurrentProfileChanged", self._cbProfileChanged)
