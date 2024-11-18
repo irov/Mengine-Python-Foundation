@@ -116,11 +116,11 @@ class SystemApplovin(System):
             return Mengine.appleAppLovinIsConsentFlowUserGeographyGDPR()
         return False
 
-    def getBannerViewport(self):
+    def getBannerViewport(self, ad_unit_name):
         if _IOS:
-            return Mengine.appleAppLovinGetBannerViewport()
+            return Mengine.appleAppLovinGetBannerViewport(ad_unit_name)
         elif _ANDROID:
-            return Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getBannerViewport")
+            return Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getBannerViewport", ad_unit_name)
         return None
 
     def _getAllAdUnits(self):

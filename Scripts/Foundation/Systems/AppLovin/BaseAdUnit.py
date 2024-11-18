@@ -170,7 +170,7 @@ class BaseAdUnit(object):
         self._cbLoadFailed()
 
     def _cbLoadFailed(self):
-        self._log("[{} cb] !!! load failed".format(self.name), err=True, force=True)
+        self._log("[{} cb] !!! load failed".format(self.name), err=False, force=True)
         Notification.notify(Notificator.onAdvertLoadFail, self.ad_type, self.name)
 
     @ad_callback
