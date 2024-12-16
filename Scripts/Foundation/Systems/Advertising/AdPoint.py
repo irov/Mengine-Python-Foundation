@@ -48,6 +48,9 @@ class TriggerParams(object):
             self.time_cooldown *= 1000.0
             self.time_offset *= 1000.0
 
+        Trace.msg_dev("[AdPoint {}] action offset = {}, cooldown = {} | time offset = {}, cooldown = {}"
+            .format(self.name, self.action_offset, self.action_cooldown, self.time_offset, self.time_cooldown))
+
         self.group = params.get("cooldown_group", None)
 
     def validate(self):
