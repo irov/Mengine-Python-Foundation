@@ -109,7 +109,7 @@ class AppleFacebook(BaseFacebook):
             ERROR_LOGIN_ERROR = -2
         """
         Mengine.logError("[Facebook] error [{}]: {}".format(code, message))
-        self.system.onLoginError(message)
+        self.system.onLoginError(code, message)
 
     def _cbShareSuccess(self, post_id):
         Trace.msg_dev("[Facebook cb] share success post_id={}".format(post_id))
@@ -128,11 +128,12 @@ class AppleFacebook(BaseFacebook):
         """
 
         Mengine.logError("[Facebook] Share error [{}]: {}".format(code, message))
-        self.system.onShareError(message)
+        self.system.onShareError(code, message)
 
-    def _cbProfilePictureLinkGetSuccess(self, user_id, is_success, picture_url):
-        Trace.msg_dev("[Facebook cb] ProfilePictureLinkGet success [{}] {}: {}".format(user_id, is_success, picture_url))
-        self.system.onProfilePictureLinkGet(user_id, is_success, picture_url)
+    def _cbProfilePictureLinkGetSuccess(self, user_id, picture_url):
+        Trace.msg_dev("[Facebook cb] ProfilePictureLinkGet success [{}] {}".format(user_id, picture_url))
+        self.system.onProfilePictureLinkGetSuccess(user_id, picture_url)
 
     def _cbProfilePictureLinkGetError(self, code, message):
         Mengine.logError("[Facebook] ProfilePictureLinkGet error [{}]: {}".format(code, message))
+        self.system.onProfilePictureLinkGetError(code, message)
