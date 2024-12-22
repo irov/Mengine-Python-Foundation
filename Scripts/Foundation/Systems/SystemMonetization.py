@@ -425,6 +425,9 @@ class SystemMonetization(System):
                 "Energy" (adds energy), "DisableInterstitialAds" (disable interstitial adverts)
             @param prod_id: id of product, which has reward info """
 
+        if SystemMonetization.isMonetizationEnable() is False:
+            return False
+
         reward = {}
         if prod_id is not None:
             reward = MonetizationManager.getProductReward(prod_id)
@@ -477,6 +480,8 @@ class SystemMonetization(System):
 
     @staticmethod
     def disableInterstitialAds(*args):
+        if SystemMonetization.isMonetizationEnable() is False:
+            return
         if SystemManager.hasSystem("SystemAdvertising") is False:
             return
         SystemAdvertising = SystemManager.getSystem("SystemAdvertising")
@@ -487,6 +492,9 @@ class SystemMonetization(System):
 
     @classmethod
     def showAd(cls, AdType="Rewarded", AdUnitName=None):
+        if SystemMonetization.isMonetizationEnable() is False:
+            return
+
         if AdUnitName is None:
             AdUnitName = AdType
 
@@ -502,6 +510,9 @@ class SystemMonetization(System):
 
     @staticmethod
     def updateAvailableAds():
+        if SystemMonetization.isMonetizationEnable() is False:
+            return
+
         """ resets `today_viewed_ads` if `last_viewed_date` is different from today date"""
         today_date = SystemMonetization.__getTodayDate()
 
@@ -536,6 +547,9 @@ class SystemMonetization(System):
 
     @staticmethod
     def isAdsEnded(AdUnitName="Rewarded"):
+        if SystemMonetization.isMonetizationEnable() is False:
+            return False
+
         """ :return: True if ads ended """
         today_viewed_ads = SystemMonetization.getAdvertStorageKey(AdUnitName, "today_viewed_ads")
 
@@ -599,10 +613,16 @@ class SystemMonetization(System):
 
     @staticmethod
     def shouldAcceptPrice():
+        if SystemMonetization.isMonetizationEnable() is False:
+            return False
+
         return MonetizationManager.getGeneralSetting("ShouldAcceptPrice", True)
 
     @staticmethod
     def isGameStoreEnable():
+        if SystemMonetization.isMonetizationEnable() is False:
+            return False
+
         if GroupManager.hasGroup(SystemMonetization.game_store_name) is False:
             return False
         demon = DemonManager.getDemon(SystemMonetization.game_store_name)
@@ -610,6 +630,9 @@ class SystemMonetization(System):
 
     @staticmethod
     def isComponentEnable(name):
+        if SystemMonetization.isMonetizationEnable() is False:
+            return False
+
         if name not in SystemMonetization.components:
             return False
 
@@ -636,6 +659,9 @@ class SystemMonetization(System):
                 Trace.log("System", 0, "Wrong product id type {}, must be str".format(type(prod_id)))
                 return False
 
+        if SystemMonetization.isMonetizationEnable() is False:
+            return False
+
         items = SystemMonetization.getStorageListValues("purchased")
         if items is None:
             return False
@@ -649,6 +675,9 @@ class SystemMonetization(System):
 
     @staticmethod
     def isProductGroupPurchased(group_id):
+        if SystemMonetization.isMonetizationEnable() is False:
+            return False
+
         items = SystemMonetization.getStorageListValues("PurchasedProductGroups")
         if items is None:
             return False
@@ -658,6 +687,9 @@ class SystemMonetization(System):
 
     @staticmethod
     def isPurchaseDelayed(prod_id):
+        if SystemMonetization.isMonetizationEnable() is False:
+            return False
+
         return prod_id in SystemMonetization._session_delayed_products
 
     # --- Observers ----------------------------------------------------------------------------------------------------
