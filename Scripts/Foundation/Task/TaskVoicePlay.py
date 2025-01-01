@@ -35,7 +35,7 @@ class TaskVoicePlay(Task):
             return True
         pass
 
-    def _onVoiceEnd(self, playId, isEnd):
+    def _onVoiceEnd(self, method, playId):
         """
         Voice play callback
         :param playId: SoundIdentity
