@@ -16,16 +16,16 @@ class IOSRewardedAd(BaseAdUnit):
             "onAppleAppLovinRewardedDidFailToLoadAdForAdUnitIdentifier": self.cbLoadFailed,
             "onAppleAppLovinRewardedDidPayRevenueForAd": self.cbPayRevenue,
         }
-        return Mengine.appleAppLovinInitRewarded(self.ad_unit_id, callbacks)
+        return Mengine.appleAppLovinInitRewarded(callbacks)
 
     def _canOffer(self):
-        return Mengine.appleAppLovinCanOfferRewarded(self.ad_unit_id, self.getPlacementName())
+        return Mengine.appleAppLovinCanOfferRewarded(self.getPlacementName())
 
     def _isAvailable(self):
-        return Mengine.appleAppLovinCanYouShowRewarded(self.ad_unit_id, self.getPlacementName())
+        return Mengine.appleAppLovinCanYouShowRewarded(self.getPlacementName())
 
     def _show(self):
-        return Mengine.appleAppLovinShowRewarded(self.ad_unit_id, self.getPlacementName())
+        return Mengine.appleAppLovinShowRewarded(self.getPlacementName())
 
     # callbacks
 

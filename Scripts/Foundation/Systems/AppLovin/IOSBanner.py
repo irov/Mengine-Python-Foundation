@@ -17,7 +17,7 @@ class IOSBanner(BaseAdUnit):
             "onAppleAppLovinBannerDidPayRevenueForAd": self.cbPayRevenue,
             # onAppleAppLovinBannerDidStartAdRequestForAdUnitIdentifier
         }
-        return Mengine.appleAppLovinInitBanner(self.ad_unit_id, self.getPlacementName(), callbacks)
+        return Mengine.appleAppLovinInitBanner(self.getPlacementName(), callbacks)
 
     def _canOffer(self):
         return True
@@ -26,10 +26,10 @@ class IOSBanner(BaseAdUnit):
         return True
 
     def _show(self):
-        return Mengine.appleAppLovinShowBanner(self.ad_unit_id)
+        return Mengine.appleAppLovinShowBanner()
 
     def hide(self):
-        return Mengine.appleAppLovinHideBanner(self.ad_unit_id)
+        return Mengine.appleAppLovinHideBanner()
 
     # callbacks
 

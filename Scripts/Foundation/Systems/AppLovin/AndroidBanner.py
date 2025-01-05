@@ -21,8 +21,7 @@ class AndroidBanner(BaseAdUnit, AndroidAdUnitCallbacks):
 
     def _initialize(self):
         self._setCallbacks()
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "initBanner",
-                                            self.ad_unit_id, self.getPlacementName())
+        return True
 
     def _canOffer(self):
         Trace.log("System", 0, "Banner function 'canOffer' always returns True")
@@ -33,12 +32,10 @@ class AndroidBanner(BaseAdUnit, AndroidAdUnitCallbacks):
         return True
 
     def _show(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "bannerVisible",
-                                            self.ad_unit_id, True)
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "bannerVisible", True)
 
     def hide(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "bannerVisible",
-                                            self.ad_unit_id, False)
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "bannerVisible", False)
 
     # callbacks
 

@@ -8,9 +8,7 @@ CREDENTIALS_CONFIG_KEY = "AppLovinPlugin"
 def ad_callback(bound_method):
     if _ANDROID:
         # I add callback, that returns an `ad_unit_id` as first argument
-        def cb_wrapper(self, ad_unit_id, *args, **kwargs):
-            if ad_unit_id != self.ad_unit_id:
-                return
+        def cb_wrapper(self, *args, **kwargs):
             return bound_method(self, *args, **kwargs)
     elif _IOS:
         # each callback is bounded to a specific ad unit
@@ -30,13 +28,9 @@ class BaseAdUnit(object):
         self.inited = False
         self.display = False
         self.name = name    # placement
-        self.ad_unit_id = Mengine.getConfigString(CREDENTIALS_CONFIG_KEY, "%sAdUnitId" % self.name, "")
 
     def initialize(self):
         if bool(Mengine.getConfigBool('Advertising', self.ad_type, False)) is False:
-            return False
-        if self.ad_unit_id == "":
-            self._log("[{}] call init failed: ad unit id is not configured or wrong ({})!".format(self.name, self.ad_unit_id), err=True, force=True)
             return False
 
         self._log("[{}] call init".format(self.name))
@@ -99,13 +93,9 @@ class BaseAdUnit(object):
     def __checkInit(self, init_if_no=False):
         """ returns True if ad inited else False
             @param init_if_no: if True - tries to init """
-
-        if self.ad_unit_id is None:
-            return False
-
         if self.inited is True:
             return True
-        err_msg = "Applovin ad [{}:{}:{}] not inited".format(self.ad_type, self.name, self.ad_unit_id)
+        err_msg = "Applovin ad [{}:{}] not inited".format(self.ad_type, self.name)
 
         if init_if_no is True:
             err_msg += ". Try init..."
@@ -124,7 +114,7 @@ class BaseAdUnit(object):
     # callbacks
 
     @ad_callback
-    def cbDisplaySuccess(self):
+    def cbDisplaySuccess(self, *args, **kwargs):
         self._cbDisplaySuccess()
 
     def _cbDisplaySuccess(self):
@@ -133,7 +123,7 @@ class BaseAdUnit(object):
         Notification.notify(Notificator.onAdvertDisplayed, self.ad_type, self.name)
 
     @ad_callback
-    def cbDisplayFailed(self):
+    def cbDisplayFailed(self, *args, **kwargs):
         self._cbDisplayFailed()
 
     def _cbDisplayFailed(self):
@@ -141,7 +131,7 @@ class BaseAdUnit(object):
         Notification.notify(Notificator.onAdvertDisplayFailed, self.ad_type, self.name)
 
     @ad_callback
-    def cbHidden(self):
+    def cbHidden(self, *args, **kwargs):
         self._cbHidden()
 
     def _cbHidden(self):
@@ -150,7 +140,7 @@ class BaseAdUnit(object):
         Notification.notify(Notificator.onAdvertHidden, self.ad_type, self.name)
 
     @ad_callback
-    def cbClicked(self):
+    def cbClicked(self, *args, **kwargs):
         self._cbClicked()
 
     def _cbClicked(self):
@@ -158,7 +148,7 @@ class BaseAdUnit(object):
         Notification.notify(Notificator.onAdvertClicked, self.ad_type, self.name)
 
     @ad_callback
-    def cbLoadSuccess(self):
+    def cbLoadSuccess(self, *args, **kwargs):
         self._cbLoadSuccess()
 
     def _cbLoadSuccess(self):
@@ -166,7 +156,7 @@ class BaseAdUnit(object):
         Notification.notify(Notificator.onAdvertLoadSuccess, self.ad_type, self.name)
 
     @ad_callback
-    def cbLoadFailed(self):
+    def cbLoadFailed(self, *args, **kwargs):
         self._cbLoadFailed()
 
     def _cbLoadFailed(self):
@@ -174,10 +164,10 @@ class BaseAdUnit(object):
         Notification.notify(Notificator.onAdvertLoadFail, self.ad_type, self.name)
 
     @ad_callback
-    def cbPayRevenue(self, revenue_data=None):
+    def cbPayRevenue(self, *args, **kwargs):
         """ revenue_data = {'revenue': float} """
-        if revenue_data is None:    # fixme
-            revenue_data = {}
+        # fixme
+        revenue_data = {}
         self._cbPayRevenue(revenue_data)
 
     def _cbPayRevenue(self, revenue_data):

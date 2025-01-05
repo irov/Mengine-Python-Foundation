@@ -18,17 +18,14 @@ class AndroidInterstitialAd(BaseAdUnit, AndroidAdUnitCallbacks):
 
     def _initialize(self):
         self._setCallbacks()
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "initInterstitial",
-                                            self.ad_unit_id)
+        return True
 
     def _canOffer(self):
         Trace.log("System", 0, "Interstitial advert works only with isAvailable function")
         return self._isAvailable()
 
     def _isAvailable(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "canYouShowInterstitial",
-                                            self.ad_unit_id, self.getPlacementName())
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "canYouShowInterstitial", self.getPlacementName())
 
     def _show(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showInterstitial",
-                                            self.ad_unit_id, self.getPlacementName())
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showInterstitial", self.getPlacementName())
