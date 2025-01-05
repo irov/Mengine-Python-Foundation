@@ -58,9 +58,7 @@ class TaskSoundEffect(Task):
             pass
         pass
 
-    def _onSoundEnd(self, playId, callback=None):
-        if callback == 0:
-            return
+    def _onSoundEnd(self, method, playId):
         if self.playId.getId() != playId.getId():
             return
             pass
