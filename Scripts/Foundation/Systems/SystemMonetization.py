@@ -576,8 +576,8 @@ class SystemMonetization(System):
     # callbacks
 
     @staticmethod
-    def _onAdvertisementResult(ad_name, label, result):  # react on showAd()
-        _Log("onAdvertisementReward {} - [{}] {}".format(ad_name, label, result))
+    def _onAdUserRewarded(ad_type, ad_name, params):  # react on showAd()
+        _Log("onAdvertisementReward type: {} name: {} params: {}".format(ad_type, ad_name, params))
 
         advert_product = MonetizationManager.findProduct(lambda pr: pr.currency == "Advert" and pr.name == ad_name)
         if advert_product is None:
@@ -706,7 +706,7 @@ class SystemMonetization(System):
         self.addObserver(Notificator.onGameStorePayGold, self._onPayGold)
 
         # other
-        self.addObserver(Notificator.onAdvertRewarded, self._onAdvertisementResult)
+        self.addObserver(Notificator.onAdUserRewarded, self._onAdUserRewarded)
         self.addObserver(Notificator.onAppRated, self._onAppRated)
 
         self._setupObservers()

@@ -26,7 +26,6 @@ class BaseAdUnit(object):
     def __init__(self, name):
         super(BaseAdUnit, self).__init__()
         self.inited = False
-        self.display = False
         self.name = name    # placement
 
     def initialize(self):
@@ -74,18 +73,22 @@ class BaseAdUnit(object):
 
     def show(self):
         if self.__checkInit() is False:
-            self._cbDisplayFailed()
+            self._cbShowCompleted(False, {})
             return False
 
         self._log("[{}:{}] show advertisement...".format(self.ad_type, self.name))
 
-        if self._show() is False:
-            self._cbDisplayFailed()
+        def __showCompleted(successful, params):
+            self.cbShowCompleted(successful, params)
+            pass
+
+        if self._show(__showCompleted) is False:
+            self._cbShowCompleted(False, {})
             return False
 
         return True
 
-    def _show(self):
+    def _show(self, cb):
         raise NotImplementedError
 
     # utils
@@ -114,66 +117,20 @@ class BaseAdUnit(object):
     # callbacks
 
     @ad_callback
-    def cbDisplaySuccess(self, *args, **kwargs):
-        self._cbDisplaySuccess()
+    def cbShowCompleted(self, successful, params):
+        self._cbShowCompleted(successful, params)
 
-    def _cbDisplaySuccess(self):
-        self.display = True
-        self._log("[{} cb] displayed".format(self.name))
-        Notification.notify(Notificator.onAdvertDisplayed, self.ad_type, self.name)
-
-    @ad_callback
-    def cbDisplayFailed(self, *args, **kwargs):
-        self._cbDisplayFailed()
-
-    def _cbDisplayFailed(self):
-        self._log("[{} cb] !!! display failed".format(self.name), err=True, force=True)
-        Notification.notify(Notificator.onAdvertDisplayFailed, self.ad_type, self.name)
+    def _cbShowCompleted(self, successful, params):
+        self._log("[{} cb] completed {}".format(self.name, params))
+        Notification.notify(Notificator.onAdShowCompleted, self.ad_type, self.name, successful, params)
 
     @ad_callback
-    def cbHidden(self, *args, **kwargs):
-        self._cbHidden()
+    def cbRevenuePaid(self, placement, params):
+        self._cbRevenuePaid(params)
 
-    def _cbHidden(self):
-        self.display = False
-        self._log("[{} cb] hidden".format(self.name))
-        Notification.notify(Notificator.onAdvertHidden, self.ad_type, self.name)
-
-    @ad_callback
-    def cbClicked(self, *args, **kwargs):
-        self._cbClicked()
-
-    def _cbClicked(self):
-        self._log("[{} cb] clicked".format(self.name))
-        Notification.notify(Notificator.onAdvertClicked, self.ad_type, self.name)
-
-    @ad_callback
-    def cbLoadSuccess(self, *args, **kwargs):
-        self._cbLoadSuccess()
-
-    def _cbLoadSuccess(self):
-        self._log("[{} cb] load success".format(self.name))
-        Notification.notify(Notificator.onAdvertLoadSuccess, self.ad_type, self.name)
-
-    @ad_callback
-    def cbLoadFailed(self, *args, **kwargs):
-        self._cbLoadFailed()
-
-    def _cbLoadFailed(self):
-        self._log("[{} cb] !!! load failed".format(self.name), err=False, force=True)
-        Notification.notify(Notificator.onAdvertLoadFail, self.ad_type, self.name)
-
-    @ad_callback
-    def cbPayRevenue(self, *args, **kwargs):
-        """ revenue_data = {'revenue': float} """
-        # fixme
-        revenue_data = {}
-        self._cbPayRevenue(revenue_data)
-
-    def _cbPayRevenue(self, revenue_data):
-        self._log("[{} cb] pay revenue {}".format(self.name, revenue_data))
-        revenue = revenue_data.get('revenue', 0.0)
-        Notification.notify(Notificator.onAdvertPayRevenue, self.ad_type, self.name, revenue)
+    def _cbRevenuePaid(self, params):
+        self._log("[{} cb] pay revenue {}".format(self.name, params))
+        Notification.notify(Notificator.onAdRevenuePaid, self.ad_type, self.name, params)
 
     # devtodebug
 

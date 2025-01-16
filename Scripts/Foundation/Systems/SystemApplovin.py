@@ -118,7 +118,7 @@ class SystemApplovin(System):
 
     def getBannerViewport(self, ad_unit_name):
         if _IOS:
-            return Mengine.appleAppLovinGetBannerViewport(ad_unit_name)
+            return Mengine.appleAppLovinGetBannerViewport()
         elif _ANDROID:
             return Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getBannerViewport")
         return None

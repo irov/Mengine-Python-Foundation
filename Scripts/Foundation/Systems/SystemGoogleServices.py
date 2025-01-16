@@ -412,9 +412,9 @@ class SystemGoogleServices(System):
             if product is acknowledged, Mengine sends onGooglePlayBillingPurchaseAcknowledged
         """
         for prod_id in products:
-            is_consumable = ProductsProvider.isProductConsumable(prod_id)
-            _Log("[Billing cb] onGooglePlayBillingPurchaseIsConsumable: {!r} consumable={!r}".format(prod_id, is_consumable))
-            cb(is_consumable)
+            isConsumable = ProductsProvider.isProductConsumable(prod_id)
+            _Log("[Billing cb] onGooglePlayBillingPurchaseIsConsumable: {!r} consumable={!r}".format(prod_id, isConsumable))
+            cb(True, dict(isConsumable=isConsumable))
 
     @staticmethod
     def __cbBillingBuyInAppStatus(prod_id, status):

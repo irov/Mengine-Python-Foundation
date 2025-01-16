@@ -102,16 +102,15 @@ class DummyAdvertisement(object):
 
             if display_failed:
                 source.addDelay(FakeWatchDelay)
-                source.addNotify(Notificator.onAdvertDisplayFailed, AdType, AdUnitName)
+                source.addNotify(Notificator.onAdShowCompleted, AdType, AdUnitName, False, {})
             else:
-                source.addNotify(Notificator.onAdvertDisplayed, AdType, AdUnitName)
                 source.addDelay(FakeWatchDelay)
 
                 if AdType == "Rewarded":
-                    source.addNotify(Notificator.onAdvertRewarded, AdUnitName, "gold", GoldReward)
+                    source.addNotify(Notificator.onAdUserRewarded, AdUnitName, {"gold": GoldReward})
 
-                source.addNotify(Notificator.onAdvertHidden, AdType, AdUnitName)
-                source.addNotify(Notificator.onAdvertPayRevenue, AdType, AdUnitName, revenue)
+                source.addNotify(Notificator.onAdShowCompleted, AdType, AdUnitName, True, {})
+                source.addNotify(Notificator.onAdRevenuePaid, AdType, AdUnitName, {})
 
     @staticmethod
     def canOfferAdvert(AdType, AdUnitName=None, **params):
@@ -146,11 +145,6 @@ class DummyAdvertisement(object):
         Trace.msg("<DummyAdvertisement> show advert {}:{} (fail: {})...".format(
             AdType, AdUnitName, display_failed))
 
-        if display_failed is True:
-            Notification.notify(Notificator.onAdvertDisplayFailed, AdType, AdUnitName)
-        else:
-            Notification.notify(Notificator.onAdvertDisplayed, AdType, AdUnitName)
-
         return True
 
     @staticmethod
@@ -159,7 +153,7 @@ class DummyAdvertisement(object):
         if AdUnitName is None:
             AdUnitName = params.get("AdUnitName", AdType)
 
-        Notification.notify(Notificator.onAdvertHidden, AdType, AdUnitName)
+        Notification.notify(Notificator.onAdShowCompleted, AdType, AdUnitName, True, {})
 
         return True
 

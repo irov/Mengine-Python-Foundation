@@ -708,16 +708,11 @@ def onInitialize():
         , 'onGameSceneChange'
 
         , 'onAdPointStart'
-        , 'onAdvertLoadSuccess'
-        , 'onAdvertLoadFail'
-        , 'onAdvertDisplayed'
-        , 'onAdvertDisplayFailed'
-        , 'onAdvertClicked'
-        , 'onAdvertRewarded'
-        , 'onAdvertPayRevenue'
-        , 'onAdvertSkipped'
-        , 'onAdvertHidden'
         , 'onDisableInterstitialAds'
+
+        , "onAdShowCompleted"
+        , "onAdRevenuePaid"
+        , "onAdUserRewarded"
 
         , "onRequestPromoCodeResult"
 

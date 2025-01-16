@@ -1,20 +1,11 @@
 from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit, AndroidAdUnitCallbacks
 from Foundation.Systems.AppLovin.BaseAdUnit import ad_callback
 
-
 class AndroidBanner(BaseAdUnit, AndroidAdUnitCallbacks):
     ad_type = "Banner"
 
     def _setCallbacks(self):
-        self._addAndroidCallback("onAppLovinBannerOnAdDisplayed", self.cbDisplaySuccess)
-        self._addAndroidCallback("onAppLovinBannerOnAdDisplayFailed", self.cbDisplayFailed)
-        self._addAndroidCallback("onAppLovinBannerOnAdClicked", self.cbClicked)
-        self._addAndroidCallback("onAppLovinBannerOnAdHidden", self.cbHidden)
-        self._addAndroidCallback("onAppLovinBannerOnAdExpanded", self.cbExpanded)
-        self._addAndroidCallback("onAppLovinBannerOnAdCollapsed", self.cbCollapsed)
-        self._addAndroidCallback("onAppLovinBannerOnAdLoaded", self.cbLoadSuccess)
-        self._addAndroidCallback("onAppLovinBannerOnAdLoadFailed", self.cbLoadFailed)
-        self._addAndroidCallback("onAppLovinBannerOnAdRevenuePaid", self.cbPayRevenue)
+        self._addAndroidCallback("onAndroidAppLovinBannerRevenuePaid", self.cbPayRevenue)
 
     def _cleanUp(self):
         self._removeAndroidCallbacks()

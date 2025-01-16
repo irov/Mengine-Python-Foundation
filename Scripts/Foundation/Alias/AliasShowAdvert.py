@@ -31,22 +31,9 @@ class AliasShowAdvert(TaskAlias):
     def _scopeShowAdvert(self, source):
         with source.addParallelTask(2) as (display_respond, show):
             # check is advert shown
-            with display_respond.addRaceTask(4) as (ok, fail, timeout, reached_limit):
-                with ok.addParallelTask(2) as (ok_display, ok_hide):
-                    ok_display.addListener(Notificator.onAdvertDisplayed)
-                    ok_display.addSemaphore(self._semaphore_ad_display_ok, To=True)
-                    ok_hide.addListener(Notificator.onAdvertHidden)
-
-                fail.addListener(Notificator.onAdvertDisplayFailed)
-                fail.addFunction(self._displayRespondError, "display failed")
-
-                timeout.addDelay(self.Timeout)
-                with timeout.addIfSemaphore(self._semaphore_ad_display_ok, True) as (_, error):
-                    # if after timeout delay ad not displayed - send error
-                    error.addFunction(self._displayRespondError, "timeout {} seconds".format(self.Timeout / 1000))
-
+            with display_respond.addRaceTask(4) as (completed, reached_limit):
+                completed.addListener(Notificator.onAdShowCompleted)
                 reached_limit.addListener(Notificator.onAvailableAdsEnded)
-                reached_limit.addFunction(self._displayRespondError, "reached ads limit")
 
             show.addFunction(self._showAd)
 
