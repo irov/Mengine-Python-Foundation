@@ -10,7 +10,7 @@ class IOSRewardedAd(BaseAdUnit):
             "onAppleAppLovinRewardedUserRewarded": self.cbUserRewarded,
             "onAndroidAppLovinRewardedRevenuePaid": self.cbRevenuePaid,
         }
-        return Mengine.appleAppLovinSetProvider(callbacks)
+        return Mengine.appleAppLovinSetRewardedProvider(callbacks)
 
     def _canOffer(self):
         return Mengine.appleAppLovinCanOfferRewarded(self.getPlacementName())

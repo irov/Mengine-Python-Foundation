@@ -6,15 +6,9 @@ class IOSInterstitialAd(BaseAdUnit):
 
     def _initialize(self):
         callbacks = {
-            "onAppleAppLovinInterstitialDidDisplayAd": self.cbDisplaySuccess,
-            "onAppleAppLovinInterstitialDidFailToDisplayAd": self.cbDisplayFailed,
-            "onAppleAppLovinInterstitialDidClickAd": self.cbClicked,
-            "onAppleAppLovinInterstitialDidHideAd": self.cbHidden,
-            "onAppleAppLovinInterstitialDidLoadAd": self.cbLoadSuccess,
-            "onAppleAppLovinInterstitialDidFailToLoadAdForAdUnitIdentifier": self.cbLoadFailed,
-            "onAppleAppLovinInterstitialDidPayRevenueForAd": self.cbPayRevenue,
+            "onAppleAppLovinInterstitialRevenuePaid": self.cbRevenuePaid,
         }
-        return Mengine.appleAppLovinInitInterstitial(callbacks)
+        return Mengine.appleAppLovinSetInterstitialProvider(callbacks)
 
     def _canOffer(self):
         Trace.log("System", 0, "Interstitial advert works only with isAvailable function")
@@ -23,5 +17,5 @@ class IOSInterstitialAd(BaseAdUnit):
     def _isAvailable(self):
         return Mengine.appleAppLovinCanYouShowInterstitial(self.getPlacementName())
 
-    def _show(self):
-        return Mengine.appleAppLovinShowInterstitial(self.getPlacementName())
+    def _show(self, cb):
+        return Mengine.appleAppLovinShowInterstitial(self.getPlacementName(), cb)

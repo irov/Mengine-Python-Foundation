@@ -4,7 +4,7 @@ class AndroidInterstitialAd(BaseAdUnit, AndroidAdUnitCallbacks):
     ad_type = "Interstitial"
 
     def _setCallbacks(self):
-        self._addAndroidCallback("onAppLovinInterstitialRevenuePaid", self.cbRevenuePaid)
+        self._addAndroidCallback("onAndroidAppLovinInterstitialRevenuePaid", self.cbRevenuePaid)
 
     def _cleanUp(self):
         self._removeAndroidCallbacks()

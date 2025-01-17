@@ -125,7 +125,7 @@ class BaseAdUnit(object):
         Notification.notify(Notificator.onAdShowCompleted, self.ad_type, self.name, successful, params)
 
     @ad_callback
-    def cbRevenuePaid(self, placement, params):
+    def cbRevenuePaid(self, params):
         self._cbRevenuePaid(params)
 
     def _cbRevenuePaid(self, params):
