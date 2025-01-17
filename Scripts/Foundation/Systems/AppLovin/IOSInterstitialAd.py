@@ -17,5 +17,9 @@ class IOSInterstitialAd(BaseAdUnit):
     def _isAvailable(self):
         return Mengine.appleAppLovinCanYouShowInterstitial(self.getPlacementName())
 
-    def _show(self, cb):
-        return Mengine.appleAppLovinShowInterstitial(self.getPlacementName(), cb)
+    def _show(self):
+        def __showCompleted(successful, params):
+            self.cbShowCompleted(successful, params)
+            pass
+
+        return Mengine.appleAppLovinShowInterstitial(self.getPlacementName(), __showCompleted)

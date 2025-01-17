@@ -18,8 +18,12 @@ class IOSRewardedAd(BaseAdUnit):
     def _isAvailable(self):
         return Mengine.appleAppLovinCanYouShowRewarded(self.getPlacementName())
 
-    def _show(self, cb):
-        return Mengine.appleAppLovinShowRewarded(self.getPlacementName(), cb)
+    def _show(self):
+        def __showCompleted(successful, params):
+            self.cbShowCompleted(successful, params)
+            pass
+
+        return Mengine.appleAppLovinShowRewarded(self.getPlacementName(), __showCompleted)
 
     # callbacks
 

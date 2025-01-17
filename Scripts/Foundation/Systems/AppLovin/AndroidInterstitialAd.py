@@ -20,5 +20,9 @@ class AndroidInterstitialAd(BaseAdUnit, AndroidAdUnitCallbacks):
     def _isAvailable(self):
         return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "canYouShowInterstitial", self.getPlacementName())
 
-    def _show(self, cb):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showInterstitial", self.getPlacementName(), cb)
+    def _show(self):
+        def __showCompleted(successful, params):
+            self.cbShowCompleted(successful, params)
+            pass
+
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showInterstitial", self.getPlacementName(), __showCompleted)

@@ -21,8 +21,12 @@ class AndroidRewardedAd(BaseAdUnit, AndroidAdUnitCallbacks):
     def _isAvailable(self):
         return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "canYouShowRewarded", self.getPlacementName())
 
-    def _show(self, cb):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showRewarded", self.getPlacementName(), cb)
+    def _show(self):
+        def __showCompleted(successful, params):
+            self.cbShowCompleted(successful, params)
+            pass
+
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showRewarded", self.getPlacementName(), __showCompleted)
 
     # callbacks
 
