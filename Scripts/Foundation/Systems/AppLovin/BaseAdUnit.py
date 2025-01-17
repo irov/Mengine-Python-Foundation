@@ -84,7 +84,7 @@ class BaseAdUnit(object):
 
         return True
 
-    def _show(self, cb):
+    def _show(self):
         raise NotImplementedError
 
     # utils
