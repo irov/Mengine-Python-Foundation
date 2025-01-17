@@ -78,7 +78,7 @@ class BaseAdUnit(object):
 
         self._log("[{}:{}] show advertisement...".format(self.ad_type, self.name))
 
-        if self._show(__showCompleted) is False:
+        if self._show() is False:
             self._cbShowCompleted(False, {})
             return False
 
