@@ -39,9 +39,11 @@ class SystemAdvertising(System):
 
         return True
 
-    def tryInterstitial(self, next_scene, AdPlacement):
+    def tryInterstitial(self, next_scene, AdPlacements, Skip = False):
         if self.__checkAdInterstitial(AdPlacement) is False:
-            Notification.notify(Notificator.onChangeScene, next_scene)
+            if Skip is True:
+                Notification.notify(Notificator.onChangeScene, next_scene)
+                pass
             return
 
         AdvertisingScene = DemonManager.getDemon("AdvertisingScene")
