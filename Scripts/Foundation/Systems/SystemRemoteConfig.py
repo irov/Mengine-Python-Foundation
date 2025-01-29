@@ -20,10 +20,6 @@ class SystemRemoteConfig(System):
             return
 
         RemoteConfigProvider.setProvider("Firebase", dict(
-            getRemoteConfigValueString=SystemRemoteConfig.getRemoteConfigValueString,
-            getRemoteConfigValueBoolean=SystemRemoteConfig.getRemoteConfigValueBoolean,
-            getRemoteConfigValueFloat=SystemRemoteConfig.getRemoteConfigValueFloat,
-            getRemoteConfigValueInt=SystemRemoteConfig.getRemoteConfigValueInt,
             getRemoteConfigValueJSON=SystemRemoteConfig.getRemoteConfigValueJSON,
         ))
 
@@ -52,54 +48,6 @@ class SystemRemoteConfig(System):
                 value = raw  # use default config type
 
             return value
-
-    @staticmethod
-    def getRemoteConfigValueString(key):
-        """ returns str value """
-        value = None
-        if _ANDROID:
-            value = Mengine.androidStringMethod(SystemRemoteConfig.ANDROID_PLUGIN_NAME, "getRemoteConfigValueString", key)
-        elif _IOS:
-            value = Mengine.appleFirebaseRemoteConfigGetValueConstString(key)
-        else:
-            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValueString")
-        return value
-
-    @staticmethod
-    def getRemoteConfigValueBoolean(key):
-        """ returns bool value """
-        value = None
-        if _ANDROID:
-            value = Mengine.androidBooleanMethod(SystemRemoteConfig.ANDROID_PLUGIN_NAME, "getRemoteConfigValueBoolean", key)
-        elif _IOS:
-            value = Mengine.appleFirebaseRemoteConfigGetValueBoolean(key)
-        else:
-            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValueBoolean")
-        return value
-
-    @staticmethod
-    def getRemoteConfigValueInt(key):
-        """ returns int value """
-        value = None
-        if _ANDROID:
-            value = Mengine.androidLongMethod(SystemRemoteConfig.ANDROID_PLUGIN_NAME, "getRemoteConfigValueLong", key)
-        elif _IOS:
-            value = Mengine.appleFirebaseRemoteConfigGetValueInteger(key)
-        else:
-            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValueInt")
-        return value
-
-    @staticmethod
-    def getRemoteConfigValueFloat(key):
-        """ returns float value """
-        value = None
-        if _ANDROID:
-            value = Mengine.androidDoubleMethod(SystemRemoteConfig.ANDROID_PLUGIN_NAME, "getRemoteConfigValueDouble", key)
-        elif _IOS:
-            value = Mengine.appleFirebaseRemoteConfigGetValueDouble(key)
-        else:
-            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValueFloat")
-        return value
 
     @staticmethod
     def getRemoteConfigValueJSON(key):

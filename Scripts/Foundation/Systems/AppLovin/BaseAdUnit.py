@@ -23,16 +23,15 @@ def ad_callback(bound_method):
 class BaseAdUnit(object):
     ad_type = None
 
-    def __init__(self, name):
+    def __init__(self):
         super(BaseAdUnit, self).__init__()
         self.inited = False
-        self.name = name    # placement
 
     def initialize(self):
         if bool(Mengine.getConfigBool('Advertising', self.ad_type, False)) is False:
             return False
 
-        self._log("[{}] call init".format(self.name))
+        self._log("[{}] call init".format(self.ad_type))
 
         if self._initialize() is True:
             self.inited = True
@@ -49,42 +48,67 @@ class BaseAdUnit(object):
     def _cleanUp(self):
         return
 
-    def canOffer(self):
-        """ Call this method only once when you create rewarded button """
-
-        status = self._canOffer()
-        self._log("[{}:{}] available to offer is {}".format(self.ad_type, self.name, status))
-
-        return status
-
-    def _canOffer(self):
-        raise NotImplementedError
-
-    def isAvailable(self):
-        """ Call this method if you 100% will show ad, but want to do something before show """
-
-        status = self._isAvailable()
-        self._log("[{}:{}] available to show is {}".format(self.ad_type, self.name, status))
-
-        return status
-
-    def _isAvailable(self):
-        raise NotImplementedError
-
-    def show(self):
+    def has(self, placement):
         if self.__checkInit() is False:
-            self._cbShowCompleted(False, {})
             return False
 
-        self._log("[{}:{}] show advertisement...".format(self.ad_type, self.name))
+        return self._has(placement)
 
-        if self._show() is False:
-            self._cbShowCompleted(False, {})
+    def _has(self, placement):
+        raise NotImplementedError
+
+    def canOffer(self, placement):
+        """ Call this method only once when you create rewarded button """
+
+        status = self._canOffer(placement)
+        self._log("[{}] available to offer {} is {}".format(self.ad_type, placement, status))
+
+        return status
+
+    def _canOffer(self, placement):
+        raise NotImplementedError
+
+    def canYouShow(self, placement):
+        """ Call this method if you 100% will show ad, but want to do something before show """
+
+        status = self._canYouShow(placement)
+        self._log("[{}] available to show {} is {}".format(self.ad_type, placement, status))
+
+        return status
+
+    def _canYouShow(self, placement):
+        raise NotImplementedError
+
+    def show(self, placement):
+        if self.__checkInit() is False:
+            self._cbShowCompleted(False, {"placement": placement})
+            return False
+
+        self._log("[{}] show {}".format(self.ad_type, placement))
+
+        if self._show(placement) is False:
+            self._cbShowCompleted(False, {"placement": placement})
             return False
 
         return True
 
-    def _show(self):
+    def _show(self, placement):
+        raise NotImplementedError
+
+    def hide(self, placement):
+        if self.__checkInit() is False:
+            self._cbShowCompleted(False, {"placement": placement})
+            return False
+
+        self._log("[{}] hide {}".format(self.ad_type, placement))
+
+        if self._hide(placement) is False:
+            self._cbShowCompleted(False, {"placement": placement})
+            return False
+
+        return True
+
+    def _hide(self, placement):
         raise NotImplementedError
 
     # utils
@@ -94,7 +118,7 @@ class BaseAdUnit(object):
             @param init_if_no: if True - tries to init """
         if self.inited is True:
             return True
-        err_msg = "Applovin ad [{}:{}] not inited".format(self.ad_type, self.name)
+        err_msg = "Applovin ad [{}] not inited".format(self.ad_type)
 
         if init_if_no is True:
             err_msg += ". Try init..."
@@ -103,9 +127,6 @@ class BaseAdUnit(object):
 
         self._log(err_msg, err=True, force=True)
         return False
-
-    def getPlacementName(self):
-        return self.name
 
     def _log(self, *args, **kwargs):
         _Log(*args, **kwargs)
@@ -118,7 +139,7 @@ class BaseAdUnit(object):
 
     def _cbShowCompleted(self, successful, params):
         self._log("[{} cb] completed {}".format(self.name, params))
-        Notification.notify(Notificator.onAdShowCompleted, self.ad_type, self.name, successful, params)
+        Notification.notify(Notificator.onAdShowCompleted, self.ad_type, successful, params)
 
     @ad_callback
     def cbRevenuePaid(self, params):
@@ -126,7 +147,7 @@ class BaseAdUnit(object):
 
     def _cbRevenuePaid(self, params):
         self._log("[{} cb] pay revenue {}".format(self.name, params))
-        Notification.notify(Notificator.onAdRevenuePaid, self.ad_type, self.name, params)
+        Notification.notify(Notificator.onAdRevenuePaid, self.ad_type, params)
 
     # devtodebug
 
@@ -138,12 +159,12 @@ class BaseAdUnit(object):
         is_enable = bool(Mengine.getConfigBool('Advertising', self.ad_type, False))
 
         def _getDescr():
-            text = "### [{}] {}".format(self.ad_type, self.name)
+            text = "### [{}]".format(self.ad_type)
             text += "\nenable in configs.json: `{}`".format(is_enable)
             text += "\ninited: `{}`".format(self.inited)
             return text
 
-        w_descr = Mengine.createDevToDebugWidgetText(self.name + "_descr")
+        w_descr = Mengine.createDevToDebugWidgetText(self.ad_type + "_descr")
         w_descr.setText(_getDescr)
         widgets.append(w_descr)
 
@@ -151,7 +172,7 @@ class BaseAdUnit(object):
 
         methods = {"init": self.initialize, "show": self.show, }
         for key, method in methods.items():
-            w_btn = Mengine.createDevToDebugWidgetButton(self.name + "_" + key)
+            w_btn = Mengine.createDevToDebugWidgetButton(self.ad_type + "_" + key)
             w_btn.setTitle(key)
             w_btn.setClickEvent(method)
             widgets.append(w_btn)

@@ -10,16 +10,15 @@ class IOSInterstitialAd(BaseAdUnit):
         }
         return Mengine.appleAppLovinSetInterstitialProvider(callbacks)
 
-    def _canOffer(self):
-        Trace.log("System", 0, "Interstitial advert works only with isAvailable function")
-        return self._isAvailable()
+    def _has(self, placement):
+        return Mengine.appleAppLovinHasInterstitial(placement)
 
-    def _isAvailable(self):
-        return Mengine.appleAppLovinCanYouShowInterstitial(self.getPlacementName())
+    def _canYouShow(self, placement):
+        return Mengine.appleAppLovinCanYouShowInterstitial(placement)
 
-    def _show(self):
+    def _show(self, placement):
         def __showCompleted(successful, params):
             self.cbShowCompleted(successful, params)
             pass
 
-        return Mengine.appleAppLovinShowInterstitial(self.getPlacementName(), __showCompleted)
+        return Mengine.appleAppLovinShowInterstitial(placement, __showCompleted)

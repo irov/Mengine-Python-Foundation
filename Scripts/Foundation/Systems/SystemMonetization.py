@@ -484,29 +484,11 @@ class SystemMonetization(System):
             return
         if SystemManager.hasSystem("SystemAdvertising") is False:
             return
-        SystemAdvertising = SystemManager.getSystem("SystemAdvertising")
-        SystemAdvertising.disableForever()
+        #SystemAdvertising = SystemManager.getSystem("SystemAdvertising")
+        #SystemAdvertising.disableForever()
         _Log("disabled interstitial ads", optional=True)
 
     # --- Advertisements -----------------------------------------------------------------------------------------------
-
-    @classmethod
-    def showAd(cls, AdType="Rewarded", AdUnitName=None):
-        if MonetizationManager.isMonetizationEnable() is False:
-            return
-
-        if AdUnitName is None:
-            AdUnitName = AdType
-
-        if AdType == "Rewarded" and cls.isAdsEnded(AdUnitName) is True:
-            cls.updateAvailableAds()
-
-            if cls.isAdsEnded(AdUnitName) is True:
-                _Log("ad limit reached today", err=True)
-                Notification.notify(Notificator.onAvailableAdsEnded, AdUnitName)
-                return
-
-        TaskManager.runAlias("AliasShowAdvert", None, AdType=AdType, AdUnitName=AdUnitName)
 
     @staticmethod
     def updateAvailableAds():

@@ -365,8 +365,6 @@ def onInitialize():
 
         , "AliasMakeMovieAndPlayOnce"
         , "AliasMakeTriggerAndWait"
-
-        , "AliasShowAdvert"
         ]
 
     from TaskManager import TaskManager

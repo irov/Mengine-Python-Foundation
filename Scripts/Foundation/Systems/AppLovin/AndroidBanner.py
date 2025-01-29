@@ -14,32 +14,17 @@ class AndroidBanner(BaseAdUnit, AndroidAdUnitCallbacks):
         self._setCallbacks()
         return True
 
-    def _canOffer(self):
-        Trace.log("System", 0, "Banner function 'canOffer' always returns True")
+    def _has(self, placement):
+        return Mengine.androidMethod(self.ANDROID_PLUGIN_NAME, "hasBanner")
+
+    def _canOffer(self, placement):
         return True
 
-    def _isAvailable(self):
-        Trace.log("System", 0, "Banner function 'isAvailable' always returns True")
+    def _canYouShow(self, placement):
         return True
 
-    def _show(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "bannerVisible", True)
+    def _show(self, placement):
+        return Mengine.androidMethod(self.ANDROID_PLUGIN_NAME, "showBanner")
 
-    def hide(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "bannerVisible", False)
-
-    # callbacks
-
-    @ad_callback
-    def cbExpanded(self):
-        self._cbExpanded()
-
-    def _cbExpanded(self):
-        self._log("[{} cb] {} was expanded".format(self.ad_type, self.name))
-
-    @ad_callback
-    def cbCollapsed(self):
-        self._cbCollapsed()
-
-    def _cbCollapsed(self):
-        self._log("[{} cb] {} was collapsed".format(self.ad_type, self.name))
+    def _hide(self, placement):
+        return Mengine.androidMethod(self.ANDROID_PLUGIN_NAME, "hideBanner")

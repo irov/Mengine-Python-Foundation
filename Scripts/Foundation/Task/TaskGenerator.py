@@ -669,8 +669,6 @@ class TaskSource(object):
             desc.setupCaller(0, self.doc)
             pass
 
-        self.source.append(desc)
-
         tg = TaskSource(desc.source, self.skiped)
 
         self.source.append(desc)
@@ -728,8 +726,6 @@ class TaskSource(object):
         if _DEVELOPMENT is True:
             desc.setupCaller(0, self.doc)
             pass
-
-        self.source.append(desc)
 
         tg = TaskSource(desc.repeat, self.skiped)
 

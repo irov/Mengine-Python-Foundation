@@ -20,9 +20,9 @@ class SystemApplovin(System):
 
     def __init__(self):
         super(SystemApplovin, self).__init__()
-        self.interstitials = {}
-        self.rewardeds = {}
-        self.banners = {}
+        self.banner = AppLovinAdFactory.createAd("Banner")
+        self.interstitial = AppLovinAdFactory.createAd("Interstitial")
+        self.rewarded = AppLovinAdFactory.createAd("Rewarded")
 
     def _onInitialize(self):
         if _ANDROID:
@@ -33,59 +33,42 @@ class SystemApplovin(System):
         if self.is_plugin_active is False:
             return
 
-        init_params = [
-            ["RewardedUnitNames", ["Rewarded"], self.rewardeds, "Rewarded"],
-            ["InterstitialUnitNames", ["Interstitial"], self.interstitials, "Interstitial"],
-            ["BannerUnitNames", ["Banner"], self.banners, "Banner"],
-        ]
-
-        for config_key, default_values, storage, ad_type in init_params:
-            if Mengine.getConfigBool("Advertising", ad_type, False) is False:
-                # this ad type is not active - enable in Configs.json
-                continue
-
-            unit_names = Mengine.getConfigStrings("Advertising", config_key)
-            if len(unit_names) == 0:
-                unit_names = default_values
-
-            for name in unit_names:
-                if name in storage:
-                    _Log("Duplicate name {} in {}".format(name, ad_type), err=True)
-                    continue
-
-                ad_unit = AppLovinAdFactory.createAd(ad_type, name)
-                storage[name] = ad_unit
-
         Mengine.waitSemaphore("AppLovinSdkInitialized", self.__cbSdkInitialized)
 
         # ads do init in `__cbSdkInitialized`
         self.__addDevToDebug()
 
     def _onFinalize(self):
-        for ad_unit in self._getAllAdUnits():
-            ad_unit.cleanUp()
-        self.rewardeds = None
-        self.interstitials = None
-        self.banners = None
+        self.banner.cleanUp()
+        self.banner = None
+        self.interstitial.cleanUp()
+        self.interstitial = None
+        self.rewarded.cleanUp()
+        self.rewarded = None
 
     # utils
 
     def initAds(self):
-        for ad_unit in self._getAllAdUnits():
-            if ad_unit.initialize() is False:
-                Trace.log("System", 0, "Failed to init advert [{}:{}]".format(ad_unit.ad_type, ad_unit.name))
+        if self.banner.initialize() is False:
+            Trace.log("System", 0, "Failed to init banner advert")
+
+        if self.interstitial.initialize() is False:
+            Trace.log("System", 0, "Failed to init interstitial advert")
+
+        if self.rewarded.initialize() is False:
+            Trace.log("System", 0, "Failed to init rewarded advert")
 
         provider_methods = dict(
-            ShowRewardedAdvert=Functor(self.showAdvert, self.rewardeds),
-            ShowInterstitialAdvert=Functor(self.showAdvert, self.interstitials),
-            CanOfferRewardedAdvert=Functor(self.canOfferAdvert, self.rewardeds),
-            IsRewardedAdvertAvailable=Functor(self.isAdvertAvailable, self.rewardeds),
-            IsInterstitialAdvertAvailable=Functor(self.isAdvertAvailable, self.interstitials),
-            ShowBanner=Functor(self.showAdvert, self.banners),
-            HideBanner=Functor(self.hideBanner, self.banners),
+            ShowRewardedAdvert=self.showRewarded,
+            ShowInterstitialAdvert=self.showInterstitial,
+            CanOfferRewardedAdvert=self.canOfferRewarded,
+            CanYouShowRewardedAdvert=self.canYouShowRewarded,
+            CanYouShowInterstitialAdvert=self.canYouShowInterstitial,
+            ShowBanner=self.showBanner,
+            HideBanner=self.hideBanner,
             ShowConsentFlow=self.showConsentFlow,
             IsConsentFlow=self.isConsentFlow,
-            GetBannerViewport=self.getBannerViewport,
+            GetBannerHeight=self.getBannerHeight,
         )
         AdvertisementProvider.setProvider(ANDROID_PLUGIN_NAME, provider_methods)
 
@@ -116,15 +99,12 @@ class SystemApplovin(System):
             return Mengine.appleAppLovinIsConsentFlowUserGeographyGDPR()
         return False
 
-    def getBannerViewport(self, ad_unit_name):
+    def getBannerHeight(self):
         if _IOS:
-            return Mengine.appleAppLovinGetBannerViewport()
+            return Mengine.appleAppLovinGetBannerHeight()
         elif _ANDROID:
-            return Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getBannerViewport")
+            return Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getBannerHeight")
         return None
-
-    def _getAllAdUnits(self):
-        return self.rewardeds.values() + self.interstitials.values() + self.banners.values()
 
     # callbacks
 
@@ -143,37 +123,32 @@ class SystemApplovin(System):
 
     # provider handling
 
-    def showAdvert(self, ad_unit_name, advert_dict):
-        advert = advert_dict.get(ad_unit_name)
-        if advert is None:
-            Trace.log("System", 0, "Advert {!r} not found for showAdvert in {}".format(
-                ad_unit_name, advert_dict.keys()))
-            return False
-        return advert.show()
+    def showBanner(self):
+        return self.banner.show("banner")
 
-    def canOfferAdvert(self, ad_unit_name, advert_dict):
-        advert = advert_dict.get(ad_unit_name)
-        if advert is None:
-            Trace.log("System", 0, "Advert {!r} not found for canOfferAdvert in {}".format(
-                ad_unit_name, advert_dict.keys()))
-            return False
-        return advert.canOffer()
+    def hideBanner(self):
+        return self.banner.hide("banner")
 
-    def isAdvertAvailable(self, ad_unit_name, advert_dict):
-        advert = advert_dict.get(ad_unit_name)
-        if advert is None:
-            Trace.log("System", 0, "Advert {!r} not found for isAdvertAvailable in {}".format(
-                ad_unit_name, advert_dict.keys()))
-            return False
-        return advert.isAvailable()
+    def hasInterstitial(self, placement):
+        return self.interstitial.has(placement)
 
-    def hideBanner(self, ad_unit_name, banners_dict):
-        banner = banners_dict.get(ad_unit_name)
-        if banner is None:
-            Trace.log("System", 0, "Banner {!r} not found for hideBanner in {}".format(
-                ad_unit_name, banners_dict.keys()))
-            return False
-        return banner.hide()
+    def canYouShowInterstitial(self):
+        return self.interstitial.canYouShow()
+
+    def showInterstitial(self, placement):
+        return self.interstitial.show(placement)
+
+    def hasRewarded(self, placement):
+        return self.rewarded.has(placement)
+
+    def canOfferRewarded(self, placement):
+        return self.rewarded.canOffer(placement)
+
+    def canYouShowRewarded(self, placement):
+        return self.rewarded.canYouShow(placement)
+
+    def showRewarded(self, placement):
+        return self.rewarded.show(placement)
 
     # debug
 
@@ -215,8 +190,9 @@ class SystemApplovin(System):
         w_consent.setClickEvent(self.showConsentFlow)
         widgets.append(w_consent)
 
-        for ad_unit in self._getAllAdUnits():
-            widgets.extend(ad_unit._getDevToDebugWidgets())
+        widgets.extend(self.banner._getDevToDebugWidgets())
+        widgets.extend(self.interstitial._getDevToDebugWidgets())
+        widgets.extend(self.rewarded._getDevToDebugWidgets())
 
         for widget in widgets:
             tab.addWidget(widget)

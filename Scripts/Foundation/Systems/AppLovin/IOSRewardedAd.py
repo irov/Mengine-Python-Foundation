@@ -12,18 +12,21 @@ class IOSRewardedAd(BaseAdUnit):
         }
         return Mengine.appleAppLovinSetRewardedProvider(callbacks)
 
-    def _canOffer(self):
-        return Mengine.appleAppLovinCanOfferRewarded(self.getPlacementName())
+    def _has(self, placement):
+        return Mengine.appleAppLovinHasRewarded(placement)
 
-    def _isAvailable(self):
-        return Mengine.appleAppLovinCanYouShowRewarded(self.getPlacementName())
+    def _canOffer(self, placement):
+        return Mengine.appleAppLovinCanOfferRewarded(placement)
 
-    def _show(self):
+    def _canYouShow(self, placement):
+        return Mengine.appleAppLovinCanYouShowRewarded(placement)
+
+    def _show(self, placement):
         def __showCompleted(successful, params):
             self.cbShowCompleted(successful, params)
             pass
 
-        return Mengine.appleAppLovinShowRewarded(self.getPlacementName(), __showCompleted)
+        return Mengine.appleAppLovinShowRewarded(placement, __showCompleted)
 
     # callbacks
 

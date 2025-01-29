@@ -31,6 +31,7 @@ class TaskFor(Task):
         super(TaskFor, self)._onFinalize()
 
         self.Source = None
+        self.Iterator = None
 
         if self.forTaskChain is not None:
             forTaskChain = self.forTaskChain

@@ -10,14 +10,17 @@ class IOSBanner(BaseAdUnit):
         }
         return Mengine.appleAppLovinSetBannerProvider(callbacks)
 
+    def _has(self):
+        return Mengine.appleAppLovinHasBanner()
+
     def _canOffer(self):
         return True
 
-    def _isAvailable(self):
+    def _canYouShow(self):
         return True
 
-    def _show(self):
+    def _show(self, placement):
         return Mengine.appleAppLovinShowBanner()
 
-    def hide(self):
+    def _hide(self, placement):
         return Mengine.appleAppLovinHideBanner()
