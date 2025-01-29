@@ -39,12 +39,17 @@ class SystemApplovin(System):
         self.__addDevToDebug()
 
     def _onFinalize(self):
-        self.banner.cleanUp()
-        self.banner = None
-        self.interstitial.cleanUp()
-        self.interstitial = None
-        self.rewarded.cleanUp()
-        self.rewarded = None
+        if self.banner is not None:
+            self.banner.cleanUp()
+            self.banner = None
+
+        if self.interstitial is not None:
+            self.interstitial.cleanUp()
+            self.interstitial = None
+
+        if self.rewarded is not None:
+            self.rewarded.cleanUp()
+            self.rewarded = None
 
     # utils
 

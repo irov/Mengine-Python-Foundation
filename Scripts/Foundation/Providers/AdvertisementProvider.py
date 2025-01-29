@@ -1,5 +1,5 @@
 from Foundation.Providers.BaseProvider import BaseProvider
-
+from Foundation.TaskManager import TaskManager
 
 class AdvertisementProvider(BaseProvider):
     """
@@ -89,67 +89,10 @@ class DummyAdvertisement(object):
     """ Dummy Provider """
 
     @staticmethod
-    def hasAdvert(AdType, placement):
-        status = True
-
-        Trace.msg("<DummyAdvertisement> hasAdvert {}:{} result = {}".format(AdType, placement, status))
-        return status
-
-    @staticmethod
-    def showAdvert(AdType, placement):
-        from Foundation.TaskManager import TaskManager
-
-        DisplayFail = params.get("DisplayFail", "Random")
-        FakeWatchDelay = params.get("Delay", 5000)
-        GoldReward = params.get("GoldReward", 1)
-
-        display_failed = Mengine.rand(20) < 5 if DisplayFail == "Random" else bool(DisplayFail)
-
-        dummy_revenue = {
-            "Banner": 0.005,
-            "Rewarded": 0.05,
-            "Interstitial": 0.02,
-        }
-        revenue = dummy_revenue[AdType]
-
-        with TaskManager.createTaskChain(Name="DummyShow{}Advert".format(AdType)) as source:
-            source.addPrint("<DummyAdvertisement> watch advertisement {}:{}, delay {}s (fail: {})...".format(
-                AdType, placement, round(float(FakeWatchDelay) / 1000, 1), display_failed))
-
-            if display_failed:
-                source.addDelay(FakeWatchDelay)
-                source.addNotify(Notificator.onAdShowCompleted, AdType, False, {"placement": placement})
-            else:
-                source.addDelay(FakeWatchDelay)
-
-                if AdType == "Rewarded":
-                    source.addNotify(Notificator.onAdUserRewarded, placement, {"gold": GoldReward})
-
-                source.addNotify(Notificator.onAdShowCompleted, AdType, True, {"placement": placement})
-                source.addNotify(Notificator.onAdRevenuePaid, AdType, {"placement": placement, "revenue": revenue})
-
-    @staticmethod
-    def canOfferAdvert(AdType, placement):
-        status = True
-        if AdType == "Rewarded":
-            status = Mengine.rand(20) < 15
-
-        Trace.msg("<DummyAdvertisement> canOfferAdvert {}:{} result = {}".format(AdType, placement, status))
-        return status
-
-    @staticmethod
-    def сanYouShowAdvert(AdType, placement):
-        status = Mengine.rand(100) <= 90
-        Trace.msg("<DummyAdvertisement> isAdvertAvailable {}:{} result = {}".format(AdType, placement, status))
-        return status
-
-    @staticmethod
     def showBanner():
         AdType = "Banner"
 
-        DisplayFail = params.get("DisplayFail", "Random")
-
-        display_failed = Mengine.rand(20) < 5 if DisplayFail == "Random" else bool(DisplayFail)
+        display_failed = Mengine.rand(20) < 5
 
         Trace.msg("<DummyAdvertisement> show advert {} (fail: {})...".format(
             AdType, display_failed))
@@ -165,6 +108,77 @@ class DummyAdvertisement(object):
         return True
 
     @staticmethod
+    def hasInterstitialAdvert(AdPlacement):
+        status = True
+
+        Trace.msg("<DummyAdvertisement> hasInterstitialAdvert {} result = {}".format(AdPlacement, status))
+        return status
+
+    @staticmethod
+    def canYouShowInterstitialAdvert(AdPlacement):
+        status = Mengine.rand(100) <= 90
+        Trace.msg("<DummyAdvertisement> canYouShowInterstitialAdvert {} result = {}".format(AdPlacement, status))
+        return status
+
+    @staticmethod
+    def showInterstitialAdvert(AdPlacement):
+        FakeWatchDelay = 5000
+
+        display_failed = Mengine.rand(20) < 5
+
+        revenue = 0.02
+
+        with TaskManager.createTaskChain(Name="DummyShowInterstitialAdvert") as source:
+            source.addPrint("<DummyAdvertisement> watch showInterstitialAdvert {}, delay {}s (fail: {})...".format(
+                AdPlacement, round(float(FakeWatchDelay) / 1000, 1), display_failed))
+
+            if display_failed:
+                source.addDelay(FakeWatchDelay)
+                source.addNotify(Notificator.onAdShowCompleted, "Interstitial", False, {"placement": AdPlacement})
+            else:
+                source.addDelay(FakeWatchDelay)
+
+                source.addNotify(Notificator.onAdShowCompleted, "Interstitial", True, {"placement": AdPlacement})
+                source.addNotify(Notificator.onAdRevenuePaid, "Interstitial", {"placement": AdPlacement, "revenue": revenue})
+
+    @staticmethod
+    def canOfferRewardedAdvert(AdPlacement):
+        status = Mengine.rand(20) < 15
+
+        Trace.msg("<DummyAdvertisement> canOfferRewardedAdvert {} result = {}".format(AdPlacement, status))
+        return status
+
+    @staticmethod
+    def canYouShowRewardedAdvert(AdPlacement):
+        status = Mengine.rand(100) <= 90
+        Trace.msg("<DummyAdvertisement> canYouShowRewardedAdvert {} result = {}".format(AdPlacement, status))
+        return status
+
+    @staticmethod
+    def showRewardedAdvert(AdPlacement):
+        FakeWatchDelay = 5000
+        GoldReward = 1
+
+        display_failed = Mengine.rand(20) < 5
+
+        revenue = 0.05
+
+        with TaskManager.createTaskChain(Name="DummyShowRewardedAdvert") as source:
+            source.addPrint("<DummyAdvertisement> watch showRewardedAdvert {}, delay {}s (fail: {})...".format(
+                AdPlacement, round(float(FakeWatchDelay) / 1000, 1), display_failed))
+
+            if display_failed:
+                source.addDelay(FakeWatchDelay)
+                source.addNotify(Notificator.onAdShowCompleted, "Rewarded", False, {"placement": AdPlacement})
+            else:
+                source.addDelay(FakeWatchDelay)
+
+                source.addNotify(Notificator.onAdUserRewarded, AdPlacement, {"gold": GoldReward})
+
+                source.addNotify(Notificator.onAdShowCompleted, "Rewarded", True, {"placement": AdPlacement})
+                source.addNotify(Notificator.onAdRevenuePaid, "Rewarded", {"placement": AdPlacement, "revenue": revenue})
+
+    @staticmethod
     def showConsentFlow():
         Trace.msg("<DummyAdvertisement> DUMMY show consent flow...")
         return
@@ -176,25 +190,23 @@ class DummyAdvertisement(object):
     @staticmethod
     def setProvider():
         def _HasRewardedAdvert(placement):
-            return DummyAdvertisement.hasAdvert("Rewarded", placement)
+            return DummyAdvertisement.hasRewardedAdvert(placement)
         def _HasInterstitialAdvert(placement):
-            return DummyAdvertisement.hasAdvert("Interstitial", placement)
+            return DummyAdvertisement.hasInterstitialAdvert(placement)
         def _ShowRewardedAdvert(placement):
-            return DummyAdvertisement.showAdvert("Rewarded", placement)
+            return DummyAdvertisement.showRewardedAdvert(placement)
         def _CanOfferRewardedAdvert(placement):
-            return DummyAdvertisement.canOfferAdvert("Rewarded", placement)
+            return DummyAdvertisement.canOfferRewardedAdvert(placement)
         def _CanYouShowRewardedAdvert(placement):
-            return DummyAdvertisement.сanYouShowAdvert("Rewarded", placement)
+            return DummyAdvertisement.canYouShowRewardedAdvert(placement)
         def _ShowInterstitialAdvert(placement):
-            return DummyAdvertisement.showAdvert("Interstitial", placement)
-        def _CanOfferInterstitialAdvert(placement):
-            return DummyAdvertisement.canOfferAdvert("Interstitial", placement)
+            return DummyAdvertisement.showInterstitialAdvert(placement)
         def _CanYouShowInterstitialAdvert(placement):
-            return DummyAdvertisement.сanYouShowAdvert("Interstitial", placement)
-        def _ShowBanner(placement):
-            return DummyAdvertisement.showBanner(placement)
-        def _HideBanner(placement):
-            return DummyAdvertisement.hideBanner(placement)
+            return DummyAdvertisement.canYouShowInterstitialAdvert(placement)
+        def _ShowBanner():
+            return DummyAdvertisement.showBanner()
+        def _HideBanner():
+            return DummyAdvertisement.hideBanner()
         def _ShowConsentFlow():
             return DummyAdvertisement.showConsentFlow()
         def _IsConsentFlow():
@@ -209,7 +221,6 @@ class DummyAdvertisement(object):
             # interstitial:
             HasInterstitialAdvert=_HasInterstitialAdvert,
             ShowInterstitialAdvert=_ShowInterstitialAdvert,
-            CanOfferInterstitialAdvert=_CanOfferInterstitialAdvert,
             CanYouShowInterstitialAdvert=_CanYouShowInterstitialAdvert,
             # banner:
             ShowBanner=_ShowBanner,
