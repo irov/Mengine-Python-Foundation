@@ -784,6 +784,9 @@ def getMovieSocketHeight(movie, socket_name):
     bounding_box = Mengine.getHotSpotPolygonBoundingBox(socket)
     return getBoundingBoxHeight(bounding_box)
 
+def getBoundingBoxSize(bounding_box):
+    return Mengine.vec2f(getBoundingBoxWidth(bounding_box), getBoundingBoxHeight(bounding_box))
+
 def getBoundingBoxWidth(bounding_box):
     return bounding_box.maximum.x - bounding_box.minimum.x
 
