@@ -1,0 +1,17 @@
+{
+    "Scripts": {
+        "Script": [ 
+            {"Path": "Scripts/", "Module": "Foundation", "Initializer": "onInitialize", "Finalizer": "onFinalize"},
+            {"Path": "Scripts/Lib/"}
+        ]
+    },
+    "Materials": {
+        "Material": [
+            {"Path": "Materials/Shader_DX11.bin"},
+            {"Path": "Materials/Shader_DX9.bin"},
+            {"Path": "Materials/Shader_OpenGL.bin"},
+            {"Path": "Materials/Shader_OpenGLES.bin"},
+            {"Path": "Materials/Standart.bin"}
+        ]
+    }
+}
