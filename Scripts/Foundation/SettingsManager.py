@@ -16,7 +16,7 @@ class SettingsManager(Manager):
     @staticmethod
     def __onSettingChange(setting_name, setting_value):
         SettingsManager.__updateSettings()
-        pass
+        return False
 
     @staticmethod
     def __updateSettings():
