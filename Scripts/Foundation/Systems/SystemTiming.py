@@ -2,7 +2,7 @@ from Foundation.SceneManager import SceneManager
 from Foundation.System import System
 
 """
-System manage game timing multiply. listen onSceneInit,onKeyEvent,onTimingFactor events
+System manage game timing multiply. listen onSceneInit,onKeyEvent,onTimeFactor events
 """
 
 class SystemTiming(System):
@@ -27,7 +27,7 @@ class SystemTiming(System):
 
     def _onRun(self):
         self.addObserver(Notificator.onSceneInit, self.__onSceneInit)
-        self.addObserver(Notificator.onTimingFactor, self.__onTimingFactor)
+        self.addObserver(Notificator.onTimeFactorChange, self.__onTimeFactorChange)
 
         return True
         pass
@@ -89,16 +89,16 @@ class SystemTiming(System):
         return False
         pass
 
-    def __onTimingFactor(self, factor):
+    def __onTimeFactorChange(self, factor):
         scene = SceneManager.getCurrentScene()
         if scene is None:
-            Trace.log("System", 0, "__onTimingFactor scene is None")
+            Trace.log("System", 0, "__onTimeFactorChange scene is None")
             return False
             pass
 
         layer = scene.getMainLayer()
         if layer is None:
-            Trace.log("System", 0, "__onTimingFactor layer is None")
+            Trace.log("System", 0, "__onTimeFactorChange layer is None")
             return False
             pass
 

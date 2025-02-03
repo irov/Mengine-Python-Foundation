@@ -34,7 +34,8 @@ def onPreparation(isDebug):
         , "onMouseButtonEventBegin"
         , "onMouseButtonEvent"
         , "onMouseButtonEventEnd"
-        , "onTimingFactor"
+        , "onTimeFactorChange"
+        , "onSettingChange"
         , "onFullscreen"
         , "onFixedContentResolution"
         , "onCursorMode"
@@ -200,8 +201,11 @@ def onHandleMouseButtonEventEnd(event):
     Notification.notify(Notificator.onMouseButtonEventEnd, event)
     return False
 
-def onTimeFactor(factor):
-    Notification.notify(Notificator.onTimingFactor, factor)
+def onTimeFactorChange(factor):
+    Notification.notify(Notificator.onTimeFactorChange, factor)
+
+def onSettingChange(setting, key):
+    Notification.notify(Notificator.onSettingChange, setting, key)
 
 def onFullscreen(fullscreen):
     if Mengine.hasCurrentAccountSetting("Fullscreen") is True:

@@ -1332,3 +1332,11 @@ def makeId(id=None):
         text += possible[Mengine.rand(len(possible))]
 
     return text
+
+def dictToStruct(d):
+    if not isinstance(d, dict):
+        return d
+
+    p = {key: dictToStruct(value) for key, value in d.items()}
+
+    return type("Struct", (), p)()
