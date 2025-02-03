@@ -22,8 +22,6 @@ class SettingsManager(Manager):
     def __updateSettings():
         settings = Mengine.getSettings()
 
-        print(settings)
-
         settings_struct = Utils.dictToStruct(settings)
 
         Mengine.addGlobalModule("SETTINGS", settings_struct)
