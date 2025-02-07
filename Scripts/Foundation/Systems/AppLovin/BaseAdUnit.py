@@ -138,7 +138,7 @@ class BaseAdUnit(object):
         self._cbShowCompleted(successful, params)
 
     def _cbShowCompleted(self, successful, params):
-        self._log("[{} cb] completed {}".format(self.name, params))
+        self._log("[{} cb] completed {}".format(self.ad_type, params))
         Notification.notify(Notificator.onAdShowCompleted, self.ad_type, successful, params)
 
     @ad_callback
@@ -146,7 +146,7 @@ class BaseAdUnit(object):
         self._cbRevenuePaid(params)
 
     def _cbRevenuePaid(self, params):
-        self._log("[{} cb] pay revenue {}".format(self.name, params))
+        self._log("[{} cb] pay revenue {}".format(self.ad_type, params))
         Notification.notify(Notificator.onAdRevenuePaid, self.ad_type, params)
 
     # devtodebug
@@ -158,14 +158,14 @@ class BaseAdUnit(object):
 
         is_enable = bool(Mengine.getConfigBool('Advertising', self.ad_type, False))
 
-        def _getDescr():
+        def __getDescr():
             text = "### [{}]".format(self.ad_type)
             text += "\nenable in configs.json: `{}`".format(is_enable)
             text += "\ninited: `{}`".format(self.inited)
             return text
 
         w_descr = Mengine.createDevToDebugWidgetText(self.ad_type + "_descr")
-        w_descr.setText(_getDescr)
+        w_descr.setText(__getDescr)
         widgets.append(w_descr)
 
         # button widgets

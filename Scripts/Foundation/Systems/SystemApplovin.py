@@ -51,7 +51,6 @@ class SystemApplovin(System):
             self.rewarded.cleanUp()
             self.rewarded = None
 
-    # utils
 
     def initAds(self):
         if self.banner.initialize() is False:
@@ -75,6 +74,7 @@ class SystemApplovin(System):
             IsConsentFlow=self.isConsentFlow,
             GetBannerHeight=self.getBannerHeight,
         )
+
         AdvertisementProvider.setProvider(ANDROID_PLUGIN_NAME, provider_methods)
 
     @staticmethod
