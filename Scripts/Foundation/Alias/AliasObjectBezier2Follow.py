@@ -21,7 +21,7 @@ class AliasObjectBezier2Follow(MixinObject, TaskAlias):
     def _onGenerate(self, source):
         ObjectEntityNode = self.Object.getEntityNode()
 
-        source.addTask("TaskNodeBezier2Follow", Node=ObjectEntityNode, Follow=self.Follow, Time=self.Time)
+        source.addTask("TaskNodeBezier2WorldFollow", Node=ObjectEntityNode, Follow=self.Follow, Time=self.Time)
         pass
 
     pass
