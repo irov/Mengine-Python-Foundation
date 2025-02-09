@@ -75,7 +75,7 @@ def caller(deep=0):
 
 def __getTraceback():
     message = "\nTraceback (most recent call last):"
-    for (filename, line_number, function_name, text) in reversed(traceback.extract_stack()[:-2]):
+    for (filename, line_number, function_name, text) in traceback.extract_stack()[2:]:
         message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
     return message
 

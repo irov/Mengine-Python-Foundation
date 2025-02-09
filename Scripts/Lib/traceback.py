@@ -275,7 +275,7 @@ def string_stack(f=None, limit=None):
     if len(l) == 1:
         return None
     str = ""
-    for s in l[:-1]:
+    for s in l[1:]:
         str += s
         pass
     return str
@@ -323,7 +323,6 @@ def extract_stack(f=None, limit = None):
         list.append((filename, lineno, name, None))
         f = f.f_back
         n = n+1
-    list.reverse()
     return list
 
 def tb_lineno(tb):
