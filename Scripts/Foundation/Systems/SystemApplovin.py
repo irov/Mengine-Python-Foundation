@@ -33,7 +33,7 @@ class SystemApplovin(System):
         if self.is_plugin_active is False:
             return
 
-        Mengine.waitSemaphore("AppLovinSdkInitialized", self.__cbSdkInitialized)
+        Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)
 
         # ads do init in `__cbSdkInitialized`
         self.__addDevToDebug()
