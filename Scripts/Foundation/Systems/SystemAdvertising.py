@@ -39,7 +39,7 @@ class SystemAdvertising(System):
 
         return True
 
-    def tryInterstitial(self, next_scene, AdPlacements, Skip = False):
+    def tryInterstitial(self, next_scene, AdPlacement, Skip = False):
         if self.__checkAdInterstitial(AdPlacement) is False:
             if Skip is True:
                 Notification.notify(Notificator.onChangeScene, next_scene)
