@@ -181,7 +181,7 @@ class BaseAdUnit(object):
 
 
 class AndroidAdUnitCallbacks(object):
-    ANDROID_PLUGIN_NAME = "MengineAppLovin"
+    ANDROID_PLUGIN_NAME = "MengineAdService"
 
     def __init__(self):
         super(AndroidAdUnitCallbacks, self).__init__()
