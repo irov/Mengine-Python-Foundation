@@ -37,13 +37,14 @@ class Movie2(BaseAnimatable):
         pass
 
     def getCompositionBounds(self):
-        return self.getMovie().getCompositionBounds()
+        return self.movie.getCompositionBounds()
 
     def hasCompositionBounds(self):
-        return self.getMovie().hasCompositionBounds()
+        return self.movie.hasCompositionBounds()
 
     def getDuration(self):
-        return self.movie.getAnimation().getDuration()
+        animation = self.movie.getAnimation()
+        return animation.getDuration()
         pass
 
     def getAnimatable(self):
