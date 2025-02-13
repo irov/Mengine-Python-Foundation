@@ -13,8 +13,8 @@ class AndroidInterstitialAd(BaseAdUnit, AndroidAdUnitCallbacks):
         self._setCallbacks()
         return True
 
-    def _has(self, placement):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "hasInterstitial", placement)
+    def _has(self):
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "hasInterstitial")
 
     def _canYouShow(self, placement):
         return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "canYouShowInterstitial", placement)

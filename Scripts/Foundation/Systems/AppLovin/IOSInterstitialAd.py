@@ -10,8 +10,8 @@ class IOSInterstitialAd(BaseAdUnit):
         }
         return Mengine.appleAppLovinSetInterstitialProvider(callbacks)
 
-    def _has(self, placement):
-        return Mengine.appleAppLovinHasInterstitial(placement)
+    def _has(self):
+        return Mengine.appleAppLovinHasInterstitial()
 
     def _canYouShow(self, placement):
         return Mengine.appleAppLovinCanYouShowInterstitial(placement)

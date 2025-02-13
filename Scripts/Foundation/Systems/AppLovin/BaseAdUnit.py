@@ -48,13 +48,13 @@ class BaseAdUnit(object):
     def _cleanUp(self):
         return
 
-    def has(self, placement):
+    def has(self):
         if self.__checkInit() is False:
             return False
 
-        return self._has(placement)
+        return self._has()
 
-    def _has(self, placement):
+    def _has(self):
         raise NotImplementedError
 
     def canOffer(self, placement):

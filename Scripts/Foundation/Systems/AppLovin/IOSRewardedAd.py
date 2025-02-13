@@ -12,8 +12,8 @@ class IOSRewardedAd(BaseAdUnit):
         }
         return Mengine.appleAppLovinSetRewardedProvider(callbacks)
 
-    def _has(self, placement):
-        return Mengine.appleAppLovinHasRewarded(placement)
+    def _has(self):
+        return Mengine.appleAppLovinHasRewarded()
 
     def _canOffer(self, placement):
         return Mengine.appleAppLovinCanOfferRewarded(placement)

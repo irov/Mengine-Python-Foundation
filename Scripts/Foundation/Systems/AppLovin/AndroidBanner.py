@@ -14,7 +14,7 @@ class AndroidBanner(BaseAdUnit, AndroidAdUnitCallbacks):
         self._setCallbacks()
         return True
 
-    def _has(self, placement):
+    def _has(self):
         return Mengine.androidMethod(self.ANDROID_PLUGIN_NAME, "hasBanner")
 
     def _canOffer(self, placement):
