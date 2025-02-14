@@ -137,8 +137,8 @@ class SystemApplovin(System):
     def hasInterstitial(self):
         return self.interstitial.has()
 
-    def canYouShowInterstitial(self):
-        return self.interstitial.canYouShow()
+    def canYouShowInterstitial(self, placement):
+        return self.interstitial.canYouShow(placement)
 
     def showInterstitial(self, placement):
         return self.interstitial.show(placement)

@@ -108,10 +108,10 @@ class DummyAdvertisement(object):
         return True
 
     @staticmethod
-    def hasInterstitialAdvert(AdPlacement):
+    def hasInterstitialAdvert():
         status = True
 
-        Trace.msg("<DummyAdvertisement> hasInterstitialAdvert {} result = {}".format(AdPlacement, status))
+        Trace.msg("<DummyAdvertisement> hasInterstitialAdvert result = {}".format(status))
         return status
 
     @staticmethod
@@ -189,10 +189,10 @@ class DummyAdvertisement(object):
 
     @staticmethod
     def setProvider():
-        def _HasRewardedAdvert(placement):
-            return DummyAdvertisement.hasRewardedAdvert(placement)
-        def _HasInterstitialAdvert(placement):
-            return DummyAdvertisement.hasInterstitialAdvert(placement)
+        def _HasRewardedAdvert():
+            return DummyAdvertisement.hasRewardedAdvert()
+        def _HasInterstitialAdvert():
+            return DummyAdvertisement.hasInterstitialAdvert()
         def _ShowRewardedAdvert(placement):
             return DummyAdvertisement.showRewardedAdvert(placement)
         def _CanOfferRewardedAdvert(placement):
