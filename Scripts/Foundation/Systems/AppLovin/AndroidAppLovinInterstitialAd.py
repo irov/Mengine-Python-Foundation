@@ -1,9 +1,11 @@
-from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit, AndroidAdUnitCallbacks
+from Foundation.Systems.AppLovin.AndroidAppLovinAdUnit import AndroidAppLovinAdUnit
 
-class AndroidInterstitialAd(BaseAdUnit, AndroidAdUnitCallbacks):
+class AndroidAppLovinInterstitialAd(AndroidAppLovinAdUnit):
     ad_type = "Interstitial"
 
     def _setCallbacks(self):
+        self._addAndroidCallback("onAndroidAppLovinInterstitialShowSuccessful", self.cbShowSuccessful)
+        self._addAndroidCallback("onAndroidAppLovinInterstitialShowFailed", self.cbShowFailed)
         self._addAndroidCallback("onAndroidAppLovinInterstitialRevenuePaid", self.cbRevenuePaid)
 
     def _cleanUp(self):
@@ -20,8 +22,4 @@ class AndroidInterstitialAd(BaseAdUnit, AndroidAdUnitCallbacks):
         return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "canYouShowInterstitial", placement)
 
     def _show(self, placement):
-        def __showCompleted(successful, params):
-            self.cbShowCompleted(successful, params)
-            pass
-
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showInterstitial", placement, __showCompleted)
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showInterstitial", placement)

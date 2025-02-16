@@ -20,35 +20,33 @@ class SystemAdvertising(System):
 
         return True
 
-    def __checkAdInterstitial(self, AdPlacement):
-        """ checks if interstitial is allowed and ad point exists, enabled """
+    def __checkAdInterstitial(self, placement):
         if self.isInterstitialEnabled() is False:
             return False
 
-        if AdPlacement is None:
-            Trace.log("Object", 0, "AdPlacement not setup")
+        if placement is None:
             return False
 
         if AdvertisementProvider.hasInterstitialAdvert() is False:
-            Trace.log("Object", 0, "AdPoint {!r} has interstitial advert is False".format(AdPlacement))
             return False
 
-        if AdvertisementProvider.canYouShowInterstitialAdvert(AdPlacement) is False:
-            Trace.log("Object", 0, "AdPoint {!r} can you show is False".format(AdPlacement))
+        if AdvertisementProvider.canYouShowInterstitialAdvert(placement) is False:
             return False
 
         return True
 
-    def tryInterstitial(self, next_scene, AdPlacement, Skip = False):
-        if self.__checkAdInterstitial(AdPlacement) is False:
-            if Skip is True:
+    def tryInterstitial(self, next_scene, placement, Skip = False):
+        print("SystemAdvertising.tryInterstitial next_scene: ", next_scene, " placement: ", placement, " Skip: ", Skip)
+
+        if self.__checkAdInterstitial(placement) is False:
+            if Skip is False:
                 Notification.notify(Notificator.onChangeScene, next_scene)
                 pass
             return
 
         AdvertisingScene = DemonManager.getDemon("AdvertisingScene")
         AdvertisingScene.setParam("NextScene", next_scene)
-        AdvertisingScene.setParam("AdPlacement", AdPlacement)
+        AdvertisingScene.setParam("AdPlacement", placement)
 
         Notification.notify(Notificator.onChangeScene, SystemAdvertising.base_scene_name)
         pass

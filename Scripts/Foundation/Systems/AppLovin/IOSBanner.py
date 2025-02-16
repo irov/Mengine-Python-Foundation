@@ -1,5 +1,4 @@
-from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit, ad_callback
-
+from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit
 
 class IOSBanner(BaseAdUnit):
     ad_type = "Banner"

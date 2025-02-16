@@ -1,5 +1,4 @@
 class ProviderManager(object):
-
     s_providers = {}
 
     @staticmethod

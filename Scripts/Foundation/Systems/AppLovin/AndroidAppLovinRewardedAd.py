@@ -1,10 +1,11 @@
-from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit, AndroidAdUnitCallbacks
-from Foundation.Systems.AppLovin.BaseAdUnit import ad_callback
+from Foundation.Systems.AppLovin.AndroidAppLovinAdUnit import AndroidAppLovinAdUnit
 
-class AndroidRewardedAd(BaseAdUnit, AndroidAdUnitCallbacks):
+class AndroidAppLovinRewardedAd(AndroidAppLovinAdUnit):
     ad_type = "Rewarded"
 
     def _setCallbacks(self):
+        self._addAndroidCallback("onAndroidAppLovinRewardedShowSuccessful", self.cbShowSuccessful)
+        self._addAndroidCallback("onAndroidAppLovinRewardedShowFailed", self.cbShowFailed)
         self._addAndroidCallback("onAndroidAppLovinRewardedUserRewarded", self.cbUserRewarded)
         self._addAndroidCallback("onAndroidAppLovinRewardedRevenuePaid", self.cbRevenuePaid)
 
@@ -25,18 +26,4 @@ class AndroidRewardedAd(BaseAdUnit, AndroidAdUnitCallbacks):
         return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "canYouShowRewarded", placement)
 
     def _show(self, placement):
-        def __showCompleted(successful, params):
-            self.cbShowCompleted(successful, params)
-            pass
-
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showRewarded", placement, __showCompleted)
-
-    # callbacks
-
-    @ad_callback
-    def cbUserRewarded(self, params):
-        self._cbUserRewarded(params)
-
-    def _cbUserRewarded(self, params):
-        self._log("[{} cb] user rewarded: {}".format(self.name, params))
-        Notification.notify(Notificator.onAdUserRewarded, self.ad_type, self.name, params)
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showRewarded", placement)

@@ -4,7 +4,6 @@ from Foundation.Utils import SimpleLogger
 _Log = SimpleLogger("SystemApplovin")
 CREDENTIALS_CONFIG_KEY = "AppLovinPlugin"
 
-
 def ad_callback(bound_method):
     if _ANDROID:
         # I add callback, that returns an `ad_unit_id` as first argument
@@ -134,8 +133,14 @@ class BaseAdUnit(object):
     # callbacks
 
     @ad_callback
-    def cbShowCompleted(self, successful, params):
-        self._cbShowCompleted(successful, params)
+    def cbShowSuccessful(self, params):
+        print ("cbShowSuccessful", params)
+        self._cbShowCompleted(True, params)
+
+    @ad_callback
+    def cbShowFailed(self, params):
+        print ("cbShowFailed", params)
+        self._cbShowCompleted(False, params)
 
     def _cbShowCompleted(self, successful, params):
         self._log("[{} cb] completed {}".format(self.ad_type, params))
@@ -148,6 +153,14 @@ class BaseAdUnit(object):
     def _cbRevenuePaid(self, params):
         self._log("[{} cb] pay revenue {}".format(self.ad_type, params))
         Notification.notify(Notificator.onAdRevenuePaid, self.ad_type, params)
+
+    @ad_callback
+    def cbUserRewarded(self, params):
+        self._cbUserRewarded(params)
+
+    def _cbUserRewarded(self, params):
+        self._log("[{} cb] user rewarded: {}".format(self.name, params))
+        Notification.notify(Notificator.onAdUserRewarded, self.ad_type, self.name, params)
 
     # devtodebug
 
@@ -178,27 +191,3 @@ class BaseAdUnit(object):
             widgets.append(w_btn)
 
         return widgets
-
-
-class AndroidAdUnitCallbacks(object):
-    ANDROID_PLUGIN_NAME = "MengineAdService"
-
-    def __init__(self):
-        super(AndroidAdUnitCallbacks, self).__init__()
-        self._cbs = {}
-
-    def _addAndroidCallback(self, name, cb):
-        if name in self._cbs:
-            Trace.log("System", 0, "{}: callback {!r} is already exists !!!".format(self.__class__.__name__, name))
-            Mengine.removeAndroidCallback(self.ANDROID_PLUGIN_NAME, name, self._cbs[name])
-        identity = Mengine.addAndroidCallback(self.ANDROID_PLUGIN_NAME, name, cb)
-        self._cbs[name] = identity
-        return identity
-
-    def _setCallbacks(self):
-        raise NotImplementedError
-
-    def _removeAndroidCallbacks(self):
-        for name, cb_id in self._cbs.items():
-            Mengine.removeAndroidCallback(self.ANDROID_PLUGIN_NAME, name, cb_id)
-        self._cbs = {}

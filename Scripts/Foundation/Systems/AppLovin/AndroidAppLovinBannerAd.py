@@ -1,7 +1,6 @@
-from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit, AndroidAdUnitCallbacks
-from Foundation.Systems.AppLovin.BaseAdUnit import ad_callback
+from Foundation.Systems.AppLovin.AndroidAppLovinAdUnit import AndroidAppLovinAdUnit
 
-class AndroidBanner(BaseAdUnit, AndroidAdUnitCallbacks):
+class AndroidAppLovinBannerAd(AndroidAppLovinAdUnit):
     ad_type = "Banner"
 
     def _setCallbacks(self):
