@@ -57,7 +57,12 @@ class BaseProvider(object):
             Trace.log("Provider", cls.trace_level, "Not found method {}".format(name))
             return cls.__callNotFoundCb(name, *args, **kwargs)
 
-        return fn(*args, **kwargs)
+        try:
+            return fn(*args, **kwargs)
+        except Exception as e:
+            Trace.log("Provider", cls.trace_level, "Exception in {} {}".format(name, e))
+            return None
+
 
     @classmethod
     def __callNotFoundCb(cls, name, *args, **kwargs):

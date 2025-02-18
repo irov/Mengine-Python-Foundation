@@ -1,6 +1,6 @@
-from Foundation.Systems.AppLovin.AndroidInterstitialAd import AndroidInterstitialAd
-from Foundation.Systems.AppLovin.AndroidRewardedAd import AndroidRewardedAd
-from Foundation.Systems.AppLovin.AndroidBanner import AndroidBanner
+from Foundation.Systems.AppLovin.AndroidAppLovinInterstitialAd import AndroidAppLovinInterstitialAd
+from Foundation.Systems.AppLovin.AndroidAppLovinRewardedAd import AndroidAppLovinRewardedAd
+from Foundation.Systems.AppLovin.AndroidAppLovinBannerAd import AndroidAppLovinBannerAd
 from Foundation.Systems.AppLovin.IOSInterstitialAd import IOSInterstitialAd
 from Foundation.Systems.AppLovin.IOSRewardedAd import IOSRewardedAd
 from Foundation.Systems.AppLovin.IOSBanner import IOSBanner
@@ -27,9 +27,9 @@ class AppLovinAdFactory(object):
     @staticmethod
     def _createAndroidAd(ad_type):
         types = {
-            "Interstitial": AndroidInterstitialAd,
-            "Rewarded": AndroidRewardedAd,
-            "Banner": AndroidBanner,
+            "Interstitial": AndroidAppLovinInterstitialAd,
+            "Rewarded": AndroidAppLovinRewardedAd,
+            "Banner": AndroidAppLovinBannerAd,
         }
 
         Type = types[ad_type]

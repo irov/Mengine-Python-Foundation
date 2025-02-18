@@ -134,17 +134,17 @@ class SystemApplovin(System):
     def hideBanner(self):
         return self.banner.hide("banner")
 
-    def hasInterstitial(self, placement):
-        return self.interstitial.has(placement)
+    def hasInterstitial(self):
+        return self.interstitial.has()
 
-    def canYouShowInterstitial(self):
-        return self.interstitial.canYouShow()
+    def canYouShowInterstitial(self, placement):
+        return self.interstitial.canYouShow(placement)
 
     def showInterstitial(self, placement):
         return self.interstitial.show(placement)
 
-    def hasRewarded(self, placement):
-        return self.rewarded.has(placement)
+    def hasRewarded(self):
+        return self.rewarded.has()
 
     def canOfferRewarded(self, placement):
         return self.rewarded.canOffer(placement)
