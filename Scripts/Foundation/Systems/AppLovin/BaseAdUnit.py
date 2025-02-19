@@ -1,8 +1,7 @@
 from Foundation.Utils import SimpleLogger
 
 
-_Log = SimpleLogger("SystemApplovin")
-CREDENTIALS_CONFIG_KEY = "AppLovinPlugin"
+_Log = SimpleLogger("SystemAppLovin")
 
 def ad_callback(bound_method):
     if _ANDROID:
