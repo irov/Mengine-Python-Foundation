@@ -42,11 +42,13 @@ class SystemAdvertising(System):
             if Skip is False:
                 Notification.notify(Notificator.onChangeScene, next_scene)
                 pass
-            return
+            return False
 
         AdvertisingScene = DemonManager.getDemon("AdvertisingScene")
         AdvertisingScene.setParam("NextScene", next_scene)
         AdvertisingScene.setParam("AdPlacement", placement)
 
         Notification.notify(Notificator.onChangeScene, SystemAdvertising.base_scene_name)
+
+        return True
         pass
