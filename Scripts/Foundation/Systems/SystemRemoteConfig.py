@@ -20,7 +20,7 @@ class SystemRemoteConfig(System):
             return
 
         RemoteConfigProvider.setProvider("Firebase", dict(
-            getRemoteConfigValueJSON=SystemRemoteConfig.getRemoteConfigValueJSON,
+            getRemoteConfigValue=SystemRemoteConfig.getRemoteConfigValue,
         ))
 
     def _onRun(self):
@@ -50,15 +50,15 @@ class SystemRemoteConfig(System):
             return value
 
     @staticmethod
-    def getRemoteConfigValueJSON(key):
+    def getRemoteConfigValue(key):
         """ returns dict value """
         value = None
         if _ANDROID:
-            value = Mengine.androidObjectMethod(SystemRemoteConfig.ANDROID_PLUGIN_NAME, "getRemoteConfigValueJSON", key)
+            value = Mengine.androidObjectMethod(SystemRemoteConfig.ANDROID_PLUGIN_NAME, "getRemoteConfigValue", key)
         elif _IOS:
-            value = Mengine.appleFirebaseRemoteConfigGetValueJSON(key)
+            value = Mengine.appleFirebaseRemoteConfigGetValue(key)
         else:
-            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValueJSON")
+            SystemRemoteConfig.__errorNotSupportedOS("getRemoteConfigValue")
         return value
 
     @staticmethod
