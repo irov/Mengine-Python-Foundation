@@ -79,6 +79,10 @@ class BaseEntity(Actor, Initializer):
         return self.node.getWorldPosition()
         pass
 
+    def getScreenPosition(self):
+        return self.node.getScreenPosition()
+        pass
+
     def getCameraPosition(self, Camera):
         return Mengine.getCameraPosition(Camera, self.node)
         pass
