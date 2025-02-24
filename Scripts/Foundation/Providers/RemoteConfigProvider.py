@@ -3,12 +3,12 @@ from Foundation.Providers.BaseProvider import BaseProvider
 
 class RemoteConfigProvider(BaseProvider):
     s_allowed_methods = [
-        "getRemoteConfigValueJSON",
+        "getRemoteConfigValue",
     ]
 
     @staticmethod
-    def getRemoteConfigValueJSON(key, default=None):
-        remote_value = RemoteConfigProvider._call("getRemoteConfigValueJSON", key)
+    def getRemoteConfigValue(key, default=None):
+        remote_value = RemoteConfigProvider._call("getRemoteConfigValue", key)
         return RemoteConfigProvider.__returnValueOrDefault(remote_value, default)
 
     @staticmethod
