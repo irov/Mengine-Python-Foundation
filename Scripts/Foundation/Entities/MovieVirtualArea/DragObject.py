@@ -283,7 +283,7 @@ class DragObject(object):
                 return
 
         offset = self._get_bounds_offset(self._position)  # current offset
-        if self._velocity * offset < 0.0:
+        if Mengine.dot_v2_v2(self._velocity, offset) < 0.0:
             self._velocity.x *= (self._elasticity.limit - abs(offset.x)) / self._elasticity.limit
             self._velocity.y *= (self._elasticity.limit - abs(offset.y)) / self._elasticity.limit
         self._move(self._velocity)
