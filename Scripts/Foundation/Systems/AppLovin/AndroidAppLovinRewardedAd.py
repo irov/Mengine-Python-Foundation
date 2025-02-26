@@ -4,10 +4,10 @@ class AndroidAppLovinRewardedAd(AndroidAppLovinAdUnit):
     ad_type = "Rewarded"
 
     def _setCallbacks(self):
-        self._addAndroidCallback("onAndroidAppLovinRewardedShowSuccessful", self.cbShowSuccessful)
-        self._addAndroidCallback("onAndroidAppLovinRewardedShowFailed", self.cbShowFailed)
-        self._addAndroidCallback("onAndroidAppLovinRewardedUserRewarded", self.cbUserRewarded)
-        self._addAndroidCallback("onAndroidAppLovinRewardedRevenuePaid", self.cbRevenuePaid)
+        self._addAndroidCallback("onAndroidAdServiceRewardedShowSuccessful", self.cbShowSuccessful)
+        self._addAndroidCallback("onAndroidAdServiceRewardedShowFailed", self.cbShowFailed)
+        self._addAndroidCallback("onAndroidAdServiceRewardedUserRewarded", self.cbUserRewarded)
+        self._addAndroidCallback("onAndroidAdServiceRewardedRevenuePaid", self.cbRevenuePaid)
 
     def _cleanUp(self):
         self._removeAndroidCallbacks()

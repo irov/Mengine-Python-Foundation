@@ -4,7 +4,7 @@ class AndroidAppLovinBannerAd(AndroidAppLovinAdUnit):
     ad_type = "Banner"
 
     def _setCallbacks(self):
-        self._addAndroidCallback("onAndroidAppLovinBannerRevenuePaid", self.cbRevenuePaid)
+        self._addAndroidCallback("onAndroidAdServiceBannerRevenuePaid", self.cbRevenuePaid)
 
     def _cleanUp(self):
         self._removeAndroidCallbacks()
