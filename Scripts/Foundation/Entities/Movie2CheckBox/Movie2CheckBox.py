@@ -135,10 +135,26 @@ class Movie2CheckBox(BaseEntity):
         else:
             return self.MovieButtonFalse
 
+    def getCurrentMovieSocketCenter(self):
+        current_button = self.getCurrentMovie()
+        return current_button.getCurrentMovieSocketCenter()
+
     def getCompositionBounds(self):
-        current_movie = self.getCurrentMovie()
-        return current_movie.getCompositionBounds()
+        current_button = self.getCurrentMovie()
+        return current_button.getCompositionBounds()
 
     def hasCompositionBounds(self):
-        current_movie = self.getCurrentMovie()
-        return current_movie.hasCompositionBounds()
+        current_button = self.getCurrentMovie()
+        return current_button.hasCompositionBounds()
+
+    def addChildToSlot(self, node, slot_name):
+        for button in [self.MovieButtonTrue, self.MovieButtonFalse]:
+            if button is None:
+                continue
+            button.addChildToSlot(node, slot_name)
+
+    def setTextAliasEnvironment(self, env_name):
+        for button in [self.MovieButtonTrue, self.MovieButtonFalse]:
+            if button is None:
+                continue
+            button.setTextAliasEnvironment(env_name)

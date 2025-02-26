@@ -46,18 +46,16 @@ class ObjectMovie2CheckBox(DemonObject):
         pass
 
     def getCurrentMovieSocketCenter(self):
-        entity = self.getEntity()
-
-        if entity is not None:
-            button_false = entity.MovieButtonFalse
-            button_true = entity.MovieButtonTrue
-
-            current_button = button_false if button_false.getEnable() else button_true
-
-            return current_button.getCurrentMovieSocketCenter()
+        return self.getEntity().getCurrentMovieSocketCenter()
 
     def getCompositionBounds(self):
         return self.getEntity().getCompositionBounds()
 
     def hasCompositionBounds(self):
         return self.getEntity().hasCompositionBounds()
+
+    def addChildToSlot(self, node, slot_name):
+        return self.getEntity().addChildToSlot(node, slot_name)
+
+    def setTextAliasEnvironment(self, env_name):
+        return self.getEntity().setTextAliasEnvironment(env_name)
