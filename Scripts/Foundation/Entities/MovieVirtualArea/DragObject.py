@@ -111,8 +111,8 @@ class DragObject(object):
         half_scaled_size = scaled_size / 2.0
 
         self._scale_factor *= scale_factor
-        self._bounds['begin'].set(center - half_scaled_size)
-        self._bounds['end'].set(center + half_scaled_size)
+        self._bounds['begin'] = center - half_scaled_size
+        self._bounds['end'] = center + half_scaled_size
 
         self._update_local_bounds()
 
