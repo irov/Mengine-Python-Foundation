@@ -16,12 +16,20 @@ class TaskNodeBezier2ScreenFollow(MixinNode, Task):
         self.id = 0
         pass
 
+    def _onCheckParams(self):
+        if self.Follow is None:
+            self.paramsFailed("Follow is None.")
+            pass
+
+        if self.Time is None and self.Speed is None:
+            self.paramsFailed("Time and Speed is None.")
+            pass
+        pass
+
     def _onInitialize(self):
         super(TaskNodeBezier2ScreenFollow, self)._onInitialize()
 
         if self.Time is None:
-            if self.Speed is None:
-                self.initializeFailed("Time and speed is None.")
             positionFrom = self.node.getScreenPosition()
             positionTo = self.Follow.getScreenPosition()
             length = Mengine.length_v2_v2(positionFrom, positionTo)

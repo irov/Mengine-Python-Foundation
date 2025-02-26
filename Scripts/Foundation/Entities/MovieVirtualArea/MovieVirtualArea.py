@@ -1,7 +1,6 @@
 from Foundation.Entity.BaseEntity import BaseEntity
 from Foundation.ObjectManager import ObjectManager
 from Foundation.TaskManager import TaskManager
-from Foundation.Vector2D import Vector2D
 
 from VirtualArea import VirtualArea
 
@@ -75,7 +74,7 @@ class MovieVirtualArea(BaseEntity):
         snapping = self._virtual_area.get_snapping()
 
         snapping.set_to_Y_axis()
-        snapping.set_bounds_point(Vector2D())
+        snapping.set_bounds_point(Mengine.vec2f(0.0, 0.0))
 
         for child in self._content.getMovie().getAllChildren():
             snapping.add_snapper(child.getWorldPosition().y - anchor)

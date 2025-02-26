@@ -1,5 +1,4 @@
 from Foundation.Initializer import Initializer
-from Foundation.Vector2D import Vector2D
 
 from DragObject import DragObject
 
@@ -56,6 +55,9 @@ class VirtualArea(Initializer):
             "drag_start_threshold": kwargs.get('drag_start_threshold', 50.0),  # todo: px -> cm
             "allow_out_of_bounds": kwargs.get('allow_out_of_bounds', True)
         }
+        name = kwargs.get('name', 'VirtualArea')
+        camera_name = kwargs.get('camera_name', 'VirtualAreaRenderCameraOrthogonal')
+        viewport_name = kwargs.get('viewport_name', 'VirtualAreaRenderViewport')
 
         self._enable_scale = enable_scale
         self._scale_factor = scale_factor
@@ -65,12 +67,12 @@ class VirtualArea(Initializer):
         self._target.set_content_size(*content_size)
 
         self._root = Mengine.createNode('Interender')
-        self._root.setName("VirtualAreaRoot")
+        self._root.setName(name)
 
         self._camera = self._root.createChild('RenderCameraOrthogonal')
-        self._camera.setName('VirtualAreaRenderCameraOrthogonal')
+        self._camera.setName(camera_name)
         self._viewport = self._root.createChild('RenderViewport')
-        self._viewport.setName('VirtualAreaRenderViewport')
+        self._viewport.setName(viewport_name)
 
         if viewport:
             self.setup_viewport(viewport)
@@ -118,6 +120,9 @@ class VirtualArea(Initializer):
 
         self._socket = None
 
+        self._camera = None
+        self._viewport = None
+
         if self._root is not None:
             root_render = self._root.getRender()
             root_render.setRenderViewport(None)
@@ -126,9 +131,6 @@ class VirtualArea(Initializer):
             self._root.removeFromParent()
             Mengine.destroyNode(self._root)
             self._root = None
-
-        self._camera = None
-        self._viewport = None
 
         # finalize target
         self._target.remove_affector()
@@ -145,7 +147,7 @@ class VirtualArea(Initializer):
             self.on_drag_move(*self.get_percentage())
 
     def set_snapping(self, bounds, content, radius):
-        self._target._snapping.set(Vector2D(bounds), Vector2D(content), radius, )
+        self._target._snapping.set(bounds, content, radius)
 
     def get_snapping(self):
         return self._target._snapping
@@ -159,16 +161,13 @@ class VirtualArea(Initializer):
 
         bounds = self._target._local_bounds
         size = self._target._size
-        self._target.set_velocity(0.0, 0.0)
+        self._target.set_velocity(Mengine.vec2f(0, 0))
         self._target.setup_affector()
 
-        if x_is_None:
-            self._target.set_position(y=bounds['begin'].y + (self.get_height() - abs(size.y - size.w)) * y)
-        elif y_is_None:
-            self._target.set_position(x=bounds['begin'].x + (self.get_width() - abs(size.x - size.z)) * x)
-        else:
-            self._target.set_position(bounds['begin'].x + (self.get_width() - abs(size.x - size.z)) * x,
-                                      bounds['begin'].y + (self.get_height() - abs(size.y - size.w)) * y)
+        x = self._target.get_position().x if x is None else bounds['begin'].x + (self.get_width() - abs(size.x - size.z)) * x
+        y = self._target.get_position().y if y is None else bounds['begin'].y + (self.get_height() - abs(size.y - size.w)) * y
+
+        self._target.set_position(Mengine.vec2f(x, y))
 
     def get_percentage(self):
         position = self._target._position
@@ -227,7 +226,7 @@ class VirtualArea(Initializer):
         """
         if use_as_anchor:
             anchor = node.getWorldPosition()
-            self._target.set_anchor_point(anchor.x, anchor.y)
+            self._target.set_anchor_point(anchor)
         self._root.addChild(node)
 
     def get_node(self):
@@ -287,7 +286,7 @@ class VirtualArea(Initializer):
             self._camera.setOrthogonalViewport(vp)
             self._camera.setFixedOrthogonalViewport(True)
 
-        if isinstance(left, Mengine.Node):
+        if isinstance(left, Mengine.HotSpotPolygon):
             box = Mengine.getHotSpotPolygonBoundingBox(left)
             __set(Mengine.Viewport(box.minimum, box.maximum))
 

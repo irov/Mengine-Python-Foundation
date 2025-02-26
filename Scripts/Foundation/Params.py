@@ -187,6 +187,10 @@ class Params(object):
     def onParams(self, params):
         try:
             self._onParams(params)
+
+            if _DEVELOPMENT is True:
+                self._onCheckParams()
+                pass
         except ParamsException as pe:
             Trace.log("Manager", 0, "Params.onParams error %s" % (pe))
 
@@ -194,6 +198,9 @@ class Params(object):
             pass
 
         return True
+        pass
+
+    def _onCheckParams(self):
         pass
 
     def _onParams(self, params):

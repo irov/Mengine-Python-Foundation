@@ -83,6 +83,12 @@ class SceneManager(object):
 
     @staticmethod
     def getSceneType(name):
+        if name not in SceneManager.s_scenesType:
+            Trace.log("Manager", 0, "SceneManager.getSceneType scene %s not found" % name)
+
+            return None
+            pass
+
         Type, module = SceneManager.s_scenesType.get(name)
 
         return Type

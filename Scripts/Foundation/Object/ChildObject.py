@@ -134,7 +134,7 @@ class ChildObject(BaseObject):
     def createObject(self, Type, Name, **Params):
         if self.hasObject(Name) is True:
             if self.loaded is False:
-                Trace.log("Object", 0, "ChildObject '%s' already exist child '%s'" % (self.name, Name))
+                Trace.log("Object", 0, "ChildObject '%s' already exist child '%s'"%(self.name, Name))
                 return None
 
             obj = self.getObject(Name)
@@ -145,7 +145,7 @@ class ChildObject(BaseObject):
         obj = ObjectManager.createObject(Type, Name, self, Params)
 
         if obj is None:
-            Trace.log("Object", 0, "ChildObject '%s' invalid create child '%s:%s'" % (self.name, Type, Name))
+            Trace.log("Object", 0, "ChildObject '%s' invalid create child '%s:%s'"%(self.name, Type, Name))
 
             return None
 

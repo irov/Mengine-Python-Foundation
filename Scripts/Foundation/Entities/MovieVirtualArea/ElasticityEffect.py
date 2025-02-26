@@ -1,5 +1,3 @@
-from Foundation.Vector2D import Vector2D
-
 class ElasticityEffect(object):
     Rigidity_Minimum = 100.0
     Rigidity_Maximum = 1000.0
@@ -17,7 +15,7 @@ class ElasticityEffect(object):
     def post_solve(self, offset, new_position, dt):
         target = self._target
         new_offset = target._get_bounds_offset(new_position)
-        if new_offset == Vector2D.Null:
+        if new_offset == Mengine.vec2f(0.0, 0.0):
             # target became inside the viewport in this case
             target.set_position(target._position + offset)
             target._velocity.set(0.0, 0.0)
@@ -38,4 +36,5 @@ class ElasticityEffect(object):
     def _elasticity_law(self, offset):
         # x = self.elasticity_limit - abs(offset.x)
         # y = self.elasticity_limit - abs(offset.y)
-        return offset / self.limit
+        law = offset / self.limit
+        return law

@@ -1,14 +1,11 @@
-from Foundation.Vector2D import Vector2D
-
 class SnappingEffect(object):
-
     def __init__(self, target):
         self._target = target
-        self.bounds_point = Vector2D()
+        self.bounds_point = Mengine.vec2f(0.0, 0.0)
         self.axis = 'x'
         self.coefficient = 0.0001
         self._epsilon = 2.0
-        self._acceleration = Vector2D()
+        self._acceleration = Mengine.vec2f(0.0, 0.0)
         self._distance = 0.0
 
         self._snappers = []
@@ -48,12 +45,12 @@ class SnappingEffect(object):
         if abs(self._distance) <= self._epsilon:
             self._target.set_position(**{self.axis: getattr(self._target._position, self.axis) + self._distance})
             # print 'target was snapped'
-            self._target.set_velocity(0, 0)
+            self._target.set_velocity(Mengine.vec2f(0.0, 0.0))
             return True
         return False
 
     def _snapping_law(self, distance):
-        direction = Vector2D()
+        direction = Mengine.vec2f(0.0, 0.0)
         direction.set(**{self.axis: distance})
         # direction.set(abs=distance)
         return direction

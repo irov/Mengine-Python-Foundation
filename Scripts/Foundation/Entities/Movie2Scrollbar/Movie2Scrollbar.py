@@ -2,8 +2,6 @@ from Foundation.Entity.BaseEntity import BaseEntity
 from Foundation.ObjectManager import ObjectManager
 from Foundation.TaskManager import TaskManager
 
-from Foundation.Vector2D import Vector2D
-
 class Movie2Scrollbar(BaseEntity):
     @staticmethod
     def declareORM(Type):
@@ -25,8 +23,8 @@ class Movie2Scrollbar(BaseEntity):
         self.tc = None
 
         self._slider_box = None
-        self._slider_size = Vector2D()
-        self._half_slider_size = Vector2D()
+        self._slider_size = Mengine.vec2f(0.0, 0.0)
+        self._half_slider_size = Mengine.vec2f(0.0, 0.0)
         self._bar_box = None
         pass
 
@@ -105,21 +103,21 @@ class Movie2Scrollbar(BaseEntity):
         if self.object.getIsHorizontal() is True:
             left_offset = self._bar_box.minimum.x + self._half_slider_size.x - x
             if left_offset > 0:
-                return Vector2D(left_offset, 0)
+                return Mengine.vec2f(left_offset, 0)
             else:
                 right_offset = self._bar_box.maximum.x - self._half_slider_size.x - x
                 if right_offset < 0:
-                    return Vector2D(right_offset, 0)
+                    return Mengine.vec2f(right_offset, 0)
         else:
             top_offset = self._bar_box.minimum.y + self._half_slider_size.y - y
             if top_offset > 0:
-                return Vector2D(0, top_offset)
+                return Mengine.vec2f(0, top_offset)
             else:
                 bottom_offset = self._bar_box.maximum.y - self._half_slider_size.y - y
                 if bottom_offset < 0:
-                    return Vector2D(0, bottom_offset)
+                    return Mengine.vec2f(0, bottom_offset)
 
-        return Vector2D()
+        return None
 
     def _move(self, dx, dy):
         x, y, _ = self._slider.getPosition()
@@ -133,7 +131,7 @@ class Movie2Scrollbar(BaseEntity):
             socket_pos.y += dy
 
         offset = self._is_inside_bar(socket_pos.x, socket_pos.y)
-        if offset == Vector2D.Null:
+        if offset is None:
             self._slider.setPosition((x, y, _))
         else:
             self._slider.setPosition((x + offset.x, y + offset.y, _))

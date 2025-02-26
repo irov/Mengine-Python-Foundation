@@ -1,8 +1,6 @@
 from Foundation.Entities.MovieVirtualArea.ElasticityEffect import ElasticityEffect
 from Foundation.Entities.MovieVirtualArea.FrictionEffect import FrictionEffect
 from Foundation.Entities.MovieVirtualArea.SnappingEffect import SnappingEffect
-from Foundation.Vector2D import Vector2D
-from Foundation.Vector4D import Vector4D
 
 class DragObject(object):
 
@@ -41,11 +39,11 @@ class DragObject(object):
         self._old_time = 0.0
         self._epsilon = 20.0
 
-        self._start_drag_position = Vector2D()
+        self._start_drag_position = Mengine.vec2f(0.0, 0.0)
         self._drag_start_threshold = drag_start_threshold
 
-        self._position = Vector2D()
-        self._velocity = Vector2D()
+        self._position = Mengine.vec2f(0.0, 0.0)
+        self._velocity = Mengine.vec2f(0.0, 0.0)
 
         self._velocity_limit = 150.0
         self._velocity_mouse_release_factor = 0.05
@@ -55,11 +53,11 @@ class DragObject(object):
 
         self._affector = None
 
-        self._bounds = dict(begin=Vector2D(), end=Vector2D())
-        self._local_bounds = dict(begin=Vector2D(), end=Vector2D())
+        self._bounds = dict(begin=Mengine.vec2f(0.0, 0.0), end=Mengine.vec2f(0.0, 0.0))
+        self._local_bounds = dict(begin=Mengine.vec2f(0.0, 0.0), end=Mengine.vec2f(0.0, 0.0))
 
-        self._size = Vector4D()
-        self._anchor_point = Vector2D()
+        self._size = Mengine.vec4f(0.0, 0.0, 0.0, 0.0)
+        self._anchor_point = Mengine.vec2f(0.0, 0.0)
 
         self._disable_drag = disable_drag_if_invalid
         self._allow_out_of_bounds = allow_out_of_bounds
@@ -82,19 +80,16 @@ class DragObject(object):
             self._affector = None
 
     def get_velocity(self):
-        return Vector2D(self._velocity)
+        return self._velocity
 
-    def set_velocity(self, *args, **kwargs):
-        if 'speed' in kwargs:
-            kwargs['abs'] = kwargs['speed']
-            del kwargs['speed']
-        self._velocity.set(*args, **kwargs)
+    def set_velocity(self, velocity):
+        self._velocity = velocity
 
     def get_position(self):
-        return Vector2D(self._position)
+        return self._position
 
-    def set_position(self, *args, **kwargs):
-        self._position.set(*args, **kwargs)
+    def set_position(self, position):
+        self._position = position
         self._on_position_changed(self._position.x, self._position.y)
 
     def set_scale(self, scale):
@@ -129,8 +124,8 @@ class DragObject(object):
             offset = self._get_bounds_offset(self._position)
             self._move(offset)
 
-    def set_anchor_point(self, *args, **kwargs):
-        self._anchor_point.set(*args, **kwargs)
+    def set_anchor_point(self, anchor_point):
+        self._anchor_point = anchor_point
         self._update_local_bounds()
         self._update_position_to_anchor()
 
@@ -157,7 +152,7 @@ class DragObject(object):
         self._validate_content_size()
 
     def get_content_size(self):
-        return Vector4D(self._size)
+        return self._size
 
     def _update_local_bounds(self):
         self._local_bounds['begin'] = self._bounds['begin'] - self._anchor_point
@@ -179,20 +174,25 @@ class DragObject(object):
                           "(c.height {} < {} va.height)".format(abs(self._size.w - self._size.y), vp_size.y))
 
         if invalid_width and invalid_height:
-            self._size.set(self._bounds['begin'].x, self._bounds['begin'].y, self._bounds['end'].x, self._bounds['end'].y)
+            self._size.x = self._bounds['begin'].x
+            self._size.y = self._bounds['begin'].y
+            self._size.z = self._bounds['end'].x
+            self._size.w = self._bounds['end'].y
 
             if self._disable_drag:
                 self._dragging_mode = self._modes['none']
 
         elif invalid_width:
-            self._size.set(x=self._bounds['begin'].x, z=self._bounds['end'].x)
+            self._size.x = self._bounds['begin'].x
+            self._size.z = self._bounds['end'].x
 
             if self._disable_drag:
                 if self._dragging_mode is self._modes['horizontal']:
                     self._dragging_mode = self._modes['none']
 
         elif invalid_height:
-            self._size.set(y=self._bounds['begin'].y, w=self._bounds['end'].y)
+            self._size.y = self._bounds['begin'].y
+            self._size.w = self._bounds['end'].y
 
             if self._disable_drag:
                 if self._dragging_mode is self._modes['vertical']:
@@ -212,7 +212,7 @@ class DragObject(object):
         :param position: Vector2D instance
         :return: Vector2D instance
         """
-        offset = Vector2D()
+        offset = Mengine.vec2f(0.0, 0.0)
 
         sw = self._size.z - self._size.x
         sh = self._size.w - self._size.y
@@ -222,9 +222,8 @@ class DragObject(object):
         top_offset = self._local_bounds['begin'].y - (position.y + self._size.y)
         bottom_offset = self._local_bounds['end'].y - (position.y + self._size.w)
 
-        offset.set(x=right_offset if right_offset < 0.0 else left_offset if left_offset > 0.0 else 0.0,
-
-            y=top_offset if top_offset < 0.0 else bottom_offset if bottom_offset > 0.0 else 0.0)
+        offset.x = right_offset if right_offset < 0.0 else left_offset if left_offset > 0.0 else 0.0
+        offset.y = top_offset if top_offset < 0.0 else bottom_offset if bottom_offset > 0.0 else 0.0
 
         return offset
 
@@ -237,7 +236,7 @@ class DragObject(object):
 
         # checking for target being inside viewport
         offset = self._get_bounds_offset(self._position)
-        if offset == Vector2D.Null:
+        if offset is None:
             # target is inside the viewport in this case
             # adding snapping force
             self._snapping.pre_solve(dt)
@@ -255,7 +254,7 @@ class DragObject(object):
         # calculating new position of target
         new_position = self._position + self._velocity * dt
 
-        if offset == Vector2D.Null:
+        if offset is None:
             # target was inside the viewport in this case
             if self._snapping.post_solve(new_position, dt):  # and self._friction.post_solve(dt):
                 return True
@@ -273,12 +272,16 @@ class DragObject(object):
         return False
 
     def mouse_move(self, touch_id, x, y, dx, dy):
-        self._velocity.set(*self._dragging_mode(dx * self._scale_factor, dy * self._scale_factor))
+        x, y = self._dragging_mode(dx * self._scale_factor, dy * self._scale_factor)
+
+        self._velocity.x = x
+        self._velocity.y = y
 
         if self._allow_out_of_bounds is False:
             next_pos = self._position + self._velocity
-            if self._get_bounds_offset(next_pos) != Vector2D.Null:
-                self._velocity.set(0.0, 0.0)
+            if self._get_bounds_offset(next_pos) != Mengine.vec2f(0.0, 0.0):
+                self._velocity.x = 0.0
+                self._velocity.y = 0.0
                 # print "!!!!! OUT OF BOUNDS"
                 return
 
@@ -304,8 +307,9 @@ class DragObject(object):
         if self._dt == 0.0:
             self._velocity.set(0.0, 0.0)
         else:
-            if abs(self._velocity) > self._velocity_limit:
-                self._velocity.set(abs=self._velocity_limit)
+            l = abs(self._velocity)
+            if l > self._velocity_limit:
+                self._velocity *= self._velocity_limit / l
 
             # before fix
             # self._velocity /= self._dt
@@ -321,7 +325,7 @@ class DragObject(object):
         if calc_y == 0.0:  # ignore vertical part
             y = self._start_drag_position.y
 
-        last_position = Vector2D(x, y)
+        last_position = Mengine.vec2f(x, y)
         length = abs(last_position - self._start_drag_position)
 
         if length < self._drag_start_threshold:
