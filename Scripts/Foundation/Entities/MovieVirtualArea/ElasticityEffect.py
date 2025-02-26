@@ -24,12 +24,12 @@ class ElasticityEffect(object):
             # target became outside the viewport in this case
             if new_offset.x == 0.0 and offset.x != 0.0 or new_offset.x * offset.x < 0.0:
                 # target returned to bounds by X-axis
-                new_position.set(x=target._position.x + offset.x)
-                target._velocity.set(x=0.0)
+                new_position.x=target._position.x + offset.x
+                target._velocity.x=0.0
             elif new_offset.y == 0.0 and offset.y != 0.0 or new_offset.y * offset.y < 0.0:
                 # target returned to bounds by Y-axis
-                new_position.set(y=target._position.y + offset.y)
-                target._velocity.set(y=0.0)
+                new_position.y=target._position.y + offset.y
+                target._velocity.y=0.0
 
         return False
 

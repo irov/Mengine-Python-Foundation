@@ -214,9 +214,6 @@ class DragObject(object):
         """
         offset = Mengine.vec2f(0.0, 0.0)
 
-        sw = self._size.z - self._size.x
-        sh = self._size.w - self._size.y
-
         right_offset = self._local_bounds['begin'].x - (position.x + self._size.x)
         left_offset = self._local_bounds['end'].x - (position.x + self._size.z)
         top_offset = self._local_bounds['begin'].y - (position.y + self._size.y)
