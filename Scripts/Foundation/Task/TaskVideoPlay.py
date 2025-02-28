@@ -15,7 +15,7 @@ class TaskVideoPlay(MixinVideo, Task):
 
         if self.wait is True:
             with TaskManager.createTaskChain(Cb=self._onVideoPlayWait) as tc:
-                tc.addTask("TaskListener", ID=Notificator.onVideoEnd, Filter=self._onVideoPlayFilter)
+                tc.addListener(Notificator.onVideoEnd, Filter=self._onVideoPlayFilter)
                 pass
 
             return False

@@ -162,16 +162,16 @@ class MovieButton(BaseEntity):
 
     def __stateEnter(self, source, MovieEnter):
         if MovieEnter is None:
-            source.addTask("TaskNotify", ID=Notificator.onButtonMouseEnter, Args=(self.object,))
-            source.addTask("TaskNotify", ID=Notificator.onMovieButtonMouseEnter, Args=(self.object,))
+            source.addNotify(Notificator.onButtonMouseEnter, self.object)
+            source.addNotify(Notificator.onMovieButtonMouseEnter, self.object)
             source.addFunction(self.__setState, "Over")
             return
             pass
 
         source.addEnable(MovieEnter)
         source.addDelay(0.0)
-        source.addTask("TaskNotify", ID=Notificator.onButtonMouseEnter, Args=(self.object,))
-        source.addTask("TaskNotify", ID=Notificator.onMovieButtonMouseEnter, Args=(self.object,))
+        source.addNotify(Notificator.onButtonMouseEnter, self.object)
+        source.addNotify(Notificator.onMovieButtonMouseEnter, self.object)
 
         with source.addRaceTask(3) as (source_enter_movie, source_enter_leave, source_enter_click):
             source_enter_movie.addTask("TaskMoviePlay", Movie=MovieEnter)
@@ -190,14 +190,14 @@ class MovieButton(BaseEntity):
 
     def __stateLeave(self, source, MovieLeave):
         if MovieLeave is None:
-            source.addTask("TaskNotify", ID=Notificator.onMovieButtonMouseLeave, Args=(self.object,))
+            source.addNotify(Notificator.onMovieButtonMouseLeave, self.object)
             source.addFunction(self.__setState, "Idle")
             return
             pass
 
         source.addEnable(MovieLeave)
         source.addDelay(0.0)
-        source.addTask("TaskNotify", ID=Notificator.onMovieButtonMouseLeave, Args=(self.object,))
+        source.addNotify(Notificator.onMovieButtonMouseLeave, self.object)
 
         with source.addRaceTask(2) as (source_leave_movie, source_leave_enter):
             source_leave_movie.addTask("TaskMoviePlay", Movie=MovieLeave)
@@ -212,13 +212,13 @@ class MovieButton(BaseEntity):
 
     def __statePush(self, source, MoviePush):
         if MoviePush is None:
-            source.addTask("TaskNotify", ID=Notificator.onMovieButtonPush, Args=(self.object,))
+            source.addNotify(Notificator.onMovieButtonPush, self.object)
             source.addFunction(self.__setState, "Pressed")
             return
             pass
 
         source.addEnable(MoviePush)
-        source.addTask("TaskNotify", ID=Notificator.onMovieButtonPush, Args=(self.object,))
+        source.addNotify(Notificator.onMovieButtonPush, self.object)
         source.addDelay(0.0)
 
         with source.addRaceTask(3) as (source_Push_movie, source_Push_leave, source_Pressed_click_Rel):
@@ -263,13 +263,13 @@ class MovieButton(BaseEntity):
 
     def __stateRelease(self, source, MoviePressed):
         if MoviePressed is None:
-            source.addTask("TaskNotify", ID=Notificator.onMovieButtonRelease, Args=(self.object,))
+            source.addNotify(Notificator.onMovieButtonRelease, self.object)
             source.addFunction(self.__setState, "Release_Play")
             return
             pass
 
         source.addEnable(MoviePressed)
-        source.addTask("TaskNotify", ID=Notificator.onMovieButtonRelease, Args=(self.object,))
+        source.addNotify(Notificator.onMovieButtonRelease, self.object)
         source.addDelay(0.0)
 
         with source.addRaceTask(2) as (source_Release_movie, source_Release_enter):
@@ -297,20 +297,20 @@ class MovieButton(BaseEntity):
 
     def __stateClick(self, source, MovieClick):
         if MovieClick is None:
-            source.addTask("TaskNotify", ID=Notificator.onButtonClickBegin, Args=(self.object,))
-            source.addTask("TaskNotify", ID=Notificator.onButtonClick, Args=(self.object,))
-            source.addTask("TaskNotify", ID=Notificator.onMovieButtonClick, Args=(self.object,))
-            source.addTask("TaskNotify", ID=Notificator.onMovieButtonClickEnd, Args=(self.object,))
+            source.addNotify(Notificator.onButtonClickBegin, self.object)
+            source.addNotify(Notificator.onButtonClick, self.object)
+            source.addNotify(Notificator.onMovieButtonClick, self.object)
+            source.addNotify(Notificator.onMovieButtonClickEnd, self.object)
             source.addFunction(self.__setState, "Idle")
             return
             pass
 
         source.addEnable(MovieClick)
-        source.addTask("TaskNotify", ID=Notificator.onButtonClickBegin, Args=(self.object,))
-        source.addTask("TaskNotify", ID=Notificator.onButtonClick, Args=(self.object,))
-        source.addTask("TaskNotify", ID=Notificator.onMovieButtonClick, Args=(self.object,))
+        source.addNotify(Notificator.onButtonClickBegin, self.object)
+        source.addNotify(Notificator.onButtonClick, self.object)
+        source.addNotify(Notificator.onMovieButtonClick, self.object)
         source.addTask("TaskMoviePlay", Movie=MovieClick)
-        source.addTask("TaskNotify", ID=Notificator.onMovieButtonClickEnd, Args=(self.object,))
+        source.addNotify(Notificator.onMovieButtonClickEnd, self.object)
         source.addFunction(self.__setState, "Idle")
         source.addDisable(MovieClick)
         pass

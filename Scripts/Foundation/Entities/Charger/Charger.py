@@ -251,7 +251,7 @@ class Charger(BaseEntity):
 
                     source_release_movie_2.addListener(ID=Notificator.onChargerSkip, Filter=lambda obj: obj is self.object)
                     source_release_movie_2.addFunction(self.object.setState, "Skip")
-                    source_release_movie_2.addTask("TaskDeadLock")
+                    source_release_movie_2.addBlock()
                     pass
 
                 if self.WaitCharge is True:

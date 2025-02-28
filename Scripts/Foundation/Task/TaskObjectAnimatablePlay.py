@@ -16,7 +16,6 @@ class TaskObjectAnimatablePlay(MixinEvent, Task):
         self.LastFrame = params.get("LastFrame", True)
         self.ValidationParentEnable = params.get("ValidationParentEnable", True)
         self.AutoEnable = params.get("AutoEnable", False)
-        self.Docdeb = params.get("Docdeb", " Docdeb NOT YOUR OBJECT")
 
     def _onValidate(self):
         super(TaskObjectAnimatablePlay, self)._onValidate()

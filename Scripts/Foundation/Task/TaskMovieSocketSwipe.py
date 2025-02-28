@@ -122,30 +122,30 @@ class TaskMovieSocketSwipe(TaskAlias, MixinMovie):
 
         with source.addRepeatTask() as (repeat, until):
             with repeat.addIfTask(self.Movie.getEnable) as (enabled, disabled):
-                enabled.addTask("TaskDummy")
-                disabled.addTask("TaskDeadLock")
+                enabled.addDummy()
+                disabled.addBlock()
                 pass
 
             repeat.addTask("TaskMovieSocketClick", SocketName=self.SocketName, Movie=self.Movie, isDown=True)
             with repeat.addRaceTask(2) as (handlers, timer):
-                handlers.addTask("TaskSemaphore", Semaphore=self.sem_remove, To=1)
+                handlers.addSemaphore(self.sem_remove, To=1)
                 with handlers.addSwitchTask(3, __detector) as (no_swipe, try_swipe, swipe):
-                    try_swipe.addTask("TaskSemaphore", Semaphore=self.sem_complete, To=2)
-                    swipe.addTask("TaskSemaphore", Semaphore=self.sem_complete, To=1)
+                    try_swipe.addSemaphore(self.sem_complete, To=2)
+                    swipe.addSemaphore(self.sem_complete, To=1)
                     pass
-                handlers.addTask("TaskSemaphore", Semaphore=self.sem_remove, To=0)
+                handlers.addSemaphore(self.sem_remove, To=0)
 
                 timer.addDelay(self.delay)
                 pass
 
             with repeat.addIfTask(lambda: self.sem_remove.getValue() == 1) as (remove, not_remove):
                 remove.addFunction(__removeHandlers)
-                remove.addTask("TaskSemaphore", Semaphore=self.sem_remove, To=0)
+                remove.addSemaphore(self.sem_remove, To=0)
 
             if self.catchTry is True:
-                until.addTask("TaskSemaphore", Semaphore=self.sem_complete, From=2)
+                until.addSemaphore(self.sem_complete, From=2)
             else:
-                until.addTask("TaskSemaphore", Semaphore=self.sem_complete, From=1)
+                until.addSemaphore(self.sem_complete, From=1)
             pass
         pass
     pass

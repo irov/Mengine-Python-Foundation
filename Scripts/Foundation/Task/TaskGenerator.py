@@ -433,7 +433,7 @@ class TaskSource(object):
                 pass
             pass
 
-        self.__addDesc("TaskEnable", dict(Object=object))
+        self.__addDesc("TaskEnable", dict(Object=object, Value=True))
         pass
 
     def addDummy(self, **kwrds):

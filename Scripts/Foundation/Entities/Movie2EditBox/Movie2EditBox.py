@@ -326,7 +326,7 @@ class Movie2EditBox(BaseEntity):
 
     def __stateFocus(self, source, MovieFocus):
         if MovieFocus is None:
-            source.addTask("TaskNotify", ID=Notificator.onMovie2EditBoxFocus, Args=(self.object,))
+            source.addNotify(Notificator.onMovie2EditBoxFocus, self.object)
             source.addEnable(self.Movies.get("Idle"))
             source.addSemaphore(self.SemaphoreFocus, From=False)
             source.addFunction(self.__setState, "Idle")
@@ -336,7 +336,7 @@ class Movie2EditBox(BaseEntity):
 
         source.addEnable(MovieFocus)
 
-        source.addTask("TaskNotify", ID=Notificator.onMovie2EditBoxFocus, Args=(self.object,))
+        source.addNotify(Notificator.onMovie2EditBoxFocus, self.object)
         source.addFunction(self.updateValue)
         source.addSemaphore(self.SemaphoreFocus, From=False)
         source.addFunction(self.__setState, "Idle")

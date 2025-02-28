@@ -334,7 +334,7 @@ class MovieEditBox(BaseEntity):
 
     def __stateFocus(self, source, MovieFocus):
         if MovieFocus is None:
-            source.addTask("TaskNotify", ID=Notificator.onMovieEditBoxFocus, Args=(self.object,))
+            source.addNotify(Notificator.onMovieEditBoxFocus, self.object)
             source.addEnable(self.Movies.get("Idle"))
             source.addSemaphore(self.SemaphoreFocus, From=False)
             source.addFunction(self.__setState, "Idle")
@@ -347,7 +347,7 @@ class MovieEditBox(BaseEntity):
 
         source.addEnable(MovieFocus)
 
-        source.addTask("TaskNotify", ID=Notificator.onMovieEditBoxFocus, Args=(self.object,))
+        source.addNotify(Notificator.onMovieEditBoxFocus, self.object)
         source.addFunction(self.updateValue)
         # source.addFacebookMessage(message='HelloAgainAndAgain2456')
         # source.addFacebookData(cb = cb, fields = 'id,name,last_name')
