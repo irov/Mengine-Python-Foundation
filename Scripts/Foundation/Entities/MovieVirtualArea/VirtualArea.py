@@ -72,10 +72,6 @@ class VirtualArea(Initializer):
         self._camera = self._root.createChild('RenderCameraOrthogonal')
         self._camera.setName(camera_name)
         self._viewport = self._root.createChild('RenderViewport')
-        contentResolution = Mengine.getContentResolution()
-        gameViewport = Mengine.getGameViewport()
-        self._viewport.setContentResolution(contentResolution)
-        self._viewport.setGameViewport(gameViewport)
         self._viewport.setName(viewport_name)
 
         if viewport:
