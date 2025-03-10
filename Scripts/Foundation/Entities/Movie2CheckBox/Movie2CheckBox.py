@@ -19,11 +19,19 @@ class Movie2CheckBox(BaseEntity):
         Type.addAction(Type, "CompositionNameTrue_Click")
         Type.addAction(Type, "CompositionNameTrue_Leave")
 
+        Type.addAction(Type, "CompositionNameTrue_Push")
+        Type.addAction(Type, "CompositionNameTrue_Pressed")
+        Type.addAction(Type, "CompositionNameTrue_Release")
+
         Type.addAction(Type, "CompositionNameFalse_Idle")
         Type.addAction(Type, "CompositionNameFalse_Enter")
         Type.addAction(Type, "CompositionNameFalse_Over")
         Type.addAction(Type, "CompositionNameFalse_Click")
         Type.addAction(Type, "CompositionNameFalse_Leave")
+
+        Type.addAction(Type, "CompositionNameFalse_Push")
+        Type.addAction(Type, "CompositionNameFalse_Pressed")
+        Type.addAction(Type, "CompositionNameFalse_Release")
 
         Type.addAction(Type, "BlockState")
 
@@ -40,13 +48,16 @@ class Movie2CheckBox(BaseEntity):
         check_box_name = self.object.getName()
         group = self.object.getGroup()
 
-        self.MovieButtonFalse = ObjectManager.createObjectUnique("Movie2Button", check_box_name + "FalseButton",
-                                                                 group, ResourceMovie=self.ResourceMovie,
+        self.MovieButtonFalse = ObjectManager.createObjectUnique("Movie2Button", check_box_name + "FalseButton", group,
+                                                                 ResourceMovie=self.ResourceMovie,
                                                                  CompositionNameIdle=self.CompositionNameFalse_Idle,
                                                                  CompositionNameEnter=self.CompositionNameFalse_Enter,
                                                                  CompositionNameOver=self.CompositionNameFalse_Over,
                                                                  CompositionNameClick=self.CompositionNameFalse_Click,
-                                                                 CompositionNameLeave=self.CompositionNameFalse_Leave)
+                                                                 CompositionNameLeave=self.CompositionNameFalse_Leave,
+                                                                 CompositionNamePush=self.CompositionNameFalse_Push,
+                                                                 CompositionNameRelease=self.CompositionNameFalse_Release,
+                                                                 CompositionNamePressed=self.CompositionNameFalse_Pressed)
 
         self.MovieButtonTrue = ObjectManager.createObjectUnique("Movie2Button", check_box_name + "TrueButton", group,
                                                                 ResourceMovie=self.ResourceMovie,
@@ -54,7 +65,10 @@ class Movie2CheckBox(BaseEntity):
                                                                 CompositionNameEnter=self.CompositionNameTrue_Enter,
                                                                 CompositionNameOver=self.CompositionNameTrue_Over,
                                                                 CompositionNameClick=self.CompositionNameTrue_Click,
-                                                                CompositionNameLeave=self.CompositionNameTrue_Leave)
+                                                                CompositionNameLeave=self.CompositionNameTrue_Leave,
+                                                                CompositionNamePush=self.CompositionNameTrue_Push,
+                                                                CompositionNameRelease=self.CompositionNameTrue_Release,
+                                                                CompositionNamePressed=self.CompositionNameTrue_Pressed)
 
         button_false_entity_node = self.MovieButtonFalse.getEntityNode()
         self.addChild(button_false_entity_node)
