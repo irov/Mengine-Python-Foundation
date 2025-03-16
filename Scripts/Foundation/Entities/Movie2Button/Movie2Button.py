@@ -393,7 +393,7 @@ class Movie2Button(BaseEntity):
             source_enter_movie.addFunction(self.__setState, "Over")
 
             source_enter_leave.addTask("TaskMovie2SocketLeave", SocketName="socket", Movie2=MovieEnter)
-            source_enter_leave.addTask("TaskNotify", ID=Notificator.onMovie2ButtonMouseLeave, Args=(self.object,))
+            source_enter_leave.addNotify(Notificator.onMovie2ButtonMouseLeave, self.object)
             source_enter_leave.addFunction(self.__setState, "Idle")
 
             source_enter_click.addTask("TaskMovie2SocketClick", SocketName="socket",

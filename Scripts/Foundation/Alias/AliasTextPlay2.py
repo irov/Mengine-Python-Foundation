@@ -31,7 +31,7 @@ class AliasTextPlay2(TaskAlias):
         with source.addRaceTask(2) as (play, skip):
             with play.addForTask(TextCharCount + 1) as (it, source_char):
                 source_char.addTask("TaskObjectTextSetMaxVisibleChar", Text=self.ObjectText, Iterator=it)
-                source_char.addTask("TaskDelay", Time=self.TextDelay)
+                source_char.addDelay(self.TextDelay)
 
             skip.addDelay(300)
             skip.addTask("TaskMouseButtonClick", isDown=False)

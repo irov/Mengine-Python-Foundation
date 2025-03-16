@@ -23,7 +23,7 @@ class AliasTextPlay(TaskAlias):
         pass
 
     def _onGenerate(self, source):
-        source.addTask("TaskEnable", Object=self.ObjectText, Value=True)
+        source.addEnable(self.ObjectText)
         source.addTask("TaskTextSetTextID", Text=self.ObjectText, Value=self.TextID)
 
         if self.TextDelay != 0:
