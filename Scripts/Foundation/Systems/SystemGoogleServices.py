@@ -101,25 +101,25 @@ class SystemGoogleServices(System):
             setBillingCallback("PurchasesUpdatedUserCanceled", self.__cbBillingPurchaseError, "UserCanceled")
             setBillingCallback("PurchasesUpdatedOk", self.__cbBillingPurchaseOk)
             # query products & purchases (for restore)
-            setBillingCallback("QueryProductSuccessful", self.__cbBillingQueryProductsSuccess)
+            setBillingCallback("QueryProductSuccess", self.__cbBillingQueryProductsSuccess)
             setBillingCallback("QueryProductFailed", self.__cbBillingQueryProductsFail)
-            setBillingCallback("QueryPurchasesSuccessful", self.__cbBillingQueryPurchasesStatus, True)
+            setBillingCallback("QueryPurchasesSuccess", self.__cbBillingQueryPurchasesStatus, True)
             setBillingCallback("QueryPurchasesFailed", self.__cbBillingQueryPurchasesStatus, False)
             # purchase flow
             setBillingCallback("PurchaseIsConsumable", self.__cbBillingPurchaseIsConsumable)
-            setBillingCallback("BuyInAppSuccessful", self.__cbBillingBuyInAppStatus, True)
+            setBillingCallback("BuyInAppSuccess", self.__cbBillingBuyInAppStatus, True)
             setBillingCallback("BuyInAppFailed", self.__cbBillingBuyInAppStatus, False)
             #  - consumable
-            setBillingCallback("PurchasesOnConsumeSuccessful", self.__cbBillingPurchaseConsumeSuccess)
+            setBillingCallback("PurchasesOnConsumeSuccess", self.__cbBillingPurchaseConsumeSuccess)
             setBillingCallback("PurchasesOnConsumeFailed", self.__cbBillingPurchaseConsumeFail)
             #  - non-consumable
             setBillingCallback("PurchaseAcknowledged", self.__cbBillingPurchaseAcknowledged)
-            setBillingCallback("PurchasesAcknowledgeSuccessful", self.__cbBillingPurchaseAcknowledgeSuccess)
+            setBillingCallback("PurchasesAcknowledgeSuccess", self.__cbBillingPurchaseAcknowledgeSuccess)
             setBillingCallback("PurchasesAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeFail)
             # billingConnect callbacks:
             setBillingCallback("ConnectServiceDisconnected", self.__cbBillingClientDisconnected)
             setBillingCallback("ConnectSetupFinishedFailed", self.__cbBillingClientSetupFinishedFail)
-            setBillingCallback("ConnectSetupFinishedSuccessful", self.__cbBillingClientSetupFinishedSuccess)
+            setBillingCallback("ConnectSetupFinishedSuccess", self.__cbBillingClientSetupFinishedSuccess)
 
             self.startBillingClient()
 
@@ -352,10 +352,10 @@ class SystemGoogleServices(System):
             1. onGooglePlayBillingPurchasesUpdatedOk or FAIL
             2. onGooglePlayBillingPurchaseIsConsumable - here we check is consumable and starts handling
             - consumable:
-                3. onGooglePlayBillingPurchasesOnConsumeSuccessful - OK
+                3. onGooglePlayBillingPurchasesOnConsumeSuccess - OK
                    onGooglePlayBillingPurchasesOnConsumeFailed
             - non-consumable:
-                3. onGooglePlayBillingPurchasesAcknowledgeSuccessful - OK
+                3. onGooglePlayBillingPurchasesAcknowledgeSuccess - OK
                    onGooglePlayBillingPurchasesAcknowledgeFailed
 
         """

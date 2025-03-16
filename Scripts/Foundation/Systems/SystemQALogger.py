@@ -74,7 +74,7 @@ class SystemQALogger(System):
     def _addFilterObservers(self):
         identities_with_filter = {
             # Foundation
-            "onMovieSocketClickSuccessful": self._cbMovieSocketClick,
+            "onMovieSocketClickSuccess": self._cbMovieSocketClick,
             "onSocketClick": self._cbSocketClick,
             "onButtonClick": self._cbButtonClick,
             # HOPA

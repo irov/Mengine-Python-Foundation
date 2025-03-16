@@ -5,7 +5,7 @@ class IOSRewardedAd(BaseAdUnit):
 
     def _initialize(self):
         callbacks = {
-            "onAppleAppLovinRewardedShowSuccessful": self.cbShowSuccessful,
+            "onAppleAppLovinRewardedShowSuccess": self.cbShowSuccess,
             "onAppleAppLovinRewardedShowFailed": self.cbShowFailed,
             "onAppleAppLovinRewardedUserRewarded": self.cbUserRewarded,
             "onAppleAppLovinRewardedRevenuePaid": self.cbRevenuePaid,

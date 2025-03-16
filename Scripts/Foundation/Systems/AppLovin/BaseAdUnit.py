@@ -132,8 +132,8 @@ class BaseAdUnit(object):
     # callbacks
 
     @ad_callback
-    def cbShowSuccessful(self, params):
-        print ("cbShowSuccessful", params)
+    def cbShowSuccess(self, params):
+        print ("cbShowSuccess", params)
         self._cbShowCompleted(True, params)
 
     @ad_callback

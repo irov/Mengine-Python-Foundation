@@ -635,12 +635,12 @@ def onInitialize():
         , "onChargerSkip"
         , "onChargerReload"
 
-        , "onNodeSocketClickSuccessful"
+        , "onNodeSocketClickSuccess"
 
         , "onMovieSocketEnter"
         , "onMovieSocketLeave"
         , "onMovieSocketClick"
-        , "onMovieSocketClickSuccessful"
+        , "onMovieSocketClickSuccess"
         , "onMovieSocketMove"
         , "onMovieLoop"
 

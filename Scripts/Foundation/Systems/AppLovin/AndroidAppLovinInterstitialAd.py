@@ -4,9 +4,9 @@ class AndroidAppLovinInterstitialAd(AndroidAppLovinAdUnit):
     ad_type = "Interstitial"
 
     def _setCallbacks(self):
-        self._addAndroidCallback("onAndroidAppLovinInterstitialShowSuccessful", self.cbShowSuccessful)
-        self._addAndroidCallback("onAndroidAppLovinInterstitialShowFailed", self.cbShowFailed)
-        self._addAndroidCallback("onAndroidAppLovinInterstitialRevenuePaid", self.cbRevenuePaid)
+        self._addAndroidCallback("onAndroidAdServiceInterstitialShowSuccess", self.cbShowSuccess)
+        self._addAndroidCallback("onAndroidAdServiceInterstitialShowFailed", self.cbShowFailed)
+        self._addAndroidCallback("onAndroidAdServiceInterstitialRevenuePaid", self.cbRevenuePaid)
 
     def _cleanUp(self):
         self._removeAndroidCallbacks()

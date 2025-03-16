@@ -6,7 +6,7 @@ class IOSInterstitialAd(BaseAdUnit):
 
     def _initialize(self):
         callbacks = {
-            "onAppleAppLovinInterstitialShowSuccessful": self.cbShowSuccessful,
+            "onAppleAppLovinInterstitialShowSuccess": self.cbShowSuccess,
             "onAppleAppLovinInterstitialShowFailed": self.cbShowFailed,
             "onAppleAppLovinInterstitialRevenuePaid": self.cbRevenuePaid
         }

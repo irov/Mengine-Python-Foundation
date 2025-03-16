@@ -93,7 +93,7 @@ class SystemApplovin(System):
             Mengine.androidMethod(ANDROID_PLUGIN_NAME, "showConsentFlow")
         elif _IOS:
             Mengine.appleAppLovinLoadAndShowCMPFlow({
-                "onAppleAppLovinConsentFlowShowSuccessful": self.__cbConsentFlowShowSuccessful,
+                "onAppleAppLovinConsentFlowShowSuccess": self.__cbConsentFlowShowSuccess,
                 "onAppleAppLovinConsentFlowShowFailed": self.__cbConsentFlowShowFailed,
             })
 
@@ -120,7 +120,7 @@ class SystemApplovin(System):
 
         self.__disableDevToDebugInitButton()
 
-    def __cbConsentFlowShowSuccessful(self):
+    def __cbConsentFlowShowSuccess(self):
         _Log("[cb] Consent Flow Show Successful")
 
     def __cbConsentFlowShowFailed(self):
