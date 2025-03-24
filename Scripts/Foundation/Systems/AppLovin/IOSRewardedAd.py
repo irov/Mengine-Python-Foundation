@@ -5,21 +5,21 @@ class IOSRewardedAd(BaseAdUnit):
 
     def _initialize(self):
         callbacks = {
-            "onAppleAppLovinRewardedShowSuccess": self.cbShowSuccess,
-            "onAppleAppLovinRewardedShowFailed": self.cbShowFailed,
-            "onAppleAppLovinRewardedUserRewarded": self.cbUserRewarded,
-            "onAppleAppLovinRewardedRevenuePaid": self.cbRevenuePaid,
+            "onAppleAdvertisementShowSuccess": self.cbShowSuccess,
+            "onAppleAdvertisementShowFailed": self.cbShowFailed,
+            "onAppleAdvertisementUserRewarded": self.cbUserRewarded,
+            "onAppleAdvertisementRevenuePaid": self.cbRevenuePaid,
         }
         return Mengine.appleAppLovinSetRewardedProvider(callbacks)
 
     def _has(self):
-        return Mengine.appleAppLovinHasRewarded()
+        return Mengine.appleAdvertisementHasRewarded()
 
     def _canOffer(self, placement):
-        return Mengine.appleAppLovinCanOfferRewarded(placement)
+        return Mengine.appleAdvertisementCanOfferRewarded(placement)
 
     def _canYouShow(self, placement):
-        return Mengine.appleAppLovinCanYouShowRewarded(placement)
+        return Mengine.appleAdvertisementCanYouShowRewarded(placement)
 
     def _show(self, placement):
-        return Mengine.appleAppLovinShowRewarded(placement)
+        return Mengine.appleAdvertisementShowRewarded(placement)

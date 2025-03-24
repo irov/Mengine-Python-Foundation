@@ -33,7 +33,7 @@ class TaskNodeSocketClick(TaskNodeSocketBase):
                 return Handle
                 pass
 
-            Notification.notify(Notificator.onNodeSocketClickSuccessful, self.Socket, touchId, x, y, button, isDown, isPressed)
+            Notification.notify(Notificator.onNodeSocketClickSuccess, self.Socket, touchId, x, y, button, isDown, isPressed)
 
             self.complete()
 

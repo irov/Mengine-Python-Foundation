@@ -6,17 +6,17 @@ class IOSInterstitialAd(BaseAdUnit):
 
     def _initialize(self):
         callbacks = {
-            "onAppleAppLovinInterstitialShowSuccess": self.cbShowSuccess,
-            "onAppleAppLovinInterstitialShowFailed": self.cbShowFailed,
-            "onAppleAppLovinInterstitialRevenuePaid": self.cbRevenuePaid
+            "onAppleAdvertisementShowSuccess": self.cbShowSuccess,
+            "onAppleAdvertisementShowFailed": self.cbShowFailed,
+            "onAppleAdvertisementRevenuePaid": self.cbRevenuePaid
         }
-        return Mengine.appleAppLovinSetInterstitialProvider(callbacks)
+        return Mengine.appleAdvertisementSetAdvertisementInterstitialCallback(callbacks)
 
     def _has(self):
-        return Mengine.appleAppLovinHasInterstitial()
+        return Mengine.appleAdvertisementHasInterstitial()
 
     def _canYouShow(self, placement):
-        return Mengine.appleAppLovinCanYouShowInterstitial(placement)
+        return Mengine.appleAdvertisementCanYouShowInterstitial(placement)
 
     def _show(self, placement):
-        return Mengine.appleAppLovinShowInterstitial(placement)
+        return Mengine.appleAdvertisementShowInterstitial(placement)

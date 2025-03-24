@@ -85,10 +85,6 @@ class SystemAppleServices(System):
             return False
 
         _Log("[GameCenter] set provider...", optional=True)
-        Mengine.appleGameCenterSetProvider({
-            "onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate,
-            "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronize
-        })
         SystemAppleServices._GameCenter_provider_status = True
 
     @staticmethod
@@ -98,13 +94,15 @@ class SystemAppleServices(System):
             return
 
         _Log("[GameCenter] remove provider...", optional=True)
-        Mengine.appleGameCenterRemoveProvider()
         SystemAppleServices._GameCenter_provider_status = False
 
     @staticmethod
     def connectToGameCenter():
         if SystemAppleServices.b_plugins["GameCenter"] is True:
-            status = Mengine.appleGameCenterConnect()  # check is request to GameCenter was sent
+            status = Mengine.appleGameCenterConnect({
+            "onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate,
+            "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronize
+        })  # check is request to GameCenter was sent
             # if True, cb provider will return bool that means player connected or not
         else:
             status = False

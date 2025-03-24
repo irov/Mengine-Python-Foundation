@@ -82,7 +82,7 @@ class TaskMovieSocketClick(TaskMovieSocketBase):
                 return False
                 pass
 
-            Notification.notify(Notificator.onMovieSocketClickSuccessful, object, name, touchId, x, y, button, isDown, isPressed)
+            Notification.notify(Notificator.onMovieSocketClickSuccess, object, name, touchId, x, y, button, isDown, isPressed)
 
             return True
             pass
