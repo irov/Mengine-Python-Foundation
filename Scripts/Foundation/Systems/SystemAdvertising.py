@@ -15,7 +15,7 @@ class SystemAdvertising(System):
             return False
         if Mengine.hasTouchpad() is False:
             if _DEVELOPMENT is True:
-                Trace.msg_err("Advertising works only with touchpad! (add -touchpad)")
+                Trace.msg("Advertising works only with touchpad! (add -touchpad)")
             return False
 
         return True

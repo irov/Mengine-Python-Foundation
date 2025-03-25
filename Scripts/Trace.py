@@ -7,7 +7,7 @@ def msg(text, *args):
     __validateMessage(text)
 
     message = __tryFormatMessage(text, *args)
-    Mengine.logWarning(message)
+    Mengine.logMessage(message)
 
 
 def msg_err(text, *args):
@@ -49,7 +49,7 @@ def log(category, level, text, *args):
         if level == 0:
             message += __getTraceback()
 
-        Mengine.logError(message)
+        Mengine.logMessage(message)
         pass
     pass
 
@@ -58,7 +58,7 @@ def trace():
     message += "\nTrace:"
     message += "\n-----------------------------------------------"
     message += __getTraceback()
-    Mengine.logError(message)
+    Mengine.logMessage(message)
 
 
 def caller(deep=0):
