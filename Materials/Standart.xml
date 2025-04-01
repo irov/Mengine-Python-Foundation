@@ -79,6 +79,14 @@
         <Sampler Count = "1"/>
     </Program>
     
+    <Program Name = "Saturate">
+        <VertexShader Name = "Vertex_Blend"/>
+        <FragmentShader Name = "Fragment_Saturate"/>
+        <VertexAttribute Name = "Vertex2D_UV1"/>
+        
+        <Sampler Count = "1"/>
+    </Program>
+    
     <Program Name = "Desaturate">
         <VertexShader Name = "Vertex_Blend"/>
         <FragmentShader Name = "Fragment_Desaturate"/>
@@ -407,21 +415,21 @@
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
-        <BlendFactor Source = "ONE" Dest = "ONE_MINUS_DEST_COLOUR"/>       
+        <BlendFactor Source = "ONE" Dest = "ONE_MINUS_DEST_COLOUR"/>
         
         <Program Name = "Blend_Premultiply"/>
 	</Material>   
     
-    <Material Name = "Texture_Blend_OnlyColor">        
+    <Material Name = "Texture_Blend_OnlyColor">
         <AlphaBlend Enable = "1"/>        
         <DepthBufferWrite Enable = "0"/>
         
-        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>      
+        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>
         
         <Program Name = "Blend_OnlyColor"/>
 	</Material>    
 
-    <Material Name = "Texture_Intensive_OnlyColor">        
+    <Material Name = "Texture_Intensive_OnlyColor">
         <AlphaBlend Enable = "1"/>        
         <DepthBufferWrite Enable = "0"/>
         
@@ -442,17 +450,17 @@
         <Program Name = "Blend_OnlyColor"/>
 	</Material>   
 
-    <Material Name = "Texture_Screen_OnlyColor">        
+    <Material Name = "Texture_Screen_OnlyColor">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
-        <BlendFactor Source = "ONE" Dest = "ONE_MINUS_SOURCE_COLOUR"/>       
+        <BlendFactor Source = "ONE" Dest = "ONE_MINUS_SOURCE_COLOUR"/>
         
         <Program Name = "Blend_OnlyColor"/>
 	</Material>   
     
     
-    <Material Name = "Texture_Blend_ExternalAlpha">        
+    <Material Name = "Texture_Blend_ExternalAlpha">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -461,7 +469,7 @@
         <Program Name = "ExternalAlpha"/>
 	</Material>  
     
-    <Material Name = "Texture_Blend_ExternalAlpha_WC">        
+    <Material Name = "Texture_Blend_ExternalAlpha_WC">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -478,7 +486,7 @@
         <Program Name = "ExternalAlpha"/>
 	</Material>
     
-    <Material Name = "Texture_Blend_ExternalAlpha_WW">        
+    <Material Name = "Texture_Blend_ExternalAlpha_WW">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -495,7 +503,7 @@
         <Program Name = "ExternalAlpha"/>
 	</Material>    
     
-    <Material Name = "Texture_Blend_ExternalAlpha_CW">        
+    <Material Name = "Texture_Blend_ExternalAlpha_CW">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -512,7 +520,7 @@
         <Program Name = "ExternalAlpha"/>
 	</Material>        
     
-    <Material Name = "Texture_Intensive_ExternalAlpha">        
+    <Material Name = "Texture_Intensive_ExternalAlpha">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -521,7 +529,7 @@
         <Program Name = "ExternalAlpha"/>
 	</Material>   
     
-    <Material Name = "Texture_Multiply_ExternalAlpha">        
+    <Material Name = "Texture_Multiply_ExternalAlpha">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -533,7 +541,7 @@
         <Program Name = "ExternalAlpha"/>
 	</Material>   
 
-    <Material Name = "Texture_Screen_ExternalAlpha">        
+    <Material Name = "Texture_Screen_ExternalAlpha">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -542,7 +550,7 @@
         <Program Name = "ExternalAlpha"/>
 	</Material>   
 
-    <Material Name = "Texture_Blend_ExternalAlpha_OnlyColor">        
+    <Material Name = "Texture_Blend_ExternalAlpha_OnlyColor">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -551,7 +559,7 @@
         <Program Name = "ExternalAlpha_OnlyColor"/>
 	</Material>
 
-    <Material Name = "Texture_Intensive_ExternalAlpha_OnlyColor">        
+    <Material Name = "Texture_Intensive_ExternalAlpha_OnlyColor">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -560,7 +568,7 @@
         <Program Name = "ExternalAlpha_OnlyColor"/>
 	</Material>
     
-    <Material Name = "Texture_Multiply_ExternalAlpha_OnlyColor">        
+    <Material Name = "Texture_Multiply_ExternalAlpha_OnlyColor">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -572,7 +580,7 @@
         <Program Name = "ExternalAlpha_OnlyColor"/>
 	</Material>
 
-    <Material Name = "Texture_Screen_ExternalAlpha_OnlyColor">        
+    <Material Name = "Texture_Screen_ExternalAlpha_OnlyColor">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -581,7 +589,7 @@
         <Program Name = "ExternalAlpha_OnlyColor"/>
 	</Material>    
 
-    <Material Name = "Color_Solid">        
+    <Material Name = "Color_Solid">
         <AlphaBlend Enable = "0"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -590,7 +598,7 @@
         <Program Name = "Color"/>
 	</Material>
     
-    <Material Name = "Color_Blend">        
+    <Material Name = "Color_Blend">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -608,7 +616,7 @@
         <Program Name = "Color_Premultiply"/>
 	</Material>    
 
-    <Material Name = "Color_Intensive">        
+    <Material Name = "Color_Intensive">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
@@ -636,7 +644,7 @@
         <BlendFactor Source = "ONE" Dest = "ONE_MINUS_SOURCE_COLOUR"/>
                 
         <Program Name = "Color"/>
-	</Material>      
+	</Material>
     
 	<Material Name = "Texture_Accumulator">
         <AlphaBlend Enable = "1"/>
@@ -647,13 +655,22 @@
         <Program Name = "Accumulator"/>
 	</Material>
     
-    <Material Name = "Texture_Desaturate">
+    <Material Name = "Texture_Saturate_Blend">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
         <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>  
         
-        <Program Name = "Desaturate"/>    
+        <Program Name = "Saturate"/>
+    </Material>
+    
+    <Material Name = "Texture_Desaturate_Blend">
+        <AlphaBlend Enable = "1"/>
+        <DepthBufferWrite Enable = "0"/>
+        
+        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>  
+        
+        <Program Name = "Desaturate"/>
     </Material>
 
     <Material Name = "Texture_Legendary_Blend">

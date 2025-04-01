@@ -4,9 +4,9 @@ uniform float4 u_color;
 sampler2D tex0;
 
 struct v2p {
-    float4 position  : POSITION;
-    float4 color : COLOR0;
-    float2 tex0 : TEXCOORD0;
+    float4 position : POSITION;
+    float4 color    : COLOR0;
+    float2 tex0     : TEXCOORD0;
 };
 
 struct p2f {

@@ -270,32 +270,6 @@ def format_stack(f=None, limit=None):
             f = sys.exc_info()[2].tb_frame.f_back
     return format_list(extract_stack(f, limit))
 
-def string_stack(f=None, limit=None):
-    l = format_stack(f, limit)
-    if len(l) == 1:
-        return None
-    str = ""
-    for s in l[1:]:
-        str += s
-        pass
-    return str
-    
-def top_stack_function(f=None):
-    f_back = None
-    try:
-        raise ZeroDivisionError
-    except ZeroDivisionError:
-        f = sys.exc_info()[2].tb_frame.f_back
-        #while f is not None and f.f_back is not None:
-        #    f = f.f_back
-        
-    if f is None:
-        return ("None", 0)
-
-    co = f.f_code
-    return (co.co_filename, f.f_lineno)
-    pass
-
 def extract_stack(f=None, limit = None):
     """Extract the raw traceback from the current stack frame.
 

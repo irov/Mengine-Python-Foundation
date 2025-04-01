@@ -84,6 +84,10 @@
         <File Path = "Materials/DX9_Fragment_Color_Premultiply.txt" Converter="text2pso" Compile="1"/>
     </FragmentShader>
 
+    <FragmentShader Name = "Fragment_Saturate" RenderPlatform = "DX9">
+        <File Path = "Materials/DX9_Fragment_Saturate.txt" Converter="text2pso" Compile="1"/>
+    </FragmentShader>
+
     <FragmentShader Name = "Fragment_Desaturate" RenderPlatform = "DX9">
         <File Path = "Materials/DX9_Fragment_Desaturate.txt" Converter="text2pso" Compile="1"/>
     </FragmentShader>
