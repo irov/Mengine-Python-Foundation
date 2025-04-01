@@ -87,6 +87,14 @@
         <Sampler Count = "1"/>
     </Program>
     
+    <Program Name = "Saturate_ExternalAlpha">
+        <VertexShader Name = "Vertex_Blend_ExternalAlpha"/>
+        <FragmentShader Name = "Fragment_Saturate_ExternalAlpha"/>
+        <VertexAttribute Name = "Vertex2D_UV2"/>
+        
+        <Sampler Count = "1"/>
+    </Program>
+    
     <Program Name = "Desaturate">
         <VertexShader Name = "Vertex_Blend"/>
         <FragmentShader Name = "Fragment_Desaturate"/>
@@ -650,7 +658,7 @@
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
-        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>  
+        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>
         
         <Program Name = "Accumulator"/>
 	</Material>
@@ -659,16 +667,25 @@
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
-        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>  
+        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>
         
         <Program Name = "Saturate"/>
+    </Material>
+    
+    <Material Name = "Texture_Saturate_Blend_ExternalAlpha">
+        <AlphaBlend Enable = "1"/>
+        <DepthBufferWrite Enable = "0"/>
+        
+        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>
+        
+        <Program Name = "Saturate_ExternalAlpha"/>
     </Material>
     
     <Material Name = "Texture_Desaturate_Blend">
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
-        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>  
+        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>
         
         <Program Name = "Desaturate"/>
     </Material>
@@ -677,7 +694,7 @@
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
-        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>  
+        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>
         
         <Program Name = "Legendary"/>
     </Material>
@@ -686,7 +703,7 @@
         <AlphaBlend Enable = "1"/>
         <DepthBufferWrite Enable = "0"/>
         
-        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>  
+        <BlendFactor Source = "SOURCE_ALPHA" Dest = "ONE_MINUS_SOURCE_ALPHA"/>
         
         <Program Name = "Legendary_ExternalAlpha"/>
     </Material>
