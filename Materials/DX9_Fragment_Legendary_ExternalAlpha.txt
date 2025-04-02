@@ -26,9 +26,14 @@ struct p2f {
     float4 color : COLOR0;
 };
 
-float sRGB(float t){ return lerp(1.055*pow(abs(t), 1./2.4) - 0.055, 12.92*t, step(t, 0.0031308)); }
-float3 sRGB(in float3 c) { return float3 (sRGB(c.x), sRGB(c.y), sRGB(c.z)); }
-  
+float sRGB(float t) {
+    return lerp(1.055*pow(abs(t), 1./2.4) - 0.055, 12.92*t, step(t, 0.0031308));
+}
+
+float3 sRGB(in float3 c) {
+    return float3 (sRGB(c.x), sRGB(c.y), sRGB(c.z));
+}
+
 void main(in v2p IN, out p2f OUT)
 {
     float4 tex0_color = tex2D(tex0, IN.uv0);
@@ -47,5 +52,5 @@ void main(in v2p IN, out p2f OUT)
     
     col = sRGB(col);
     
-	OUT.color = IN.color * tex0_color * float4(col, tex1_alpha);
+    OUT.color = IN.color * tex0_color * float4(col, tex1_alpha);
 }

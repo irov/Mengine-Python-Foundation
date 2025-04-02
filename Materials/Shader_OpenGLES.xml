@@ -84,6 +84,14 @@
         <File Path = "Materials/GLES_Fragment_Color_Premultiply.txt"/>
     </FragmentShader> 
     
+    <FragmentShader Name = "Fragment_Saturate" RenderPlatform = "OpenGLES">
+        <File Path = "Materials/GLES_Fragment_Saturate.txt"/>
+    </FragmentShader>
+    
+    <FragmentShader Name = "Fragment_Saturate_ExternalAlpha" RenderPlatform = "OpenGLES">
+        <File Path = "Materials/GLES_Fragment_Saturate_ExternalAlpha.txt"/>
+    </FragmentShader>
+    
     <FragmentShader Name = "Fragment_Desaturate" RenderPlatform = "OpenGLES">
         <File Path = "Materials/GLES_Fragment_Desaturate.txt"/>
     </FragmentShader>

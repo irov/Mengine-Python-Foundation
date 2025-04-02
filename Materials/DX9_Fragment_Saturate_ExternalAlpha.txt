@@ -14,14 +14,14 @@ struct p2f {
     float4 color : COLOR0;
 };
 
+const float3 REC709 = float3(0.2126, 0.7152, 0.0722);
+
 void main(in v2p IN, out p2f OUT)
 {
-    const float3 W = float3(0.2126, 0.7152, 0.0722);
-
     float3 color = tex2D(tex0, IN.tex0);
     float alpha = tex2D(tex1, IN.tex1).w;
 
-    float l = dot(color, W);
+    float l = dot(color, REC709);
     float3 grayscale = float3(l, l, l);
 
     float3 saturated = lerp(grayscale, color, u_factor);
