@@ -1,0 +1,17 @@
+uniform mediump float u_factor;
+
+varying mediump vec4 v_Col;
+
+void main(void)
+{
+    mediump vec3 REC709 = vec3(0.2126, 0.7152, 0.0722);
+    
+    mediump vec4 color = v_Col;
+
+    mediump float l = dot(color.rgb, REC709);
+    mediump vec3 grayscale = vec3(l, l, l);
+
+    mediump vec3 saturated = mix(grayscale, color.rgb, u_factor);
+
+    gl_FragColor = v_Col * vec4(saturated, color.a);
+}
