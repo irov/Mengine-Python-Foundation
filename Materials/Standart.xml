@@ -84,7 +84,7 @@
         <FragmentShader Name = "Fragment_Color_Saturate"/>
         <VertexAttribute Name = "Vertex2D_UV0"/>
         
-        <Sampler Count = "1"/>
+        <Sampler Count = "0"/>
     </Program>
     
     <Program Name = "Texture_Saturate">
