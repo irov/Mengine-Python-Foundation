@@ -41,7 +41,7 @@ class SystemGoogleServices(System):
 
     login_event = Event("GoogleGameSocialLoginEvent")
     logout_event = Event("GoogleGameSocialLogoutEvent")
-    login_data = None
+    login_status = False
     __on_auth_achievements = {}
     __on_auth_cbs = {}
     sku_response_event = Event("SkuListResponse")   # todo: check is deprecated
@@ -58,6 +58,7 @@ class SystemGoogleServices(System):
 
             # auth:
             setSocialCallback("OnAuthenticatedSuccess", self.__cbSignSuccess)
+            setSocialCallback("OnAuthenticatedFailed", self.__cbSignFailed)
             setSocialCallback("OnAuthenticatedError", self.__cbSignError)
             # incrementAchievement:
             setSocialCallback("AchievementIncrementSuccess", self.__cbAchievementIncSuccess)
@@ -135,7 +136,8 @@ class SystemGoogleServices(System):
                 Mengine.setAndroidCallback(GOOGLE_IN_APP_REVIEWS_PLUGIN, method_name, *callback)
 
             Mengine.waitSemaphore("onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
-            setReviewsCallback("LaunchingTheReviewCompleted", self.__cbReviewsLaunchingComplete)
+            setReviewsCallback("LaunchingTheReviewSuccess", self.__cbReviewsLaunchingSuccess)
+            setReviewsCallback("LaunchingTheReviewError", self.__cbReviewsLaunchingError)
 
             RatingAppProvider.setProvider("Google", dict(rateApp=self.rateApp))
 
@@ -188,9 +190,7 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def isLoggedIn():
-        # fixme
-        # return SystemGoogleServices.login_data is not None
-        return True
+        return SystemGoogleServices.login_status
 
     @staticmethod
     def signIn(only_intent=False, force=False):
@@ -245,20 +245,16 @@ class SystemGoogleServices(System):
     # callbacks
 
     @staticmethod
-    def __cbSignSuccess(account_id):
-        if account_id is None or account_id == "":
-            _Log("[Auth cb] account_id is None or empty string !!!!!!", err=True)
-            account_id = "undefined"
-
-        SystemGoogleServices.login_data = account_id
+    def __cbSignSuccess():
+        SystemGoogleServices.login_status = True
         SystemGoogleServices.login_event(True)
         Notification.notify(Notificator.onUserLoggedIn)
 
         SystemGoogleServices.__cbRestoreTasks()
-        _Log("[Auth cb] successfully logged in: id={!r}".format(account_id))
+        _Log("[Auth cb] successfully login in")
 
     @staticmethod
-    def __cbSignFail():
+    def __cbSignFailed():
         SystemGoogleServices.login_event(False)
         _Log("[Auth cb] login failed", err=True, force=True)
 
@@ -274,7 +270,7 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbSignOutSuccess():
-        SystemGoogleServices.login_data = None
+        SystemGoogleServices.login_status = False
         SystemGoogleServices.logout_event(True)
         _Log("[Auth cb] logout success", force=True)
 
@@ -290,7 +286,7 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbSignOutComplete():
-        SystemGoogleServices.login_data = None
+        SystemGoogleServices.login_status = False
         SystemGoogleServices.logout_event(True)
         Notification.notify(Notificator.onUserLoggedOut)
         _Log("[Auth cb] logout complete", force=True)
@@ -619,10 +615,15 @@ class SystemGoogleServices(System):
         _Log("[Reviews cb] GettingReviewObject")
 
     @staticmethod
-    def __cbReviewsLaunchingComplete():
+    def __cbReviewsLaunchingSuccess():
         """ reviews was launched """
         Notification.notify(Notificator.onAppRated)
-        _Log("[Reviews cb] LaunchingComplete", force=True)
+        _Log("[Reviews cb] LaunchingSuccess", force=True)
+
+    @staticmethod
+    def __cbReviewsLaunchingError():
+        """ reviews was not launched """
+        _Log("[Reviews cb] LaunchingError", force=True)
 
     # --- FirebaseCrashlytics ------------------------------------------------------------------------------------------
 
@@ -677,7 +678,7 @@ class SystemGoogleServices(System):
 
             # login
             def _login_status():
-                return "Current account id: {}".format(SystemGoogleServices.login_data)
+                return "Current account id: {}".format(SystemGoogleServices.login_status)
 
             w_login_status = Mengine.createDevToDebugWidgetText("login_status")
             w_login_status.setText(_login_status)
