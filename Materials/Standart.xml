@@ -82,7 +82,7 @@
     <Program Name = "Color_Saturate">
         <VertexShader Name = "Vertex_Blend"/>
         <FragmentShader Name = "Fragment_Color_Saturate"/>
-        <VertexAttribute Name = "Vertex2D_UV1"/>
+        <VertexAttribute Name = "Vertex2D_UV0"/>
         
         <Sampler Count = "1"/>
     </Program>
