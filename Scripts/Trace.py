@@ -38,7 +38,7 @@ def log(category, level, text, *args):
     __validateMessage(text)
 
     if TraceManager.existIn(category) is False:
-        Mengine.logWarning("trace log unknown category '%s'" % category)
+        Mengine.logError("trace log unknown category '%s'" % category)
         return
 
     if level <= TraceManager.getLevel(category):
@@ -49,7 +49,7 @@ def log(category, level, text, *args):
         if level == 0:
             message += __getTraceback()
 
-        Mengine.logMessage(message)
+        Mengine.logError(message)
         pass
     pass
 
@@ -59,7 +59,6 @@ def trace():
     message += "\n-----------------------------------------------"
     message += __getTraceback()
     Mengine.logMessage(message)
-
 
 def caller(deep=0):
     frame = sys._getframe()  # fixme
@@ -72,13 +71,11 @@ def caller(deep=0):
 
     return info
 
-
 def __getTraceback():
     message = "\nTraceback (most recent call last):"
     for (filename, line_number, function_name, text) in traceback.extract_stack()[2:]:
         message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
     return message
-
 
 def __tryFormatMessage(text, *args):
     try:
@@ -86,7 +83,6 @@ def __tryFormatMessage(text, *args):
     except Exception as ex:
         message = "{} % {}, Exception: {}".format(text, args, ex)
     return message
-
 
 def __validateMessage(text):
     assert type(text) == str, "Message must be string, not %s" % type(text)
