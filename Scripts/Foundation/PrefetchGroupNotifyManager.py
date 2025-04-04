@@ -157,7 +157,7 @@ class PrefetchGroupNotifyManager(object):
                     pass
 
                 if Mengine.prefetchResources(GroupName, __cb, GroupName) is False:
-                    Trace.log("Manager", 1, "prefetch group '{}' failed".format(GroupName))
+                    Trace.log_dev_err("Manager", 1, "prefetch group '{}' failed".format(GroupName))
 
     @staticmethod
     def unfetchGroup(GroupName):

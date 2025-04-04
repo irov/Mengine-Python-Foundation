@@ -53,6 +53,10 @@ def log(category, level, text, *args):
         pass
     pass
 
+def log_dev_err(category, level, text, *args):
+    if _DEVELOPMENT is True:
+        log(category, level, text, *args)
+
 def trace():
     message = "\n-----------------------------------------------"
     message += "\nTrace:"
