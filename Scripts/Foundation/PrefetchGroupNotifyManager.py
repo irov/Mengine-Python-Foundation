@@ -121,8 +121,7 @@ class PrefetchGroupNotifyManager(object):
 
                 PrefetchGroupNotifyManager.s_prefetch_list[Tag].append(GroupName)
                 if Mengine.prefetchResources(GroupName, __cb, Tag, GroupName) is False:
-                    __cb(False, Tag, GroupName)   # manually call callback
-                    Trace.log("Manager", 1, "prefetch group '{}' failed".format(GroupName))
+                    __cb(False, Tag, GroupName)
 
     @staticmethod
     def isPrefetchFinished():
@@ -156,8 +155,7 @@ class PrefetchGroupNotifyManager(object):
                 def __cb(successful, GroupName):
                     pass
 
-                if Mengine.prefetchResources(GroupName, __cb, GroupName) is False:
-                    Trace.log_dev_err("Manager", 1, "prefetch group '{}' failed".format(GroupName))
+                Mengine.prefetchResources(GroupName, __cb, GroupName)
 
     @staticmethod
     def unfetchGroup(GroupName):
