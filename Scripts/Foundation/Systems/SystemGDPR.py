@@ -61,8 +61,6 @@ class SystemGDPR(System):
         if state is True:
             SystemAnalytics.sendCustomAnalytic("gdpr_agree", analytics_data)
 
-            if _ANDROID and Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME) is True:
-                Mengine.androidMethod(ANDROID_PLUGIN_NAME, "setGDPRPass", True)
             if _IOS and Mengine.isAvailablePlugin("AppleGeneralDataProtectionRegulation") is True:
                 Mengine.appleSetGDPRPass(True)
 
@@ -108,17 +106,11 @@ class SystemGDPR(System):
             return False
 
         if self.isUserAgreeWithGDPR() is True:
-
-            if _ANDROID and Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME) is True:
-                if Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "isGDPRPass") is False:
-                    Mengine.androidMethod(ANDROID_PLUGIN_NAME, "setGDPRPass", True)
-
             if _IOS and Mengine.isAvailablePlugin("AppleGeneralDataProtectionRegulation") is True:
                 if Mengine.appleIsGDPRPass() is False:
                     Mengine.appleSetGDPRPass(True)
 
             SystemGDPR._global_agree_state = True
-
             return True
 
         self.runTaskChain()
