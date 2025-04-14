@@ -21,14 +21,12 @@ GOOGLE_PLAY_BILLING_PLUGIN = "MengineGPlayBilling"
 GOOGLE_IN_APP_REVIEWS_PLUGIN = "MengineGInAppReviews"
 FIREBASE_CRASHLYTICS_PLUGIN = "MengineFBCrashlytics"
 
-
 class SystemGoogleServices(System):
-    """ Google service that provides
-        - authentication in Google Account
-        - Billing
-        - Google Play Social
-        - InAppReviews
-    """
+    # Google service that provides
+    #    - authentication in Google Account
+    #    - Billing
+    #    - Google Play Social
+    #    - InAppReviews
 
     __lastProductId = None
 
@@ -314,11 +312,11 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def startBillingClient():
-        """ callbacks:
-            __cbBillingClientDisconnected
-            __cbBillingClientSetupFinishedFail
-            __cbBillingClientSetupFinishedSuccess   - OK
-        """
+        # callbacks:
+        #    __cbBillingClientDisconnected
+        #    __cbBillingClientSetupFinishedFail
+        #    __cbBillingClientSetupFinishedSuccess   - OK
+
         _Log("Start connect to the billing client...")
         Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "billingConnect")
 
@@ -328,10 +326,9 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def queryProducts(product_ids):
-        """ setup product's list and response via callbacks
-            - __cbBillingQueryProductsSuccess <- product details - OK
-            - __cbBillingQueryProductsFail
-        """
+        # setup product's list and response via callbacks
+        #    - __cbBillingQueryProductsSuccess <- product details - OK
+        #    - __cbBillingQueryProductsFail
         if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
             _Log("[Billing] queryProducts fail: billing client is not connected", err=True, force=True)
             SystemGoogleServices.__cbBillingPurchaseError("BillingClientUnavailable")
@@ -344,17 +341,16 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def buy(product_id):
-        """ start purchase flow
-            1. onGooglePlayBillingPurchasesUpdatedOk or FAIL
-            2. onGooglePlayBillingPurchaseIsConsumable - here we check is consumable and starts handling
-            - consumable:
-                3. onGooglePlayBillingPurchasesOnConsumeSuccess - OK
-                   onGooglePlayBillingPurchasesOnConsumeFailed
-            - non-consumable:
-                3. onGooglePlayBillingPurchasesAcknowledgeSuccess - OK
-                   onGooglePlayBillingPurchasesAcknowledgeFailed
+        # start purchase flow
+        #    1. onGooglePlayBillingPurchasesUpdatedOk or FAIL
+        #    2. onGooglePlayBillingPurchaseIsConsumable - here we check is consumable and starts handling
+        #    - consumable:
+        #        3. onGooglePlayBillingPurchasesOnConsumeSuccess - OK
+        #           onGooglePlayBillingPurchasesOnConsumeFailed
+        #    - non-consumable:
+        #        3. onGooglePlayBillingPurchasesAcknowledgeSuccess - OK
+        #           onGooglePlayBillingPurchasesAcknowledgeFailed
 
-        """
         if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
             _Log("[Billing] buy fail: billing client is not connected", err=True, force=True)
             SystemGoogleServices.__cbBillingPurchaseError("BillingClientUnavailable")
@@ -403,10 +399,9 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbBillingPurchaseIsConsumable(products, cb):
-        """ after we call buyInApp, we need to setup consumable status for purchase
-            cb is `MengineFunctorBoolean cb = (Boolean isConsumable)`
-            if product is acknowledged, Mengine sends onGooglePlayBillingPurchaseAcknowledged
-        """
+        # after we call buyInApp, we need to setup consumable status for purchase
+        #    cb is `MengineFunctorBoolean cb = (Boolean isConsumable)`
+        #    if product is acknowledged, Mengine sends onGooglePlayBillingPurchaseAcknowledged
         for prod_id in products:
             isConsumable = ProductsProvider.isProductConsumable(prod_id)
             _Log("[Billing cb] onGooglePlayBillingPurchaseIsConsumable: {!r} consumable={!r}".format(prod_id, isConsumable))
@@ -414,7 +409,7 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbBillingBuyInAppStatus(prod_id, status):
-        """ purchase process status """
+        # purchase process status
         if status is False:
             Notification.notify(Notificator.onPayFailed, prod_id)
             Notification.notify(Notificator.onPayComplete, prod_id)
@@ -422,17 +417,15 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbBillingQueryProductsSuccess(products):
-        """ this callback receives details of every product in json format
-
-            - productId - The product ID for the product.
-            - type - "inapp"  for an in-app product or "subs" for subscriptions.
-            - price - formatted price without taxes, i.e. "UAH 37.22".
-            - price_amount_micros - Price in micro-units (1000000 micro-units = 1 unit), i.e. "EUR 7.99" is "7990000".
-            - price_currency_code - ISO 4217 currency code for price, i.e. "GBP".
-            - title - Title of the product with Game ID.
-            - name - Just title of the product.
-            - description - Description of the product.
-        """
+        # this callback receives details of every product in json format
+        #    - productId - The product ID for the product.
+        #    - type - "inapp"  for an in-app product or "subs" for subscriptions.
+        #    - price - formatted price without taxes, i.e. "UAH 37.22".
+        #    - price_amount_micros - Price in micro-units (1000000 micro-units = 1 unit), i.e. "EUR 7.99" is "7990000".
+        #    - price_currency_code - ISO 4217 currency code for price, i.e. "GBP".
+        #    - title - Title of the product with Game ID.
+        #    - name - Just title of the product.
+        #    - description - Description of the product.
 
         _Log("[Billing cb] query products SUCCESS: {!r}".format(products))
         SystemGoogleServices.sku_response_event()
@@ -447,19 +440,19 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbBillingPurchaseConsumeSuccess(products):
-        """ pay success for consumable """
+        # pay success for consumable
         _Log("[Billing cb] purchase consumable successful: {!r}".format(products))
         SystemGoogleServices.handlePurchased(products, True)
 
     @staticmethod
     def __cbBillingPurchaseConsumeFail(products):
-        """ pay fail for consumable  """
+        # pay fail for consumable
         _Log("[Billing cb] purchase consumable failed: {!r}".format(products))
         SystemGoogleServices.handlePurchased(products, False)
 
     @staticmethod
     def __cbBillingPurchaseAcknowledged(products):
-        """ pay success if already purchased non-consumable """
+        # pay success if already purchased non-consumable
         _Log("[Billing cb] purchase non-consumable already acknowledged: {!r}".format(products))
         for prod_id in products:
             Notification.notify(Notificator.onProductAlreadyOwned, prod_id)
@@ -468,13 +461,13 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbBillingPurchaseAcknowledgeSuccess(products):
-        """ pay success for non-consumable """
+        # pay success for non-consumable
         _Log("[Billing cb] purchase non-consumable successful: {!r}".format(products))
         SystemGoogleServices.handlePurchased(products, True)
 
     @staticmethod
     def __cbBillingPurchaseAcknowledgeFail(products):
-        """ pay fail for non-consumable  """
+        # pay fail for non-consumable
         _Log("[Billing cb] purchase non-consumable failed: {!r}".format(products))
         SystemGoogleServices.handlePurchased(products, False)
 
@@ -490,7 +483,7 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbBillingPurchaseError(response_code):
-        """  error while purchase """
+        #  error while purchase
         product_id = SystemGoogleServices.__lastProductId
         _Log("[Billing cb] purchase process error, product {!r}: {}".format(product_id, response_code), force=True, err=True)
 
@@ -507,7 +500,7 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbBillingPurchaseOk():
-        """  item purchased successful """
+        #  item purchased successful
         _Log("[Billing cb] purchase process ok: {}".format(SystemGoogleServices.__lastProductId))
 
     @staticmethod
@@ -555,6 +548,12 @@ class SystemGoogleServices(System):
         _Log("[Achievements] try showAchievements...", force=True)
         Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "showAchievements")
 
+    @staticmethod
+    def incrementEvent(event_id, value):
+        # increment event
+        _Log("[Achievements] try incrementEvent: {!r} by {}".format(event_id, value), force=True)
+        Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "incrementEvent", event_id, value)
+
     # utils
 
     @staticmethod
@@ -568,39 +567,39 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbAchievementIncSuccess(achievement_id):
-        """ cb on incrementAchievement """
+        # cb on incrementAchievement
         _Log("[Achievements cb] AchievementIncrement Success: {!r}".format(achievement_id))
 
     @staticmethod
     def __cbAchievementIncError(achievement_id):
-        """ cb on incrementAchievement """
+        # cb on incrementAchievement
         _Log("[Achievements cb] AchievementIncrement Error: {!r}".format(achievement_id), force=True, err=True)
 
     @staticmethod
     def __cbAchievementUnlockSuccess(achievement_id):
-        """ cb on unlockAchievement """
+        # cb on unlockAchievement
         _Log("[Achievements cb] AchievementUnlock Success: {!r}".format(achievement_id))
 
     @staticmethod
     def __cbAchievementUnlockError(achievement_id):
-        """ cb on unlockAchievement """
+        # cb on unlockAchievement
         _Log("[Achievements cb] AchievementUnlock Error: {!r}".format(achievement_id), force=True, err=True)
 
     @staticmethod
     def __cbAchievementShowSuccess():
-        """ cb on showAchievements """
+        # cb on showAchievements
         _Log("[Achievements cb] show achievement: Success")
 
     @staticmethod
     def __cbAchievementShowError():
-        """ cb on showAchievements """
+        # cb on showAchievements
         _Log("[Achievements cb] show achievement: Error", force=True, err=True)
 
     # --- InAppReviews -------------------------------------------------------------------------------------------------
 
     @staticmethod
     def rateApp():
-        """ starts rate app process """
+        # starts rate app process
         if SystemGoogleServices.b_plugins["GoogleInAppReviews"] is False:
             Trace.log("System", 0, "SystemGoogleServices try to rateApp, but plugin '{}' is not active".format(GOOGLE_IN_APP_REVIEWS_PLUGIN))
             return
@@ -611,18 +610,18 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbReviewsGettingReviewObject():
-        """ on initialize success """
+        # on initialize success
         _Log("[Reviews cb] GettingReviewObject")
 
     @staticmethod
     def __cbReviewsLaunchingSuccess():
-        """ reviews was launched """
+        # reviews was launched
         Notification.notify(Notificator.onAppRated)
         _Log("[Reviews cb] LaunchingSuccess", force=True)
 
     @staticmethod
     def __cbReviewsLaunchingError():
-        """ reviews was not launched """
+        # reviews was not launched
         _Log("[Reviews cb] LaunchingError", force=True)
 
     # --- FirebaseCrashlytics ------------------------------------------------------------------------------------------
@@ -657,9 +656,9 @@ class SystemGoogleServices(System):
             widgets.append(w_achievement_unlock)
 
             def _increment_achievement(text):
-                """ input text allow 2 words separated by space:
-                        first word - achievement_id
-                        second optional word - is steps """
+                # input text allow 2 words separated by space:
+                #        first word - achievement_id
+                #        second optional word - is steps
                 params = text.split(" ")
                 achievement_id = params[0]
                 steps = int(params[1]) if len(params) > 1 else 100
