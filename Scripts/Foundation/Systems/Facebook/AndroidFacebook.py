@@ -1,29 +1,5 @@
 from Foundation.Systems.Facebook.BaseFacebook import BaseFacebook
 
-"""
-pythonCall("onFacebookCurrentAccessTokenChanged", oldTokenString, newTokenString);
-pythonCall("onFacebookCurrentProfileChanged");
-
-pythonCall("onFacebookLoginSuccess", token);
-pythonCall("onFacebookLoginCancel");
-pythonCall("onFacebookLoginError", message);
-
-pythonCall("onFacebookLogoutSuccess");
-pythonCall("onFacebookLogoutError", message);
-
-pythonCall("onFacebookUserFetchSuccess", objectString, responseString);
-pythonCall("onFacebookUserFetchError", message);
-
-pythonCall("onFacebookShareSuccess", postId);
-pythonCall("onFacebookShareCancel");
-pythonCall("onFacebookShareError", error_message)
-;
-pythonCall("onFacebookProfilePictureLinkGet", m_facebookUserId, false, "");
-pythonCall("onFacebookProfilePictureLinkGet", user_id, false, "");
-pythonCall("onFacebookProfilePictureLinkGet", user_id, true, pictureURL);
-"""
-
-
 class AndroidFacebook(BaseFacebook):
     name = "Android"
     plugin_name = "MengineFacebook"
@@ -32,22 +8,22 @@ class AndroidFacebook(BaseFacebook):
         super(AndroidFacebook, self)._onInitialize(system)
 
         def _setCallback(name, cb):
-            Mengine.setAndroidCallback(self.plugin_name, "onFacebook"+name, cb)
+            Mengine.setAndroidCallback(self.plugin_name, name, cb)
 
-        _setCallback("LoginSuccess", self._cbLoginSuccess)
-        _setCallback("LoginCancel", self._cbLoginCancel)
-        _setCallback("LoginError", self._cbLoginError)
-        _setCallback("LogoutSuccess", self._cbLogoutSuccess)
-        _setCallback("LogoutError", self._cbLogoutError)
-        _setCallback("ShareSuccess", self._cbShareSuccess)
-        _setCallback("ShareCancel", self._cbShareCancel)
-        _setCallback("ShareError", self._cbShareError)
-        _setCallback("UserFetchSuccess", self._cbUserFetchSuccess)
-        _setCallback("UserFetchError", self._cbUserFetchError)
-        _setCallback("ProfilePictureLinkGetSuccess", self._cbProfilePictureLinkGetSuccess)
-        _setCallback("ProfilePictureLinkGetError", self._cbProfilePictureLinkGetError)
-        _setCallback("CurrentAccessTokenChanged", self._cbAccessTokenChanged)
-        _setCallback("CurrentProfileChanged", self._cbProfileChanged)
+        _setCallback("onFacebookLoginSuccess", self._cbLoginSuccess)
+        _setCallback("onFacebookLoginCancel", self._cbLoginCancel)
+        _setCallback("onFacebookLoginError", self._cbLoginError)
+        _setCallback("onFacebookLogoutSuccess", self._cbLogoutSuccess)
+        _setCallback("onFacebookLogoutError", self._cbLogoutError)
+        _setCallback("onFacebookShareSuccess", self._cbShareSuccess)
+        _setCallback("onFacebookShareCancel", self._cbShareCancel)
+        _setCallback("onFacebookShareError", self._cbShareError)
+        _setCallback("onFacebookUserFetchSuccess", self._cbUserFetchSuccess)
+        _setCallback("onFacebookUserFetchError", self._cbUserFetchError)
+        _setCallback("onFacebookProfilePictureLinkGetSuccess", self._cbProfilePictureLinkGetSuccess)
+        _setCallback("onFacebookProfilePictureLinkGetError", self._cbProfilePictureLinkGetError)
+        _setCallback("onFacebookCurrentAccessTokenChanged", self._cbAccessTokenChanged)
+        _setCallback("onFacebookCurrentProfileChanged", self._cbProfileChanged)
 
     def _onFinalize(self):
         super(AndroidFacebook, self)._onFinalize()
@@ -100,14 +76,14 @@ class AndroidFacebook(BaseFacebook):
     def _cbLoginCancel(self):
         self.system.onLoginCancel()
 
-    def _cbLoginError(self, code, message):
-        self.system.onLoginError(code, message)
+    def _cbLoginError(self, code, exception):
+        self.system.onLoginError(code, exception)
 
     def _cbLogoutSuccess(self):
         self.system.onLogoutSuccess()
 
-    def _cbLogoutError(self, code, message):
-        self.system.onLogoutError(code, message)
+    def _cbLogoutError(self, code, exception):
+        self.system.onLogoutError(code, exception)
 
     def _cbShareSuccess(self, post_id):
         self.system.onShareSuccess(post_id)
@@ -115,20 +91,20 @@ class AndroidFacebook(BaseFacebook):
     def _cbShareCancel(self):
         self.system.onShareCancel()
 
-    def _cbShareError(self, code, message):
-        self.system.onShareError(code, message)
+    def _cbShareError(self, code, exception):
+        self.system.onShareError(code, exception)
 
     def _cbUserFetchSuccess(self, object_string, response_string):
         self.system.onUserFetchSuccess(object_string, response_string)
 
-    def _cbUserFetchError(self, code, message):
-        self.system.onUserFetchError(code, message)
+    def _cbUserFetchError(self, code, exception):
+        self.system.onUserFetchError(code, exception)
 
     def _cbProfilePictureLinkGetSuccess(self, user_id, picture_url):
         self.system.onProfilePictureLinkGetSuccess(user_id, picture_url)
 
-    def _cbProfilePictureLinkGetError(self, code, message):
-        self.system.onProfilePictureLinkGetError(code, message)
+    def _cbProfilePictureLinkGetError(self, code, exception):
+        self.system.onProfilePictureLinkGetError(code, exception)
 
     def _cbAccessTokenChanged(self, old_access_token, new_access_token):
         pass

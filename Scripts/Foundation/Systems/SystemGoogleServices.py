@@ -50,23 +50,30 @@ class SystemGoogleServices(System):
     def _onInitialize(self):
 
         if self.b_plugins["GoogleGameSocial"] is True:
-            def setSocialCallback(callback_name, *callback):
-                method_name = "onGoogleGameSocial" + callback_name
+            def _setCallback(method_name, *callback):
                 Mengine.setAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
 
             # auth:
-            setSocialCallback("OnAuthenticatedSuccess", self.__cbSignSuccess)
-            setSocialCallback("OnAuthenticatedFailed", self.__cbSignFailed)
-            setSocialCallback("OnAuthenticatedError", self.__cbSignError)
+            _setCallback("onGoogleGameSocialOnAuthenticatedSuccess", self.__cbSignSuccess)
+            _setCallback("onGoogleGameSocialOnAuthenticatedFailed", self.__cbSignFailed)
+            _setCallback("onGoogleGameSocialOnAuthenticatedError", self.__cbSignError)
             # incrementAchievement:
-            setSocialCallback("AchievementIncrementSuccess", self.__cbAchievementIncSuccess)
-            setSocialCallback("AchievementIncrementError", self.__cbAchievementIncError)
+            _setCallback("onGoogleGameSocialIncrementAchievementSuccess", self.__cbAchievementIncSuccess)
+            _setCallback("onGoogleGameSocialIncrementAchievementError", self.__cbAchievementIncError)
             # unlockAchievement:
-            setSocialCallback("UnlockAchievementSuccess", self.__cbAchievementUnlockSuccess)
-            setSocialCallback("UnlockAchievementError", self.__cbAchievementUnlockError)
+            _setCallback("onGoogleGameSocialUnlockAchievementSuccess", self.__cbAchievementUnlockSuccess)
+            _setCallback("onGoogleGameSocialUnlockAchievementError", self.__cbAchievementUnlockError)
+            # revealAchievement:
+            _setCallback("onGoogleGameSocialRevealAchievementSuccess", self.__cbAchievementRevealSuccess)
+            _setCallback("onGoogleGameSocialRevealAchievementError", self.__cbAchievementRevealError)
             # showAchievements:
-            setSocialCallback("ShowAchievementSuccess", self.__cbAchievementShowSuccess)
-            setSocialCallback("ShowAchievementError", self.__cbAchievementShowError)
+            _setCallback("onGoogleGameSocialShowAchievementSuccess", self.__cbAchievementShowSuccess)
+            _setCallback("onGoogleGameSocialShowAchievementError", self.__cbAchievementShowError)
+
+            _setCallback("onGoogleGameSocialLeaderboardScoreSuccess", self.__cbLeaderboardScoreSuccess)
+            _setCallback("onGoogleGameSocialLeaderboardScoreError", self.__cbLeaderboardScoreError)
+
+
 
             AchievementsProvider.setProvider("Google", dict(
                 unlockAchievement=self.unlockAchievement,
@@ -81,44 +88,43 @@ class SystemGoogleServices(System):
             PolicyManager.setPolicy("Authorize", "PolicyAuthGoogleService")    # deprecated
 
         if self.b_plugins["GooglePlayBilling"] is True:
-            def setBillingCallback(callback_name, *callback):
-                method_name = "onGooglePlayBilling" + callback_name
+            def _setCallback(method_name, *callback):
                 Mengine.setAndroidCallback(GOOGLE_PLAY_BILLING_PLUGIN, method_name, *callback)
 
             # purchase status
-            setBillingCallback("PurchasesUpdatedServiceTimeout", self.__cbBillingPurchaseError, "ServiceTimeout")
-            setBillingCallback("PurchasesUpdatedFeatureNotSupported", self.__cbBillingPurchaseError, "FeatureNotSupported")
-            setBillingCallback("PurchasesUpdatedServiceDisconnected", self.__cbBillingPurchaseError, "ServiceDisconnected")
-            setBillingCallback("PurchasesUpdatedServiceUnavailable", self.__cbBillingPurchaseError, "ServiceUnavailable")
-            setBillingCallback("PurchasesUpdatedBillingUnavailable", self.__cbBillingPurchaseError, "BillingUnavailable")
-            setBillingCallback("PurchasesUpdatedItemUnavailable", self.__cbBillingPurchaseError, "ItemUnavailable")
-            setBillingCallback("PurchasesUpdatedDeveloperError", self.__cbBillingPurchaseError, "DeveloperError")
-            setBillingCallback("PurchasesUpdatedError", self.__cbBillingPurchaseError, "Error")
-            setBillingCallback("PurchasesUpdatedItemAlreadyOwned", self.__cbBillingPurchaseItemAlreadyOwned)
-            setBillingCallback("PurchasesUpdatedItemNotOwned", self.__cbBillingPurchaseError, "ItemNotOwned")
-            setBillingCallback("PurchasesUpdatedUnknown", self.__cbBillingPurchaseError)
-            setBillingCallback("PurchasesUpdatedUserCanceled", self.__cbBillingPurchaseError, "UserCanceled")
-            setBillingCallback("PurchasesUpdatedOk", self.__cbBillingPurchaseOk)
+            _setCallback("onGooglePlayBillingPurchasesUpdatedServiceTimeout", self.__cbBillingPurchaseError, "ServiceTimeout")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedFeatureNotSupported", self.__cbBillingPurchaseError, "FeatureNotSupported")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedServiceDisconnected", self.__cbBillingPurchaseError, "ServiceDisconnected")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedServiceUnavailable", self.__cbBillingPurchaseError, "ServiceUnavailable")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedBillingUnavailable", self.__cbBillingPurchaseError, "BillingUnavailable")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedItemUnavailable", self.__cbBillingPurchaseError, "ItemUnavailable")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedDeveloperError", self.__cbBillingPurchaseError, "DeveloperError")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedError", self.__cbBillingPurchaseError, "Error")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedItemAlreadyOwned", self.__cbBillingPurchaseItemAlreadyOwned)
+            _setCallback("onGooglePlayBillingPurchasesUpdatedItemNotOwned", self.__cbBillingPurchaseError, "ItemNotOwned")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedUnknown", self.__cbBillingPurchaseError)
+            _setCallback("onGooglePlayBillingPurchasesUpdatedUserCanceled", self.__cbBillingPurchaseError, "UserCanceled")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedOk", self.__cbBillingPurchaseOk)
             # query products & purchases (for restore)
-            setBillingCallback("QueryProductSuccess", self.__cbBillingQueryProductsSuccess)
-            setBillingCallback("QueryProductFailed", self.__cbBillingQueryProductsFail)
-            setBillingCallback("QueryPurchasesSuccess", self.__cbBillingQueryPurchasesStatus, True)
-            setBillingCallback("QueryPurchasesFailed", self.__cbBillingQueryPurchasesStatus, False)
+            _setCallback("onGooglePlayBillingQueryProductSuccess", self.__cbBillingQueryProductsSuccess)
+            _setCallback("onGooglePlayBillingQueryProductFailed", self.__cbBillingQueryProductsFail)
+            _setCallback("onGooglePlayBillingQueryPurchasesSuccess", self.__cbBillingQueryPurchasesStatus, True)
+            _setCallback("onGooglePlayBillingQueryPurchasesFailed", self.__cbBillingQueryPurchasesStatus, False)
             # purchase flow
-            setBillingCallback("PurchaseIsConsumable", self.__cbBillingPurchaseIsConsumable)
-            setBillingCallback("BuyInAppSuccess", self.__cbBillingBuyInAppStatus, True)
-            setBillingCallback("BuyInAppFailed", self.__cbBillingBuyInAppStatus, False)
+            _setCallback("onGooglePlayBillingPurchaseIsConsumable", self.__cbBillingPurchaseIsConsumable)
+            _setCallback("onGooglePlayBillingBuyInAppSuccess", self.__cbBillingBuyInAppStatus, True)
+            _setCallback("onGooglePlayBillingBuyInAppFailed", self.__cbBillingBuyInAppStatus, False)
             #  - consumable
-            setBillingCallback("PurchasesOnConsumeSuccess", self.__cbBillingPurchaseConsumeSuccess)
-            setBillingCallback("PurchasesOnConsumeFailed", self.__cbBillingPurchaseConsumeFail)
+            _setCallback("onGooglePlayBillingPurchasesOnConsumeSuccess", self.__cbBillingPurchaseConsumeSuccess)
+            _setCallback("onGooglePlayBillingPurchasesOnConsumeFailed", self.__cbBillingPurchaseConsumeFail)
             #  - non-consumable
-            setBillingCallback("PurchaseAcknowledged", self.__cbBillingPurchaseAcknowledged)
-            setBillingCallback("PurchasesAcknowledgeSuccess", self.__cbBillingPurchaseAcknowledgeSuccess)
-            setBillingCallback("PurchasesAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeFail)
+            _setCallback("onGooglePlayBillingPurchaseAcknowledged", self.__cbBillingPurchaseAcknowledged)
+            _setCallback("onGooglePlayBillingPurchasesAcknowledgeSuccess", self.__cbBillingPurchaseAcknowledgeSuccess)
+            _setCallback("onGooglePlayBillingPurchasesAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeFail)
             # billingConnect callbacks:
-            setBillingCallback("ConnectServiceDisconnected", self.__cbBillingClientDisconnected)
-            setBillingCallback("ConnectSetupFinishedFailed", self.__cbBillingClientSetupFinishedFail)
-            setBillingCallback("ConnectSetupFinishedSuccess", self.__cbBillingClientSetupFinishedSuccess)
+            _setCallback("onGooglePlayBillingConnectServiceDisconnected", self.__cbBillingClientDisconnected)
+            _setCallback("onGooglePlayBillingConnectSetupFinishedFailed", self.__cbBillingClientSetupFinishedFail)
+            _setCallback("onGooglePlayBillingConnectSetupFinishedSuccess", self.__cbBillingClientSetupFinishedSuccess)
 
             self.startBillingClient()
 
@@ -129,13 +135,14 @@ class SystemGoogleServices(System):
             ))
 
         if self.b_plugins["GoogleInAppReviews"] is True:
-            def setReviewsCallback(callback_name, *callback):
-                method_name = "onGoogleInAppReviews" + callback_name
-                Mengine.setAndroidCallback(GOOGLE_IN_APP_REVIEWS_PLUGIN, method_name, *callback)
+            def _setCallback(callback_name, *callback):
+                Mengine.setAndroidCallback(GOOGLE_IN_APP_REVIEWS_PLUGIN, callback_name, *callback)
 
             Mengine.waitSemaphore("onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
-            setReviewsCallback("LaunchingTheReviewSuccess", self.__cbReviewsLaunchingSuccess)
-            setReviewsCallback("LaunchingTheReviewError", self.__cbReviewsLaunchingError)
+
+            _setCallback("onGoogleInAppReviewsRequestReviewError", self.__cbReviewsRequestError)
+            _setCallback("onGoogleInAppReviewsLaunchingTheReviewSuccess", self.__cbReviewsLaunchingSuccess)
+            _setCallback("onGoogleInAppReviewsLaunchingTheReviewError", self.__cbReviewsLaunchingError)
 
             RatingAppProvider.setProvider("Google", dict(rateApp=self.rateApp))
 
@@ -257,9 +264,9 @@ class SystemGoogleServices(System):
         _Log("[Auth cb] login failed", err=True, force=True)
 
     @staticmethod
-    def __cbSignError():
+    def __cbSignError(exception):
         SystemGoogleServices.login_event(False)
-        _Log("[Auth cb] login error", err=True, force=True)
+        _Log("[Auth cb] login error: {}".format(exception), err=True, force=True)
 
     @staticmethod
     def __cbNeedIntentSign():
@@ -566,14 +573,14 @@ class SystemGoogleServices(System):
     # callbacks
 
     @staticmethod
-    def __cbAchievementIncSuccess(achievement_id):
+    def __cbAchievementIncSuccess(achievement_id, steps):
         # cb on incrementAchievement
-        _Log("[Achievements cb] AchievementIncrement Success: {!r}".format(achievement_id))
+        _Log("[Achievements cb] AchievementIncrement Success: {!r} steps: {}".format(achievement_id, steps))
 
     @staticmethod
-    def __cbAchievementIncError(achievement_id):
+    def __cbAchievementIncError(achievement_id, steps, exception):
         # cb on incrementAchievement
-        _Log("[Achievements cb] AchievementIncrement Error: {!r}".format(achievement_id), force=True, err=True)
+        _Log("[Achievements cb] AchievementIncrement Error: {!r} steps: {} exception: {}".format(achievement_id, steps, exception), force=True, err=True)
 
     @staticmethod
     def __cbAchievementUnlockSuccess(achievement_id):
@@ -581,9 +588,19 @@ class SystemGoogleServices(System):
         _Log("[Achievements cb] AchievementUnlock Success: {!r}".format(achievement_id))
 
     @staticmethod
-    def __cbAchievementUnlockError(achievement_id):
+    def __cbAchievementRevealSuccess(achievement_id):
+        # cb on revealAchievement
+        _Log("[Achievements cb] AchievementReveal Success: {!r}".format(achievement_id))
+
+    @staticmethod
+    def __cbAchievementRevealError(achievement_id, exception):
+        # cb on revealAchievement
+        _Log("[Achievements cb] AchievementReveal Error: {!r} exception: {}".format(achievement_id, exception), force=True, err=True)
+
+    @staticmethod
+    def __cbAchievementUnlockError(achievement_id, exception):
         # cb on unlockAchievement
-        _Log("[Achievements cb] AchievementUnlock Error: {!r}".format(achievement_id), force=True, err=True)
+        _Log("[Achievements cb] AchievementUnlock achivement: {!r} exception: {}".format(achievement_id, exception), force=True, err=True)
 
     @staticmethod
     def __cbAchievementShowSuccess():
@@ -591,9 +608,19 @@ class SystemGoogleServices(System):
         _Log("[Achievements cb] show achievement: Success")
 
     @staticmethod
-    def __cbAchievementShowError():
+    def __cbAchievementShowError(error):
         # cb on showAchievements
-        _Log("[Achievements cb] show achievement: Error", force=True, err=True)
+        _Log("[Achievements cb] show achievement error: {}".format(error), force=True, err=True)
+
+    @staticmethod
+    def __cbLeaderboardScoreSuccess(leaderboard_id, score):
+        # cb on setLeaderboardScore
+        _Log("[Achievements cb] LeaderboardScore Success: {!r} score: {}".format(leaderboard_id, score))
+
+    @staticmethod
+    def __cbLeaderboardScoreError(leaderboard_id, score, exception):
+        # cb on setLeaderboardScore
+        _Log("[Achievements cb] LeaderboardScore Error: {!r} score: {} error: {}".format(leaderboard_id, score, exception), force=True, err=True)
 
     # --- InAppReviews -------------------------------------------------------------------------------------------------
 
@@ -614,15 +641,20 @@ class SystemGoogleServices(System):
         _Log("[Reviews cb] GettingReviewObject")
 
     @staticmethod
+    def __cbReviewsRequestError(exception):
+        # reviews was not requested
+        _Log("[Reviews cb] RequestError {}".format(exception), force=True)
+
+    @staticmethod
     def __cbReviewsLaunchingSuccess():
         # reviews was launched
         Notification.notify(Notificator.onAppRated)
         _Log("[Reviews cb] LaunchingSuccess", force=True)
 
     @staticmethod
-    def __cbReviewsLaunchingError():
+    def __cbReviewsLaunchingError(exception):
         # reviews was not launched
-        _Log("[Reviews cb] LaunchingError", force=True)
+        _Log("[Reviews cb] LaunchingError {}".format(exception), force=True)
 
     # --- FirebaseCrashlytics ------------------------------------------------------------------------------------------
 
