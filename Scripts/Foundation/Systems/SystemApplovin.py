@@ -53,14 +53,23 @@ class SystemApplovin(System):
 
 
     def initAds(self):
-        if self.banner.initialize() is False:
-            Trace.log("System", 0, "Failed to init banner advert")
+        if Mengine.getConfigBool("Advertising", self.banner.ad_type, False) is True:
+            if self.banner.initialize() is False:
+                Trace.log("System", 0, "Failed to init banner advert")
+                pass
+            pass
 
-        if self.interstitial.initialize() is False:
-            Trace.log("System", 0, "Failed to init interstitial advert")
+        if Mengine.getConfigBool("Advertising", self.interstitial.ad_type, False) is True:
+            if self.interstitial.initialize() is False:
+                Trace.log("System", 0, "Failed to init interstitial advert")
+                pass
+            pass
 
-        if self.rewarded.initialize() is False:
-            Trace.log("System", 0, "Failed to init rewarded advert")
+        if Mengine.getConfigBool("Advertising", self.rewarded.ad_type, False) is True:
+            if self.rewarded.initialize() is False:
+                Trace.log("System", 0, "Failed to init rewarded advert")
+                pass
+            pass
 
         provider_methods = dict(
             ShowRewardedAdvert=self.showRewarded,

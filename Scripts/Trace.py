@@ -41,16 +41,17 @@ def log(category, level, text, *args):
         Mengine.logError("trace log unknown category '%s'" % category)
         return
 
-    if level <= TraceManager.getLevel(category):
-        message = "\n-----------------------------------------------"
-        message += "\nError: " + __tryFormatMessage(text, *args)
-        message += "\n-----------------------------------------------"
+    if level > TraceManager.getLevel(category):
+        return
 
-        if level == 0:
-            message += __getTraceback()
+    message = "\n-----------------------------------------------"
+    message += "\nError: " + __tryFormatMessage(text, *args)
+    message += "\n-----------------------------------------------"
 
-        Mengine.logError(message)
-        pass
+    if level == 0:
+        message += __getTraceback()
+
+    Mengine.logError(message)
     pass
 
 def log_dev_err(category, level, text, *args):

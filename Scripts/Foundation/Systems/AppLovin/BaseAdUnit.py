@@ -31,11 +31,12 @@ class BaseAdUnit(object):
 
         self._log("[{}] call init".format(self.ad_type))
 
-        if self._initialize() is True:
-            self.inited = True
-            return True
+        if self._initialize() is False:
+            return False
 
-        return False
+        self.inited = True
+
+        return True
 
     def _initialize(self):
         raise NotImplementedError

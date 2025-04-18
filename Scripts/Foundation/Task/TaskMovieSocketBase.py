@@ -8,6 +8,7 @@ class TaskMovieSocketBase(MixinMovie, MixinEvent, Task):
         super(TaskMovieSocketBase, self)._onParams(params)
 
         self.SocketName = params.get("SocketName")
+
         self.Any = params.get("Any", False)
         self.UseArrowFilter = params.get("UseArrowFilter", True)
         self.Filter = params.get("Filter", None)
