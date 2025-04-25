@@ -2,7 +2,7 @@ class BaseProvider(object):
     s_name = None
     s_methods = {}
     s_allowed_methods = []
-    trace_level = 1
+    trace_level = 0
 
     @classmethod
     def _isMethodsValid(cls, methods):
@@ -54,14 +54,12 @@ class BaseProvider(object):
         fn = cls.s_methods.get(name)
 
         if fn is None:
-            Trace.log("Provider", cls.trace_level, "Not found method {}".format(name))
             return cls.__callNotFoundCb(name, *args, **kwargs)
 
         try:
             return fn(*args, **kwargs)
         except Exception as e:
-            Trace.log("Provider", cls.trace_level, "Exception in {} {}".format(name, e))
-            return None
+            return cls.__callException(e, name, *args, **kwargs)
 
 
     @classmethod
@@ -70,6 +68,17 @@ class BaseProvider(object):
         if fail_cb_name in dir(cls):
             fail_cb = getattr(cls, fail_cb_name)
             return fail_cb(*args, **kwargs)
+
+        Trace.log("Provider", cls.trace_level, "Not found method {}".format(name))
+
+    @staticmethod
+    def __callException(cls, e, name, *args, **kwargs):
+        exception_cb_name = "_{}ExceptionCb".format(name)
+        if exception_cb_name in dir(cls):
+            exception_cb = getattr(cls, exception_cb_name)
+            return exception_cb(e, *args, **kwargs)
+
+        Trace.log("Provider", cls.trace_level, "Exception in {} {}".format(name, e))
 
     @classmethod
     def hasMethod(cls, name):
