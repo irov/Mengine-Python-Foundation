@@ -20,7 +20,7 @@ class TaskIf(MixinGroup, Task):
         result = self.Fn(*self.Args)
 
         if isinstance(result, bool) is False:
-            self.invalidTask("TaskIf invalid result must be [True|False] but is '%s'" % (result))
+            self.invalidTask("TaskIf invalid result fn '%s' args '%s' must be [True|False] but is '%s'" % (self.Fn, self.Args, result))
             pass
 
         Source = self.Source_True if result is True else self.Source_False

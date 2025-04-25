@@ -58,6 +58,8 @@ class DummyAdvertisement(object):
                 source.addNotify(Notificator.onAdShowCompleted, "Interstitial", True, {"placement": placement})
                 source.addNotify(Notificator.onAdRevenuePaid, "Interstitial", {"placement": placement, "revenue": revenue})
 
+        return True
+
     @staticmethod
     def hasRewardedAdvert():
         status = True
