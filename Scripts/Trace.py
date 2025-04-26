@@ -44,12 +44,13 @@ def log(category, level, text, *args):
     if level > TraceManager.getLevel(category):
         return
 
-    message = "\n-----------------------------------------------"
-    message += "\nError: " + __tryFormatMessage(text, *args)
+    message =  "-----------------------------------------------"
+    message += "\nError: " + __tryFormatMessage(text, *args) + ""
     message += "\n-----------------------------------------------"
 
     if level == 0:
         message += __getTraceback()
+        message += "\n-----------------------------------------------"
 
     Mengine.logError(message)
     pass
@@ -59,7 +60,7 @@ def log_dev_err(category, level, text, *args):
         log(category, level, text, *args)
 
 def trace():
-    message = "\n-----------------------------------------------"
+    message = "-----------------------------------------------"
     message += "\nTrace:"
     message += "\n-----------------------------------------------"
     message += __getTraceback()

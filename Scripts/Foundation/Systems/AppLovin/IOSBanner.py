@@ -7,6 +7,7 @@ class IOSBanner(BaseAdUnit):
         callbacks = {
             "onAppleAdvertisementRevenuePaid": self.cbRevenuePaid
         }
+
         return Mengine.appleAdvertisementSetAdvertisementBannerCallback(callbacks)
 
     def _has(self):

@@ -84,7 +84,7 @@ class SystemApplovin(System):
             GetBannerHeight=self.getBannerHeight,
         )
 
-        AdvertisementProvider.setProvider(ANDROID_PLUGIN_NAME, provider_methods)
+        AdvertisementProvider.setProvider("AppLovin", provider_methods)
 
     @staticmethod
     def isSdkInitialized():

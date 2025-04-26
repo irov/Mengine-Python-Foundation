@@ -10,6 +10,7 @@ class IOSRewardedAd(BaseAdUnit):
             "onAppleAdvertisementUserRewarded": self.cbUserRewarded,
             "onAppleAdvertisementRevenuePaid": self.cbRevenuePaid,
         }
+
         return Mengine.appleAppLovinSetRewardedProvider(callbacks)
 
     def _has(self):
