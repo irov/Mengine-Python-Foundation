@@ -71,7 +71,7 @@ class BaseProvider(object):
 
         Trace.log("Provider", cls.trace_level, "Provider {} Not found method {} in {}".format(cls.s_name, name, cls.s_methods))
 
-    @staticmethod
+    @classmethod
     def __callException(cls, e, name, *args, **kwargs):
         exception_cb_name = "_{}ExceptionCb".format(name)
         exception_cb = getattr(cls, exception_cb_name, None)
