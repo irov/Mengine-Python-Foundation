@@ -139,18 +139,18 @@ class DummyAdvertisement(object):
             return DummyAdvertisement.isConsentFlow()
 
         methods = dict(
-            # rewarded:
-            HasRewardedAdvert=_HasRewardedAdvert,
-            ShowRewardedAdvert=_ShowRewardedAdvert,
-            CanOfferRewardedAdvert=_CanOfferRewardedAdvert,
-            CanYouShowRewardedAdvert=_CanYouShowRewardedAdvert,
-            # interstitial:
-            HasInterstitialAdvert=_HasInterstitialAdvert,
-            ShowInterstitialAdvert=_ShowInterstitialAdvert,
-            CanYouShowInterstitialAdvert=_CanYouShowInterstitialAdvert,
             # banner:
             ShowBanner=_ShowBanner,
             HideBanner=_HideBanner,
+            # interstitial:
+            HasInterstitialAdvert=_HasInterstitialAdvert,
+            CanYouShowInterstitialAdvert=_CanYouShowInterstitialAdvert,
+            ShowInterstitialAdvert=_ShowInterstitialAdvert,
+            # rewarded:
+            HasRewardedAdvert=_HasRewardedAdvert,
+            CanOfferRewardedAdvert=_CanOfferRewardedAdvert,
+            CanYouShowRewardedAdvert=_CanYouShowRewardedAdvert,
+            ShowRewardedAdvert=_ShowRewardedAdvert,
             # consent flow:
             ShowConsentFlow=_ShowConsentFlow,
             IsConsentFlow=_IsConsentFlow,

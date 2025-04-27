@@ -71,20 +71,26 @@ class SystemApplovin(System):
                 pass
             pass
 
-        provider_methods = dict(
-            ShowRewardedAdvert=self.showRewarded,
-            ShowInterstitialAdvert=self.showInterstitial,
-            CanOfferRewardedAdvert=self.canOfferRewarded,
-            CanYouShowRewardedAdvert=self.canYouShowRewarded,
-            CanYouShowInterstitialAdvert=self.canYouShowInterstitial,
+        methods = dict(
+            # banner:
             ShowBanner=self.showBanner,
             HideBanner=self.hideBanner,
+            GetBannerHeight=self.getBannerHeight,
+            # interstitial:
+            HasInterstitialAdvert=self.hasInterstitial,
+            CanYouShowInterstitialAdvert=self.canYouShowInterstitial,
+            ShowInterstitialAdvert=self.showInterstitial,
+            # rewarded:
+            HasRewardedAdvert=self.hasRewarded,
+            CanOfferRewardedAdvert=self.canOfferRewarded,
+            CanYouShowRewardedAdvert=self.canYouShowRewarded,
+            ShowRewardedAdvert=self.showRewarded,
+            # consent flow:
             ShowConsentFlow=self.showConsentFlow,
             IsConsentFlow=self.isConsentFlow,
-            GetBannerHeight=self.getBannerHeight,
         )
 
-        AdvertisementProvider.setProvider("AppLovin", provider_methods)
+        AdvertisementProvider.setProvider("AppLovin", methods)
 
     @staticmethod
     def isSdkInitialized():
@@ -101,10 +107,16 @@ class SystemApplovin(System):
         if _ANDROID:
             Mengine.androidMethod(ANDROID_PLUGIN_NAME, "showConsentFlow")
         elif _IOS:
-            Mengine.appleAppLovinLoadAndShowCMPFlow({
-                "onAppleAppLovinConsentFlowShowSuccess": self.__cbConsentFlowShowSuccess,
-                "onAppleAppLovinConsentFlowShowFailed": self.__cbConsentFlowShowFailed,
-            })
+            def __cbConsentFlowShowSuccess(self):
+                _Log("[cb] Consent Flow Show Successful")
+
+            def __cbConsentFlowShowFailed(self):
+                _Log("[cb] Consent Flow Show Failed", err=True, force=True)
+
+            Mengine.appleAppLovinLoadAndShowCMPFlow(dict(
+                onAppleAppLovinConsentFlowShowSuccess=__cbConsentFlowShowSuccess,
+                onAppleAppLovinConsentFlowShowFailed=__cbConsentFlowShowFailed,
+            ))
 
     def isConsentFlow(self):
         if _ANDROID:
@@ -128,12 +140,6 @@ class SystemApplovin(System):
         self.initAds()
 
         self.__disableDevToDebugInitButton()
-
-    def __cbConsentFlowShowSuccess(self):
-        _Log("[cb] Consent Flow Show Successful")
-
-    def __cbConsentFlowShowFailed(self):
-        _Log("[cb] Consent Flow Show Failed", err=True, force=True)
 
     # provider handling
 

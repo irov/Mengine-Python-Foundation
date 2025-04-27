@@ -11,7 +11,7 @@ class IOSInterstitialAd(BaseAdUnit):
             "onAppleAdvertisementRevenuePaid": self.cbRevenuePaid
         }
 
-        return Mengine.appleAdvertisementSetAdvertisementInterstitialCallback(callbacks)
+        return Mengine.appleAdvertisementSetInterstitialCallback(callbacks)
 
     def _has(self):
         return Mengine.appleAdvertisementHasInterstitial()

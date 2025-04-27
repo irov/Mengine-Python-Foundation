@@ -53,7 +53,7 @@ class BaseProvider(object):
     def _call(cls, name, *args, **kwargs):
         fn = cls.s_methods.get(name)
 
-        if fn is None or callable(fn) is False:
+        if fn is None:
             return cls.__callNotFoundCb(name, *args, **kwargs)
 
         try:
@@ -69,7 +69,7 @@ class BaseProvider(object):
         if callable(fail_cb) is True:
             return fail_cb(*args, **kwargs)
 
-        Trace.log("Provider", cls.trace_level, "Not found method {}".format(name))
+        Trace.log("Provider", cls.trace_level, "Provider {} Not found method {} in {}".format(cls.s_name, name, cls.s_methods))
 
     @staticmethod
     def __callException(cls, e, name, *args, **kwargs):
