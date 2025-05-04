@@ -39,6 +39,19 @@ class SystemManager(Manager):
         return Type
 
     @staticmethod
+    def availableSystem(type, **params):
+        if type not in SystemManager.systemTypes:
+            Trace.log("System", 0, "SystemManager.availableSystem: not found system %s type %s" % (type, SystemManager.systemTypes))
+            return False
+
+        systemType = SystemManager.systemTypes[type]
+
+        if systemType.available(params) is False:
+            return False
+
+        return True
+
+    @staticmethod
     def createSystem(name, type, **params):
         if type not in SystemManager.systemTypes:
             Trace.log("System", 0, "SystemManager.createSystem: not found system %s type %s" % (name, type))
@@ -67,14 +80,14 @@ class SystemManager(Manager):
         sys = SystemManager.createSystem(name, type, **params)
 
         if sys is None:
-            return None
+            return False
 
         SystemManager.systems[name] = sys
 
         Trace.msg_dev("SystemManager.runSystem [%s]" % (type))
 
         if sys.run() is False:
-            return None
+            return False
 
         return sys
 
@@ -104,6 +117,10 @@ class SystemManager(Manager):
         Trace.msg_dev("SystemManager.stopSystem [%s]" % (sys.getType()))
 
         return True
+
+    @staticmethod
+    def getSystems():
+        return SystemManager.systems
 
     @staticmethod
     def removeSystem(name):

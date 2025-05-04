@@ -23,16 +23,20 @@ class SystemApplovin(System):
         self.banner = AppLovinAdFactory.createAd("Banner")
         self.interstitial = AppLovinAdFactory.createAd("Interstitial")
         self.rewarded = AppLovinAdFactory.createAd("Rewarded")
+        self.semaphoreAdServiceReady = Semaphore(False, "AdServiceReady")
 
-    def _onInitialize(self):
+    @classmethod
+    def _onAvailable(cls, params):
         if _ANDROID:
             SystemApplovin.is_plugin_active = Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME)
         elif _IOS:
             SystemApplovin.is_plugin_active = Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME)
+            pass
 
-        if self.is_plugin_active is False:
-            return
+        return SystemApplovin.is_plugin_active
+        pass
 
+    def _onInitialize(self):
         Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)
 
         # ads do init in `__cbSdkInitialized`
@@ -51,6 +55,9 @@ class SystemApplovin(System):
             self.rewarded.cleanUp()
             self.rewarded = None
 
+    def _onPreparation(self, source):
+        Trace.log("System", 0, "_onPreparation_onPreparation_onPreparation_onPreparation")
+        source.addSemaphore(self.semaphoreAdServiceReady, From=True)
 
     def initAds(self):
         if Mengine.getConfigBool("Advertising", self.banner.ad_type, False) is True:
@@ -140,6 +147,7 @@ class SystemApplovin(System):
         self.initAds()
 
         self.__disableDevToDebugInitButton()
+        self.semaphoreAdServiceReady.setValue(True)
 
     # provider handling
 

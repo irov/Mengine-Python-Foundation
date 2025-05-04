@@ -21,6 +21,9 @@ class TaskRunSystem(Task):
         pass
 
     def _onRun(self):
+        if SystemManager.availableSystem(self.systemType, **self.systemParams) is False:
+            return True
+
         SystemManager.runSystem(self.systemName, self.systemType, **self.systemParams)
 
         return True

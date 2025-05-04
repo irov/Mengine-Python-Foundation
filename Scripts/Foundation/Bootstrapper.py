@@ -179,7 +179,10 @@ class Bootstrapper(object):
             if Global is False:
                 Bootstrapper.s_sessionSystems.append(Name)
             else:
-                if SystemManager.runSystem(Name, Name) is None:
+                if SystemManager.availableSystem(Name) is False:
+                    continue
+
+                if SystemManager.runSystem(Name, Name) is False:
                     Trace.log("Manager", 0, "Bootstrapper.loadSystems system %s invalid run" % Name)
                     return False
 

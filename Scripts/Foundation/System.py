@@ -190,3 +190,22 @@ class System(Params, Initializer):
 
     def _onStop(self):
         pass
+
+    def preparation(self, source):
+        try:
+            self._onPreparation(source)
+        except Exception as ex:
+            Trace.log("System", 0, "System '%s' _onPreparation %s error: %s" % (self.name, self._onPreparation, ex))
+
+    def _onPreparation(self, source):
+        pass
+
+    @classmethod
+    def available(cls, params):
+        return cls._onAvailable(params)
+        pass
+
+    @classmethod
+    def _onAvailable(cls, params):
+        return True
+        pass
