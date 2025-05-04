@@ -56,7 +56,6 @@ class SystemApplovin(System):
             self.rewarded = None
 
     def _onPreparation(self, source):
-        Trace.log("System", 0, "_onPreparation_onPreparation_onPreparation_onPreparation")
         source.addSemaphore(self.semaphoreAdServiceReady, From=True)
 
     def initAds(self):
