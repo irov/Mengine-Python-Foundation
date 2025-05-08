@@ -31,10 +31,10 @@ class SystemGoogleServices(System):
     __lastProductId = None
 
     b_plugins = {
-        "GoogleGameSocial": Mengine.isAvailablePlugin(GOOGLE_GAME_SOCIAL_PLUGIN),
-        "GooglePlayBilling": Mengine.isAvailablePlugin(GOOGLE_PLAY_BILLING_PLUGIN),
-        "GoogleInAppReviews": Mengine.isAvailablePlugin(GOOGLE_IN_APP_REVIEWS_PLUGIN),
-        "FirebaseCrashlytics": Mengine.isAvailablePlugin(FIREBASE_CRASHLYTICS_PLUGIN),
+        GOOGLE_GAME_SOCIAL_PLUGIN: Mengine.isAvailablePlugin(GOOGLE_GAME_SOCIAL_PLUGIN),
+        GOOGLE_PLAY_BILLING_PLUGIN: Mengine.isAvailablePlugin(GOOGLE_PLAY_BILLING_PLUGIN),
+        GOOGLE_IN_APP_REVIEWS_PLUGIN: Mengine.isAvailablePlugin(GOOGLE_IN_APP_REVIEWS_PLUGIN),
+        FIREBASE_CRASHLYTICS_PLUGIN: Mengine.isAvailablePlugin(FIREBASE_CRASHLYTICS_PLUGIN),
     }
 
     login_event = Event("GoogleGameSocialLoginEvent")
@@ -49,10 +49,14 @@ class SystemGoogleServices(System):
 
     def _onInitialize(self):
 
-        if self.b_plugins["GoogleGameSocial"] is True:
+        if self.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is True:
             def _setCallback(method_name, *callback):
                 Mengine.setAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
 
+            # sign in:
+            _setCallback("onGoogleGameSocialSignInIntentSuccess", self.__cbSignSuccess)
+            _setCallback("onGoogleGameSocialSignInIntentFailed", self.__cbSignFailed)
+            _setCallback("onGoogleGameSocialSignInIntentError", self.__cbSignError)
             # auth:
             _setCallback("onGoogleGameSocialOnAuthenticatedSuccess", self.__cbSignSuccess)
             _setCallback("onGoogleGameSocialOnAuthenticatedFailed", self.__cbSignFailed)
@@ -87,7 +91,7 @@ class SystemGoogleServices(System):
             ))
             PolicyManager.setPolicy("Authorize", "PolicyAuthGoogleService")    # deprecated
 
-        if self.b_plugins["GooglePlayBilling"] is True:
+        if self.b_plugins[GOOGLE_PLAY_BILLING_PLUGIN] is True:
             def _setCallback(method_name, *callback):
                 Mengine.setAndroidCallback(GOOGLE_PLAY_BILLING_PLUGIN, method_name, *callback)
 
@@ -134,7 +138,7 @@ class SystemGoogleServices(System):
                 restorePurchases=self.restorePurchases
             ))
 
-        if self.b_plugins["GoogleInAppReviews"] is True:
+        if self.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is True:
             def _setCallback(callback_name, *callback):
                 Mengine.setAndroidCallback(GOOGLE_IN_APP_REVIEWS_PLUGIN, callback_name, *callback)
 
@@ -146,7 +150,7 @@ class SystemGoogleServices(System):
 
             RatingAppProvider.setProvider("Google", dict(rateApp=self.rateApp))
 
-        if self.b_plugins["GoogleGameSocial"] is True:
+        if self.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is True:
             # google do auto login on create app, so we don't need to do it manually here
             if Mengine.getGameParamBool("GoogleAutoLogin", False) is True:
                 self.signIn()
@@ -199,7 +203,7 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def signIn(only_intent=False, force=False):
-        if SystemGoogleServices.b_plugins["GoogleGameSocial"] is False:
+        if SystemGoogleServices.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is False:
             _Log("[Auth] plugin {!r} is not active for signIn".format(GOOGLE_GAME_SOCIAL_PLUGIN))
             return
 
@@ -218,30 +222,20 @@ class SystemGoogleServices(System):
 
         with TaskManager.createTaskChain(Name="SystemGoogleServices_SignIn") as tc:
             with tc.addParallelTask(2) as (respond, request):
-                with respond.addRaceTask(2) as (success, fail):
-                    success.addEvent(SystemGoogleServices.login_event, Filter=lambda status: status is True)
+                with request.addIfTask(Mengine.androidBooleanMethod, GOOGLE_GAME_SOCIAL_PLUGIN, "isAuthenticated") as (success, fail):
                     success.addFunction(_Log, "[Auth] silence auth success!")
 
-                    fail.addEvent(SystemGoogleServices.login_event, Filter=lambda status: status is False)
                     fail.addFunction(_Log, "[Auth] silence auth failed, try intent...")
                     fail.addFunction(SystemGoogleServices._signInIntent)
-
-                request.addFunction(_Log, "[Auth] try silence auth...")
-                request.addFunction(SystemGoogleServices._signInSilently)
 
     @staticmethod
     def _signInIntent():
         _Log("[Auth] startSignIn Intent...", force=True)
-        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "startSignInIntent")
-
-    @staticmethod
-    def _signInSilently():
-        _Log("[Auth] signIn Silently...", force=True)
-        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "signInSilently")
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "signInIntent")
 
     @staticmethod
     def signOut():
-        if SystemGoogleServices.b_plugins["GoogleGameSocial"] is False:
+        if SystemGoogleServices.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is False:
             _Log("[Auth] plugin {!r} is not active for signOut".format(GOOGLE_GAME_SOCIAL_PLUGIN))
             return
         _Log("[Auth] signOut...", force=True)
@@ -541,25 +535,25 @@ class SystemGoogleServices(System):
     def incrementAchievement(achievement_id, steps):
         # auth is not required
         _Log("[Achievements] try incrementAchievement {!r} for {} steps".format(achievement_id, steps), force=True)
-        Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "incrementAchievement", achievement_id, steps)
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "incrementAchievement", achievement_id, steps)
 
     @staticmethod
     def unlockAchievement(achievement_id):
         # auth is not required
         _Log("[Achievements] try unlockAchievement: {!r}".format(achievement_id), force=True)
-        Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "unlockAchievement", achievement_id)
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "unlockAchievement", achievement_id)
 
     @staticmethod
     def showAchievements():
         # auth is not required
         _Log("[Achievements] try showAchievements...", force=True)
-        Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "showAchievements")
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "showAchievements")
 
     @staticmethod
     def incrementEvent(event_id, value):
         # increment event
         _Log("[Achievements] try incrementEvent: {!r} by {}".format(event_id, value), force=True)
-        Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "incrementEvent", event_id, value)
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "incrementEvent", event_id, value)
 
     # utils
 
@@ -627,7 +621,7 @@ class SystemGoogleServices(System):
     @staticmethod
     def rateApp():
         # starts rate app process
-        if SystemGoogleServices.b_plugins["GoogleInAppReviews"] is False:
+        if SystemGoogleServices.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is False:
             Trace.log("System", 0, "SystemGoogleServices try to rateApp, but plugin '{}' is not active".format(GOOGLE_IN_APP_REVIEWS_PLUGIN))
             return
         Mengine.androidMethod(GOOGLE_IN_APP_REVIEWS_PLUGIN, "launchTheInAppReview")
@@ -660,7 +654,7 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def testCrash():
-        if SystemGoogleServices.b_plugins["FirebaseCrashlytics"] is False:
+        if SystemGoogleServices.b_plugins[FIREBASE_CRASHLYTICS_PLUGIN] is False:
             Trace.log("System", 0, "try to testCrash, but plugin '{}' is not active".format(FIREBASE_CRASHLYTICS_PLUGIN))
             return
         _Log("[FirebaseCrashlytics] testCrash...")
@@ -680,7 +674,7 @@ class SystemGoogleServices(System):
         widgets = []
 
         # achievements
-        if self.b_plugins["GoogleGameSocial"] is True:
+        if self.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is True:
             w_achievement_unlock = Mengine.createDevToDebugWidgetCommandLine("unlock_achievement")
             w_achievement_unlock.setTitle("Unlock achievement")
             w_achievement_unlock.setPlaceholder("syntax: <achievement_id>")
@@ -725,18 +719,13 @@ class SystemGoogleServices(System):
             w_logout.setClickEvent(self.signOut)
             widgets.append(w_logout)
 
-            w_sign_in_silence = Mengine.createDevToDebugWidgetButton("sign_in_silence")
-            w_sign_in_silence.setTitle("Sign In [Silence]")
-            w_sign_in_silence.setClickEvent(self._signInSilently)
-            widgets.append(w_sign_in_silence)
-
             w_sign_in_intent = Mengine.createDevToDebugWidgetButton("sign_in_intent")
             w_sign_in_intent.setTitle("Sign In [Intent]")
             w_sign_in_intent.setClickEvent(self._signInIntent)
             widgets.append(w_sign_in_intent)
 
         # payment
-        if self.b_plugins["GooglePlayBilling"] is True:
+        if self.b_plugins[GOOGLE_PLAY_BILLING_PLUGIN] is True:
             w_buy = Mengine.createDevToDebugWidgetCommandLine("buy")
             w_buy.setTitle("Buy product")
             w_buy.setPlaceholder("syntax: <prod_id>")
@@ -759,14 +748,14 @@ class SystemGoogleServices(System):
             widgets.append(w_restore)
 
         # rateApp
-        if self.b_plugins["GoogleInAppReviews"] is True:
+        if self.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is True:
             w_rate = Mengine.createDevToDebugWidgetButton("rate_app")
             w_rate.setTitle("Show Rate App window")
             w_rate.setClickEvent(self.rateApp)
             widgets.append(w_rate)
 
         # Firebase Crashlytics
-        if self.b_plugins["FirebaseCrashlytics"] is True:
+        if self.b_plugins[FIREBASE_CRASHLYTICS_PLUGIN] is True:
             w_test_crash = Mengine.createDevToDebugWidgetButton("test_crash")
             w_test_crash.setTitle("FirebaseCrashlytics - Test Crash")
             w_test_crash.setClickEvent(self.testCrash)

@@ -14,7 +14,7 @@ class AndroidAppLovinBannerAd(AndroidAppLovinAdUnit):
         return True
 
     def _has(self):
-        return Mengine.androidMethod(self.ANDROID_PLUGIN_NAME, "hasBanner")
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "hasBanner")
 
     def _canOffer(self, placement):
         return True

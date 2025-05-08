@@ -135,7 +135,7 @@ class SystemApplovin(System):
         if _IOS:
             return Mengine.appleAppLovinGetBannerHeight()
         elif _ANDROID:
-            return Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getBannerHeight")
+            return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerHeight")
         return None
 
     # callbacks
@@ -200,12 +200,6 @@ class SystemApplovin(System):
 
         tab = Mengine.addDevToDebugTab(DEVDEBUGGER_TAB_NAME)
         widgets = []
-
-        if self.is_sdk_init is False and _ANDROID:
-            w_init = Mengine.createDevToDebugWidgetButton("run_init")
-            w_init.setTitle("Run init applovin")
-            w_init.setClickEvent(Mengine.androidMethod, ANDROID_PLUGIN_NAME, "initialize")
-            widgets.append(w_init)
 
         w_debug = Mengine.createDevToDebugWidgetButton("show_mediation_debugger")
         w_debug.setTitle("Show Mediation Debugger")
