@@ -25,6 +25,12 @@ class DummyAdvertisement(object):
         return True
 
     @staticmethod
+    def getBannerHeight():
+        height = 50
+
+        return height
+
+    @staticmethod
     def hasInterstitialAdvert():
         status = True
 
@@ -133,6 +139,8 @@ class DummyAdvertisement(object):
             return DummyAdvertisement.showBanner()
         def _HideBanner():
             return DummyAdvertisement.hideBanner()
+        def _GetBannerHeight():
+            return DummyAdvertisement.getBannerHeight()
         def _ShowConsentFlow():
             return DummyAdvertisement.showConsentFlow()
         def _IsConsentFlow():
@@ -142,6 +150,7 @@ class DummyAdvertisement(object):
             # banner:
             ShowBanner=_ShowBanner,
             HideBanner=_HideBanner,
+            GetBannerHeight=_GetBannerHeight,
             # interstitial:
             HasInterstitialAdvert=_HasInterstitialAdvert,
             CanYouShowInterstitialAdvert=_CanYouShowInterstitialAdvert,
