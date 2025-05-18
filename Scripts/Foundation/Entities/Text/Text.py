@@ -97,7 +97,7 @@ class Text(BaseEntity):
 
     def __updateMaxLength(self, wrap):
         if wrap is None:
-            self.text_field.setMaxLength(2048.0)
+            self.text_field.removeMaxLength()
         else:
             maxlen = wrap[1][0] - wrap[0][0]
             self.text_field.setMaxLength(maxlen)
