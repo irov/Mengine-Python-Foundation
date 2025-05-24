@@ -97,6 +97,7 @@ def onInitialize():
         , "TaskGameUnblock"
 
         , "TaskPrint"
+        , "TaskPrintFormat"
         , "TaskPrintTrace"
         , "TaskTrace"
 

@@ -418,6 +418,11 @@ class TaskSource(object):
             self.__addDesc("TaskPrint", dict(Value=msg, Args=args))
         pass
 
+    def addPrintFormat(self, msg, *args, **kwds):
+        if _DEVELOPMENT is True:
+            self.__addDesc("TaskPrintFormat", dict(Value=msg, Args=args, Kwds=kwds))
+        pass
+
     def addDelay(self, Time, Scheduler=None):
         self.__addDesc("TaskDelay", dict(Time=Time, Scheduler=Scheduler))
         pass
