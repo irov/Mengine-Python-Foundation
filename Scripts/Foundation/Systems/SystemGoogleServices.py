@@ -74,6 +74,10 @@ class SystemGoogleServices(System):
             _setCallback("onGoogleGameSocialShowAchievementSuccess", self.__cbAchievementShowSuccess)
             _setCallback("onGoogleGameSocialShowAchievementError", self.__cbAchievementShowError)
 
+            _setCallback("onGoogleGameSocialIncrementEventSuccess", self.__cbEventIncrementSuccess)
+            _setCallback("onGoogleGameSocialIncrementEventError", self.__cbEventIncrementError)
+
+
             _setCallback("onGoogleGameSocialLeaderboardScoreSuccess", self.__cbLeaderboardScoreSuccess)
             _setCallback("onGoogleGameSocialLeaderboardScoreError", self.__cbLeaderboardScoreError)
 
@@ -239,7 +243,7 @@ class SystemGoogleServices(System):
             _Log("[Auth] plugin {!r} is not active for signOut".format(GOOGLE_GAME_SOCIAL_PLUGIN))
             return
         _Log("[Auth] signOut...", force=True)
-        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "signOut")
+        #ToDo signOut is not implemented in GoogleGameSocial plugin
 
     # callbacks
 
@@ -605,6 +609,16 @@ class SystemGoogleServices(System):
     def __cbAchievementShowError(error):
         # cb on showAchievements
         _Log("[Achievements cb] show achievement error: {}".format(error), force=True, err=True)
+
+    @staticmethod
+    def __cbEventIncrementSuccess(eventId, value):
+        # cb on incrementEvent
+        _Log("[Achievements cb] EventIncrement Success: eventId={!r} value={}".format(eventId, value))
+
+    @staticmethod
+    def __cbEventIncrementError(eventId, value, exception):
+        # cb on incrementEvent
+        _Log("[Achievements cb] EventIncrement Error: eventId={!r} value={} exception: {}".format(eventId, value, exception), force=True, err=True)
 
     @staticmethod
     def __cbLeaderboardScoreSuccess(leaderboard_id, score):
