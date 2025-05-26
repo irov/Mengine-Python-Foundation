@@ -47,3 +47,8 @@ class LanguagesManager(Manager):
         locales = Mengine.getLocales()
 
         return locales
+
+    @staticmethod
+    def hasLocale(locale):
+        if locale is not None:
+            return Mengine.hasLocale(locale)
