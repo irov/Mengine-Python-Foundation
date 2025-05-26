@@ -441,9 +441,6 @@ class TaskSource(object):
         self.__addDesc("TaskEnable", dict(Object=object, Value=True))
         pass
 
-    def addDummy(self, **kwrds):
-        self.__addDesc("TaskDummy", dict(**kwrds))
-
     def addDisable(self, object, check=True):
         if check is False:
             if object is None:
@@ -452,6 +449,14 @@ class TaskSource(object):
             pass
 
         self.__addDesc("TaskEnable", dict(Object=object, Value=False))
+        pass
+
+    def addReturn(self, object):
+        self.__addDesc("TaskObjectReturn", dict(Object=object))
+        pass
+
+    def addDummy(self, **kwrds):
+        self.__addDesc("TaskDummy", dict(**kwrds))
         pass
 
     def addFunction(self, fn, *args, **kwds):
