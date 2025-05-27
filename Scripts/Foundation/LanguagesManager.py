@@ -26,11 +26,11 @@ class LanguagesManager(Manager):
         language_orm_record = DatabaseManager.find(LanguagesManager.s_languagesORM, Language=locale)
 
         if language_orm_record is None:
-            Trace.msg("Locale '{!r}' not found".format(locale))
+            Trace.msg("Locale {!r} not found".format(locale))
             return None
 
         if LanguagesManager.validateTextId(language_orm_record.TextId) is False:
-            Trace.msg("Text id '{!r}' for localization '{!r}' not found".format(
+            Trace.msg("Text id {!r} for localization {!r} not found".format(
                           language_orm_record.TextId, locale))
             return None
 
@@ -40,14 +40,14 @@ class LanguagesManager(Manager):
     def getLocale():
         locale = Mengine.getLocale()
         if locale is None:
-            Trace.msg("Locale '{!r}' is not found!".format(locale))
+            Trace.msg("Locale {!r} is not found!".format(locale))
 
         return locale
 
     @staticmethod
     def setLocale(locale):
         if Mengine.hasLocale(locale) is False:
-            Trace.msg("Locale '{!r}' is not found!".format(locale))
+            Trace.msg("Locale {!r} is not found!".format(locale))
             return
 
         Mengine.setLocale(locale)
@@ -57,14 +57,14 @@ class LanguagesManager(Manager):
     def getLocales():
         locales = Mengine.getLocales()
         if locales is None:
-            Trace.msg("There is any Locale not found!")
+            Trace.msg("No localization found!")
 
         return locales
 
     @staticmethod
     def hasLocale(locale):
         if locale is None:
-            Trace.msg("'hasLocale' got empty argument!")
+            Trace.msg("LanguagesManager.hasLocale got empty argument!")
             return None
 
         return Mengine.hasLocale(locale)
