@@ -260,6 +260,9 @@ class VirtualArea(Initializer):
         scale_factor = scale / self._target._scale_factor
         self.scale(scale_factor)
 
+    def get_scale_factor(self):
+        return self._target.get_scale_factor()
+
     def freeze(self, value):
         self._frozen = value
         Mengine.enableGlobalHandler(self._mouse_move_handler, False)
