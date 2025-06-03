@@ -10,7 +10,6 @@ class TaskNodeBezier2ScreenFollow(MixinNode, Task):
         self.Follow = params.get("Follow")
         self.Time = params.get("Time", None)
         self.Speed = params.get("Speed", None)
-        self.Offset = params.get("Offset", (0.0, 0.0))
         self.Deep = params.get("Deep", 0.0)
         self.Easing = params.get("Easing", "easyLinear")
         self.id = 0
@@ -38,7 +37,7 @@ class TaskNodeBezier2ScreenFollow(MixinNode, Task):
         pass
 
     def _onRun(self):
-        self.id = self.node.bezier2ScreenFollower(self.Time, self.Follow, self.Offset, self.Deep, self.Easing, self._onBezierTo)
+        self.id = self.node.bezier2ScreenFollower(self.Time, self.Follow, self.Deep, self.Easing, self._onBezierTo)
 
         if self.id == 0:
             self.log("[%s] not active" % (self.node.getName()))
