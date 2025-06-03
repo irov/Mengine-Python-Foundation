@@ -7,7 +7,7 @@ class TaskNodeOriginTo(MixinNode, Task):
     def _onParams(self, params):
         super(TaskNodeOriginTo, self)._onParams(params)
 
-        #self.time = params.get("Time", None)
+        self.time = params.get("Time", None)
         self.origin = params.get("Origin")
         self.easing = params.get("Easing", "easyLinear")
         self.id = 0
