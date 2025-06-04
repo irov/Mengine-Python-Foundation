@@ -428,3 +428,7 @@ class VirtualArea(Initializer):
         Mengine.enableGlobalHandler(self._mouse_leave_handler, False)
         self._target.mouse_release()
         self._target.setup_affector()
+
+    def get_scale_factor(self):
+        return self._scale_factor
+    
