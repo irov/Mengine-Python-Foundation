@@ -178,7 +178,6 @@ def onInitialize():
         , "TaskNodeSetOrigin"
         , "TaskNodePercentVisibilityTo"
         , "TaskNodeDestroy"
-        , "TaskNodeOriginTo"
         , "TaskNodeRemoveFromParent"
 
         , "TaskNodeMovieEvent"
