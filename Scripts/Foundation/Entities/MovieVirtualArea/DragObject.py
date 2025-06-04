@@ -332,4 +332,3 @@ class DragObject(object):
 
     def get_scale_factor(self):
         return self._scale_factor
-    
