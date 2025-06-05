@@ -1,6 +1,7 @@
 from MixinNode import MixinNode
 from Task import Task
 
+
 class TaskNodeOriginTo(MixinNode, Task):
     Skiped = True
 
@@ -10,33 +11,36 @@ class TaskNodeOriginTo(MixinNode, Task):
         self.time = params.get("Time", None)
         self.origin = params.get("Origin")
         self.easing = params.get("Easing", "easyLinear")
-        self.id = 0
-        pass
+        self.id = None
 
     def _onRun(self):
-        self.id = self.node.originTo(self.time, self.origin, self.easing, self._onOriginTo)
+        if self.time is None:
+            self.time = 0.0
 
-        if self.id == 0:
+        self.id = self.node.originTo(self.time, self.origin, self.easing,
+                                     self._onOriginTo)
+
+        if self.id is None:
             self.log("[%s] not active" % (self.node.getName()))
 
             return True
-            pass
 
         return False
-        pass
 
     def _onSkip(self):
         self.id = 0
         self.node.moveStop()
+        self.node.setOrigin(self.origin)
         return
+
+    def _onFastSkip(self):
+        self.node.setOrigin(self.origin)
+        return True
 
     def _onOriginTo(self, node, id, isEnd):
         if self.id != id:
             return
-            pass
 
-        self.id = 0
+        self.id = None
 
         self.complete()
-        pass
-    pass
