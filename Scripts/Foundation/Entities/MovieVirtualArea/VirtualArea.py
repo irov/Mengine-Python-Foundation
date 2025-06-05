@@ -253,12 +253,17 @@ class VirtualArea(Initializer):
 
         vp = self._target.get_bounds_viewport()
         self._camera.setOrthogonalViewport(vp)
-        self.on_scale(self._target._scale_factor)
+        drag_object_scale_factor = self.get_scale_factor()
+        self.on_scale(drag_object_scale_factor)
 
     def set_scale(self, scale):
         """ Scales target and camera to specific `scale` value """
-        scale_factor = scale / self._target._scale_factor
+        drag_object_scale_factor = self.get_scale_factor()
+        scale_factor = scale / drag_object_scale_factor
         self.scale(scale_factor)
+
+    def get_scale_factor(self):
+        return self._target.get_scale_factor()
 
     def freeze(self, value):
         self._frozen = value
