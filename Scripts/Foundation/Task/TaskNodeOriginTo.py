@@ -28,7 +28,7 @@ class TaskNodeOriginTo(MixinNode, Task):
         return False
 
     def _onSkip(self):
-        self.id = 0
+        self.id = None
         self.node.moveStop()
         self.node.setOrigin(self.origin)
         return
