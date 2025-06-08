@@ -792,6 +792,30 @@ class TaskSource(object):
         return TaskSourceTgsList(tgs)
         pass
 
+    def addParallelTaskZip(self, *objects):
+        self.checkComplete()
+
+        desc = TaskParallelDesc([])
+
+        if _DEVELOPMENT is True:
+            desc.setupCaller(0, self.doc)
+            pass
+
+        tgs = []
+
+        for obj in list(zip(*objects)):
+            source = []
+            desc.parallel.append(source)
+
+            tg = TaskSource(source, self.skiped)
+            tgs.append((obj, tg))
+            pass
+
+        self.source.append(desc)
+
+        return TaskSourceTgsList(tgs)
+        pass
+
     def addRaceTask(self, count, NoSkip=False, RaceSkip=False):
         self.checkComplete()
 

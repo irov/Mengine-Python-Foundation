@@ -23,25 +23,16 @@ class AliasObjectAlphaTo(MixinObject, MixinTime, TaskAlias):
             self.alpha_from = self.Object.getParam("Alpha")
         else:
             self.Object.setParam("Alpha", self.alpha_from)
-            pass
 
         if self.time == 0.0:
             self.Object.setParam("Alpha", self.alpha_to)
             return
-            pass
 
         if self.Object.isActive() is True:
             entity_node = self.Object.getEntityNode()
             if entity_node.isActivate() is True:
-                task_params = dict(Node=entity_node, Time=self.time, From=self.alpha_from, To=self.alpha_to)
-
-                if self.easing:
-                    task_params["Easing"] = self.easing
-
-                source.addTask("TaskNodeAlphaTo", **task_params)
-            pass
+                source.addTask("TaskNodeAlphaTo", Node=entity_node, Time=self.time, From=self.alpha_from, To=self.alpha_to, Easing=self.easing)
 
         source.addTask("TaskObjectSetAlpha", Object=self.Object, Value=self.alpha_to)
         pass
-
     pass
