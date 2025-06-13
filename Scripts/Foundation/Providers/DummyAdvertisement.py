@@ -1,6 +1,6 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
-
 from Foundation.TaskManager import TaskManager
+from UIKit.AdjustableScreenUtils import AdjustableScreenUtils
 
 class DummyAdvertisement(object):
     """ Dummy Provider """
@@ -26,7 +26,11 @@ class DummyAdvertisement(object):
 
     @staticmethod
     def getBannerHeight():
-        height = 50.0
+        game_width = AdjustableScreenUtils.getGameWidth()
+        if game_width is not None:
+            height = AdjustableScreenUtils.getPhoneAdaptiveBannerHeight(game_width)
+        else:
+            height = 50.0
 
         return height
 
