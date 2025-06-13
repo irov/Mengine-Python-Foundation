@@ -26,7 +26,7 @@ class DummyAdvertisement(object):
 
     @staticmethod
     def getBannerHeight():
-        height = 50
+        height = 50.0
 
         return height
 

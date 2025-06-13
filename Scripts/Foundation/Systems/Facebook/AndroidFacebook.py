@@ -8,7 +8,7 @@ class AndroidFacebook(BaseFacebook):
         super(AndroidFacebook, self)._onInitialize(system)
 
         def _setCallback(name, cb):
-            Mengine.setAndroidCallback(self.plugin_name, name, cb)
+            Mengine.addAndroidCallback(self.plugin_name, name, cb)
 
         _setCallback("onFacebookLoginSuccess", self._cbLoginSuccess)
         _setCallback("onFacebookLoginCancel", self._cbLoginCancel)

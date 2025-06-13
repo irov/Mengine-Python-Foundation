@@ -23,7 +23,7 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
 
         if render is not None:
             if self.isTemp:  # if isTemp get original alpha
-                self.alphaOrig = float(render.getLocalAlpha())
+                self.alphaOrig = render.getLocalAlpha()
 
             if self.alphaFrom is not None:
                 render.setLocalAlpha(self.alphaFrom)

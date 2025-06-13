@@ -3,14 +3,12 @@ from Foundation.Utils import SimpleLogger
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.Systems.AppLovin.AppLovinAdFactory import AppLovinAdFactory
 
-
 _Log = SimpleLogger("SystemApplovin")
 
 ANDROID_PLUGIN_NAME = "MengineAppLovin"
 APPLE_PLUGIN_NAME = "AppleAppLovin"
 
 DEVDEBUGGER_TAB_NAME = "Applovin"
-
 
 class SystemApplovin(System):
     """ Advertisement module 'Applovin' """

@@ -51,7 +51,7 @@ class SystemGoogleServices(System):
 
         if self.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is True:
             def _setCallback(method_name, *callback):
-                Mengine.setAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
+                Mengine.addAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
 
             # sign in:
             _setCallback("onGoogleGameSocialSignInIntentSuccess", self.__cbSignSuccess)
@@ -97,7 +97,7 @@ class SystemGoogleServices(System):
 
         if self.b_plugins[GOOGLE_PLAY_BILLING_PLUGIN] is True:
             def _setCallback(method_name, *callback):
-                Mengine.setAndroidCallback(GOOGLE_PLAY_BILLING_PLUGIN, method_name, *callback)
+                Mengine.addAndroidCallback(GOOGLE_PLAY_BILLING_PLUGIN, method_name, *callback)
 
             # purchase status
             _setCallback("onGooglePlayBillingPurchasesUpdatedServiceTimeout", self.__cbBillingPurchaseError, "ServiceTimeout")
@@ -144,7 +144,7 @@ class SystemGoogleServices(System):
 
         if self.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is True:
             def _setCallback(callback_name, *callback):
-                Mengine.setAndroidCallback(GOOGLE_IN_APP_REVIEWS_PLUGIN, callback_name, *callback)
+                Mengine.addAndroidCallback(GOOGLE_IN_APP_REVIEWS_PLUGIN, callback_name, *callback)
 
             Mengine.waitSemaphore("onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
 
