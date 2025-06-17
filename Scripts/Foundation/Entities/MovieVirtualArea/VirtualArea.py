@@ -249,8 +249,6 @@ class VirtualArea(Initializer):
         """
         Scales target and camera
         """
-        #if self._frozen is True:
-        #    return
         self._target.scale(scale_factor)
 
         vp = self._target.get_bounds_viewport()
