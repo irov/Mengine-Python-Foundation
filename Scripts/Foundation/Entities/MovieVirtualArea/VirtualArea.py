@@ -267,6 +267,7 @@ class VirtualArea(Initializer):
 
     def freeze(self, value):
         self._frozen = value
+        self._socket.freeze(value)
         Mengine.enableGlobalHandler(self._mouse_move_handler, False)
         Mengine.enableGlobalHandler(self._mouse_release_handler, False)
         Mengine.enableGlobalHandler(self._mouse_leave_handler, False)
