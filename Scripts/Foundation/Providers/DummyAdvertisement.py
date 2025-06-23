@@ -4,6 +4,7 @@ from Foundation.TaskManager import TaskManager
 
 class DummyAdvertisement(object):
     """ Dummy Provider """
+    _banner_height = 50.0
 
     @staticmethod
     def showBanner():
@@ -26,9 +27,15 @@ class DummyAdvertisement(object):
 
     @staticmethod
     def getBannerHeight():
-        height = 50.0
+        return DummyAdvertisement._banner_height
 
-        return height
+    @staticmethod
+    def setBannerHeight(height):
+        DummyAdvertisement._banner_height = height
+
+    @staticmethod
+    def setBannerScale(scale):
+        DummyAdvertisement._banner_height *= scale
 
     @staticmethod
     def hasInterstitialAdvert():
