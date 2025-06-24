@@ -1,11 +1,10 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
-
 from Foundation.TaskManager import TaskManager
 
 class DummyAdvertisement(object):
     """ Dummy Provider """
-    _banner_height = 50.0
-    _banner_width = 320.0
+    _banner_dp_height = 50.0
+    _banner_dp_width = 320.0
     _scale_factor = None
 
     @staticmethod
@@ -28,30 +27,21 @@ class DummyAdvertisement(object):
         return True
 
     @staticmethod
-    def _updateScale():
-        viewport = Mengine.getGameViewport()
-        game_width = viewport.end.x - viewport.begin.x
-        DummyAdvertisement._scale_factor = game_width / DummyAdvertisement._banner_width
-        DummyAdvertisement._banner_height *= DummyAdvertisement._scale_factor
-        DummyAdvertisement._banner_width *= DummyAdvertisement._scale_factor
+    def _getBannerScale():
+        if DummyAdvertisement._scale_factor is None:
+            viewport = Mengine.getGameViewport()
+            game_width = viewport.end.x - viewport.begin.x
+            DummyAdvertisement._scale_factor = game_width / DummyAdvertisement._banner_dp_width
+
+        return DummyAdvertisement._scale_factor
 
     @staticmethod
     def getBannerHeight():
-        if DummyAdvertisement._scale_factor is None:
-            DummyAdvertisement._updateScale()
-        return DummyAdvertisement._banner_height
+        return DummyAdvertisement._banner_dp_height * DummyAdvertisement._getBannerScale()
 
     @staticmethod
     def getBannerWidth():
-        if DummyAdvertisement._scale_factor is None:
-            DummyAdvertisement._updateScale()
-        return DummyAdvertisement._banner_width
-
-    @staticmethod
-    def getBannerScaleFactor():
-        if DummyAdvertisement._scale_factor is None:
-            DummyAdvertisement._updateScale()
-        return DummyAdvertisement._scale_factor
+        return DummyAdvertisement._banner_dp_width * DummyAdvertisement._getBannerScale()
 
     @staticmethod
     def hasInterstitialAdvert():
