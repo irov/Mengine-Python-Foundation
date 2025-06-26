@@ -241,7 +241,7 @@ class SceneManager(object):
     class SceneSlot(object):
         __slots__ = "name", "type", "width", "height", "main", "x", "y"
 
-        def __init__(self, name, type, width, height, main, x=0.0, y=0.0):
+        def __init__(self, name, type, width, height, main, x, y):
             self.name = name
             self.type = type
             self.width = width
@@ -377,7 +377,7 @@ class SceneManager(object):
 
             slot = SceneManager.SceneSlot(Name, Type, Width, Height, Main, X, Y)
             slots.append(slot)
-        print(name)
+
         SceneManager.s_slots[name] = slots
 
         return True
