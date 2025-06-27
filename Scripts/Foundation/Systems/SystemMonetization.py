@@ -57,7 +57,7 @@ class SystemMonetization(System):
         self.setupPolicies()
         self._addAnalytics()
 
-        self.__addDevToDebug()
+        # self.__addDevToDebug()
 
         return True
 
@@ -752,7 +752,9 @@ class SystemMonetization(System):
                                     service_key="spent_currency",
                                     params_method=lambda gold, descr: {'amount': gold, 'description': descr, 'name': 'gold'})
 
-        SystemAnalytics.addAnalytic("got_promocode_reward", Notificator.onGiftExchangeRedeemResult, None,
+        # `onGiftExchangeRedeemResult` notification identity is located in HOPA framework !!!!!
+        if Notification.validateIdentity("onGiftExchangeRedeemResult") is True:
+            SystemAnalytics.addAnalytic("got_promocode_reward", Notificator.onGiftExchangeRedeemResult, None,
                                     lambda label, result: {'type': str(label), 'result': str(result)})
         SystemAnalytics.addAnalytic("got_purchase_reward", Notificator.onGameStoreSentRewards,
                                     lambda prod_id, *_: prod_id != advert_prod_id, _cbSentRewardParams)
