@@ -92,9 +92,9 @@ class LayoutBox(object):
                             element.setter((offsetX + offset, offsetY), (size, height))
                             pass
 
-                        layout.addElement(None, element.let_type, element.getter, __setter)
+                        layout.addElement(element.let_type, element.getter, __setter)
                     elif isinstance(element, LayoutBox.ElementPadding):
-                        layout.addElement(None, Mengine.LET_PAD, element.getWeight, None)
+                        layout.addElement(Mengine.LET_PAD, element.getWeight, None)
                         pass
                 __process(element)
 
@@ -139,9 +139,9 @@ class LayoutBox(object):
                             element.setter((offsetX, offsetY + offset), (width, size))
                             pass
 
-                        layout.addElement(None, element.let_type, element.getter, __setter)
+                        layout.addElement(element.let_type, element.getter, __setter)
                     elif isinstance(element, LayoutBox.ElementPadding):
-                        layout.addElement(None, Mengine.LET_PAD, element.getWeight, None)
+                        layout.addElement(Mengine.LET_PAD, element.getWeight, None)
                         pass
                 __process(element)
 
@@ -230,9 +230,9 @@ class LayoutBox(object):
                             offsetY = component.getOffsetY()
                             element.setter((offsetX, offsetY + offset), (w, size))
 
-                        layout.addElement(None, element.let_type, element.getter, __setter)
+                        layout.addElement(element.let_type, element.getter, __setter)
                     elif isinstance(element, LayoutBox.ElementPadding):
-                        layout.addElement(None, Mengine.LET_PAD, element.getWeight, None)
+                        layout.addElement(Mengine.LET_PAD, element.getWeight, None)
                         pass
 
                 __process(element)
@@ -277,9 +277,9 @@ class LayoutBox(object):
                             offsetY = component.getOffsetY()
                             element.setter((offsetX + offset, offsetY), (size, h))
 
-                        layout.addElement(None, element.let_type, element.getter, __setter)
+                        layout.addElement(element.let_type, element.getter, __setter)
                     elif isinstance(element, LayoutBox.ElementPadding):
-                        layout.addElement(None, Mengine.LET_PAD, element.getWeight, None)
+                        layout.addElement(Mengine.LET_PAD, element.getWeight, None)
                         pass
                     pass
 
