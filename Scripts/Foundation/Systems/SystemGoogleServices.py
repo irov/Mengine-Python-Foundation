@@ -110,6 +110,7 @@ class SystemGoogleServices(System):
             _setCallback("onGooglePlayBillingPurchasesUpdatedError", self.__cbBillingPurchaseError, "Error")
             _setCallback("onGooglePlayBillingPurchasesUpdatedItemAlreadyOwned", self.__cbBillingPurchaseItemAlreadyOwned)
             _setCallback("onGooglePlayBillingPurchasesUpdatedItemNotOwned", self.__cbBillingPurchaseError, "ItemNotOwned")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedNetworkError", self.__cbBillingPurchaseError, "NetworkError")
             _setCallback("onGooglePlayBillingPurchasesUpdatedUnknown", self.__cbBillingPurchaseErrorUnknown)
             _setCallback("onGooglePlayBillingPurchasesUpdatedUserCanceled", self.__cbBillingPurchaseError, "UserCanceled")
             _setCallback("onGooglePlayBillingPurchasesUpdatedOk", self.__cbBillingPurchaseOk)
@@ -410,8 +411,8 @@ class SystemGoogleServices(System):
         Notification.notify(Notificator.onPayComplete, prod_id)
 
     @staticmethod
-    def __cbBillingBuyInAppFailed(prod_id):
-        _Log("[Billing cb] onGooglePlayBillingBuyInAppFailed: prod_id={!r}".format(prod_id))
+    def __cbBillingBuyInAppFailed(prod_id, code, subCode):
+        _Log("[Billing cb] onGooglePlayBillingBuyInAppFailed: prod_id={!r} code={!r} subCode={!r}".format(prod_id, code, subCode))
         Notification.notify(Notificator.onPayFailed, prod_id)
 
     @staticmethod
