@@ -110,18 +110,21 @@ class SystemGoogleServices(System):
             _setCallback("onGooglePlayBillingPurchasesUpdatedError", self.__cbBillingPurchaseError, "Error")
             _setCallback("onGooglePlayBillingPurchasesUpdatedItemAlreadyOwned", self.__cbBillingPurchaseItemAlreadyOwned)
             _setCallback("onGooglePlayBillingPurchasesUpdatedItemNotOwned", self.__cbBillingPurchaseError, "ItemNotOwned")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedUnknown", self.__cbBillingPurchaseError)
+            _setCallback("onGooglePlayBillingPurchasesUpdatedNetworkError", self.__cbBillingPurchaseError, "NetworkError")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedUnknown", self.__cbBillingPurchaseErrorUnknown)
             _setCallback("onGooglePlayBillingPurchasesUpdatedUserCanceled", self.__cbBillingPurchaseError, "UserCanceled")
             _setCallback("onGooglePlayBillingPurchasesUpdatedOk", self.__cbBillingPurchaseOk)
             # query products & purchases (for restore)
             _setCallback("onGooglePlayBillingQueryProductSuccess", self.__cbBillingQueryProductsSuccess)
             _setCallback("onGooglePlayBillingQueryProductFailed", self.__cbBillingQueryProductsFail)
+            _setCallback("onGooglePlayBillingQueryProductError", self.__cbBillingQueryProductsError)
             _setCallback("onGooglePlayBillingQueryPurchasesSuccess", self.__cbBillingQueryPurchasesStatus, True)
             _setCallback("onGooglePlayBillingQueryPurchasesFailed", self.__cbBillingQueryPurchasesStatus, False)
             # purchase flow
             _setCallback("onGooglePlayBillingPurchaseIsConsumable", self.__cbBillingPurchaseIsConsumable)
-            _setCallback("onGooglePlayBillingBuyInAppSuccess", self.__cbBillingBuyInAppStatus, True)
-            _setCallback("onGooglePlayBillingBuyInAppFailed", self.__cbBillingBuyInAppStatus, False)
+            _setCallback("onGooglePlayBillingBuyInAppSuccess", self.__cbBillingBuyInAppSucces)
+            _setCallback("onGooglePlayBillingBuyInAppFailed", self.__cbBillingBuyInAppFailed)
+            _setCallback("onGooglePlayBillingBuyInAppError", self.__cbBillingBuyInAppError)
             #  - consumable
             _setCallback("onGooglePlayBillingPurchasesOnConsumeSuccess", self.__cbBillingPurchaseConsumeSuccess)
             _setCallback("onGooglePlayBillingPurchasesOnConsumeFailed", self.__cbBillingPurchaseConsumeFail)
@@ -131,8 +134,9 @@ class SystemGoogleServices(System):
             _setCallback("onGooglePlayBillingPurchasesAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeFail)
             # billingConnect callbacks:
             _setCallback("onGooglePlayBillingConnectServiceDisconnected", self.__cbBillingClientDisconnected)
-            _setCallback("onGooglePlayBillingConnectSetupFinishedFailed", self.__cbBillingClientSetupFinishedFail)
             _setCallback("onGooglePlayBillingConnectSetupFinishedSuccess", self.__cbBillingClientSetupFinishedSuccess)
+            _setCallback("onGooglePlayBillingConnectSetupFinishedFailed", self.__cbBillingClientSetupFinishedFail)
+            _setCallback("onGooglePlayBillingConnectSetupFinishedError", self.__cbBillingClientSetupFinishedError)
 
             self.startBillingClient()
 
@@ -336,7 +340,7 @@ class SystemGoogleServices(System):
         #    - __cbBillingQueryProductsFail
         if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
             _Log("[Billing] queryProducts fail: billing client is not connected", err=True, force=True)
-            SystemGoogleServices.__cbBillingPurchaseError("BillingClientUnavailable")
+            SystemGoogleServices.__cbBillingClientUnavailable()
             return False
 
         query_list = filter(lambda x: isinstance(x, str), product_ids)
@@ -346,19 +350,9 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def buy(product_id):
-        # start purchase flow
-        #    1. onGooglePlayBillingPurchasesUpdatedOk or FAIL
-        #    2. onGooglePlayBillingPurchaseIsConsumable - here we check is consumable and starts handling
-        #    - consumable:
-        #        3. onGooglePlayBillingPurchasesOnConsumeSuccess - OK
-        #           onGooglePlayBillingPurchasesOnConsumeFailed
-        #    - non-consumable:
-        #        3. onGooglePlayBillingPurchasesAcknowledgeSuccess - OK
-        #           onGooglePlayBillingPurchasesAcknowledgeFailed
-
         if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
             _Log("[Billing] buy fail: billing client is not connected", err=True, force=True)
-            SystemGoogleServices.__cbBillingPurchaseError("BillingClientUnavailable")
+            SystemGoogleServices.__cbBillingClientUnavailable()
             return
 
         if SystemGoogleServices.isLoggedIn() is False:
@@ -369,8 +363,7 @@ class SystemGoogleServices(System):
 
         _Log("[Billing] buy {!r}".format(product_id))
         SystemGoogleServices.__lastProductId = product_id
-        if Mengine.androidBooleanMethod(GOOGLE_PLAY_BILLING_PLUGIN, "buyInApp", product_id) is False:
-            SystemGoogleServices.__cbBillingPurchaseError("BuyInApp return False")
+        Mengine.androidBooleanMethod(GOOGLE_PLAY_BILLING_PLUGIN, "buyInApp", product_id)
 
     @staticmethod
     def restorePurchases():
@@ -413,12 +406,19 @@ class SystemGoogleServices(System):
             cb(True, dict(isConsumable=isConsumable))
 
     @staticmethod
-    def __cbBillingBuyInAppStatus(prod_id, status):
-        # purchase process status
-        if status is False:
-            Notification.notify(Notificator.onPayFailed, prod_id)
-            Notification.notify(Notificator.onPayComplete, prod_id)
-        _Log("[Billing cb] onGooglePlayBillingBuyInAppSuccess: prod_id={!r}, status={!r}".format(prod_id, status))
+    def __cbBillingBuyInAppSucces(prod_id):
+        _Log("[Billing cb] onGooglePlayBillingBuyInAppSuccess: prod_id={!r}".format(prod_id))
+        Notification.notify(Notificator.onPayComplete, prod_id)
+
+    @staticmethod
+    def __cbBillingBuyInAppFailed(prod_id, code, subCode):
+        _Log("[Billing cb] onGooglePlayBillingBuyInAppFailed: prod_id={!r} code={!r} subCode={!r}".format(prod_id, code, subCode))
+        Notification.notify(Notificator.onPayFailed, prod_id)
+
+    @staticmethod
+    def __cbBillingBuyInAppError(prod_id, code, exception):
+        _Log("[Billing cb] onGooglePlayBillingBuyInAppError: prod_id={!r} code={!r} exception={!r}".format(prod_id, code, exception))
+        Notification.notify(Notificator.onPayFailed, prod_id)
 
     @staticmethod
     def __cbBillingQueryProductsSuccess(products):
@@ -442,6 +442,10 @@ class SystemGoogleServices(System):
     @staticmethod
     def __cbBillingQueryProductsFail():
         _Log("[Billing cb] query products FAIL", err=True, force=True)
+
+    @staticmethod
+    def __cbBillingQueryProductsError(code, exception):
+        _Log("[Billing cb] query products ERROR: code={!r} exception={!r}".format(code, exception), err=True, force=True)
 
     @staticmethod
     def __cbBillingPurchaseConsumeSuccess(products):
@@ -487,15 +491,25 @@ class SystemGoogleServices(System):
             Notification.notify(Notificator.onPayComplete, prod_id)
 
     @staticmethod
-    def __cbBillingPurchaseError(response_code):
+    def __cbBillingPurchaseError(reason):
         #  error while purchase
         product_id = SystemGoogleServices.__lastProductId
-        _Log("[Billing cb] purchase process error, product {!r}: {}".format(product_id, response_code), force=True, err=True)
+        _Log("[Billing cb] purchase process error, product {!r}: {}".format(product_id, reason), force=True, err=True)
 
         SystemGoogleServices.handlePurchased([product_id], False)
 
-        if response_code == "BillingClientUnavailable":
-            SystemGoogleServices.startBillingClient()
+    @staticmethod
+    def __cbBillingClientUnavailable():
+        _Log("[Billing cb] billing client unavailable, try to reconnect", err=True)
+        SystemGoogleServices.startBillingClient()
+
+    @staticmethod
+    def __cbBillingPurchaseErrorUnknown(response_code):
+        #  error while purchase, unknown error
+        product_id = SystemGoogleServices.__lastProductId
+        _Log("[Billing cb] purchase process error, product {!r}: Unknown error: {}".format(product_id, response_code), force=True, err=True)
+
+        SystemGoogleServices.handlePurchased([product_id], False)
 
     @staticmethod
     def __cbBillingPurchaseItemAlreadyOwned():
@@ -514,11 +528,6 @@ class SystemGoogleServices(System):
         SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_NOT_CONNECTED
 
     @staticmethod
-    def __cbBillingClientSetupFinishedFail():
-        _Log("[Billing cb] billing client setup finished with status: FAIL", err=True)
-        SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_FAIL
-
-    @staticmethod
     def __cbBillingClientSetupFinishedSuccess():
         _Log("[Billing cb] billing client setup finished with status: SUCCESS")
         SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_OK
@@ -528,6 +537,16 @@ class SystemGoogleServices(System):
             PaymentProvider.queryProducts()
         else:
             _Log("Auto query products disabled, do it manually in code")
+
+    @staticmethod
+    def __cbBillingClientSetupFinishedFail():
+        _Log("[Billing cb] billing client setup finished with status: FAIL", err=True)
+        SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_FAIL
+
+    @staticmethod
+    def __cbBillingClientSetupFinishedError(code, exception):
+        _Log("[Billing cb] billing client setup finished with status: ERROR code={!r} exception={!r}".format(code, exception), err=True)
+        SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_FAIL
 
     @staticmethod
     def __cbBillingQueryPurchasesStatus(status):
