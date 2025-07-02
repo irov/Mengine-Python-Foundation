@@ -285,4 +285,6 @@ class LayoutBox(object):
 
                 __process(element)
             pass
+
+            layout.flush()
         pass
