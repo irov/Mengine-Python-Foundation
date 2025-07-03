@@ -236,6 +236,8 @@ class LayoutBox(object):
                         pass
 
                 __process(element)
+
+            layout.flush()
             pass
 
     class BuilderHorizontal(BuilderSubHorizontal):
