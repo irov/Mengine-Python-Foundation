@@ -165,8 +165,7 @@ class LayoutBox(object):
                 w, h = ob.getLayoutSize()
                 return h
             def __setter(offset, size):
-                ob.setLayoutOffset(offset)
-                ob.setLayoutSize(size)
+                ob.setLayoutOffset(offset, size)
             self.addFixed(__getter, __setter)
             return self
 
@@ -187,8 +186,7 @@ class LayoutBox(object):
                 w, h = ob.getLayoutSize()
                 return w
             def __setter(offset, size):
-                ob.setLayoutOffset(offset)
-                ob.setLayoutSize(size)
+                ob.setLayoutOffset(offset, size)
             self.addFixed(__getter, __setter)
             return self
 
