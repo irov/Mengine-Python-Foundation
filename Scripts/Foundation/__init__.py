@@ -202,6 +202,7 @@ def onInitialize():
         , "TaskObjectAnimatableInterrupt"
 
         , "TaskObjectPlay"
+        , "TaskObjectInterrupt"
 
         , "TaskMovieSlotAddChild"
         , "TaskMovieSlotAddObject"
