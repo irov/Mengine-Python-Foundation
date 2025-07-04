@@ -4,6 +4,10 @@ class LayoutBox(object):
         self.component = None
         pass
 
+    def getSize(self):
+        w, h = self.sizer()
+        return w, h
+
     class ElementFixed(object):
         def __init__(self, getter, setter):
             self.getter = getter
@@ -88,7 +92,7 @@ class LayoutBox(object):
                         def __setter(offset, size):
                             offsetX = component.getOffsetX()
                             offsetY = component.getOffsetY()
-                            element.setter((offsetX + offset, offsetY), (size, height))
+                            element.setter(self.box, (offsetX + offset, offsetY), (size, height))
                             pass
 
                         layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
@@ -133,7 +137,7 @@ class LayoutBox(object):
                         def __setter(offset, size):
                             offsetX = component.getOffsetX()
                             offsetY = component.getOffsetY()
-                            element.setter((offsetX, offsetY + offset), (width, size))
+                            element.setter(self.box, (offsetX, offsetY + offset), (width, size))
                             pass
 
                         layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
@@ -164,8 +168,8 @@ class LayoutBox(object):
             def __getter():
                 w, h = ob.getLayoutSize()
                 return h
-            def __setter(offset, size):
-                ob.setLayoutOffset(offset, size)
+            def __setter(box, offset, size):
+                ob.setLayoutOffset(box, offset, size)
             self.addFixed(__getter, __setter)
             return self
 
@@ -185,8 +189,8 @@ class LayoutBox(object):
             def __getter():
                 w, h = ob.getLayoutSize()
                 return w
-            def __setter(offset, size):
-                ob.setLayoutOffset(offset, size)
+            def __setter(box, offset, size):
+                ob.setLayoutOffset(box, offset, size)
             self.addFixed(__getter, __setter)
             return self
 
@@ -233,7 +237,7 @@ class LayoutBox(object):
                             w, h = self.box.sizer()
                             offsetX = component.getOffsetX()
                             offsetY = component.getOffsetY()
-                            element.setter((offsetX, offsetY + offset), (w, size))
+                            element.setter(self.box, (offsetX, offsetY + offset), (w, size))
 
                         layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
                     elif isinstance(element, LayoutBox.ElementPadding):
@@ -282,7 +286,7 @@ class LayoutBox(object):
                             w, h = self.box.sizer()
                             offsetX = component.getOffsetX()
                             offsetY = component.getOffsetY()
-                            element.setter((offsetX + offset, offsetY), (size, h))
+                            element.setter(self.box, (offsetX + offset, offsetY), (size, h))
 
                         layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
                     elif isinstance(element, LayoutBox.ElementPadding):
