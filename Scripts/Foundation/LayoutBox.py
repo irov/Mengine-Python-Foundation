@@ -8,6 +8,13 @@ class LayoutBox(object):
         w, h = self.sizer()
         return w, h
 
+    def finalize(self):
+        self.sizer = None
+        if self.component is not None:
+            self.component.finalize()
+            self.component = None
+        pass
+
     class ElementFixed(object):
         def __init__(self, getter, setter):
             self.getter = getter
@@ -28,6 +35,11 @@ class LayoutBox(object):
             self.sizer = sizer
             self.layout = layout
             self.parent = parent
+
+        def finalize(self):
+            Mengine.destroyLayout(self.layout)
+            self.layout = None
+            self.parent = None
 
         def getOffsetX(self):
             if self.parent is None:
