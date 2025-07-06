@@ -381,46 +381,46 @@ class MonetizationManager(Manager, CurrencyManager):
 
         return True
 
-    @classmethod
-    def _onInitialize(cls, *args):
+    @staticmethod
+    def _onInitialize(*args):
         def _getQueryProductIds():
-            currency_products = cls.selectProducts(lambda product: product.getCurrency() == "Real")
+            currency_products = MonetizationManager.selectProducts(lambda product: product.getCurrency() == "Real")
             query_ids = [product.id for product in currency_products]
             return query_ids
 
-        ProductsProvider.setProvider(cls.__name__, dict(
-            getProductsInfo=cls.getProductsInfo,
+        ProductsProvider.setProvider(MonetizationManager.__name__, dict(
+            getProductsInfo=MonetizationManager.getProductsInfo,
             getQueryProductIds=_getQueryProductIds,
-            getProductReward=cls.getProductReward,
-            getProductPrice=cls.getProductPrice,
-            getProductInfo=cls.getProductInfo,
-            hasProductInfo=cls.hasProductInfo,
+            getProductReward=MonetizationManager.getProductReward,
+            getProductPrice=MonetizationManager.getProductPrice,
+            getProductInfo=MonetizationManager.getProductInfo,
+            hasProductInfo=MonetizationManager.hasProductInfo,
         ))
 
         # --- How to update products?
-        cls.addObserver(Notificator.onProductsUpdate, MonetizationManager._cbProductsUpdate)
+        MonetizationManager.addObserver(Notificator.onProductsUpdate, MonetizationManager._cbProductsUpdate)
         # Optional step 1: call policy 'CurrentProductsCall' and do something with current products
         #   i.e. setSkuList and respond product's details from Google services by cur product's ids
         # Step 2: send push to `onProductsUpdate` with new params dict (see details in `_cbProductsUpdate` observer)
         # Step 3: `_cbProductsUpdate` called and changes ProductsParams
         # Step 4: on done sends push on `onProductsUpdateDone`
 
-        cls.addObserver(Notificator.onGetRemoteConfig, MonetizationManager._cbGetRemoteConfig)
+        MonetizationManager.addObserver(Notificator.onGetRemoteConfig, MonetizationManager._cbGetRemoteConfig)
 
         for ad_type, ad_names in MonetizationManager.s_advert_names.items():
             if len(ad_names) == 0:
                 MonetizationManager.s_advert_names[ad_type] = [ad_type]     # default name
 
-    @classmethod
-    def _onFinalize(cls):
-        cls.s_components = {}
+    @staticmethod
+    def _onFinalize():
+        MonetizationManager.s_components = {}
 
-        cls.s_params = {}
-        cls.s_cards = {}
-        cls.s_images = {}
-        cls.s_specials = {}
-        cls.s_products = {}
-        cls.s_alias_products = {}
+        MonetizationManager.s_params = {}
+        MonetizationManager.s_cards = {}
+        MonetizationManager.s_images = {}
+        MonetizationManager.s_specials = {}
+        MonetizationManager.s_products = {}
+        MonetizationManager.s_alias_products = {}
 
     # observers
 

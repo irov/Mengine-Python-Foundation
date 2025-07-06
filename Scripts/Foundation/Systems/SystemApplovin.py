@@ -23,8 +23,8 @@ class SystemApplovin(System):
         self.rewarded = AppLovinAdFactory.createAd("Rewarded")
         self.semaphoreAdServiceReady = Semaphore(False, "AdServiceReady")
 
-    @classmethod
-    def _onAvailable(cls, params):
+    @staticmethod
+    def _onAvailable(params):
         if _ANDROID:
             SystemApplovin.is_plugin_active = Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME)
         elif _IOS:
