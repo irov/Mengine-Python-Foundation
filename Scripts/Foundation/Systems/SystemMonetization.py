@@ -40,7 +40,7 @@ class SystemMonetization(System):
         return True
 
     def _onInitialize(self):
-        if self.__isActive() is False:
+        if SystemMonetization.__isActive() is False:
             return
 
         SystemMonetization.game_store_name = MonetizationManager.getGeneralSetting("GameStoreName", "GameStore")
@@ -49,7 +49,7 @@ class SystemMonetization(System):
         AccountManager.addCreateAccountExtra(SystemMonetization.addExtraAccountSettings)
 
     def _onRun(self):
-        if self.__isActive(send_debug_log=True) is False:
+        if SystemMonetization.__isActive(send_debug_log=True) is False:
             return True
 
         self._setupParams()
@@ -82,6 +82,9 @@ class SystemMonetization(System):
 
     @staticmethod
     def pay(prod_id):
+        if SystemMonetization.__isActive() is False:
+            return
+
         real_prod_id = MonetizationManager.getProductRealId(prod_id)
 
         if SystemMonetization.isPurchaseDelayed(real_prod_id) is True:
