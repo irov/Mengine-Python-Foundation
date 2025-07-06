@@ -734,6 +734,7 @@ def onInitialize():
         , "onPaySuccess"
         , "onPayFailed"
         , "onPayComplete"
+        , "onPayPending"
         , "onProductsUpdate"
         , "onProductsUpdateDone"
         , "onDelayPurchased"
