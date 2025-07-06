@@ -18,7 +18,7 @@ class BaseScopeEntity(BaseEntity):
             self.tc = None
             pass
 
-        self.tc = TaskManager.createTaskChain(Repeat = self.ENTITY_SCOPE_REPEAT, Group = self.Group)
+        self.tc = TaskManager.createTaskChain(Repeat = self.ENTITY_SCOPE_REPEAT, Group = self.object.Group)
 
         with self.tc as source:
             self._onScopeActivate(source)

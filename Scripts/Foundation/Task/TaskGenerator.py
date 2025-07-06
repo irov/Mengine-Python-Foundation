@@ -431,6 +431,10 @@ class TaskSource(object):
         self.__addDesc("TaskObjectPlay", dict(Object=Object, **Kwds))
         pass
 
+    def addInterrupt(self, Object, **Kwds):
+        self.__addDesc("TaskObjectInterrupt", dict(Object=Object, **Kwds))
+        pass
+
     def addEnable(self, object, check=True):
         if check is False:
             if object is None:
