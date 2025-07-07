@@ -12,10 +12,6 @@ from Notification import Notification
 
 _Log = SimpleLogger("SystemGoogleServices")
 
-BILLING_CLIENT_STATUS_NOT_CONNECTED = 0
-BILLING_CLIENT_STATUS_OK = 1
-BILLING_CLIENT_STATUS_FAIL = 2
-
 GOOGLE_GAME_SOCIAL_PLUGIN = "MengineGGameSocial"
 GOOGLE_PLAY_BILLING_PLUGIN = "MengineGPlayBilling"
 GOOGLE_IN_APP_REVIEWS_PLUGIN = "MengineGInAppReviews"
@@ -39,13 +35,11 @@ class SystemGoogleServices(System):
 
     login_event = Event("GoogleGameSocialLoginEvent")
     logout_event = Event("GoogleGameSocialLogoutEvent")
-    login_status = False
     __on_auth_achievements = {}
     __on_auth_cbs = {}
     sku_response_event = Event("SkuListResponse")   # todo: check is deprecated
 
     s_products = {}
-    __billing_client_status = BILLING_CLIENT_STATUS_NOT_CONNECTED
 
     def _onInitialize(self):
 
@@ -57,10 +51,6 @@ class SystemGoogleServices(System):
             _setCallback("onGoogleGameSocialSignInIntentSuccess", self.__cbSignSuccess)
             _setCallback("onGoogleGameSocialSignInIntentFailed", self.__cbSignFailed)
             _setCallback("onGoogleGameSocialSignInIntentError", self.__cbSignError)
-            # auth:
-            _setCallback("onGoogleGameSocialOnAuthenticatedSuccess", self.__cbSignSuccess)
-            _setCallback("onGoogleGameSocialOnAuthenticatedFailed", self.__cbSignFailed)
-            _setCallback("onGoogleGameSocialOnAuthenticatedError", self.__cbSignError)
             # incrementAchievement:
             _setCallback("onGoogleGameSocialIncrementAchievementSuccess", self.__cbAchievementIncSuccess)
             _setCallback("onGoogleGameSocialIncrementAchievementError", self.__cbAchievementIncError)
@@ -206,7 +196,8 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def isLoggedIn():
-        return SystemGoogleServices.login_status
+        authenticated = Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "isAuthenticated")
+        return authenticated
 
     @staticmethod
     def signIn(only_intent=False, force=False):
@@ -227,13 +218,7 @@ class SystemGoogleServices(System):
                 _Log("[Auth] SystemGoogleServices_SignIn is already in process...", err=True)
             return
 
-        with TaskManager.createTaskChain(Name="SystemGoogleServices_SignIn") as tc:
-            with tc.addParallelTask(2) as (respond, request):
-                with request.addIfTask(Mengine.androidBooleanMethod, GOOGLE_GAME_SOCIAL_PLUGIN, "isAuthenticated") as (success, fail):
-                    success.addFunction(_Log, "[Auth] silence auth success!")
-
-                    fail.addFunction(_Log, "[Auth] silence auth failed, try intent...")
-                    fail.addFunction(SystemGoogleServices._signInIntent)
+        _Log("[Auth] silence auth success!")
 
     @staticmethod
     def _signInIntent():
@@ -252,7 +237,6 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbSignSuccess():
-        SystemGoogleServices.login_status = True
         SystemGoogleServices.login_event(True)
         Notification.notify(Notificator.onUserLoggedIn)
 
@@ -276,7 +260,6 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbSignOutSuccess():
-        SystemGoogleServices.login_status = False
         SystemGoogleServices.logout_event(True)
         _Log("[Auth cb] logout success", force=True)
 
@@ -292,7 +275,6 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbSignOutComplete():
-        SystemGoogleServices.login_status = False
         SystemGoogleServices.logout_event(True)
         Notification.notify(Notificator.onUserLoggedOut)
         _Log("[Auth cb] logout complete", force=True)
@@ -329,19 +311,10 @@ class SystemGoogleServices(System):
         #Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "billingConnect")
 
     @staticmethod
-    def getBillingClientStatus():
-        return SystemGoogleServices.__billing_client_status
-
-    @staticmethod
     def queryProducts(product_ids):
         # setup product's list and response via callbacks
         #    - __cbBillingQueryProductsSuccess <- product details - OK
         #    - __cbBillingQueryProductsFail
-        if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
-            _Log("[Billing] queryProducts fail: billing client is not connected", err=True, force=True)
-            SystemGoogleServices.__cbBillingClientUnavailable()
-            return False
-
         query_list = filter(lambda x: isinstance(x, str), product_ids)
         _Log("[Billing] queryProducts: query_list={!r}".format(query_list))
         Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts", query_list)
@@ -349,20 +322,9 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def buy(product_id):
-        if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
-            _Log("[Billing] buy fail: billing client is not connected", err=True, force=True)
-            SystemGoogleServices.__cbBillingClientUnavailable()
-            return
-
-        if SystemGoogleServices.isLoggedIn() is False:
-            _Log("[Billing error] buy {!r} failed: not authorized, try auth...".format(product_id), err=True, force=True)
-            SystemGoogleServices.__on_auth_cbs["buy"] = product_id
-            SystemGoogleServices.signIn(only_intent=True)
-            return
-
         _Log("[Billing] buy {!r}".format(product_id))
         SystemGoogleServices.__lastProductId = product_id
-        Mengine.androidBooleanMethod(GOOGLE_PLAY_BILLING_PLUGIN, "buyInApp", product_id)
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "buyInApp", product_id)
 
     @staticmethod
     def restorePurchases():
@@ -579,8 +541,6 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __checkAuthForAchievements(method, *args):
-        if SystemGoogleServices.isLoggedIn() is True:
-            return
         _Log("[Achievements] Not logged in to perform {!r} {}, save task...".format(method, args), err=True)
         SystemGoogleServices.__on_auth_achievements[method].append(args)
 
@@ -732,13 +692,6 @@ class SystemGoogleServices(System):
             widgets.append(w_show_achievements)
 
             # login
-            def _login_status():
-                return "Current account id: {}".format(SystemGoogleServices.login_status)
-
-            w_login_status = Mengine.createDevToDebugWidgetText("login_status")
-            w_login_status.setText(_login_status)
-            widgets.append(w_login_status)
-
             w_login = Mengine.createDevToDebugWidgetButton("sign_in")
             w_login.setTitle("Sign IN <--")
             w_login.setClickEvent(self.signIn)

@@ -1,5 +1,6 @@
 from Foundation.DemonManager import DemonManager
 from Foundation.GroupManager import GroupManager
+from Foundation.AccountManager import AccountManager
 from Foundation.MonetizationManager import MonetizationManager
 from Foundation.SecureStringValue import SecureStringValue
 from Foundation.SecureValue import SecureValue
@@ -31,10 +32,9 @@ class SystemMonetization(System):
                 return False
 
             # send possible reasons for developers
-            if send_debug_log is True and Mengine.getConfigBool("Monetization", "Enable", False) is True:
-                _Log("Monetization is enabled in Config, but it doesn't work. Possible reasons:"
-                     "\n - you tries to enable it on PC, but `OnlyMobile` is True (set it to False)"
-                     "\n - game is not CE, but `OnlyCE` is True (set it to False)", err=True)
+            _Log("Monetization is enabled in Config, but it doesn't work. Possible reasons:"
+                 "\n - you tries to enable it on PC, but `OnlyMobile` is True (set it to False)"
+                 "\n - game is not CE, but `OnlyCE` is True (set it to False)", err=True)
 
             return False
         return True
@@ -45,7 +45,6 @@ class SystemMonetization(System):
 
         SystemMonetization.game_store_name = MonetizationManager.getGeneralSetting("GameStoreName", "GameStore")
 
-        from Foundation.AccountManager import AccountManager
         AccountManager.addCreateAccountExtra(SystemMonetization.addExtraAccountSettings)
 
     def _onRun(self):
