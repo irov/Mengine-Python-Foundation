@@ -415,9 +415,9 @@ class TaskSource(object):
         def __winned():
             value = winner.getValue()
             if value == 0:
-                return False
-            elif value == 1:
                 return True
+            elif value == 1:
+                return False
             else:
                 raise TaskGeneratorException("invalid generate source [addWaitListener] winner value %s", value)
 
