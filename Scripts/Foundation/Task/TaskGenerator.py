@@ -397,6 +397,14 @@ class TaskSource(object):
         self.__addDesc("TaskScopeListener", dict(ID=ID, Scope=Scope, Args=Args, Kwds=Kwds))
         pass
 
+    def addWaitListener(self, Time, ID, Filter=None, Scheduler=None, *Args, **Kwds):
+        with self.addRace(2) as (source_wait, source_listener):
+            source_wait.addDelay(Time, Scheduler=Scheduler)
+            source_listener.addListener(ID, Filter=Filter, *Args, **Kwds)
+
+        return source_wait, self
+        pass
+
     def addEvent(self, Event, Filter=None, *Args, **Kwds):
         self.__addDesc("TaskEvent", dict(Event=Event, Filter=Filter, Args=Args, Kwds=Kwds))
         pass
