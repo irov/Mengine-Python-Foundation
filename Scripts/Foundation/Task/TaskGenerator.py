@@ -331,7 +331,6 @@ class TaskSource(object):
 
     def getSource(self):
         return self.source
-        pass
 
     def setSource(self, source):
         self.source = source
@@ -351,15 +350,12 @@ class TaskSource(object):
 
     def getDocument(self):
         return self.doc
-        pass
 
     def isSkiped(self):
         return self.skiped
-        pass
 
     def getSize(self):
         return len(self.source)
-        pass
 
     def __addDesc(self, typeName, params):
         self.checkComplete()
@@ -489,7 +485,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTg(tg)
-        pass
 
     def addForkScope(self, scope=None, *args, **kwds):
         self.__addDesc("TaskFork", dict(Scope=scope, Args=args, Kwds=kwds))
@@ -501,15 +496,19 @@ class TaskSource(object):
 
     def increfSemaphore(self, Semaphore, Increment=None):
         self.__addDesc('TaskSemaphoreIncrement', dict(Semaphore=Semaphore, Increment=Increment))
+        pass
 
     def lockSemaphore(self, Semaphore):
         self.__addDesc('TaskSemaphoreIncrement', dict(Semaphore=Semaphore, Increment=1))
+        pass
 
     def unlockSemaphore(self, Semaphore):
         self.__addDesc('TaskSemaphoreIncrement', dict(Semaphore=Semaphore, Increment=-1))
+        pass
 
     def trySemaphore(self, Semaphore):
         self.__addDesc("TaskSemaphore", dict(Semaphore=Semaphore, From=0))
+        pass
 
     def addRefcount(self, Refcount, Increase=None):
         self.__addDesc("TaskRefcount", dict(Refcount=Refcount, Increase=Increase))
@@ -540,13 +539,11 @@ class TaskSource(object):
         self.source.append(desc)
 
         return tg_guard_source
-        pass
 
     def addGuardTask(self, enable, guard, *args):
         source = self.makeGuardSource(enable, guard, args)
 
         return TaskSourceTg(source)
-        pass
 
     def addSwitchTask(self, count, cb, *args, **kwargs):
         self.checkComplete()
@@ -570,7 +567,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addScopeSwitch(self, scopes, cb, *args, **kwds):
         self.__addDesc("TaskScopeSwitch", dict(Scopes=scopes, Cb=cb, Args=args, Kwds=kwds))
@@ -598,7 +594,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgw(tgw)
-        pass
 
     def addTryTask(self, typeName, **params):
         self.checkComplete()
@@ -626,7 +621,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addIfTask(self, fn, *args):
         self.checkComplete()
@@ -648,7 +642,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addIfSemaphore(self, semaphore, value):
         self.checkComplete()
@@ -670,7 +663,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addForTask(self, count):
         self.checkComplete()
@@ -688,7 +680,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgIter(it, tg)
-        pass
 
     def addRepeatTask(self):
         self.checkComplete()
@@ -710,7 +701,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addRepeatTaskScope(self, scope, *args, **kwds):
         self.checkComplete()
@@ -730,7 +720,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return until_tg
-        pass
 
     def addWhileTask(self):
         self.checkComplete()
@@ -746,7 +735,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTg(tg)
-        pass
 
     def addParallelTask(self, count):
         self.checkComplete()
@@ -770,7 +758,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addParallelTaskList(self, objects):
         self.checkComplete()
@@ -794,31 +781,9 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgsList(tgs)
-        pass
 
     def addParallelTaskZip(self, *objects):
-        self.checkComplete()
-
-        desc = TaskParallelDesc([])
-
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
-
-        tgs = []
-
-        for obj in list(zip(*objects)):
-            source = []
-            desc.parallel.append(source)
-
-            tg = TaskSource(source, self.skiped)
-            tgs.append((obj, tg))
-            pass
-
-        self.source.append(desc)
-
-        return TaskSourceTgsList(tgs)
-        pass
+        return self.addParallelTaskList(list(zip(*objects)))
 
     def addRaceTask(self, count, NoSkip=False, RaceSkip=False):
         self.checkComplete()
@@ -842,7 +807,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addRaceTaskList(self, objects, NoSkip=False, RaceSkip=False):
         self.checkComplete()
@@ -866,6 +830,15 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgsList(tgs)
+
+    def addRaceTaskZip(self, *objects, **Kwds):
+        return self.addRaceTaskList(list(zip(*objects)), **Kwds)
+
+    def addNotifyRequest(self, ID, Count, *Args, **Kwds):
+        with self.addParallelTask(2) as (source_request, source_notify):
+            source_notify.addNotify(ID, *Args, **Kwds)
+            return source_request.addRaceTask(Count)
+            pass
         pass
 
     def addShiftCollect(self, index, shiftCollect):
