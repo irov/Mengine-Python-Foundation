@@ -1,6 +1,8 @@
 from Foundation.PolicyManager import PolicyManager
+from Foundation.Task.Semaphore import Semaphore
 from Foundation.Task.TaskBase import TaskBase
 from Foundation.TaskManager import TaskManager
+
 
 class TaskGeneratorException(Exception):
     def __init__(self, value, *args):
@@ -398,11 +400,15 @@ class TaskSource(object):
         pass
 
     def addWaitListener(self, Time, ID, Filter=None, Scheduler=None, *Args, **Kwds):
-        with self.addRace(2) as (source_wait, source_listener):
-            source_wait.addDelay(Time, Scheduler=Scheduler)
-            source_listener.addListener(ID, Filter=Filter, *Args, **Kwds)
+        semaphore = Semaphore(0, None)
 
-        return source_wait, self
+        with self.addRaceTask(2) as (source_wait, source_listener):
+            source_wait.addDelay(Time, Scheduler=Scheduler)
+            source_wait.addSemaphore(semaphore, From=0, To=1)
+            source_listener.addListener(ID, Filter=Filter, *Args, **Kwds)
+            source_listener.addSemaphore(semaphore, From=0, To=2)
+
+        return source_wait, source_listener
         pass
 
     def addEvent(self, Event, Filter=None, *Args, **Kwds):
