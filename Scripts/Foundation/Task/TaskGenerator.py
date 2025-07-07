@@ -1,5 +1,5 @@
 from Foundation.PolicyManager import PolicyManager
-from Foundation.Task.Semaphore import Semaphore
+from Foundation.Task.Wrapper import Wrapper
 from Foundation.Task.TaskBase import TaskBase
 from Foundation.TaskManager import TaskManager
 
@@ -387,6 +387,10 @@ class TaskSource(object):
         self.__addDesc(type, params)
         pass
 
+    def addWrapper(self, Wrapper, value):
+        self.__addDesc("TaskSetWrapper", dict(Wrapper=Wrapper, Value=value))
+        pass
+
     def addNotify(self, ID, *Args, **Kwds):
         self.__addDesc("TaskNotify", dict(ID=ID, Args=Args, Kwds=Kwds))
         pass
@@ -400,16 +404,24 @@ class TaskSource(object):
         pass
 
     def addWaitListener(self, Time, ID, Filter=None, Scheduler=None, *Args, **Kwds):
-        semaphore = Semaphore(0, None)
+        winner = Wrapper(-1)
 
         with self.addRaceTask(2) as (source_wait, source_listener):
             source_wait.addDelay(Time, Scheduler=Scheduler)
-            source_wait.addSemaphore(semaphore, From=0, To=1)
+            source_wait.addWrapper(winner, 0)
             source_listener.addListener(ID, Filter=Filter, *Args, **Kwds)
-            source_listener.addSemaphore(semaphore, From=0, To=2)
+            source_listener.addWrapper(winner, 1)
 
-        return source_wait, source_listener
-        pass
+        def __winned():
+            value = winner.getValue()
+            if value == 0:
+                return False
+            elif value == 1:
+                return True
+            else:
+                raise TaskGeneratorException("invalid generate source [addWaitListener] winner value %s", value)
+
+        return self.addIfTask(__winned)
 
     def addEvent(self, Event, Filter=None, *Args, **Kwds):
         self.__addDesc("TaskEvent", dict(Event=Event, Filter=Filter, Args=Args, Kwds=Kwds))
