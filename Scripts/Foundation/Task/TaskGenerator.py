@@ -395,12 +395,12 @@ class TaskSource(object):
         self.__addDesc("TaskNotify", dict(ID=ID, Args=Args, Kwds=Kwds))
         pass
 
-    def addListener(self, ID, Filter=None, *Args, **Kwds):
-        self.__addDesc("TaskListener", dict(ID=ID, Filter=Filter, Args=Args, Kwds=Kwds))
+    def addListener(self, ID, Filter=None, Capture=None, *Args, **Kwds):
+        self.__addDesc("TaskListener", dict(ID=ID, Filter=Filter, Capture=Capture, Args=Args, Kwds=Kwds))
         pass
 
-    def addScopeListener(self, ID, Scope, *Args, **Kwds):
-        self.__addDesc("TaskScopeListener", dict(ID=ID, Scope=Scope, Args=Args, Kwds=Kwds))
+    def addScopeListener(self, ID, Scope, Capture=None, *Args, **Kwds):
+        self.__addDesc("TaskScopeListener", dict(ID=ID, Scope=Scope, Capture=Capture, Args=Args, Kwds=Kwds))
         pass
 
     def addWaitListener(self, Time, ID, Filter=None, Scheduler=None, *Args, **Kwds):
