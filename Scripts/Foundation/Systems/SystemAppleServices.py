@@ -44,11 +44,6 @@ class SystemAppleServices(System):
                 SystemAppleServices._can_use_payment = True
                 self.setInAppPurchaseProvider()
 
-                if Mengine.getConfigBool("Monetization", "AutoQueryProducts", True) is True:
-                    PaymentProvider.queryProducts()
-                else:
-                    _Log("Auto query products disabled, do it manually in code")
-
         if self.b_plugins["Review"] is True:
             RatingAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
 
@@ -252,7 +247,6 @@ class SystemAppleServices(System):
         PaymentProvider.setProvider("Apple", dict(
             pay=SystemAppleServices.pay,
             canUserMakePurchases=SystemAppleServices.canUserMakePurchases,
-            queryProducts=SystemAppleServices.requestProducts,
             restorePurchases=SystemAppleServices.restorePurchases,
         ))
         SystemAppleServices._InAppPurchase_provider_status = True
@@ -475,11 +469,6 @@ class SystemAppleServices(System):
             w_buy.setPlaceholder("syntax: <prod_id>")
             w_buy.setCommandEvent(self.pay)
             widgets.append(w_buy)
-
-            w_update_products = Mengine.createDevToDebugWidgetButton("update_products")
-            w_update_products.setTitle("Update products (update prices and prod params)")
-            w_update_products.setClickEvent(PaymentProvider.queryProducts)
-            widgets.append(w_update_products)
 
         # rateApp
         if self.b_plugins["Review"] is True:

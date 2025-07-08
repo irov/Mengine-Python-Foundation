@@ -412,16 +412,13 @@ class TaskSource(object):
             source_listener.addListener(ID, Filter=Filter, *Args, **Kwds)
             source_listener.addWrapper(winner, 1)
 
-        def __winned():
+        def __states(isSkip, cb):
             value = winner.getValue()
-            if value == 0:
-                return False
-            elif value == 1:
-                return True
-            else:
+            if value == -1:
                 raise TaskGeneratorException("invalid generate source [addWaitListener] winner value %s", value)
+            cb(isSkip, value)
 
-        return self.addIfTask(__winned)
+        return self.addSwitchTask(2, __states)
 
     def addEvent(self, Event, Filter=None, *Args, **Kwds):
         self.__addDesc("TaskEvent", dict(Event=Event, Filter=Filter, Args=Args, Kwds=Kwds))
@@ -431,8 +428,12 @@ class TaskSource(object):
         self.__addDesc("TaskScopeEvent", dict(Event=Event, Scope=Scope, Args=Args, Kwds=Kwds))
         pass
 
-    def addParam(self, object, param, value):
-        self.__addDesc("TaskSetParam", dict(Object=object, Param=param, Value=value))
+    def addParam(self, Object, Param, Value):
+        self.__addDesc("TaskSetParam", dict(Object=Object, Param=Param, Value=Value))
+        pass
+
+    def addInteractive(self, Object, Value):
+        self.__addDesc("TaskInteractive", dict(Object=Object, Value=Value))
         pass
 
     def addPrint(self, msg, *args):

@@ -6,7 +6,6 @@ class PaymentProvider(BaseProvider):
     s_allowed_methods = [
         "pay",
         "restorePurchases",
-        "queryProducts",
         "canUserMakePurchases",
         "completeOrder",
     ]
@@ -30,24 +29,6 @@ class PaymentProvider(BaseProvider):
         return PaymentProvider._call("restorePurchases")
 
     @staticmethod
-    def queryProducts():
-        """ query products from provider
-            - onProductsUpdate dict: when we got products from provider
-            - onProductsUpdateDone: when update complete """
-        products_id = ProductsProvider.getQueryProductIds()
-        if products_id is None:
-            Trace.log("Provider", 0, "ProductsProvider.getQueryProductIds return None - queryProducts fail")
-            return
-        if len(products_id) == 0:
-            Trace.log("Provider", 0, "ProductsProvider.queryProducts got empty products_id list!")
-            return
-        return PaymentProvider._call("queryProducts", products_id)
-
-    @staticmethod
-    def _queryProductsNotFoundCb():
-        Notification.notify(Notificator.onProductsUpdateDone)
-
-    @staticmethod
     def canUserMakePurchases():
         return bool(PaymentProvider._call("canUserMakePurchases"))
 
@@ -67,7 +48,6 @@ class DummyPayment(object):
         PaymentProvider.setProvider("Dummy", dict(
             pay=DummyPayment.pay,
             restorePurchases=DummyPayment.restorePurchases,
-            queryProducts=DummyPayment.queryProducts,
             canUserMakePurchases=DummyPayment.canUserMakePurchases
         ))
 
@@ -100,11 +80,6 @@ class DummyPayment(object):
     def restorePurchases():
         Trace.msg("DUMMY restorePurchases - no actions")
         Notification.notify(Notificator.onRestorePurchasesDone)
-
-    @staticmethod
-    def queryProducts(product_ids):
-        Trace.msg("DUMMY queryProducts {} - no actions, products are the same".format(product_ids))
-        Notification.notify(Notificator.onProductsUpdateDone)
 
     @staticmethod
     def canUserMakePurchases():

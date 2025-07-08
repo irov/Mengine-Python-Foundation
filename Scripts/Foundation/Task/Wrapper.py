@@ -12,4 +12,8 @@ class Wrapper(object):
     def getValue(self):
         return self.value
         pass
+
+    def __call__(self, *args, **kwargs):
+        return self.value
+
     pass

@@ -131,7 +131,6 @@ class SystemGoogleServices(System):
 
             PaymentProvider.setProvider("Google", dict(
                 pay=self.buy,
-                queryProducts=self.queryProducts,
                 restorePurchases=self.restorePurchases
             ))
 
@@ -308,17 +307,7 @@ class SystemGoogleServices(System):
         #    __cbBillingClientSetupFinishedSuccess   - OK
 
         _Log("Start connect to the billing client...")
-        #Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "billingConnect")
-
-    @staticmethod
-    def queryProducts(product_ids):
-        # setup product's list and response via callbacks
-        #    - __cbBillingQueryProductsSuccess <- product details - OK
-        #    - __cbBillingQueryProductsFail
-        query_list = filter(lambda x: isinstance(x, str), product_ids)
-        _Log("[Billing] queryProducts: query_list={!r}".format(query_list))
-        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts", query_list)
-        return True
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts")
 
     @staticmethod
     def buy(product_id):
@@ -329,7 +318,7 @@ class SystemGoogleServices(System):
     @staticmethod
     def restorePurchases():
         _Log("[Billing] restore purchases...")
-        #Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryPurchases")
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryPurchases")
 
     @staticmethod
     def responseProducts():
@@ -719,11 +708,6 @@ class SystemGoogleServices(System):
             w_connect_billing.setTitle("Connect billing client")
             w_connect_billing.setClickEvent(self.startBillingClient)
             widgets.append(w_connect_billing)
-
-            w_update_products = Mengine.createDevToDebugWidgetButton("query_products")
-            w_update_products.setTitle("Query products")
-            w_update_products.setClickEvent(PaymentProvider.queryProducts)
-            widgets.append(w_update_products)
 
             w_restore = Mengine.createDevToDebugWidgetButton("restore_products")
             w_restore.setTitle("Restore purchases")
