@@ -413,7 +413,7 @@ class TaskSource(object):
             source_listener.addWrapper(winner, 1)
 
         def __states(isSkip, cb):
-            value, = winner.getArgs()
+            value, = winner
             if value == -1:
                 raise TaskGeneratorException("invalid generate source [addWaitListener] winner value %s", value)
             cb(isSkip, value)
