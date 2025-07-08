@@ -1,5 +1,5 @@
 from Foundation.PolicyManager import PolicyManager
-from Foundation.Task.Capture import Capture
+from Foundation.Task.Capture import Capture as _Capture
 from Foundation.Task.TaskBase import TaskBase
 from Foundation.TaskManager import TaskManager
 
@@ -403,13 +403,13 @@ class TaskSource(object):
         self.__addDesc("TaskScopeListener", dict(ID=ID, Scope=Scope, Capture=Capture, Args=Args, Kwds=Kwds))
         pass
 
-    def addWaitListener(self, Time, ID, Filter=None, Capture1=None, Scheduler=None, *Args, **Kwds):
-        winner = Capture(-1)
+    def addWaitListener(self, Time, ID, Filter=None, Capture=None, Scheduler=None, *Args, **Kwds):
+        winner = _Capture(-1)
 
         with self.addRaceTask(2) as (source_wait, source_listener):
             source_wait.addDelay(Time, Scheduler=Scheduler)
             source_wait.addWrapper(winner, 0)
-            source_listener.addListener(ID, Filter=Filter, Capture=Capture1, *Args, **Kwds)
+            source_listener.addListener(ID, Filter=Filter, Capture=Capture, *Args, **Kwds)
             source_listener.addWrapper(winner, 1)
 
         def __states(isSkip, cb):
