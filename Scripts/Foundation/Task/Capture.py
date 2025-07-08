@@ -16,13 +16,4 @@ class Capture(object):
 
     def getKwargs(self):
         return self.kwargs
-
-    def __iter__(self):
-        return iter(self.args)
-
-    def __len__(self):
-        return len(self.args)
-
-    def __getitem__(self, idx):
-        return self.args[idx]
     pass
