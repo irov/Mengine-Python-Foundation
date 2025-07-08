@@ -14,6 +14,8 @@ class TaskScopeListener(MixinGroup, MixinObserver, Task):
         self.ID = params.get("ID")
 
         self.Scope = Utils.make_functor(params, "Scope")
+
+        self.Capture = params.get("Capture", None)
         pass
 
     def _onValidate(self):
@@ -54,6 +56,10 @@ class TaskScopeListener(MixinGroup, MixinObserver, Task):
 
         if result is False:
             return False
+            pass
+
+        if self.Capture is not None:
+            self.Capture.setValue(*args, **kwargs)
             pass
 
         nexts = self.base.popNexts()

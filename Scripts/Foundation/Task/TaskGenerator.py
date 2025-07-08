@@ -1,5 +1,5 @@
 from Foundation.PolicyManager import PolicyManager
-from Foundation.Task.Wrapper import Wrapper
+from Foundation.Task.Capture import Capture
 from Foundation.Task.TaskBase import TaskBase
 from Foundation.TaskManager import TaskManager
 
@@ -404,7 +404,7 @@ class TaskSource(object):
         pass
 
     def addWaitListener(self, Time, ID, Filter=None, Scheduler=None, *Args, **Kwds):
-        winner = Wrapper(-1)
+        winner = Capture(-1)
 
         with self.addRaceTask(2) as (source_wait, source_listener):
             source_wait.addDelay(Time, Scheduler=Scheduler)
@@ -413,7 +413,7 @@ class TaskSource(object):
             source_listener.addWrapper(winner, 1)
 
         def __states(isSkip, cb):
-            value = winner.getValue()
+            value, = winner.getArgs()
             if value == -1:
                 raise TaskGeneratorException("invalid generate source [addWaitListener] winner value %s", value)
             cb(isSkip, value)
