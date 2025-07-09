@@ -1,4 +1,5 @@
 from Foundation.Initializer import Initializer
+from Foundation.Object.BaseObject import BaseObject
 from Foundation.Task.MixinGroup import MixinGroup
 
 class MixinObject(MixinGroup, Initializer):
@@ -15,8 +16,16 @@ class MixinObject(MixinGroup, Initializer):
         super(MixinObject, self)._onInitialize()
 
         if self.Object is not None:
-            self.ObjectName = self.Object.getName()
-            return
+            if isinstance(self.Object, BaseObject) is True:
+                self.ObjectName = self.Object.getName()
+                return
+
+            if isinstance(self.Object, str) is True:
+                self.ObjectName = self.Object
+                self.Object = None
+            else:
+                self.initializeFailed("Mixin MixinObject Object is not BaseObject or str")
+                pass
             pass
 
         if _DEVELOPMENT is True:
@@ -30,6 +39,7 @@ class MixinObject(MixinGroup, Initializer):
 
             if self.Group.hasObject(self.ObjectName) is False:
                 groupName = self.Group.getName()
+
                 self.initializeFailed("Mixin MixinObject Group %s not found Object %s" % (groupName, self.ObjectName))
                 pass
             pass

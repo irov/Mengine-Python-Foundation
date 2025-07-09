@@ -15,7 +15,7 @@ class TaskCallback(Task):
         super(TaskCallback, self)._onValidate()
 
         if Utils.is_valid_functor_args(self.Cb, 2) is False:
-            self.validateFailed("Cb %s is bad arguments or kwds" % (self.Cb))
+            self.validateFailed("Cb %s is bad arguments or kwargs" % (self.Cb))
             pass
         pass
 

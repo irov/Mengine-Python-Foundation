@@ -50,7 +50,7 @@ class FunctorStore(object):
         pass
 
     def __repr__(self):
-        return "<Functor fn '%s' args '%s' kwds '%s'>" % (self.fn, self.args, self.kwargs)
+        return "<Functor fn '%s' args '%s' kwargs '%s'>" % (self.fn, self.args, self.kwargs)
         pass
     pass
 

@@ -3,7 +3,6 @@ from Foundation.Task.Capture import Capture as _Capture
 from Foundation.Task.TaskBase import TaskBase
 from Foundation.TaskManager import TaskManager
 
-
 class TaskGeneratorException(Exception):
     def __init__(self, value, *args):
         assert type(value) == str
@@ -387,45 +386,35 @@ class TaskSource(object):
         self.__addDesc(type, params)
         pass
 
-    def addWrapper(self, Wrapper, value):
-        self.__addDesc("TaskSetWrapper", dict(Wrapper=Wrapper, Value=value))
+    def addCapture(self, Capture, *Args, **Kwargs):
+        self.__addDesc("TaskSetCapture", dict(Capture=Capture, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addNotify(self, ID, *Args, **Kwds):
-        self.__addDesc("TaskNotify", dict(ID=ID, Args=Args, Kwds=Kwds))
+    def addNotify(self, ID, *Args, **Kwargs):
+        self.__addDesc("TaskNotify", dict(ID=ID, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addListener(self, ID, Filter=None, Capture=None, *Args, **Kwds):
-        self.__addDesc("TaskListener", dict(ID=ID, Filter=Filter, Capture=Capture, Args=Args, Kwds=Kwds))
+    def addListener(self, ID, Filter=None, Capture=None, *Args, **Kwargs):
+        self.__addDesc("TaskListener", dict(ID=ID, Filter=Filter, Capture=Capture, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addScopeListener(self, ID, Scope, Capture=None, *Args, **Kwds):
-        self.__addDesc("TaskScopeListener", dict(ID=ID, Scope=Scope, Capture=Capture, Args=Args, Kwds=Kwds))
+    def addScopeListener(self, ID, Scope, Capture=None, *Args, **Kwargs):
+        self.__addDesc("TaskScopeListener", dict(ID=ID, Scope=Scope, Capture=Capture, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addWaitListener(self, Time, ID, Filter=None, Capture=None, Scheduler=None, *Args, **Kwds):
-        winner = _Capture(-1)
-
-        with self.addRaceTask(2) as (source_wait, source_listener):
+    def addWaitListener(self, Time, ID, Filter=None, Capture=None, Scheduler=None, *Args, **Kwargs):
+        def __scope(source_wait, source_listener):
             source_wait.addDelay(Time, Scheduler=Scheduler)
-            source_wait.addWrapper(winner, 0)
-            source_listener.addListener(ID, Filter=Filter, Capture=Capture, *Args, **Kwds)
-            source_listener.addWrapper(winner, 1)
+            source_listener.addListener(ID, Filter=Filter, Capture=Capture, *Args, **Kwargs)
 
-        def __states(isSkip, cb):
-            value, = winner
-            if value == -1:
-                raise TaskGeneratorException("invalid generate source [addWaitListener] winner value %s", value)
-            cb(isSkip, value)
+        return self.addRaceScope(2, __scope)
 
-        return self.addSwitchTask(2, __states)
-
-    def addEvent(self, Event, Filter=None, *Args, **Kwds):
-        self.__addDesc("TaskEvent", dict(Event=Event, Filter=Filter, Args=Args, Kwds=Kwds))
+    def addEvent(self, Event, Filter=None, *Args, **Kwargs):
+        self.__addDesc("TaskEvent", dict(Event=Event, Filter=Filter, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addScopeEvent(self, Event, Scope, *Args, **Kwds):
-        self.__addDesc("TaskScopeEvent", dict(Event=Event, Scope=Scope, Args=Args, Kwds=Kwds))
+    def addScopeEvent(self, Event, Scope, *Args, **Kwargs):
+        self.__addDesc("TaskScopeEvent", dict(Event=Event, Scope=Scope, Args=Args, Kwargs=Kwargs))
         pass
 
     def addParam(self, Object, Param, Value):
@@ -436,26 +425,26 @@ class TaskSource(object):
         self.__addDesc("TaskInteractive", dict(Object=Object, Value=Value))
         pass
 
-    def addPrint(self, msg, *args):
+    def addPrint(self, Msg, *Args):
         if _DEVELOPMENT is True:
-            self.__addDesc("TaskPrint", dict(Value=msg, Args=args))
+            self.__addDesc("TaskPrint", dict(Value=Msg, Args=Args))
         pass
 
-    def addPrintFormat(self, msg, *args, **kwds):
+    def addPrintFormat(self, Msg, *Args, **Kwargs):
         if _DEVELOPMENT is True:
-            self.__addDesc("TaskPrintFormat", dict(Value=msg, Args=args, Kwds=kwds))
+            self.__addDesc("TaskPrintFormat", dict(Value=Msg, Args=Args, Kwargs=Kwargs))
         pass
 
     def addDelay(self, Time, Scheduler=None):
         self.__addDesc("TaskDelay", dict(Time=Time, Scheduler=Scheduler))
         pass
 
-    def addPlay(self, Object, **Kwds):
-        self.__addDesc("TaskObjectPlay", dict(Object=Object, **Kwds))
+    def addPlay(self, Object, **Kwargs):
+        self.__addDesc("TaskObjectPlay", dict(Object=Object, **Kwargs))
         pass
 
-    def addInterrupt(self, Object, **Kwds):
-        self.__addDesc("TaskObjectInterrupt", dict(Object=Object, **Kwds))
+    def addInterrupt(self, Object, **Kwargs):
+        self.__addDesc("TaskObjectInterrupt", dict(Object=Object, **Kwargs))
         pass
 
     def addEnable(self, object, check=True):
@@ -486,16 +475,16 @@ class TaskSource(object):
         self.__addDesc("TaskDummy", dict(**kwrds))
         pass
 
-    def addFunction(self, fn, *args, **kwds):
-        self.__addDesc("TaskFunction", dict(Fn=fn, Args=args, Kwds=kwds))
+    def addFunction(self, Fn, *Args, **Kwargs):
+        self.__addDesc("TaskFunction", dict(Fn=Fn, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addCallback(self, cb, *args, **kwds):
-        self.__addDesc("TaskCallback", dict(Cb=cb, Args=args, Kwds=kwds))
+    def addCallback(self, Fn, *args, **Kwargs):
+        self.__addDesc("TaskCallback", dict(Cb=Fn, Args=args, Kwargs=Kwargs))
         pass
 
-    def addScope(self, scope, *args, **kwds):
-        self.__addDesc("TaskScope", dict(Scope=scope, Args=args, Kwds=kwds))
+    def addScope(self, Scope, *Args, **Kwargs):
+        self.__addDesc("TaskScope", dict(Scope=Scope, Args=Args, Kwargs=Kwargs))
         pass
 
     def addFork(self):
@@ -513,8 +502,8 @@ class TaskSource(object):
 
         return TaskSourceTg(tg)
 
-    def addForkScope(self, scope=None, *args, **kwds):
-        self.__addDesc("TaskFork", dict(Scope=scope, Args=args, Kwds=kwds))
+    def addForkScope(self, Scope=None, *Args, **Kwargs):
+        self.__addDesc("TaskFork", dict(Scope=Scope, Args=Args, Kwargs=Kwargs))
         pass
 
     def addSemaphore(self, Semaphore, From=None, Less=None, To=None, Change=False):
@@ -595,8 +584,8 @@ class TaskSource(object):
 
         return TaskSourceTgs(tgs)
 
-    def addScopeSwitch(self, scopes, cb, *args, **kwds):
-        self.__addDesc("TaskScopeSwitch", dict(Scopes=scopes, Cb=cb, Args=args, Kwds=kwds))
+    def addScopeSwitch(self, Scopes, Cb, *Args, **Kwargs):
+        self.__addDesc("TaskScopeSwitch", dict(Scopes=Scopes, Cb=Cb, Args=Args, Kwargs=Kwargs))
         pass
 
     def addDictTask(self, Dict, cb, *args, **kwargs):
@@ -729,7 +718,7 @@ class TaskSource(object):
 
         return TaskSourceTgs(tgs)
 
-    def addRepeatTaskScope(self, scope, *args, **kwds):
+    def addRepeatTaskScope(self, Scope, *Args, **Kwargs):
         self.checkComplete()
 
         desc = TaskRepeatDesc([], [], True)
@@ -740,7 +729,7 @@ class TaskSource(object):
 
         repeat_tg = TaskSource(desc.repeat, self.skiped)
 
-        repeat_tg.addScope(scope, *args, **kwds)
+        repeat_tg.addScope(Scope, *Args, **Kwargs)
 
         until_tg = TaskSource(desc.until, self.skiped)
 
@@ -858,12 +847,28 @@ class TaskSource(object):
 
         return TaskSourceTgsList(tgs)
 
-    def addRaceTaskZip(self, *objects, **Kwds):
-        return self.addRaceTaskList(list(zip(*objects)), **Kwds)
+    def addRaceTaskZip(self, *Objects, **Kwargs):
+        return self.addRaceTaskList(list(zip(*Objects)), **Kwargs)
 
-    def addNotifyRequest(self, ID, Count, *Args, **Kwds):
+    def addRaceScope(self, count, scope, NoSkip=False, RaceSkip=False):
+        winner = _Capture(-1)
+        with self.addRaceTask(count, NoSkip=NoSkip, RaceSkip=RaceSkip) as tgs:
+            scope(*tgs)
+            for index, tg in enumerate(tgs):
+                tg.addCapture(winner, index)
+                pass
+
+        def __states(isSkip, cb):
+            value, = winner
+            if value == -1:
+                raise TaskGeneratorException("invalid generate source [addRaceScope] winner value %s", value)
+            cb(isSkip, value)
+
+        return self.addSwitchTask(count, __states)
+
+    def addNotifyRequest(self, ID, Count, *Args, **Kwargs):
         with self.addParallelTask(2) as (source_request, source_notify):
-            source_notify.addNotify(ID, *Args, **Kwds)
+            source_notify.addNotify(ID, *Args, **Kwargs)
             return source_request.addRaceTask(Count)
             pass
         pass
@@ -1184,7 +1189,7 @@ class TaskGenerator(object):
             return
             pass
 
-        task = self.chain.createTaskBase("TaskSwitch", self.group, Caller=element.caller_info, Cb=element.cb, CbArgs=element.args, CbKwds=element.kwargs, Tasks=tasks, Lasts=lasts)
+        task = self.chain.createTaskBase("TaskSwitch", self.group, Caller=element.caller_info, Cb=element.cb, CbArgs=element.args, CbKwargs=element.kwargs, Tasks=tasks, Lasts=lasts)
 
         if task is None:
             Trace.log("Task", 0, "TaskGenerator._addSwitch invalid create task TaskSwitch")

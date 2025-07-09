@@ -1,7 +1,7 @@
 from Foundation.Task.Task import Task
 
 class TaskSwitch(Task):
-    __metaclass__ = finalslots("Cb", "CbArgs", "CbKwds", "Tasks", "Lasts", "switched")
+    __metaclass__ = finalslots("Cb", "CbArgs", "CbKwargs", "Tasks", "Lasts", "switched")
 
     Skiped = True
 
@@ -16,7 +16,7 @@ class TaskSwitch(Task):
 
         self.Cb = params.get("Cb")
         self.CbArgs = params.get("CbArgs", ())
-        self.CbKwds = params.get("CbKwds", {})
+        self.CbKwargs = params.get("CbKwargs", {})
         self.Tasks = params.get("Tasks")
         self.Lasts = params.get("Lasts")
         pass
@@ -24,7 +24,7 @@ class TaskSwitch(Task):
     def _onRun(self):
         skiped = self.isSkiped()
 
-        self.Cb(*((skiped, self._onSwitch) + self.CbArgs), **self.CbKwds)
+        self.Cb(*((skiped, self._onSwitch) + self.CbArgs), **self.CbKwargs)
 
         return False
         pass
@@ -75,12 +75,12 @@ class TaskSwitch(Task):
         super(TaskSwitch, self)._onFinalize()
 
         # if self.switched is False:
-        #     self.Cb(*((True, None) + self.CbArgs), **self.CbKwds)
+        #     self.Cb(*((True, None) + self.CbArgs), **self.CbKwargs)
         #     pass
 
         self.Cb = None
         self.CbArgs = None
-        self.CbKwds = None
+        self.CbKwargs = None
 
         self.Tasks = None
         self.Lasts = None

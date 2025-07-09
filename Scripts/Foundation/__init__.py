@@ -80,7 +80,7 @@ def onInitialize():
         , "TaskScopeListener"
         , "TaskDebugBreak"
 
-        , "TaskSetWrapper"
+        , "TaskSetCapture"
 
         , "TaskDelay"
         , "TaskPipe"

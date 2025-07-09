@@ -11,7 +11,7 @@ class Initializer(object):
         return self._initialized is True
         pass
 
-    def onInitialize(self, *args, **kwds):
+    def onInitialize(self, *args, **kwargs):
         if self._initialized is not None:
             if self._initialized is True:
                 self.onInitializeFailed("already initialized")
@@ -25,7 +25,7 @@ class Initializer(object):
             pass
 
         try:
-            self._onInitialize(*args, **kwds)
+            self._onInitialize(*args, **kwargs)
         except Exception as ex:
             self.onInitializeFailed("onInitialize exception %s\n%s" % (ex, traceback.format_exc()))
 
@@ -37,7 +37,7 @@ class Initializer(object):
         return True
         pass
 
-    def _onInitialize(self, *args, **kwds):
+    def _onInitialize(self, *args, **kwargs):
         pass
 
     def onInitializeFailed(self, msg):

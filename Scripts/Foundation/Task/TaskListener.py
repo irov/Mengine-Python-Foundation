@@ -50,7 +50,7 @@ class TaskListener(MixinObserver, Task):
         if self.Filter is not None:
             if _DEVELOPMENT is True:
                 if Utils.is_valid_functor_args(self.Filter, len(args) + len(kwargs)) is False:
-                    self.log("%s filter %s is bad arguments or kwds" % (self.ID, self.Filter))
+                    self.log("%s filter %s is bad arguments or kwargs" % (self.ID, self.Filter))
 
                     return False
                     pass

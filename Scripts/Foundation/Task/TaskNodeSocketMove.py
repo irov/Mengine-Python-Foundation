@@ -4,7 +4,7 @@ class TaskNodeSocketMove(TaskNodeSocketBase):
     def _onParams(self, params):
         super(TaskNodeSocketMove, self)._onParams(params)
 
-        self.Tracker = Utils.make_functor(params, "Tracker", "TrackerArgs", "TrackerKwds")
+        self.Tracker = Utils.make_functor(params, "Tracker", "TrackerArgs", "TrackerKwargs")
         pass
 
     def _onValidate(self):

@@ -835,7 +835,7 @@ def clearMovieSlots(Movie):
         pass
     pass
 
-def make_functor(params, name, args="Args", kwds="Kwds"):
+def make_functor(params, name, args="Args", kwargs="Kwargs"):
     Fn = params.get(name)
 
     if Fn is None:
@@ -843,9 +843,9 @@ def make_functor(params, name, args="Args", kwds="Kwds"):
         pass
 
     Args = params.get(args, ())
-    Kwds = params.get(kwds, {})
+    Kwargs = params.get(kwargs, {})
 
-    return FunctorStore(Fn, Args, Kwds)
+    return FunctorStore(Fn, Args, Kwargs)
     pass
 
 def is_valid_functor_args(Fn, Count):

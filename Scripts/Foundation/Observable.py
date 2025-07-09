@@ -10,8 +10,8 @@ class Observable(Initializer):
         self.__events = []
         pass
 
-    def addObserver(self, identity, fn, *args, **kwds):
-        observer = Notification.addObserver(identity, fn, *args, **kwds)
+    def addObserver(self, identity, fn, *args, **kwargs):
+        observer = Notification.addObserver(identity, fn, *args, **kwargs)
 
         if observer is None:
             return
@@ -31,8 +31,8 @@ class Observable(Initializer):
         self.__observers.remove(observer)
         pass
 
-    def addEvent(self, ev, fn, *args, **kwds):
-        observer = ev.addObserver(fn, *args, **kwds)
+    def addEvent(self, ev, fn, *args, **kwargs):
+        observer = ev.addObserver(fn, *args, **kwargs)
 
         desc = (ev, observer)
         self.__events.append(desc)
