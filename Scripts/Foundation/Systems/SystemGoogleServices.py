@@ -108,9 +108,9 @@ class SystemGoogleServices(System):
             _setCallback("onGooglePlayBillingQueryProductSuccess", self.__cbBillingQueryProductsSuccess)
             _setCallback("onGooglePlayBillingQueryProductFailed", self.__cbBillingQueryProductsFail)
             _setCallback("onGooglePlayBillingQueryProductError", self.__cbBillingQueryProductsError)
-            _setCallback("onGooglePlayBillingQueryPurchasesSuccess", self.__cbBillingQueryPurchasesSuccess)
-            _setCallback("onGooglePlayBillingQueryPurchasesFailed", self.__cbBillingQueryPurchasesFailed)
-            _setCallback("onGooglePlayBillingQueryPurchasesError", self.__cbBillingQueryPurchasesError)
+            _setCallback("onGooglePlayBillingRestorePurchasesSuccess", self.__cbBillingRestorePurchasesSuccess)
+            _setCallback("onGooglePlayBillingRestorePurchasesFailed", self.__cbBillingRestorePurchasesFailed)
+            _setCallback("onGooglePlayBillingRestorePurchasesError", self.__cbBillingRestorePurchasesError)
             # purchase flow
             _setCallback("onGooglePlayBillingPurchaseUnspecifiedState", self.__cbBillingPurchaseUnspecifiedState)
             _setCallback("onGooglePlayBillingPurchaseIsConsumable", self.__cbBillingPurchaseIsConsumable)
@@ -318,7 +318,7 @@ class SystemGoogleServices(System):
     @staticmethod
     def restorePurchases():
         _Log("[Billing] restore purchases...")
-        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryPurchases")
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "restorePurchases")
 
     @staticmethod
     def responseProducts():
@@ -488,17 +488,17 @@ class SystemGoogleServices(System):
         _Log("[Billing cb] purchase process ok: {}".format(SystemGoogleServices.__lastProductId))
 
     @staticmethod
-    def __cbBillingQueryPurchasesSuccess():
-        _Log("[Billing cb] query purchases success")
+    def __cbBillingRestorePurchasesSuccess(products):
+        _Log("[Billing cb] restore purchases successful: products={!r}".format(products))
 
     @staticmethod
-    def __cbBillingQueryPurchasesFailed():
-        _Log("[Billing cb] query purchases failed", err=True, force=True)
+    def __cbBillingRestorePurchasesFailed():
+        _Log("[Billing cb] restore purchases failed", err=True, force=True)
 
     @staticmethod
-    def __cbBillingQueryPurchasesError(code, exception):
+    def __cbBillingRestorePurchasesError(code, exception):
         #  error while query purchases
-        _Log("[Billing cb] query purchases error: code={!r} exception={!r}".format(code, exception), err=True, force=True)
+        _Log("[Billing cb] restore purchases error: code={!r} exception={!r}".format(code, exception), err=True, force=True)
 
     # --- Achievements --------------------------------------------------------------------------------------------
 
