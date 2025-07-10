@@ -1,7 +1,7 @@
 from Foundation.DemonManager import DemonManager
 from Foundation.GroupManager import GroupManager
-from Foundation.AccountManager import AccountManager
 from Foundation.MonetizationManager import MonetizationManager
+from Foundation.AccountManager import AccountManager
 from Foundation.SecureStringValue import SecureStringValue
 from Foundation.SecureValue import SecureValue
 from Foundation.System import System
@@ -26,7 +26,7 @@ class SystemMonetization(System):
     game_store_name = None
 
     @staticmethod
-    def __isActive(send_debug_log=False):
+    def __isActive():
         if MonetizationManager.isMonetizationEnable() is False:
             if _DEVELOPMENT is False:
                 return False
@@ -48,7 +48,7 @@ class SystemMonetization(System):
         AccountManager.addCreateAccountExtra(SystemMonetization.addExtraAccountSettings)
 
     def _onRun(self):
-        if SystemMonetization.__isActive(send_debug_log=True) is False:
+        if SystemMonetization.__isActive() is False:
             return True
 
         self._setupParams()
@@ -192,7 +192,7 @@ class SystemMonetization(System):
 
     @staticmethod
     def _onPayFailed(prod_id):
-        _Log("Failed purchase {!r}".format(prod_id), err=True, force=True)
+        _Log("Failed purchase launch flow {!r}".format(prod_id), err=True, force=True)
         return False
 
     # --- Gold ---------------------------------------------------------------------------------------------------------
@@ -620,11 +620,10 @@ class SystemMonetization(System):
         if name not in SystemMonetization.components:
             return False
 
-        b_run = SystemMonetization.__isActive()
         b_store = SystemMonetization.isGameStoreEnable() is True
         b_component = SystemMonetization.components[name].isEnable() is True
 
-        return all([b_run, b_store, b_component])
+        return all([b_store, b_component])
 
     @staticmethod
     def getComponent(name):
