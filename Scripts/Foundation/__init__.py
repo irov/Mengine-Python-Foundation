@@ -737,7 +737,7 @@ def onInitialize():
         , "onPaySuccess"
         , "onPayFailed"
         , "onPayComplete"
-        . "onPayLaunchFlowSuccess"
+        , "onPayLaunchFlowSuccess"
         , "onPayLaunchFlowFailed"
         , "onPayLaunchFlowError"
         , "onPayPending"
