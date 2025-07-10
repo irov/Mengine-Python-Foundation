@@ -12,7 +12,6 @@ class TaskGeneratorException(Exception):
 
     def __str__(self):
         return str(self.value)
-        pass
     pass
 
 class TaskSourceTg(object):
@@ -24,7 +23,6 @@ class TaskSourceTg(object):
 
     def __enter__(self):
         return self.tg
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
@@ -54,7 +52,6 @@ class TaskSourceTgIter(object):
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             self.tg.end()
@@ -73,12 +70,10 @@ class TaskSourceTgs(object):
 
     def __enter__(self):
         return self.tgs
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             for tg in self.tgs:
@@ -87,7 +82,6 @@ class TaskSourceTgs(object):
             pass
 
         return True
-        pass
 
     def __iter__(self):
         for tg in self.tgs:
@@ -105,7 +99,6 @@ class TaskSourceTgsList(object):
 
     def __enter__(self):
         return self.tgs
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
@@ -119,7 +112,6 @@ class TaskSourceTgsList(object):
             pass
 
         return True
-        pass
 
     def __iter__(self):
         for o, tg in self.tgs:
@@ -137,12 +129,10 @@ class TaskSourceTgw(object):
 
     def __enter__(self):
         return self.tgw
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             for tg in self.tgw.itervalues():
@@ -151,7 +141,6 @@ class TaskSourceTgw(object):
             pass
 
         return True
-        pass
 
     def __iter__(self):
         for tg in self.tgw.itervalues():
