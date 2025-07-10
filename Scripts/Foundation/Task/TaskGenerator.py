@@ -848,7 +848,7 @@ class TaskSource(object):
                 pass
 
         def __states(isSkip, cb):
-            value, = winner
+            value, = winner.getArgs()
             if value == -1:
                 raise TaskGeneratorException("invalid generate source [addRaceScope] winner value %s", value)
             cb(isSkip, value)
