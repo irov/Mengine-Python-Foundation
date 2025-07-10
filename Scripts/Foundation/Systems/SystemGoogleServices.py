@@ -131,7 +131,8 @@ class SystemGoogleServices(System):
 
             PaymentProvider.setProvider("Google", dict(
                 pay=self.buy,
-                restorePurchases=self.restorePurchases
+                restorePurchases=self.restorePurchases,
+                isOwnedInAppProduct=self.isOwnedInAppProduct,
             ))
 
         if self.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is True:
@@ -321,6 +322,12 @@ class SystemGoogleServices(System):
         Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "restorePurchases")
 
     @staticmethod
+    def isOwnedInAppProduct(product_id):
+        owned = Mengine.androidBooleanMethod(GOOGLE_PLAY_BILLING_PLUGIN, "isOwnedInAppProduct", product_id)
+        _Log("[Billing] isOwnedInAppProduct {!r} - {}".format(product_id, owned))
+        return owned
+
+    @staticmethod
     def responseProducts():
         if SystemGoogleServices.s_products is None:
             return
@@ -486,19 +493,23 @@ class SystemGoogleServices(System):
     def __cbBillingPurchaseOk():
         #  item purchased successful
         _Log("[Billing cb] purchase process ok: {}".format(SystemGoogleServices.__lastProductId))
+        pass
 
     @staticmethod
     def __cbBillingRestorePurchasesSuccess(products):
         _Log("[Billing cb] restore purchases successful: products={!r}".format(products))
+        pass
 
     @staticmethod
     def __cbBillingRestorePurchasesFailed():
         _Log("[Billing cb] restore purchases failed", err=True, force=True)
+        pass
 
     @staticmethod
     def __cbBillingRestorePurchasesError(code, exception):
         #  error while query purchases
         _Log("[Billing cb] restore purchases error: code={!r} exception={!r}".format(code, exception), err=True, force=True)
+        pass
 
     # --- Achievements --------------------------------------------------------------------------------------------
 
@@ -507,24 +518,28 @@ class SystemGoogleServices(System):
         # auth is not required
         _Log("[Achievements] try incrementAchievement {!r} for {} steps".format(achievement_id, steps), force=True)
         Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "incrementAchievement", achievement_id, steps)
+        pass
 
     @staticmethod
     def unlockAchievement(achievement_id):
         # auth is not required
         _Log("[Achievements] try unlockAchievement: {!r}".format(achievement_id), force=True)
         Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "unlockAchievement", achievement_id)
+        pass
 
     @staticmethod
     def showAchievements():
         # auth is not required
         _Log("[Achievements] try showAchievements...", force=True)
         Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "showAchievements")
+        pass
 
     @staticmethod
     def incrementEvent(event_id, value):
         # increment event
         _Log("[Achievements] try incrementEvent: {!r} by {}".format(event_id, value), force=True)
         Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "incrementEvent", event_id, value)
+        pass
 
     # utils
 
@@ -532,6 +547,7 @@ class SystemGoogleServices(System):
     def __checkAuthForAchievements(method, *args):
         _Log("[Achievements] Not logged in to perform {!r} {}, save task...".format(method, args), err=True)
         SystemGoogleServices.__on_auth_achievements[method].append(args)
+        pass
 
     # callbacks
 
@@ -539,72 +555,85 @@ class SystemGoogleServices(System):
     def __cbAchievementIncSuccess(achievement_id, steps):
         # cb on incrementAchievement
         _Log("[Achievements cb] AchievementIncrement Success: {!r} steps: {}".format(achievement_id, steps))
+        pass
 
     @staticmethod
     def __cbAchievementIncError(achievement_id, steps, exception):
         # cb on incrementAchievement
         _Log("[Achievements cb] AchievementIncrement Error: {!r} steps: {} exception: {}".format(achievement_id, steps, exception), force=True, err=True)
+        pass
 
     @staticmethod
     def __cbAchievementUnlockSuccess(achievement_id):
         # cb on unlockAchievement
         _Log("[Achievements cb] AchievementUnlock Success: {!r}".format(achievement_id))
+        pass
 
     @staticmethod
     def __cbAchievementRevealSuccess(achievement_id):
         # cb on revealAchievement
         _Log("[Achievements cb] AchievementReveal Success: {!r}".format(achievement_id))
+        pass
 
     @staticmethod
     def __cbAchievementRevealError(achievement_id, exception):
         # cb on revealAchievement
         _Log("[Achievements cb] AchievementReveal Error: {!r} exception: {}".format(achievement_id, exception), force=True, err=True)
+        pass
 
     @staticmethod
     def __cbAchievementUnlockError(achievement_id, exception):
         # cb on unlockAchievement
         _Log("[Achievements cb] AchievementUnlock achivement: {!r} exception: {}".format(achievement_id, exception), force=True, err=True)
+        pass
 
     @staticmethod
     def __cbAchievementShowSuccess():
         # cb on showAchievements
         _Log("[Achievements cb] show achievement: Success")
+        pass
 
     @staticmethod
     def __cbAchievementShowError(error):
         # cb on showAchievements
         _Log("[Achievements cb] show achievement error: {}".format(error), force=True, err=True)
+        pass
 
     @staticmethod
     def __cbEventIncrementSuccess(eventId, value):
         # cb on incrementEvent
         _Log("[Achievements cb] EventIncrement Success: eventId={!r} value={}".format(eventId, value))
+        pass
 
     @staticmethod
     def __cbEventIncrementError(eventId, value, exception):
         # cb on incrementEvent
         _Log("[Achievements cb] EventIncrement Error: eventId={!r} value={} exception: {}".format(eventId, value, exception), force=True, err=True)
+        pass
 
     @staticmethod
     def __cbLeaderboardScoreSuccess(leaderboard_id, score):
         # cb on setLeaderboardScore
         _Log("[Achievements cb] LeaderboardScore Success: {!r} score: {}".format(leaderboard_id, score))
+        pass
 
     @staticmethod
     def __cbLeaderboardScoreError(leaderboard_id, score, exception):
         # cb on setLeaderboardScore
         _Log("[Achievements cb] LeaderboardScore Error: {!r} score: {} error: {}".format(leaderboard_id, score, exception), force=True, err=True)
+        pass
 
     # --- InAppReviews -------------------------------------------------------------------------------------------------
 
     @staticmethod
     def rateApp():
         # starts rate app process
+        _Log("[Reviews] rateApp...")
         if SystemGoogleServices.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is False:
             Trace.log("System", 0, "SystemGoogleServices try to rateApp, but plugin '{}' is not active".format(GOOGLE_IN_APP_REVIEWS_PLUGIN))
             return
         Mengine.androidMethod(GOOGLE_IN_APP_REVIEWS_PLUGIN, "launchTheInAppReview")
-        _Log("[Reviews] rateApp...")
+        pass
 
     # callbacks
 
@@ -612,22 +641,26 @@ class SystemGoogleServices(System):
     def __cbReviewsGettingReviewObject():
         # on initialize success
         _Log("[Reviews cb] GettingReviewObject")
+        pass
 
     @staticmethod
     def __cbReviewsRequestError(exception):
         # reviews was not requested
         _Log("[Reviews cb] RequestError {}".format(exception), force=True)
+        pass
 
     @staticmethod
     def __cbReviewsLaunchingSuccess():
         # reviews was launched
         Notification.notify(Notificator.onAppRated)
         _Log("[Reviews cb] LaunchingSuccess", force=True)
+        pass
 
     @staticmethod
     def __cbReviewsLaunchingError(exception):
         # reviews was not launched
         _Log("[Reviews cb] LaunchingError {}".format(exception), force=True)
+        pass
 
     # --- FirebaseCrashlytics ------------------------------------------------------------------------------------------
 
@@ -638,6 +671,7 @@ class SystemGoogleServices(System):
             return
         _Log("[FirebaseCrashlytics] testCrash...")
         Mengine.androidMethod(FIREBASE_CRASHLYTICS_PLUGIN, "testCrash")
+        pass
 
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 

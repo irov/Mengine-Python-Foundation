@@ -8,6 +8,7 @@ class PaymentProvider(BaseProvider):
         "restorePurchases",
         "canUserMakePurchases",
         "completeOrder",
+        "isOwnedInAppProduct"
     ]
 
     @staticmethod
@@ -40,6 +41,11 @@ class PaymentProvider(BaseProvider):
     def completeOrder(order_id):
         return bool(PaymentProvider._call("completeOrder", order_id))
 
+    @staticmethod
+    def isOwnedInAppProduct(product_id):
+        """ check if product is owned by user """
+        return bool(PaymentProvider._call("isOwnedInAppProduct", product_id))
+
 
 class DummyPayment(object):
 
@@ -48,7 +54,9 @@ class DummyPayment(object):
         PaymentProvider.setProvider("Dummy", dict(
             pay=DummyPayment.pay,
             restorePurchases=DummyPayment.restorePurchases,
-            canUserMakePurchases=DummyPayment.canUserMakePurchases
+            canUserMakePurchases=DummyPayment.canUserMakePurchases,
+            completeOrder=DummyPayment.completeOrder,
+            isOwnedInAppProduct=DummyPayment.isOwnedInAppProduct,
         ))
 
     @staticmethod
@@ -90,5 +98,10 @@ class DummyPayment(object):
     def completeOrder(order_id):
         Trace.msg("DUMMY completeOrder {!r}".format(order_id))
         return True
+
+    @staticmethod
+    def isOwnedInAppProduct(product_id):
+        Trace.msg("DUMMY isOwnedInAppProduct {!r} - always False".format(product_id))
+        return False
 
 

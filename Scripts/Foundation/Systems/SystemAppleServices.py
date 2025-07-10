@@ -248,6 +248,7 @@ class SystemAppleServices(System):
             pay=SystemAppleServices.pay,
             canUserMakePurchases=SystemAppleServices.canUserMakePurchases,
             restorePurchases=SystemAppleServices.restorePurchases,
+            isOwnedInAppProduct=SystemAppleServices.isOwnedInAppProduct,
         ))
         SystemAppleServices._InAppPurchase_provider_status = True
 
@@ -279,6 +280,15 @@ class SystemAppleServices(System):
         Mengine.appleStoreInAppPurchaseRestoreCompletedTransactions()
         Notification.notify(Notificator.onRestorePurchasesDone)
         # TODO: it would be better to know when we complete all _cbPaymentRestored
+
+    @staticmethod
+    def isOwnedInAppProduct(product_id):
+        """
+            Check if product with `product_id` is owned by user.
+            Returns True if product is owned, False if not.
+        """
+        _Log("[InAppPurchase] isOwnedInAppProduct {!r}...".format(product_id), optional=True)
+        return Mengine.appleStoreInAppPurchaseIsOwnedProduct(product_id)
 
     @staticmethod
     def pay(product_id):

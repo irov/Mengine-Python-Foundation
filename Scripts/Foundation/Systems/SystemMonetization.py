@@ -645,16 +645,9 @@ class SystemMonetization(System):
         if MonetizationManager.isMonetizationEnable() is False:
             return False
 
-        items = SystemMonetization.getStorageListValues("purchased")
-        if items is None:
-            return False
+        is_owned = PaymentProvider.isOwnedInAppProduct(prod_id)
 
-        is_purchased = str(prod_id) in items
-
-        if _DEVELOPMENT is True:
-            _Log("  isProductPurchased {} in {}: {}".format(prod_id, items, is_purchased), optional=True)
-
-        return is_purchased
+        return is_owned
 
     @staticmethod
     def isProductGroupPurchased(group_id):
