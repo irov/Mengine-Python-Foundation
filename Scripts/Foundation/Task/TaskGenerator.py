@@ -375,8 +375,8 @@ class TaskSource(object):
         self.__addDesc(type, params)
         pass
 
-    def addCapture(self, Capture, *Args, **Kwargs):
-        self.__addDesc("TaskSetCapture", dict(Capture=Capture, Args=Args, Kwargs=Kwargs))
+    def addCapture(self, Capture, ID, *Args, **Kwargs):
+        self.__addDesc("TaskSetCapture", dict(Capture=Capture, Type=ID, Args=Args, Kwargs=Kwargs))
         pass
 
     def addNotify(self, ID, *Args, **Kwargs):
@@ -840,11 +840,11 @@ class TaskSource(object):
         return self.addRaceTaskList(list(zip(*Objects)), **Kwargs)
 
     def addRaceScope(self, count, scope, NoSkip=False, RaceSkip=False):
-        winner = _Capture(-1)
+        winner = _Capture(None, -1)
         with self.addRaceTask(count, NoSkip=NoSkip, RaceSkip=RaceSkip) as tgs:
             scope(*tgs)
             for index, tg in enumerate(tgs):
-                tg.addCapture(winner, index)
+                tg.addCapture(winner, None, index)
                 pass
 
         def __states(isSkip, cb):

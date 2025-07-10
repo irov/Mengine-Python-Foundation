@@ -8,27 +8,27 @@ class Socket(Interaction):
         Interaction.declareORM(Type)
         pass
 
-    def _mouseClickBegin(self):
+    def _mouseClickBegin(self, x, y):
         Notification.notify(Notificator.onSocketClickBegin, self.object)
         pass
 
-    def _mouseClick(self):
+    def _mouseClick(self, x, y):
         Notification.notify(Notificator.onSocketClick, self.object)
         pass
 
-    def _mouseClickUp(self):
+    def _mouseClickUp(self, x, y):
         Notification.notify(Notificator.onSocketClickUp, self.object)
         pass
 
-    def _mouseClickUpBegin(self):
+    def _mouseClickUpBegin(self, x, y):
         Notification.notify(Notificator.onSocketClickUpBegin, self.object)
         pass
 
-    def _mouseClickEnd(self):
+    def _mouseClickEnd(self, x, y):
         Notification.notify(Notificator.onSocketClickEnd, self.object)
         pass
 
-    def _mouseClickEndUp(self):
+    def _mouseClickEndUp(self, x, y):
         Notification.notify(Notificator.onSocketClickEndUp, self.object)
         pass
 

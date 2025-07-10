@@ -136,9 +136,9 @@ class Interaction(BaseEntity):
             return False
 
         if isDown is True:
-            self._mouseClickBegin()
+            self._mouseClickBegin(x, y)
         else:
-            self._mouseClickUpBegin()
+            self._mouseClickUpBegin(x, y)
 
         return False
 
@@ -149,9 +149,9 @@ class Interaction(BaseEntity):
             return Block
 
         if isDown is True:
-            self._mouseClick()
+            self._mouseClick(x, y)
         else:
-            self._mouseClickUp()
+            self._mouseClickUp(x, y)
 
         return Block
 
@@ -160,31 +160,31 @@ class Interaction(BaseEntity):
             return False
 
         if isDown is True:
-            self._mouseClickEnd()
+            self._mouseClickEnd(x, y)
         else:
-            self._mouseClickEndUp()
+            self._mouseClickEndUp(x, y)
 
         return False
 
-    def _mouseClickBegin(self):
+    def _mouseClickBegin(self, x, y):
         Notification.notify(Notificator.onInteractionClickBegin, self.object)
 
-    def _mouseClick(self):
+    def _mouseClick(self, x, y):
         Notification.notify(Notificator.onInteractionClick, self.object)
 
-    def _mouseClickUpBegin(self):
+    def _mouseClickUpBegin(self, x, y):
         Notification.notify(Notificator.onInteractionClickUpBegin, self.object)
 
-    def _mouseClickUp(self):
+    def _mouseClickUp(self, x, y):
         Notification.notify(Notificator.onInteractionClickUp, self.object)
 
-    def _mouseClickEnd(self):
+    def _mouseClickEnd(self, x, y):
         Notification.notify(Notificator.onInteractionClickEnd, self.object)
 
-    def _mouseClickEndUp(self):
+    def _mouseClickEndUp(self, x, y):
         Notification.notify(Notificator.onInteractionClickEndUp, self.object)
 
-    def _mouseEnter(self):
+    def _mouseEnter(self, x, y):
         Notification.notify(Notificator.onInteractionMouseEnter, self.object)
 
     def _mouseLeave(self):

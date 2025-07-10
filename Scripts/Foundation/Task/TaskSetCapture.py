@@ -7,12 +7,13 @@ class TaskSetCapture(Task):
         super(TaskSetCapture, self)._onParams(params)
 
         self.Capture = params.get("Capture")
+        self.Type = params.get("Type", None)
         self.Args = params.get("Args", ())
         self.Kwargs = params.get("Kwargs", {})
         pass
 
     def _onRun(self):
-        self.Capture.setValue(*self.Args, **self.Kwargs)
+        self.Capture.setValue(self.Type, *self.Args, **self.Kwargs)
 
         return True
         pass
