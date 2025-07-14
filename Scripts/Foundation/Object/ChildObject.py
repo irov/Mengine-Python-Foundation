@@ -72,8 +72,8 @@ class ChildObject(BaseObject):
 
         obj.setSaving(False)
 
-        entity = obj.getEntity()
-        self.entity.addChild(entity.node)
+        obj_entityNode = obj.getEntityNode()
+        self.entity.addChild(obj_entityNode)
 
         return obj
 
@@ -112,6 +112,9 @@ class ChildObject(BaseObject):
         obj.onEntityRestore()
 
         obj.setSaving(False)
+
+        obj_entityNode = obj.getEntityNode()
+        self.entity.addChild(obj_entityNode)
 
         return obj
 
