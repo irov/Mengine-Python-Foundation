@@ -527,11 +527,11 @@ class MonetizationManager(Manager, CurrencyManager):
         if Mengine.getConfigBool("Monetization", "Enable", False) is False:
             return False
 
-        if Mengine.getConfigBool("Monetization", "OnlyMobile", True) is True:
+        if Mengine.getConfigBool("Monetization", "OnlyMobile", False) is True:
             if Mengine.hasTouchpad() is False:
                 return False
 
-        if Mengine.getConfigBool("Monetization", "OnlyCE", True) is True:
+        if Mengine.getConfigBool("Monetization", "OnlyCE", False) is True:
             if isCollectorEdition() is False:
                 return False
 
