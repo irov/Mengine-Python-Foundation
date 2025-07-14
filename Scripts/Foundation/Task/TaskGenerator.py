@@ -12,7 +12,6 @@ class TaskGeneratorException(Exception):
 
     def __str__(self):
         return str(self.value)
-        pass
     pass
 
 class TaskSourceTg(object):
@@ -24,7 +23,6 @@ class TaskSourceTg(object):
 
     def __enter__(self):
         return self.tg
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
@@ -54,7 +52,6 @@ class TaskSourceTgIter(object):
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             self.tg.end()
@@ -73,12 +70,10 @@ class TaskSourceTgs(object):
 
     def __enter__(self):
         return self.tgs
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             for tg in self.tgs:
@@ -87,7 +82,6 @@ class TaskSourceTgs(object):
             pass
 
         return True
-        pass
 
     def __iter__(self):
         for tg in self.tgs:
@@ -105,7 +99,6 @@ class TaskSourceTgsList(object):
 
     def __enter__(self):
         return self.tgs
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
@@ -119,7 +112,6 @@ class TaskSourceTgsList(object):
             pass
 
         return True
-        pass
 
     def __iter__(self):
         for o, tg in self.tgs:
@@ -137,12 +129,10 @@ class TaskSourceTgw(object):
 
     def __enter__(self):
         return self.tgw
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             for tg in self.tgw.itervalues():
@@ -151,7 +141,6 @@ class TaskSourceTgw(object):
             pass
 
         return True
-        pass
 
     def __iter__(self):
         for tg in self.tgw.itervalues():
@@ -386,8 +375,8 @@ class TaskSource(object):
         self.__addDesc(type, params)
         pass
 
-    def addCapture(self, Capture, *Args, **Kwargs):
-        self.__addDesc("TaskSetCapture", dict(Capture=Capture, Args=Args, Kwargs=Kwargs))
+    def addCapture(self, Capture, ID, *Args, **Kwargs):
+        self.__addDesc("TaskSetCapture", dict(Capture=Capture, Type=ID, Args=Args, Kwargs=Kwargs))
         pass
 
     def addNotify(self, ID, *Args, **Kwargs):
@@ -851,15 +840,15 @@ class TaskSource(object):
         return self.addRaceTaskList(list(zip(*Objects)), **Kwargs)
 
     def addRaceScope(self, count, scope, NoSkip=False, RaceSkip=False):
-        winner = _Capture(-1)
+        winner = _Capture(None, -1)
         with self.addRaceTask(count, NoSkip=NoSkip, RaceSkip=RaceSkip) as tgs:
             scope(*tgs)
             for index, tg in enumerate(tgs):
-                tg.addCapture(winner, index)
+                tg.addCapture(winner, None, index)
                 pass
 
         def __states(isSkip, cb):
-            value, = winner
+            value, = winner.getArgs()
             if value == -1:
                 raise TaskGeneratorException("invalid generate source [addRaceScope] winner value %s", value)
             cb(isSkip, value)

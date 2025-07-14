@@ -59,7 +59,7 @@ class TaskScopeListener(MixinGroup, MixinObserver, Task):
             pass
 
         if self.Capture is not None:
-            self.Capture.setValue(*args, **kwargs)
+            self.Capture.setValue(self.ID, *args, **kwargs)
             pass
 
         nexts = self.base.popNexts()
