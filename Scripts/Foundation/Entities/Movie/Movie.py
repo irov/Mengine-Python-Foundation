@@ -290,7 +290,6 @@ class Movie(BaseAnimatable):
         handler = socketParam.get("button", True)
 
         return handler
-        pass
 
     def __onHandleMouseMove(self, context, event, name, hotspot):
         if self.object is not None:
@@ -299,13 +298,11 @@ class Movie(BaseAnimatable):
 
         if self.socketParams is None:
             return True
-            pass
 
         socketParam = self.socketParams.get(name, {})
         handler = socketParam.get("move", True)
 
         return handler
-        pass
 
     def __onMovieGetInternal(self, groupName, name):
         obj = self._findMovieObject(groupName, name)

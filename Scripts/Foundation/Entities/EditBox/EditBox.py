@@ -160,7 +160,6 @@ class EditBox(BaseEntity):
             self.object.setParam("Value", u"")
             self.valueByDefault = None
             self.carriage = 0
-            pass
 
         self.mouseXToCarriage(event.x)
 

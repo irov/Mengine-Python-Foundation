@@ -100,11 +100,11 @@ class Interaction(BaseEntity):
         if self.__enableKeyEvent is False:
             return False
 
-        result = self._keyEvent(event)
+        result = self._keyEvent(context, event)
 
         return result
 
-    def _keyEvent(self, event):
+    def _keyEvent(self, context, event):
         return self.BlockKey
 
     def _updateBlockInteractive(self, value):
