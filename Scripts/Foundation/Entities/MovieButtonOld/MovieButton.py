@@ -235,24 +235,24 @@ class MovieButton(BaseEntity):
             pass
 
         socket.setEventListener(onHandleMouseEnter=self.__onIdleMouseEnter)
+
         if self.KeyTag is not None:
             socket.setEventListener(onHandleKeyEvent=self._onKeyEvent)
             pass
         pass
 
-    def __onIdleMouseEnter(self, hs, x, y):
+    def __onIdleMouseEnter(self, context, event):
         if self.Clickable is False:
             return False
-            pass
+
         if self.IsAttachReact is False:
             if ArrowManager.emptyArrowAttach() is False:
                 return False
-                pass
             pass
 
         self.__onEnter()
+
         return False
-        pass
 
     def setCurrentMovie(self, movie):
         self.currentMovie = movie
@@ -264,7 +264,6 @@ class MovieButton(BaseEntity):
         if self.MovieEnter is None:
             self.__onOver()
             return
-            pass
 
         self.MovieEnter.enable()
 
@@ -279,39 +278,33 @@ class MovieButton(BaseEntity):
             if self.IsAttachReact is False:
                 if ArrowManager.emptyArrowAttach() is False:
                     return
-                    pass
                 pass
 
             self.__cleanListeners(self.MovieEnter)
             self.__onIdle()
             return
-            pass
 
         self.MovieEnter.setEventListener(onAnimatableEnd=self.__onEnterMovieEnd)
 
         self.MovieEnter.play()
         socket = self.MovieEnter.getSocket("socket")
 
-        socket.setEventListener(onHandleMouseButtonEvent=self.__onEnterMouseClick,
-                                onHandleMouseLeave=self.__onOverMouseLeave)
+        socket.setEventListener(onHandleMouseButtonEvent=self.__onEnterMouseClick, onHandleMouseLeave=self.__onOverMouseLeave)
         if self.KeyTag is not None:
             socket.setEventListener(onHandleKeyEvent=self._onKeyEvent)
             pass
         pass
 
-    def __onEnterMouseClick(self, hs, touchId, x, y, button, isDown, isPressed):
-        if isDown is False:
+    def __onEnterMouseClick(self, context, event):
+        if event.isDown is False:
             return True
-            pass
 
-        if button != 0:
+        if event.button != 0:
             return True
-            pass
 
         self.__onClick()
 
         return True
-        pass
 
     def __onEnterMovieEnd(self, emitter, id, isEnd):
         if self.currentMovie == self.MovieEnter:
@@ -325,7 +318,6 @@ class MovieButton(BaseEntity):
     def setOver(self, value):
         if self.MovieOver is None or value is False:
             return
-            pass
 
         self.__cleanListeners(self.currentMovie)
         self.setCurrentMovie(self.MovieOver)
@@ -336,7 +328,6 @@ class MovieButton(BaseEntity):
     def __onOver(self):
         if self.MovieOver is None:
             return
-            pass
 
         self.__cleanListeners(self.currentMovie)
 
@@ -347,7 +338,6 @@ class MovieButton(BaseEntity):
             self.__cleanListeners(self.MovieOver)
             self.__onLeave()
             return
-            pass
 
         self.MovieOver.setLoop(True)
         self.MovieOver.play()
@@ -360,29 +350,27 @@ class MovieButton(BaseEntity):
             pass
         pass
 
-    def __onOverMouseLeave(self, hs):
+    def __onOverMouseLeave(self, context, event):
         self.__cleanListeners(self.currentMovie)
         self.__onLeave()
         pass
 
-    def __onOverMouseClick(self, hs, touchId, x, y, button, isDown):
-        if isDown is False:
+    def __onOverMouseClick(self, context, event):
+        if event.isDown is False:
             return True
-            pass
 
-        if button != 0:
+        if event.button != 0:
             return True
-            pass
 
         self.__onClick()
 
         return True
-        pass
 
     def __onClick(self):
         Notification.notify(Notificator.onButtonClick, self.object)
 
         self.MovieClick.enable()
+
         if self.currentMovie != self.MovieClick:
             self.__cleanListeners(self.currentMovie)
             self.setCurrentMovie(self.MovieClick)
@@ -392,32 +380,28 @@ class MovieButton(BaseEntity):
         self.MovieClick.play()
         pass
 
-    def _onKeyEvent(self, hs, key, x, y, isDown, isRepeating):
+    def _onKeyEvent(self, context, event):
         if self.KeyTag is None:
             return False
-            pass
 
-        if Mengine.isExclusiveKeyDown(key) is False:
+        if Mengine.isExclusiveKeyDown(event.code) is False:
             return False
-            pass
 
-        if isDown is False:
+        if event.isDown is False:
             return False
-            pass
 
         if self.BlockKeys is True:
             return False
-            pass
 
         KeyTag = MovieButton.s_keys[self.KeyTag]
-        if KeyTag == key:
+
+        if KeyTag == event.code:
             if self.object.getEnable() is True:
                 self.__onClick()
                 pass
             pass
 
         return True
-        pass
 
     def __onClickMovieEnd(self, emitter, id, isEnd):
         Notification.notify(Notificator.onButtonClickEnd, self.object)
@@ -452,12 +436,12 @@ class MovieButton(BaseEntity):
             pass
         pass
 
-    def __onSwitchMouseClick(self, hs, touchId, x, y, button, isDown):
-        if isDown is True:
+    def __onSwitchMouseClick(self, context, event):
+        if event.isDown is True:
             return True
             pass
 
-        if button != 0:
+        if event.button != 0:
             return True
             pass
 
@@ -571,14 +555,12 @@ class MovieButton(BaseEntity):
             pass
         pass
 
-    def __onReleaseMouseClick(self, hs, touchId, x, y, button, isDown):
-        if button != 0:
+    def __onReleaseMouseClick(self, context, event):
+        if event.button != 0:
             return True
-            pass
 
-        if isDown is False:
+        if event.isDown is False:
             return True
-            pass
 
         self.__cleanListeners(self.MovieRelease)
         self.__onClick()
@@ -611,18 +593,16 @@ class MovieButton(BaseEntity):
             pass
         pass
 
-    def __onLeaveMouseClick(self, hs, touchId, x, y, button, isDown):
-        if button != 0:
+    def __onLeaveMouseClick(self, context, event):
+        if event.button != 0:
             return True
-            pass
 
-        if isDown is False:
+        if event.isDown is False:
             return True
-            pass
+
         self.__onClick()
 
         return True
-        pass
 
     def __onLeaveMovieEnd(self, emitter, id, isEnd):
         self.__cleanListeners(self.MovieLeave)

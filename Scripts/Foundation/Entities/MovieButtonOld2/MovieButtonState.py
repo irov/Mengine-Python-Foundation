@@ -136,19 +136,19 @@ class MovieButtonState(object):
             pass
         pass
 
-    def onMouseEnter(self, hs, x, y):
+    def onMouseEnter(self, context, event):
         if self.buttonEntity.Clickable is False:
             return False
             pass
 
         self._onMouseEnter()
+
         return self.buttonEntity.Block
-        pass
 
     def _onMouseEnter(self):
         pass
 
-    def onMouseLeave(self, hs):
+    def onMouseLeave(self, context, event):
         if self.buttonEntity.Clickable is False:
             return
             pass
@@ -159,7 +159,7 @@ class MovieButtonState(object):
     def _onMouseLeave(self):
         pass
 
-    def onMouseButtonEvent(self, hs, event):
+    def onMouseButtonEvent(self, context, event):
         if event.isDown is False:
             return False
             pass
@@ -182,32 +182,28 @@ class MovieButtonState(object):
     def _onMouseButtonEvent(self):
         pass
 
-    def onKeyEvent(self, hs, key, x, y, isDown, isRepeating):
+    def onKeyEvent(self, context, event):
         if self.buttonEntity.KeyTag is None:
             return False
-            pass
 
-        if Mengine.isExclusiveKeyDown(key) is False:
+        if Mengine.isExclusiveKeyDown(event.code) is False:
             return False
-            pass
 
-        if isDown is False:
+        if event.isDown is False:
             return False
-            pass
 
         if self.buttonEntity.Clickable is False:
             return False
-            pass
 
         KeyTag = MovieButtonState.s_keys[self.buttonEntity.KeyTag]
-        if KeyTag == key:
+
+        if KeyTag == event.code:
             if self.buttonEntity.object.getEnable() is True:
                 self._onKeyEvent()
                 return self.buttonEntity.Block
             pass
 
         return False
-        pass
 
     def _onKeyEvent(self):
         pass

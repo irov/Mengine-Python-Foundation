@@ -32,7 +32,7 @@ class Socket(Interaction):
         Notification.notify(Notificator.onSocketClickEndUp, self.object)
         pass
 
-    def _mouseEnter(self):
+    def _mouseEnter(self, x, y):
         Notification.notify(Notificator.onSocketMouseEnter, self.object)
         pass
 

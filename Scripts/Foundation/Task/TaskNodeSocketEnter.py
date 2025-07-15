@@ -29,12 +29,11 @@ class TaskNodeSocketEnter(TaskNodeSocketBase):
             pass
 
         return True
-        pass
 
     def _onRun(self):
         super(TaskNodeSocketEnter, self)._onRun()
 
-        def __onHandleMouseEnter(x, y):
+        def __onHandleMouseEnter(context, event):
             Handle = self.Socket.getDefaultHandle()
 
             if self._onBaseFilter() is False:
@@ -44,7 +43,6 @@ class TaskNodeSocketEnter(TaskNodeSocketBase):
             self.complete()
 
             return Handle
-            pass
 
         self.Socket.setEventListener(onHandleMouseEnter=__onHandleMouseEnter)
 
@@ -57,6 +55,6 @@ class TaskNodeSocketEnter(TaskNodeSocketBase):
         if self.Socket is None:
             return
 
-        # self.Socket.setEventListener(onHandleMouseEnter = None)
+        self.Socket.setEventListener(onHandleMouseEnter = None)
         pass
     pass

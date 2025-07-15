@@ -151,11 +151,10 @@ class EditBox(BaseEntity):
         self.valueByDefault = value
         pass
 
-    def _onMouseButtonEvent(self, touchId, x, y, button, pressure, isDown, isPressed):
-        if isDown is False:
+    def _onMouseButtonEvent(self, context, event):
+        if event.isDown is False:
             Notification.notify(Notificator.EditBoxUnhold, self.object)
             return True
-            pass
 
         if self.valueByDefault is not None:
             self.object.setParam("Value", u"")
@@ -163,7 +162,7 @@ class EditBox(BaseEntity):
             self.carriage = 0
             pass
 
-        self.mouseXToCarriage(x)
+        self.mouseXToCarriage(event.x)
 
         self.updateCarriage()
 

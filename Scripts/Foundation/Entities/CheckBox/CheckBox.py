@@ -77,22 +77,19 @@ class CheckBox(BaseEntity):
         super(CheckBox, self)._onActivate()
         pass
 
-    def _onMouseButtonEvent(self, touchId, x, y, button, pressure, isDown, isPressed):
-        if button != 0:
+    def _onMouseButtonEvent(self, context, event):
+        if event.button != 0:
             return False
-            pass
 
-        if isDown is True:
+        if event.isDown is True:
             self._changeState()
             pass
 
         return True
-        pass
 
     def _changeState(self):
         if self.BlockState is True:
             return False
-            pass
 
         state = self.object.getParam("State")
         new_state = not state

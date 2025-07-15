@@ -35,7 +35,7 @@ class TaskNodeSocketLeave(TaskNodeSocketBase):
     def _onRun(self):
         super(TaskNodeSocketLeave, self)._onRun()
 
-        def __onHandleMouseLeave():
+        def __onHandleMouseLeave(context, event):
             if self._onBaseFilter() is False:
                 return
                 pass

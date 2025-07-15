@@ -264,7 +264,7 @@ class MovieEditBox(BaseEntity):
         return True
         pass
 
-    def _onMouseButtonEventFocus(self, touchId, x, y, button, pressure, isDown, isPressed):
+    def _onMouseButtonEventFocus(self, context, event):
         if isDown is False:
             return True
         self.__activate_slider(True)

@@ -96,15 +96,15 @@ class Interaction(BaseEntity):
 
         self.__enableKeyEvent = value
 
-    def __onKeyEvent(self, x, y, key, isDown, isRepeating):
+    def __onKeyEvent(self, context, event):
         if self.__enableKeyEvent is False:
             return False
 
-        result = self._keyEvent(x, y, key, isDown, isRepeating)
+        result = self._keyEvent(event)
 
         return result
 
-    def _keyEvent(self, x, y, key, isDown, isRepeating):
+    def _keyEvent(self, event):
         return self.BlockKey
 
     def _updateBlockInteractive(self, value):
@@ -118,51 +118,51 @@ class Interaction(BaseEntity):
         else:
             hotspot.enable()
 
-    def _onMouseEnter(self, x, y):
+    def _onMouseEnter(self, context, event):
         Block = self.Block
 
-        self._mouseEnter()
+        self._mouseEnter(event.x, event.y)
 
         return Block
 
-    def _onMouseLeave(self):
+    def _onMouseLeave(self, context, event):
         self._mouseLeave()
 
     def _onMouseOverDestroy(self):
         self._mouseLeave()
 
-    def _onMouseButtonEventBegin(self, touchId, x, y, button, pressure, isDown, isPressed):
-        if button != 0:
+    def _onMouseButtonEventBegin(self, context, event):
+        if event.button != 0:
             return False
 
-        if isDown is True:
-            self._mouseClickBegin(x, y)
+        if event.isDown is True:
+            self._mouseClickBegin(event.x, event.y)
         else:
-            self._mouseClickUpBegin(x, y)
+            self._mouseClickUpBegin(event.x, event.y)
 
         return False
 
-    def _onMouseButtonEvent(self, touchId, x, y, button, pressure, isDown, isPressed):
+    def _onMouseButtonEvent(self, context, event):
         Block = self.Block
 
-        if button != 0:
+        if event.button != 0:
             return Block
 
-        if isDown is True:
-            self._mouseClick(x, y)
+        if event.isDown is True:
+            self._mouseClick(event.x, event.y)
         else:
-            self._mouseClickUp(x, y)
+            self._mouseClickUp(event.x, event.y)
 
         return Block
 
-    def _onMouseButtonEventEnd(self, touchId, x, y, button, pressure, isDown, isPressed):
-        if button != 0:
+    def _onMouseButtonEventEnd(self, context, event):
+        if event.button != 0:
             return False
 
-        if isDown is True:
-            self._mouseClickEnd(x, y)
+        if event.isDown is True:
+            self._mouseClickEnd(event.x, event.y)
         else:
-            self._mouseClickEndUp(x, y)
+            self._mouseClickEndUp(event.x, event.y)
 
         return False
 

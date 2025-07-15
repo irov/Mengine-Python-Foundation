@@ -312,20 +312,20 @@ class VirtualArea(Initializer):
         :param socket_name: to this socket will be attached listening of dragging/scaling events
         :return: None
         """
-        def mouse_press(touch_id, x, y, _1, _2, is_down, _3):
+        def mouse_press(context, event):
             handle = self._socket.getDefaultHandle()
-            if is_down:
-                self.on_touch(touch_id)
-                self._target.mouse_press(x, y)
+            if event.isDown:
+                self.on_touch(event.touchId)
+                self._target.mouse_press(event.x, event.y)
                 Mengine.enableGlobalHandler(self._mouse_move_handler, not self._frozen)
                 Mengine.enableGlobalHandler(self._mouse_release_handler, not self._frozen)
                 Mengine.enableGlobalHandler(self._mouse_leave_handler, not self._frozen)
 
             return handle
 
-        def mouse_wheel(x, y, _, direction):
+        def mouse_wheel(context, event):
             handle = self._socket.getDefaultHandle()
-            if direction > 0:
+            if event.scroll > 0:
                 self.scale(1.0 - self._scale_factor)
             else:
                 self.scale(1.0 + self._scale_factor)

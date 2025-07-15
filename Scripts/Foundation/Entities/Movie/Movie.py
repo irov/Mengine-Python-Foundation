@@ -257,9 +257,9 @@ class Movie(BaseAnimatable):
         socketParam[type] = value
         pass
 
-    def __onHandleMouseEnter(self, x, y, name, hotspot):
+    def __onHandleMouseEnter(self, context, event, name, hotspot):
         if self.object is not None:
-            self.object.onMovieSocketEnterEvent(self.object, name, hotspot, x, y)
+            self.object.onMovieSocketEnterEvent(self.object, name, hotspot, event.x, event.y)
             pass
 
         if self.socketParams is None:
@@ -272,20 +272,19 @@ class Movie(BaseAnimatable):
         return handler
         pass
 
-    def __onHandleMouseLeave(self, name, hotspot):
+    def __onHandleMouseLeave(self, context, event, name, hotspot):
         if self.object is not None:
             self.object.onMovieSocketLeaveEvent(self.object, name, hotspot)
             pass
         pass
 
-    def __onHandleMouseButtonEvent(self, touchId, x, y, button, pressure, isDown, isPressed, name, hotspot):
+    def __onHandleMouseButtonEvent(self, context, event, name, hotspot):
         if self.object is not None:
-            self.object.onMovieSocketButtonEvent(self.object, name, hotspot, touchId, x, y, button, isDown, isPressed)
+            self.object.onMovieSocketButtonEvent(self.object, name, hotspot, event.touchId, event.x, event.y, event.button, event.isDown, event.isPressed)
             pass
 
         if self.socketParams is None:
             return True
-            pass
 
         socketParam = self.socketParams.get(name, {})
         handler = socketParam.get("button", True)
@@ -293,9 +292,9 @@ class Movie(BaseAnimatable):
         return handler
         pass
 
-    def __onHandleMouseMove(self, touchId, x, y, dx, dy, pressure, name, hotspot):
+    def __onHandleMouseMove(self, context, event, name, hotspot):
         if self.object is not None:
-            self.object.onMovieSocketMoveEvent(self.object, name, hotspot, touchId, x, y, dx, dy)
+            self.object.onMovieSocketMoveEvent(self.object, name, hotspot, event.touchId, event.x, event.y, event.dx, event.dy)
             pass
 
         if self.socketParams is None:
