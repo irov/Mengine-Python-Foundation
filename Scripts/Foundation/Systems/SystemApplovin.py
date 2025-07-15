@@ -80,6 +80,7 @@ class SystemApplovin(System):
             ShowBanner=self.showBanner,
             HideBanner=self.hideBanner,
             GetBannerHeight=self.getBannerHeight,
+            GetBannerWidth=self.getBannerWidth,
             # interstitial:
             HasInterstitialAdvert=self.hasInterstitial,
             CanYouShowInterstitialAdvert=self.canYouShowInterstitial,
@@ -134,6 +135,13 @@ class SystemApplovin(System):
             return Mengine.appleAppLovinGetBannerHeight()
         elif _ANDROID:
             return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerHeight")
+        return None
+
+    def getBannerWidth(self):
+        if _IOS:
+            return Mengine.appleAppLovinGetBannerWidth()
+        elif _ANDROID:
+            return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerWidth")
         return None
 
     # callbacks
