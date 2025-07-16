@@ -40,7 +40,7 @@ class TaskScopeSwitch(MixinGroup, Task):
         return False
         pass
 
-    def _onSwitch(self, isSkip, switchId, *args, **kwds):
+    def _onSwitch(self, isSkip, switchId, *Args, **Kwargs):
         if self.isInitialized() is False:
             self.log("_onSwitch already finalized")
             return
@@ -69,7 +69,7 @@ class TaskScopeSwitch(MixinGroup, Task):
         skiped = self.isSkiped()
         source.setSkiped(skiped)
 
-        Scope(source, *args, **kwds)
+        Scope(source, *Args, **Kwargs)
 
         nexts = self.base.popNexts()
 

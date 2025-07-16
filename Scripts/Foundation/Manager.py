@@ -75,8 +75,8 @@ class Manager(object):
         pass
 
     @classmethod
-    def addObserver(cls, ID, Function, *Args, **Kwds):
-        observer = Notification.addObserver(ID, Function, *Args, **Kwds)
+    def addObserver(cls, ID, Function, *Args, **Kwargs):
+        observer = Notification.addObserver(ID, Function, *Args, **Kwargs)
 
         if observer is None:
             return

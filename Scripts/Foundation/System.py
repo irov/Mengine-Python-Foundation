@@ -116,8 +116,8 @@ class System(Params, Initializer):
 
         return tc
 
-    def addObserver(self, ID, Function, *Args, **Kwds):
-        observer = Notification.addObserver(ID, Function, *Args, **Kwds)
+    def addObserver(self, ID, Function, *Args, **Kwargs):
+        observer = Notification.addObserver(ID, Function, *Args, **Kwargs)
 
         if observer is None:
             return
@@ -125,8 +125,8 @@ class System(Params, Initializer):
         self.__observers.append(observer)
         return observer
 
-    def addEvent(self, Event, Function, *Args, **Kwds):
-        observer = Event.addObserver(Function, *Args, **Kwds)
+    def addEvent(self, Event, Function, *Args, **Kwargs):
+        observer = Event.addObserver(Function, *Args, **Kwargs)
 
         details = (Event, observer)
         self.__events.append(details)

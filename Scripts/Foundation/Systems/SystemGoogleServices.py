@@ -12,10 +12,6 @@ from Notification import Notification
 
 _Log = SimpleLogger("SystemGoogleServices")
 
-BILLING_CLIENT_STATUS_NOT_CONNECTED = 0
-BILLING_CLIENT_STATUS_OK = 1
-BILLING_CLIENT_STATUS_FAIL = 2
-
 GOOGLE_GAME_SOCIAL_PLUGIN = "MengineGGameSocial"
 GOOGLE_PLAY_BILLING_PLUGIN = "MengineGPlayBilling"
 GOOGLE_IN_APP_REVIEWS_PLUGIN = "MengineGInAppReviews"
@@ -39,13 +35,11 @@ class SystemGoogleServices(System):
 
     login_event = Event("GoogleGameSocialLoginEvent")
     logout_event = Event("GoogleGameSocialLogoutEvent")
-    login_status = False
     __on_auth_achievements = {}
     __on_auth_cbs = {}
     sku_response_event = Event("SkuListResponse")   # todo: check is deprecated
 
     s_products = {}
-    __billing_client_status = BILLING_CLIENT_STATUS_NOT_CONNECTED
 
     def _onInitialize(self):
 
@@ -57,10 +51,6 @@ class SystemGoogleServices(System):
             _setCallback("onGoogleGameSocialSignInIntentSuccess", self.__cbSignSuccess)
             _setCallback("onGoogleGameSocialSignInIntentFailed", self.__cbSignFailed)
             _setCallback("onGoogleGameSocialSignInIntentError", self.__cbSignError)
-            # auth:
-            _setCallback("onGoogleGameSocialOnAuthenticatedSuccess", self.__cbSignSuccess)
-            _setCallback("onGoogleGameSocialOnAuthenticatedFailed", self.__cbSignFailed)
-            _setCallback("onGoogleGameSocialOnAuthenticatedError", self.__cbSignError)
             # incrementAchievement:
             _setCallback("onGoogleGameSocialIncrementAchievementSuccess", self.__cbAchievementIncSuccess)
             _setCallback("onGoogleGameSocialIncrementAchievementError", self.__cbAchievementIncError)
@@ -118,32 +108,31 @@ class SystemGoogleServices(System):
             _setCallback("onGooglePlayBillingQueryProductSuccess", self.__cbBillingQueryProductsSuccess)
             _setCallback("onGooglePlayBillingQueryProductFailed", self.__cbBillingQueryProductsFail)
             _setCallback("onGooglePlayBillingQueryProductError", self.__cbBillingQueryProductsError)
-            _setCallback("onGooglePlayBillingQueryPurchasesSuccess", self.__cbBillingQueryPurchasesStatus, True)
-            _setCallback("onGooglePlayBillingQueryPurchasesFailed", self.__cbBillingQueryPurchasesStatus, False)
+            _setCallback("onGooglePlayBillingRestorePurchasesSuccess", self.__cbBillingRestorePurchasesSuccess)
+            _setCallback("onGooglePlayBillingRestorePurchasesFailed", self.__cbBillingRestorePurchasesFailed)
+            _setCallback("onGooglePlayBillingRestorePurchasesError", self.__cbBillingRestorePurchasesError)
             # purchase flow
+            _setCallback("onGooglePlayBillingPurchaseUnspecifiedState", self.__cbBillingPurchaseUnspecifiedState)
             _setCallback("onGooglePlayBillingPurchaseIsConsumable", self.__cbBillingPurchaseIsConsumable)
-            _setCallback("onGooglePlayBillingBuyInAppSuccess", self.__cbBillingBuyInAppSucces)
-            _setCallback("onGooglePlayBillingBuyInAppFailed", self.__cbBillingBuyInAppFailed)
-            _setCallback("onGooglePlayBillingBuyInAppError", self.__cbBillingBuyInAppError)
+            _setCallback("onGooglePlayBillingPurchasePending", self.__cbBillingPurchasePending)
+
+            _setCallback("onGooglePlayBillingBuyInAppLaunchFlowSuccess", self.__cbBillingBuyInAppLaunchFlowSucces)
+            _setCallback("onGooglePlayBillingBuyInAppLaunchFlowFailed", self.__cbBillingBuyInAppLaunchFlowFailed)
+            _setCallback("onGooglePlayBillingBuyInAppLaunchFlowError", self.__cbBillingBuyInAppLaunchFlowError)
             #  - consumable
-            _setCallback("onGooglePlayBillingPurchasesOnConsumeSuccess", self.__cbBillingPurchaseConsumeSuccess)
-            _setCallback("onGooglePlayBillingPurchasesOnConsumeFailed", self.__cbBillingPurchaseConsumeFail)
+            _setCallback("onGooglePlayBillingPurchasesOnConsumeSuccess", self.__cbBillingPurchaseOnConsumeSuccess)
+            _setCallback("onGooglePlayBillingPurchasesOnConsumeFailed", self.__cbBillingPurchaseOnConsumeFail)
             #  - non-consumable
             _setCallback("onGooglePlayBillingPurchaseAcknowledged", self.__cbBillingPurchaseAcknowledged)
-            _setCallback("onGooglePlayBillingPurchasesAcknowledgeSuccess", self.__cbBillingPurchaseAcknowledgeSuccess)
-            _setCallback("onGooglePlayBillingPurchasesAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeFail)
-            # billingConnect callbacks:
-            _setCallback("onGooglePlayBillingConnectServiceDisconnected", self.__cbBillingClientDisconnected)
-            _setCallback("onGooglePlayBillingConnectSetupFinishedSuccess", self.__cbBillingClientSetupFinishedSuccess)
-            _setCallback("onGooglePlayBillingConnectSetupFinishedFailed", self.__cbBillingClientSetupFinishedFail)
-            _setCallback("onGooglePlayBillingConnectSetupFinishedError", self.__cbBillingClientSetupFinishedError)
+            _setCallback("onGooglePlayBillingPurchaseAcknowledgeSuccess", self.__cbBillingPurchaseAcknowledgeSuccess)
+            _setCallback("onGooglePlayBillingPurchaseAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeFail)
 
             self.startBillingClient()
 
             PaymentProvider.setProvider("Google", dict(
                 pay=self.buy,
-                queryProducts=self.queryProducts,
-                restorePurchases=self.restorePurchases
+                restorePurchases=self.restorePurchases,
+                isOwnedInAppProduct=self.isOwnedInAppProduct,
             ))
 
         if self.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is True:
@@ -207,7 +196,8 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def isLoggedIn():
-        return SystemGoogleServices.login_status
+        authenticated = Mengine.androidBooleanMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "isAuthenticated")
+        return authenticated
 
     @staticmethod
     def signIn(only_intent=False, force=False):
@@ -228,13 +218,7 @@ class SystemGoogleServices(System):
                 _Log("[Auth] SystemGoogleServices_SignIn is already in process...", err=True)
             return
 
-        with TaskManager.createTaskChain(Name="SystemGoogleServices_SignIn") as tc:
-            with tc.addParallelTask(2) as (respond, request):
-                with request.addIfTask(Mengine.androidBooleanMethod, GOOGLE_GAME_SOCIAL_PLUGIN, "isAuthenticated") as (success, fail):
-                    success.addFunction(_Log, "[Auth] silence auth success!")
-
-                    fail.addFunction(_Log, "[Auth] silence auth failed, try intent...")
-                    fail.addFunction(SystemGoogleServices._signInIntent)
+        _Log("[Auth] silence auth success!")
 
     @staticmethod
     def _signInIntent():
@@ -253,7 +237,6 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbSignSuccess():
-        SystemGoogleServices.login_status = True
         SystemGoogleServices.login_event(True)
         Notification.notify(Notificator.onUserLoggedIn)
 
@@ -277,7 +260,6 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbSignOutSuccess():
-        SystemGoogleServices.login_status = False
         SystemGoogleServices.logout_event(True)
         _Log("[Auth cb] logout success", force=True)
 
@@ -293,7 +275,6 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbSignOutComplete():
-        SystemGoogleServices.login_status = False
         SystemGoogleServices.logout_event(True)
         Notification.notify(Notificator.onUserLoggedOut)
         _Log("[Auth cb] logout complete", force=True)
@@ -327,48 +308,24 @@ class SystemGoogleServices(System):
         #    __cbBillingClientSetupFinishedSuccess   - OK
 
         _Log("Start connect to the billing client...")
-        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "billingConnect")
-
-    @staticmethod
-    def getBillingClientStatus():
-        return SystemGoogleServices.__billing_client_status
-
-    @staticmethod
-    def queryProducts(product_ids):
-        # setup product's list and response via callbacks
-        #    - __cbBillingQueryProductsSuccess <- product details - OK
-        #    - __cbBillingQueryProductsFail
-        if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
-            _Log("[Billing] queryProducts fail: billing client is not connected", err=True, force=True)
-            SystemGoogleServices.__cbBillingClientUnavailable()
-            return False
-
-        query_list = filter(lambda x: isinstance(x, str), product_ids)
-        _Log("[Billing] queryProducts: query_list={!r}".format(query_list))
-        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts", query_list)
-        return True
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts")
 
     @staticmethod
     def buy(product_id):
-        if SystemGoogleServices.getBillingClientStatus() != BILLING_CLIENT_STATUS_OK:
-            _Log("[Billing] buy fail: billing client is not connected", err=True, force=True)
-            SystemGoogleServices.__cbBillingClientUnavailable()
-            return
-
-        if SystemGoogleServices.isLoggedIn() is False:
-            _Log("[Billing error] buy {!r} failed: not authorized, try auth...".format(product_id), err=True, force=True)
-            SystemGoogleServices.__on_auth_cbs["buy"] = product_id
-            SystemGoogleServices.signIn(only_intent=True)
-            return
-
         _Log("[Billing] buy {!r}".format(product_id))
         SystemGoogleServices.__lastProductId = product_id
-        Mengine.androidBooleanMethod(GOOGLE_PLAY_BILLING_PLUGIN, "buyInApp", product_id)
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "buyInApp", product_id)
 
     @staticmethod
     def restorePurchases():
         _Log("[Billing] restore purchases...")
-        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryPurchases")
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "restorePurchases")
+
+    @staticmethod
+    def isOwnedInAppProduct(product_id):
+        owned = Mengine.androidBooleanMethod(GOOGLE_PLAY_BILLING_PLUGIN, "isOwnedInAppProduct", product_id)
+        _Log("[Billing] isOwnedInAppProduct {!r} - {}".format(product_id, owned))
+        return owned
 
     @staticmethod
     def responseProducts():
@@ -396,6 +353,13 @@ class SystemGoogleServices(System):
     # callbacks
 
     @staticmethod
+    def __cbBillingPurchaseUnspecifiedState(products):
+        # this callback is called when we call buyInApp, but purchase state is not known yet
+        #    - products is list of product ids
+        _Log("[Billing cb] onGooglePlayBillingPurchaseUnspecifiedState: {!r}".format(products))
+
+
+    @staticmethod
     def __cbBillingPurchaseIsConsumable(products, cb):
         # after we call buyInApp, we need to setup consumable status for purchase
         #    cb is `MengineFunctorBoolean cb = (Boolean isConsumable)`
@@ -406,19 +370,27 @@ class SystemGoogleServices(System):
             cb(True, dict(isConsumable=isConsumable))
 
     @staticmethod
-    def __cbBillingBuyInAppSucces(prod_id):
+    def __cbBillingPurchasePending(products):
+        # this callback is called when we call buyInApp, but purchase is pending
+        #    - products is list of product ids
+        _Log("[Billing cb] onGooglePlayBillingPurchasePending: {!r}".format(products))
+        for prod_id in products:
+            Notification.notify(Notificator.onPayPending, prod_id)
+
+    @staticmethod
+    def __cbBillingBuyInAppLaunchFlowSucces(prod_id):
         _Log("[Billing cb] onGooglePlayBillingBuyInAppSuccess: prod_id={!r}".format(prod_id))
-        Notification.notify(Notificator.onPayComplete, prod_id)
+        Notification.notify(Notificator.onPayLaunchFlowSuccess, prod_id)
 
     @staticmethod
-    def __cbBillingBuyInAppFailed(prod_id, code, subCode):
+    def __cbBillingBuyInAppLaunchFlowFailed(prod_id, code, subCode):
         _Log("[Billing cb] onGooglePlayBillingBuyInAppFailed: prod_id={!r} code={!r} subCode={!r}".format(prod_id, code, subCode))
-        Notification.notify(Notificator.onPayFailed, prod_id)
+        Notification.notify(Notificator.onPayLaunchFlowFailed, prod_id)
 
     @staticmethod
-    def __cbBillingBuyInAppError(prod_id, code, exception):
+    def __cbBillingBuyInAppLaunchFlowError(prod_id, code, exception):
         _Log("[Billing cb] onGooglePlayBillingBuyInAppError: prod_id={!r} code={!r} exception={!r}".format(prod_id, code, exception))
-        Notification.notify(Notificator.onPayFailed, prod_id)
+        Notification.notify(Notificator.onPayLaunchFlowError, prod_id)
 
     @staticmethod
     def __cbBillingQueryProductsSuccess(products):
@@ -448,13 +420,13 @@ class SystemGoogleServices(System):
         _Log("[Billing cb] query products ERROR: code={!r} exception={!r}".format(code, exception), err=True, force=True)
 
     @staticmethod
-    def __cbBillingPurchaseConsumeSuccess(products):
+    def __cbBillingPurchaseOnConsumeSuccess(products):
         # pay success for consumable
         _Log("[Billing cb] purchase consumable successful: {!r}".format(products))
         SystemGoogleServices.handlePurchased(products, True)
 
     @staticmethod
-    def __cbBillingPurchaseConsumeFail(products):
+    def __cbBillingPurchaseOnConsumeFail(products):
         # pay fail for consumable
         _Log("[Billing cb] purchase consumable failed: {!r}".format(products))
         SystemGoogleServices.handlePurchased(products, False)
@@ -521,36 +493,23 @@ class SystemGoogleServices(System):
     def __cbBillingPurchaseOk():
         #  item purchased successful
         _Log("[Billing cb] purchase process ok: {}".format(SystemGoogleServices.__lastProductId))
+        pass
 
     @staticmethod
-    def __cbBillingClientDisconnected():
-        _Log("[Billing cb] billing client disconnected")
-        SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_NOT_CONNECTED
+    def __cbBillingRestorePurchasesSuccess(products):
+        _Log("[Billing cb] restore purchases successful: products={!r}".format(products))
+        pass
 
     @staticmethod
-    def __cbBillingClientSetupFinishedSuccess():
-        _Log("[Billing cb] billing client setup finished with status: SUCCESS")
-        SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_OK
-
-        # we should call query products only with PaymentProvider
-        if Mengine.getConfigBool("Monetization", "AutoQueryProducts", True) is True:
-            PaymentProvider.queryProducts()
-        else:
-            _Log("Auto query products disabled, do it manually in code")
+    def __cbBillingRestorePurchasesFailed():
+        _Log("[Billing cb] restore purchases failed", err=True, force=True)
+        pass
 
     @staticmethod
-    def __cbBillingClientSetupFinishedFail():
-        _Log("[Billing cb] billing client setup finished with status: FAIL", err=True)
-        SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_FAIL
-
-    @staticmethod
-    def __cbBillingClientSetupFinishedError(code, exception):
-        _Log("[Billing cb] billing client setup finished with status: ERROR code={!r} exception={!r}".format(code, exception), err=True)
-        SystemGoogleServices.__billing_client_status = BILLING_CLIENT_STATUS_FAIL
-
-    @staticmethod
-    def __cbBillingQueryPurchasesStatus(status):
-        _Log("[Billing cb] query purchases status: {}".format(status))
+    def __cbBillingRestorePurchasesError(code, exception):
+        #  error while query purchases
+        _Log("[Billing cb] restore purchases error: code={!r} exception={!r}".format(code, exception), err=True, force=True)
+        pass
 
     # --- Achievements --------------------------------------------------------------------------------------------
 
@@ -559,33 +518,36 @@ class SystemGoogleServices(System):
         # auth is not required
         _Log("[Achievements] try incrementAchievement {!r} for {} steps".format(achievement_id, steps), force=True)
         Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "incrementAchievement", achievement_id, steps)
+        pass
 
     @staticmethod
     def unlockAchievement(achievement_id):
         # auth is not required
         _Log("[Achievements] try unlockAchievement: {!r}".format(achievement_id), force=True)
         Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "unlockAchievement", achievement_id)
+        pass
 
     @staticmethod
     def showAchievements():
         # auth is not required
         _Log("[Achievements] try showAchievements...", force=True)
         Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "showAchievements")
+        pass
 
     @staticmethod
     def incrementEvent(event_id, value):
         # increment event
         _Log("[Achievements] try incrementEvent: {!r} by {}".format(event_id, value), force=True)
         Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "incrementEvent", event_id, value)
+        pass
 
     # utils
 
     @staticmethod
     def __checkAuthForAchievements(method, *args):
-        if SystemGoogleServices.isLoggedIn() is True:
-            return
         _Log("[Achievements] Not logged in to perform {!r} {}, save task...".format(method, args), err=True)
         SystemGoogleServices.__on_auth_achievements[method].append(args)
+        pass
 
     # callbacks
 
@@ -593,72 +555,85 @@ class SystemGoogleServices(System):
     def __cbAchievementIncSuccess(achievement_id, steps):
         # cb on incrementAchievement
         _Log("[Achievements cb] AchievementIncrement Success: {!r} steps: {}".format(achievement_id, steps))
+        pass
 
     @staticmethod
     def __cbAchievementIncError(achievement_id, steps, exception):
         # cb on incrementAchievement
         _Log("[Achievements cb] AchievementIncrement Error: {!r} steps: {} exception: {}".format(achievement_id, steps, exception), force=True, err=True)
+        pass
 
     @staticmethod
     def __cbAchievementUnlockSuccess(achievement_id):
         # cb on unlockAchievement
         _Log("[Achievements cb] AchievementUnlock Success: {!r}".format(achievement_id))
+        pass
 
     @staticmethod
     def __cbAchievementRevealSuccess(achievement_id):
         # cb on revealAchievement
         _Log("[Achievements cb] AchievementReveal Success: {!r}".format(achievement_id))
+        pass
 
     @staticmethod
     def __cbAchievementRevealError(achievement_id, exception):
         # cb on revealAchievement
         _Log("[Achievements cb] AchievementReveal Error: {!r} exception: {}".format(achievement_id, exception), force=True, err=True)
+        pass
 
     @staticmethod
     def __cbAchievementUnlockError(achievement_id, exception):
         # cb on unlockAchievement
         _Log("[Achievements cb] AchievementUnlock achivement: {!r} exception: {}".format(achievement_id, exception), force=True, err=True)
+        pass
 
     @staticmethod
     def __cbAchievementShowSuccess():
         # cb on showAchievements
         _Log("[Achievements cb] show achievement: Success")
+        pass
 
     @staticmethod
     def __cbAchievementShowError(error):
         # cb on showAchievements
         _Log("[Achievements cb] show achievement error: {}".format(error), force=True, err=True)
+        pass
 
     @staticmethod
     def __cbEventIncrementSuccess(eventId, value):
         # cb on incrementEvent
         _Log("[Achievements cb] EventIncrement Success: eventId={!r} value={}".format(eventId, value))
+        pass
 
     @staticmethod
     def __cbEventIncrementError(eventId, value, exception):
         # cb on incrementEvent
         _Log("[Achievements cb] EventIncrement Error: eventId={!r} value={} exception: {}".format(eventId, value, exception), force=True, err=True)
+        pass
 
     @staticmethod
     def __cbLeaderboardScoreSuccess(leaderboard_id, score):
         # cb on setLeaderboardScore
         _Log("[Achievements cb] LeaderboardScore Success: {!r} score: {}".format(leaderboard_id, score))
+        pass
 
     @staticmethod
     def __cbLeaderboardScoreError(leaderboard_id, score, exception):
         # cb on setLeaderboardScore
         _Log("[Achievements cb] LeaderboardScore Error: {!r} score: {} error: {}".format(leaderboard_id, score, exception), force=True, err=True)
+        pass
 
     # --- InAppReviews -------------------------------------------------------------------------------------------------
 
     @staticmethod
     def rateApp():
         # starts rate app process
+        _Log("[Reviews] rateApp...")
         if SystemGoogleServices.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is False:
             Trace.log("System", 0, "SystemGoogleServices try to rateApp, but plugin '{}' is not active".format(GOOGLE_IN_APP_REVIEWS_PLUGIN))
             return
         Mengine.androidMethod(GOOGLE_IN_APP_REVIEWS_PLUGIN, "launchTheInAppReview")
-        _Log("[Reviews] rateApp...")
+        pass
 
     # callbacks
 
@@ -666,22 +641,26 @@ class SystemGoogleServices(System):
     def __cbReviewsGettingReviewObject():
         # on initialize success
         _Log("[Reviews cb] GettingReviewObject")
+        pass
 
     @staticmethod
     def __cbReviewsRequestError(exception):
         # reviews was not requested
         _Log("[Reviews cb] RequestError {}".format(exception), force=True)
+        pass
 
     @staticmethod
     def __cbReviewsLaunchingSuccess():
         # reviews was launched
         Notification.notify(Notificator.onAppRated)
         _Log("[Reviews cb] LaunchingSuccess", force=True)
+        pass
 
     @staticmethod
     def __cbReviewsLaunchingError(exception):
         # reviews was not launched
         _Log("[Reviews cb] LaunchingError {}".format(exception), force=True)
+        pass
 
     # --- FirebaseCrashlytics ------------------------------------------------------------------------------------------
 
@@ -692,6 +671,7 @@ class SystemGoogleServices(System):
             return
         _Log("[FirebaseCrashlytics] testCrash...")
         Mengine.androidMethod(FIREBASE_CRASHLYTICS_PLUGIN, "testCrash")
+        pass
 
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 
@@ -735,13 +715,6 @@ class SystemGoogleServices(System):
             widgets.append(w_show_achievements)
 
             # login
-            def _login_status():
-                return "Current account id: {}".format(SystemGoogleServices.login_status)
-
-            w_login_status = Mengine.createDevToDebugWidgetText("login_status")
-            w_login_status.setText(_login_status)
-            widgets.append(w_login_status)
-
             w_login = Mengine.createDevToDebugWidgetButton("sign_in")
             w_login.setTitle("Sign IN <--")
             w_login.setClickEvent(self.signIn)
@@ -769,11 +742,6 @@ class SystemGoogleServices(System):
             w_connect_billing.setTitle("Connect billing client")
             w_connect_billing.setClickEvent(self.startBillingClient)
             widgets.append(w_connect_billing)
-
-            w_update_products = Mengine.createDevToDebugWidgetButton("query_products")
-            w_update_products.setTitle("Query products")
-            w_update_products.setClickEvent(PaymentProvider.queryProducts)
-            widgets.append(w_update_products)
 
             w_restore = Mengine.createDevToDebugWidgetButton("restore_products")
             w_restore.setTitle("Restore purchases")

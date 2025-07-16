@@ -8,14 +8,14 @@ class TaskPrintFormat(Task):
 
         self.Value = params.get("Value")
         self.Args = params.get("Args", ())
-        self.Kwds = params.get("Kwds", {})
+        self.Kwargs = params.get("Kwargs", {})
         pass
 
     def _onValidate(self):
         super(TaskPrintFormat, self)._onValidate()
 
-        if self.Kwds is None:
-            self.validateFailed("TaskPrintFormat Kwds is None")
+        if self.Kwargs is None:
+            self.validateFailed("TaskPrintFormat Kwargs is None")
             pass
 
         try:
@@ -28,7 +28,7 @@ class TaskPrintFormat(Task):
     def _onRun(self):
         m = str(self.Value).format(*self.Args)
 
-        center = self.Kwds.get("center", None)
+        center = self.Kwargs.get("center", None)
 
         if center is not None:
             m = m.center(*center)

@@ -70,8 +70,8 @@ class AndroidFacebook(BaseFacebook):
 
     # callbacks
 
-    def _cbLoginSuccess(self, access_token):
-        self.system.onLoginSuccess(access_token)
+    def _cbLoginSuccess(self):
+        self.system.onLoginSuccess()
 
     def _cbLoginCancel(self):
         self.system.onLoginCancel()

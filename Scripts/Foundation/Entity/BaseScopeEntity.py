@@ -4,6 +4,8 @@ from Foundation.TaskManager import TaskManager
 class BaseScopeEntity(BaseEntity):
     __metaclass__ = baseslots("tc")
 
+    ENTITY_SCOPE_REPEAT = False
+
     def __init__(self):
         super(BaseScopeEntity, self).__init__()
 
@@ -16,14 +18,14 @@ class BaseScopeEntity(BaseEntity):
             self.tc = None
             pass
 
-        self.tc = TaskManager.createTaskChain()
+        self.tc = TaskManager.createTaskChain(Repeat = self.ENTITY_SCOPE_REPEAT, Group = self.object.Group)
 
         with self.tc as source:
             self._onScopeActivate(source)
             pass
         pass
 
-    def _onScopeActivate(self, scope):
+    def _onScopeActivate(self, source):
         pass
 
     def _onDeactivate(self):

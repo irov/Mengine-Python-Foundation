@@ -8,7 +8,6 @@ class CheckBox(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-
         Type.addAction(Type, "Polygon", Update=CheckBox._restorePolygon)
         Type.addAction(Type, "State", Update=CheckBox._updateState)
         Type.addAction(Type, "BlockState", Update=CheckBox._updateState)
@@ -49,8 +48,9 @@ class CheckBox(BaseEntity):
             pass
 
         KeyTag = CheckBox.s_keys[self.KeyTag]
+
         if KeyTag == event.code:
-            self._mouseClick()
+            self._changeState()
             pass
 
         return False
@@ -77,22 +77,19 @@ class CheckBox(BaseEntity):
         super(CheckBox, self)._onActivate()
         pass
 
-    def _onMouseButtonEvent(self, touchId, x, y, button, pressure, isDown, isPressed):
-        if button != 0:
+    def _onMouseButtonEvent(self, context, event):
+        if event.button != 0:
             return False
-            pass
 
-        if isDown is True:
-            self._mouseClick()
+        if event.isDown is True:
+            self._changeState()
             pass
 
         return True
-        pass
 
-    def _mouseClick(self):
+    def _changeState(self):
         if self.BlockState is True:
             return False
-            pass
 
         state = self.object.getParam("State")
         new_state = not state

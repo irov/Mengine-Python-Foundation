@@ -23,8 +23,8 @@ class SystemApplovin(System):
         self.rewarded = AppLovinAdFactory.createAd("Rewarded")
         self.semaphoreAdServiceReady = Semaphore(False, "AdServiceReady")
 
-    @classmethod
-    def _onAvailable(cls, params):
+    @staticmethod
+    def _onAvailable(params):
         if _ANDROID:
             SystemApplovin.is_plugin_active = Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME)
         elif _IOS:
@@ -80,6 +80,7 @@ class SystemApplovin(System):
             ShowBanner=self.showBanner,
             HideBanner=self.hideBanner,
             GetBannerHeight=self.getBannerHeight,
+            GetBannerWidth=self.getBannerWidth,
             # interstitial:
             HasInterstitialAdvert=self.hasInterstitial,
             CanYouShowInterstitialAdvert=self.canYouShowInterstitial,
@@ -134,6 +135,13 @@ class SystemApplovin(System):
             return Mengine.appleAppLovinGetBannerHeight()
         elif _ANDROID:
             return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerHeight")
+        return None
+
+    def getBannerWidth(self):
+        if _IOS:
+            return Mengine.appleAppLovinGetBannerWidth()
+        elif _ANDROID:
+            return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerWidth")
         return None
 
     # callbacks

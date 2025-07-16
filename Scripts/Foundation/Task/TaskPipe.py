@@ -34,16 +34,9 @@ class TaskPipe(MixinTime, Task):
 
         self.Scheduler = params.get("Scheduler", None)
 
-        Pipe = params.get("Pipe", None)
-        Timing = params.get("Timing", None)
-        Event = params.get("Event", None)
-
-        Args = params.get("Args", ())
-        Kwds = params.get("Kwds", {})
-
-        self.Pipe = FunctorStore(Pipe, Args, Kwds) if Pipe is not None else None
-        self.Timing = FunctorStore(Timing, Args, Kwds) if Timing is not None else None
-        self.Event = FunctorStore(Event, Args, Kwds) if Event is not None else None
+        self.Pipe = Utils.make_functor(params, "Pipe")
+        self.Timing = Utils.make_functor(params, "Timing")
+        self.Event = Utils.make_functor(params, "Event")
         pass
 
     def _onRun(self):

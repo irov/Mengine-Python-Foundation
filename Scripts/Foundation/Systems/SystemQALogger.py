@@ -171,37 +171,37 @@ class SystemQALogger(System):
 
     # --- Logger utils -------------------------------------------------------------------------------------------------
 
-    @classmethod
-    def __createLogger(cls):
+    @staticmethod
+    def __createLogger():
         """ Creates logger file and starts logger instance """
-        if cls.__Logger is not None:
+        if SystemQALogger.__Logger is not None:
             return
-        if cls.onlyConsole() is True:
+        if SystemQALogger.onlyConsole() is True:
             return
         t = Mengine.getDatePathTimestamp()
         file_name = "QA_{}.log".format(t)
-        cls.__Logger = Mengine.makeFileLogger(file_name)
+        SystemQALogger.__Logger = Mengine.makeFileLogger(file_name)
 
-    @classmethod
-    def log(cls, msg, type_=None):
+    @staticmethod
+    def log(msg, type_=None):
         if _QUALITYASSURANCE is False:
             return
 
-        if cls.onlyConsole() is True:
+        if SystemQALogger.onlyConsole() is True:
             Trace.msg(":QA: {}".format(msg))
             return
 
-        if cls.__Logger is None:
+        if SystemQALogger.__Logger is None:
             if _DEVELOPMENT is True:
                 Trace.msg_err("SystemQALogger: can't save log (file not created), your msg: {!r}".format(msg))
             return
 
-        prefix = cls.s_msg_prefixes.get(type_, "")
+        prefix = SystemQALogger.s_msg_prefixes.get(type_, "")
 
-        cls.__Logger(prefix + msg)
-        if cls.shouldDuplicate() is True:
+        SystemQALogger.__Logger(prefix + msg)
+        if SystemQALogger.shouldDuplicate() is True:
             Trace.msg(":QA: {}".format(msg))
 
-    @classmethod
-    def notify(cls, msg):
-        cls.log(msg, "notify")
+    @staticmethod
+    def notify(msg):
+        SystemQALogger.log(msg, "notify")

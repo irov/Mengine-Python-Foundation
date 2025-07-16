@@ -21,6 +21,7 @@ class AdvertisementProvider(BaseProvider):
         "ShowConsentFlow",
         "IsConsentFlow",
         "GetBannerHeight",
+        "GetBannerWidth",
     ]
 
     @staticmethod
@@ -83,3 +84,7 @@ class AdvertisementProvider(BaseProvider):
     @staticmethod
     def getBannerHeight():
         return AdvertisementProvider._call("GetBannerHeight")
+
+    @staticmethod
+    def getBannerWidth():
+        return AdvertisementProvider._call("GetBannerWidth")

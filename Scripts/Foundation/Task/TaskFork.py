@@ -25,7 +25,7 @@ class TaskFork(MixinGroup, Task):
                 pass
 
             if Utils.is_valid_functor_args(self.Scope, 1) is False:
-                self.validateFailed("Scope %s is bad arguments or kwds" % (self.Scope))
+                self.validateFailed("Scope %s is bad arguments or kwargs" % (self.Scope))
                 pass
             pass
         pass

@@ -115,12 +115,12 @@ class Slider(BaseEntity):
         return
         pass
 
-    def _onMouseButtonEvent(self, touchId, x, y, button, pressure, isDown, isPressed):
-        if button != 0:
+    def _onMouseButtonEvent(self, context, event):
+        if event.button != 0:
             return False
             pass
 
-        if isDown is True:
+        if event.isDown is True:
             Notification.notify(Notificator.onSliderDown, self.object)
 
             Mengine.enableGlobalHandler(self.MouseButtonHandlerID, True)
@@ -128,9 +128,7 @@ class Slider(BaseEntity):
 
             sliderPos = self.object.getPosition()
 
-            arrowPos = Mengine.getCursorPosition()
-
-            self.offset = (arrowPos.x - sliderPos[0], arrowPos.y - sliderPos[1])
+            self.offset = (event.x - sliderPos[0], event.y - sliderPos[1])
             pass
 
         return True

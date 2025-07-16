@@ -72,12 +72,10 @@ class AppleFacebook(BaseFacebook):
     def _cbLoginSuccess(self, params):
         Trace.msg_dev("[Facebook cb] login success: {!r}".format(params))
 
-        access_token = params.get("accessToken")
-        auth_token = params.get("authenticationToken")
         fb_id = params.get("profile.userID")
         picture_url = params.get("profile.imageURL")
 
-        self.system.onLoginSuccess(access_token)
+        self.system.onLoginSuccess()
 
     def _cbLoginCancel(self):
         Trace.msg_dev("[Facebook cb] login cancel")

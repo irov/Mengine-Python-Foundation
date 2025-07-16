@@ -1,15 +1,15 @@
 from Foundation.Manager import Manager
 
 class SettingsManager(Manager):
-    @classmethod
-    def _onInitialize(cls, *args):
+    @staticmethod
+    def _onInitialize(*args):
         SettingsManager.__updateSettings()
 
-        cls.addObserver(Notificator.onSettingChange, SettingsManager.__onSettingChange)
+        SettingsManager.addObserver(Notificator.onSettingChange, SettingsManager.__onSettingChange)
         pass
 
-    @classmethod
-    def _onFinalize(cls):
+    @staticmethod
+    def _onFinalize():
         Mengine.removeGlobalModule("SETTINGS")
         pass
 

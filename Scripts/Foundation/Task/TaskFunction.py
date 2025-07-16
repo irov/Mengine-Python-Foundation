@@ -19,7 +19,7 @@ class TaskFunction(Task):
             pass
 
         if Utils.is_valid_functor_args(self.Fn, 0) is False:
-            self.validateFailed("Fn %s is bad arguments or kwds" % (self.Fn))
+            self.validateFailed("Fn %s is bad arguments or kwargs" % (self.Fn))
             pass
         pass
 

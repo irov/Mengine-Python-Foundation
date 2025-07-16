@@ -12,12 +12,12 @@ class CurrencyManager(object):
         "ID_CURRENCY_YUAN": ["CNY", "JPY"],
     }
 
-    @classmethod
-    def addCurrencyCode(cls, currency_code, text_id):
-        cls.CURRENCY_TEXTS_IDS.setdefault(text_id, [])
-        if currency_code in cls.CURRENCY_TEXTS_IDS[text_id]:
+    @staticmethod
+    def addCurrencyCode(currency_code, text_id):
+        CurrencyManager.CURRENCY_TEXTS_IDS.setdefault(text_id, [])
+        if currency_code in CurrencyManager.CURRENCY_TEXTS_IDS[text_id]:
             return
-        cls.CURRENCY_TEXTS_IDS[text_id].append(currency_code)
+        CurrencyManager.CURRENCY_TEXTS_IDS[text_id].append(currency_code)
 
     @staticmethod
     def setCurrentCurrencyCode(currency_code):

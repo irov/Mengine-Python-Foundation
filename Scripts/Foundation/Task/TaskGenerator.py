@@ -1,4 +1,5 @@
 from Foundation.PolicyManager import PolicyManager
+from Foundation.Task.Capture import Capture as _Capture
 from Foundation.Task.TaskBase import TaskBase
 from Foundation.TaskManager import TaskManager
 
@@ -11,7 +12,6 @@ class TaskGeneratorException(Exception):
 
     def __str__(self):
         return str(self.value)
-        pass
     pass
 
 class TaskSourceTg(object):
@@ -23,7 +23,6 @@ class TaskSourceTg(object):
 
     def __enter__(self):
         return self.tg
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
@@ -53,7 +52,6 @@ class TaskSourceTgIter(object):
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             self.tg.end()
@@ -72,12 +70,10 @@ class TaskSourceTgs(object):
 
     def __enter__(self):
         return self.tgs
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             for tg in self.tgs:
@@ -86,7 +82,6 @@ class TaskSourceTgs(object):
             pass
 
         return True
-        pass
 
     def __iter__(self):
         for tg in self.tgs:
@@ -104,7 +99,6 @@ class TaskSourceTgsList(object):
 
     def __enter__(self):
         return self.tgs
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
@@ -118,7 +112,6 @@ class TaskSourceTgsList(object):
             pass
 
         return True
-        pass
 
     def __iter__(self):
         for o, tg in self.tgs:
@@ -136,12 +129,10 @@ class TaskSourceTgw(object):
 
     def __enter__(self):
         return self.tgw
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             for tg in self.tgw.itervalues():
@@ -150,7 +141,6 @@ class TaskSourceTgw(object):
             pass
 
         return True
-        pass
 
     def __iter__(self):
         for tg in self.tgw.itervalues():
@@ -331,7 +321,6 @@ class TaskSource(object):
 
     def getSource(self):
         return self.source
-        pass
 
     def setSource(self, source):
         self.source = source
@@ -351,15 +340,12 @@ class TaskSource(object):
 
     def getDocument(self):
         return self.doc
-        pass
 
     def isSkiped(self):
         return self.skiped
-        pass
 
     def getSize(self):
         return len(self.source)
-        pass
 
     def __addDesc(self, typeName, params):
         self.checkComplete()
@@ -389,46 +375,65 @@ class TaskSource(object):
         self.__addDesc(type, params)
         pass
 
-    def addNotify(self, ID, *Args, **Kwds):
-        self.__addDesc("TaskNotify", dict(ID=ID, Args=Args, Kwds=Kwds))
+    def addCapture(self, Capture, ID, *Args, **Kwargs):
+        self.__addDesc("TaskSetCapture", dict(Capture=Capture, Type=ID, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addListener(self, ID, Filter=None, *Args, **Kwds):
-        self.__addDesc("TaskListener", dict(ID=ID, Filter=Filter, Args=Args, Kwds=Kwds))
+    def addNotify(self, ID, *Args, **Kwargs):
+        self.__addDesc("TaskNotify", dict(ID=ID, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addScopeListener(self, ID, Scope, *Args, **Kwds):
-        self.__addDesc("TaskScopeListener", dict(ID=ID, Scope=Scope, Args=Args, Kwds=Kwds))
+    def addListener(self, ID, Filter=None, Capture=None, *Args, **Kwargs):
+        self.__addDesc("TaskListener", dict(ID=ID, Filter=Filter, Capture=Capture, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addEvent(self, Event, Filter=None, *Args, **Kwds):
-        self.__addDesc("TaskEvent", dict(Event=Event, Filter=Filter, Args=Args, Kwds=Kwds))
+    def addScopeListener(self, ID, Scope, Capture=None, *Args, **Kwargs):
+        self.__addDesc("TaskScopeListener", dict(ID=ID, Scope=Scope, Capture=Capture, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addScopeEvent(self, Event, Scope, *Args, **Kwds):
-        self.__addDesc("TaskScopeEvent", dict(Event=Event, Scope=Scope, Args=Args, Kwds=Kwds))
+    def addWaitListener(self, Time, ID, Filter=None, Capture=None, Scheduler=None, *Args, **Kwargs):
+        def __scope(source_wait, source_listener):
+            source_wait.addDelay(Time, Scheduler=Scheduler)
+            source_listener.addListener(ID, Filter=Filter, Capture=Capture, *Args, **Kwargs)
+
+        return self.addRaceScope(2, __scope)
+
+    def addEvent(self, Event, Filter=None, *Args, **Kwargs):
+        self.__addDesc("TaskEvent", dict(Event=Event, Filter=Filter, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addParam(self, object, param, value):
-        self.__addDesc("TaskSetParam", dict(Object=object, Param=param, Value=value))
+    def addScopeEvent(self, Event, Scope, *Args, **Kwargs):
+        self.__addDesc("TaskScopeEvent", dict(Event=Event, Scope=Scope, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addPrint(self, msg, *args):
+    def addParam(self, Object, Param, Value):
+        self.__addDesc("TaskSetParam", dict(Object=Object, Param=Param, Value=Value))
+        pass
+
+    def addInteractive(self, Object, Value):
+        self.__addDesc("TaskInteractive", dict(Object=Object, Value=Value))
+        pass
+
+    def addPrint(self, Msg, *Args):
         if _DEVELOPMENT is True:
-            self.__addDesc("TaskPrint", dict(Value=msg, Args=args))
+            self.__addDesc("TaskPrint", dict(Value=Msg, Args=Args))
         pass
 
-    def addPrintFormat(self, msg, *args, **kwds):
+    def addPrintFormat(self, Msg, *Args, **Kwargs):
         if _DEVELOPMENT is True:
-            self.__addDesc("TaskPrintFormat", dict(Value=msg, Args=args, Kwds=kwds))
+            self.__addDesc("TaskPrintFormat", dict(Value=Msg, Args=Args, Kwargs=Kwargs))
         pass
 
     def addDelay(self, Time, Scheduler=None):
         self.__addDesc("TaskDelay", dict(Time=Time, Scheduler=Scheduler))
         pass
 
-    def addPlay(self, Object, **Kwds):
-        self.__addDesc("TaskObjectPlay", dict(Object=Object, **Kwds))
+    def addPlay(self, Object, **Kwargs):
+        self.__addDesc("TaskObjectPlay", dict(Object=Object, **Kwargs))
+        pass
+
+    def addInterrupt(self, Object, **Kwargs):
+        self.__addDesc("TaskObjectInterrupt", dict(Object=Object, **Kwargs))
         pass
 
     def addEnable(self, object, check=True):
@@ -459,16 +464,16 @@ class TaskSource(object):
         self.__addDesc("TaskDummy", dict(**kwrds))
         pass
 
-    def addFunction(self, fn, *args, **kwds):
-        self.__addDesc("TaskFunction", dict(Fn=fn, Args=args, Kwds=kwds))
+    def addFunction(self, Fn, *Args, **Kwargs):
+        self.__addDesc("TaskFunction", dict(Fn=Fn, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addCallback(self, cb, *args, **kwds):
-        self.__addDesc("TaskCallback", dict(Cb=cb, Args=args, Kwds=kwds))
+    def addCallback(self, Fn, *args, **Kwargs):
+        self.__addDesc("TaskCallback", dict(Cb=Fn, Args=args, Kwargs=Kwargs))
         pass
 
-    def addScope(self, scope, *args, **kwds):
-        self.__addDesc("TaskScope", dict(Scope=scope, Args=args, Kwds=kwds))
+    def addScope(self, Scope, *Args, **Kwargs):
+        self.__addDesc("TaskScope", dict(Scope=Scope, Args=Args, Kwargs=Kwargs))
         pass
 
     def addFork(self):
@@ -485,10 +490,9 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTg(tg)
-        pass
 
-    def addForkScope(self, scope=None, *args, **kwds):
-        self.__addDesc("TaskFork", dict(Scope=scope, Args=args, Kwds=kwds))
+    def addForkScope(self, Scope=None, *Args, **Kwargs):
+        self.__addDesc("TaskFork", dict(Scope=Scope, Args=Args, Kwargs=Kwargs))
         pass
 
     def addSemaphore(self, Semaphore, From=None, Less=None, To=None, Change=False):
@@ -497,15 +501,19 @@ class TaskSource(object):
 
     def increfSemaphore(self, Semaphore, Increment=None):
         self.__addDesc('TaskSemaphoreIncrement', dict(Semaphore=Semaphore, Increment=Increment))
+        pass
 
     def lockSemaphore(self, Semaphore):
         self.__addDesc('TaskSemaphoreIncrement', dict(Semaphore=Semaphore, Increment=1))
+        pass
 
     def unlockSemaphore(self, Semaphore):
         self.__addDesc('TaskSemaphoreIncrement', dict(Semaphore=Semaphore, Increment=-1))
+        pass
 
     def trySemaphore(self, Semaphore):
         self.__addDesc("TaskSemaphore", dict(Semaphore=Semaphore, From=0))
+        pass
 
     def addRefcount(self, Refcount, Increase=None):
         self.__addDesc("TaskRefcount", dict(Refcount=Refcount, Increase=Increase))
@@ -536,13 +544,11 @@ class TaskSource(object):
         self.source.append(desc)
 
         return tg_guard_source
-        pass
 
     def addGuardTask(self, enable, guard, *args):
         source = self.makeGuardSource(enable, guard, args)
 
         return TaskSourceTg(source)
-        pass
 
     def addSwitchTask(self, count, cb, *args, **kwargs):
         self.checkComplete()
@@ -566,10 +572,9 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
-    def addScopeSwitch(self, scopes, cb, *args, **kwds):
-        self.__addDesc("TaskScopeSwitch", dict(Scopes=scopes, Cb=cb, Args=args, Kwds=kwds))
+    def addScopeSwitch(self, Scopes, Cb, *Args, **Kwargs):
+        self.__addDesc("TaskScopeSwitch", dict(Scopes=Scopes, Cb=Cb, Args=Args, Kwargs=Kwargs))
         pass
 
     def addDictTask(self, Dict, cb, *args, **kwargs):
@@ -594,7 +599,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgw(tgw)
-        pass
 
     def addTryTask(self, typeName, **params):
         self.checkComplete()
@@ -622,7 +626,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addIfTask(self, fn, *args):
         self.checkComplete()
@@ -644,7 +647,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addIfSemaphore(self, semaphore, value):
         self.checkComplete()
@@ -666,7 +668,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addForTask(self, count):
         self.checkComplete()
@@ -684,7 +685,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgIter(it, tg)
-        pass
 
     def addRepeatTask(self):
         self.checkComplete()
@@ -706,9 +706,8 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
-    def addRepeatTaskScope(self, scope, *args, **kwds):
+    def addRepeatTaskScope(self, Scope, *Args, **Kwargs):
         self.checkComplete()
 
         desc = TaskRepeatDesc([], [], True)
@@ -719,14 +718,13 @@ class TaskSource(object):
 
         repeat_tg = TaskSource(desc.repeat, self.skiped)
 
-        repeat_tg.addScope(scope, *args, **kwds)
+        repeat_tg.addScope(Scope, *Args, **Kwargs)
 
         until_tg = TaskSource(desc.until, self.skiped)
 
         self.source.append(desc)
 
         return until_tg
-        pass
 
     def addWhileTask(self):
         self.checkComplete()
@@ -742,7 +740,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTg(tg)
-        pass
 
     def addParallelTask(self, count):
         self.checkComplete()
@@ -766,7 +763,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addParallelTaskList(self, objects):
         self.checkComplete()
@@ -790,31 +786,9 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgsList(tgs)
-        pass
 
     def addParallelTaskZip(self, *objects):
-        self.checkComplete()
-
-        desc = TaskParallelDesc([])
-
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
-
-        tgs = []
-
-        for obj in list(zip(*objects)):
-            source = []
-            desc.parallel.append(source)
-
-            tg = TaskSource(source, self.skiped)
-            tgs.append((obj, tg))
-            pass
-
-        self.source.append(desc)
-
-        return TaskSourceTgsList(tgs)
-        pass
+        return self.addParallelTaskList(list(zip(*objects)))
 
     def addRaceTask(self, count, NoSkip=False, RaceSkip=False):
         self.checkComplete()
@@ -838,7 +812,6 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgs(tgs)
-        pass
 
     def addRaceTaskList(self, objects, NoSkip=False, RaceSkip=False):
         self.checkComplete()
@@ -862,6 +835,31 @@ class TaskSource(object):
         self.source.append(desc)
 
         return TaskSourceTgsList(tgs)
+
+    def addRaceTaskZip(self, *Objects, **Kwargs):
+        return self.addRaceTaskList(list(zip(*Objects)), **Kwargs)
+
+    def addRaceScope(self, count, scope, NoSkip=False, RaceSkip=False):
+        winner = _Capture(None, -1)
+        with self.addRaceTask(count, NoSkip=NoSkip, RaceSkip=RaceSkip) as tgs:
+            scope(*tgs)
+            for index, tg in enumerate(tgs):
+                tg.addCapture(winner, None, index)
+                pass
+
+        def __states(isSkip, cb):
+            value, = winner.getArgs()
+            if value == -1:
+                raise TaskGeneratorException("invalid generate source [addRaceScope] winner value %s", value)
+            cb(isSkip, value)
+
+        return self.addSwitchTask(count, __states)
+
+    def addNotifyRequest(self, ID, Count, *Args, **Kwargs):
+        with self.addParallelTask(2) as (source_request, source_notify):
+            source_notify.addNotify(ID, *Args, **Kwargs)
+            return source_request.addRaceTask(Count)
+            pass
         pass
 
     def addShiftCollect(self, index, shiftCollect):
@@ -1180,7 +1178,7 @@ class TaskGenerator(object):
             return
             pass
 
-        task = self.chain.createTaskBase("TaskSwitch", self.group, Caller=element.caller_info, Cb=element.cb, CbArgs=element.args, CbKwds=element.kwargs, Tasks=tasks, Lasts=lasts)
+        task = self.chain.createTaskBase("TaskSwitch", self.group, Caller=element.caller_info, Cb=element.cb, CbArgs=element.args, CbKwargs=element.kwargs, Tasks=tasks, Lasts=lasts)
 
         if task is None:
             Trace.log("Task", 0, "TaskGenerator._addSwitch invalid create task TaskSwitch")

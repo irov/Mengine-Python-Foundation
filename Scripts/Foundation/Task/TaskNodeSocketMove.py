@@ -4,7 +4,7 @@ class TaskNodeSocketMove(TaskNodeSocketBase):
     def _onParams(self, params):
         super(TaskNodeSocketMove, self)._onParams(params)
 
-        self.Tracker = Utils.make_functor(params, "Tracker", "TrackerArgs", "TrackerKwds")
+        self.Tracker = Utils.make_functor(params, "Tracker", "TrackerArgs", "TrackerKwargs")
         pass
 
     def _onValidate(self):
@@ -18,26 +18,22 @@ class TaskNodeSocketMove(TaskNodeSocketBase):
     def _onRun(self):
         super(TaskNodeSocketMove, self)._onRun()
 
-        def __onHandleMouseMove(touchId, x, y, dx, dy, pressure):
-            Handle = self.Socket.getDefaultHandle()
+        def __onHandleMouseMove(context, event):
+            handle = self.Socket.getDefaultHandle()
 
-            if self._onBaseFilter(touchId, x, y, dx, dy) is False:
-                return Handle
-                pass
+            if self._onBaseFilter(event.touchId, event.x, event.y, event.dx, event.dy) is False:
+                return handle
 
-            if self.Tracker(touchId, x, y, dx, dy) is False:
-                return Handle
-                pass
+            if self.Tracker(event.touchId, event.x, event.y, event.dx, event.dy) is False:
+                return handle
 
             self.complete()
 
-            return Handle
-            pass
+            return handle
 
         self.Socket.setEventListener(onHandleMouseMove=__onHandleMouseMove)
 
         return False
-        pass
 
     def _onFinally(self):
         super(TaskNodeSocketMove, self)._onFinally()

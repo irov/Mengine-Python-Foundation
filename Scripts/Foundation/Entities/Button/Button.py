@@ -86,30 +86,24 @@ class Button(Interaction):
         # self.setEventListener(onGlobalHandleMouseButtonEvent = None)
         pass
 
-    def _keyEvent(self, x, y, key, isDown, isRepeating):
+    def _keyEvent(self, event):
         if self.KeyTag is None:
             return self.BlockKey
-            pass
 
-        if Mengine.isExclusiveKeyDown(key) is False:
+        if Mengine.isExclusiveKeyDown(event.code) is False:
             return self.BlockKey
-            pass
 
         if isDown is False:
             return self.BlockKey
-            pass
 
         if self.BlockState is True:
             return self.BlockKey
-            pass
 
         if self.BlockKeys is True:
             return self.BlockKey
-            pass
 
         if self.object.getEnable() is False:
             return self.BlockKey
-            pass
 
         KeyTag = Button.s_keys[self.KeyTag]
         if KeyTag == key:
@@ -117,7 +111,6 @@ class Button(Interaction):
             pass
 
         return self.BlockKey
-        pass
 
     def resetSpritesPosition(self):
         sprites = self.getSprites()
@@ -212,7 +205,7 @@ class Button(Interaction):
         self.MouseButtonHandlerID = None
         pass
 
-    def _mouseClickBegin(self):
+    def _mouseClickBegin(self, x, y):
         if self.BlockState is True:
             return
             pass
@@ -220,7 +213,7 @@ class Button(Interaction):
         Notification.notify(Notificator.onButtonClickBegin, self.object)
         pass
 
-    def _mouseClick(self):
+    def _mouseClick(self, x, y):
         if self.BlockState is True:
             return
             pass
@@ -229,12 +222,12 @@ class Button(Interaction):
         Notification.notify(Notificator.onButtonClick, self.object)
         pass
 
-    def _mouseClickEnd(self):
+    def _mouseClickEnd(self, x, y):
         self.__wasClicked = True
         self.setState("onDown")
         pass
 
-    def _mouseClickEndUp(self):
+    def _mouseClickEndUp(self, x, y):
         if self.isState("onDown") is True or self.wasClicked():
             Notification.notify(Notificator.onButtonClickEndUp, self.object)
             self.setState("onUp")
@@ -256,7 +249,7 @@ class Button(Interaction):
         Notification.notify(Notificator.onButtonMouseLeave, self.object)
         pass
 
-    def _mouseEnter(self):
+    def _mouseEnter(self, x, y):
         if self.BlockState is True:
             return
 

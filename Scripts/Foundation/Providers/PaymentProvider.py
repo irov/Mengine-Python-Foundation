@@ -6,9 +6,9 @@ class PaymentProvider(BaseProvider):
     s_allowed_methods = [
         "pay",
         "restorePurchases",
-        "queryProducts",
         "canUserMakePurchases",
         "completeOrder",
+        "isOwnedInAppProduct"
     ]
 
     @staticmethod
@@ -30,24 +30,6 @@ class PaymentProvider(BaseProvider):
         return PaymentProvider._call("restorePurchases")
 
     @staticmethod
-    def queryProducts():
-        """ query products from provider
-            - onProductsUpdate dict: when we got products from provider
-            - onProductsUpdateDone: when update complete """
-        products_id = ProductsProvider.getQueryProductIds()
-        if products_id is None:
-            Trace.log("Provider", 0, "ProductsProvider.getQueryProductIds return None - queryProducts fail")
-            return
-        if len(products_id) == 0:
-            Trace.log("Provider", 0, "ProductsProvider.queryProducts got empty products_id list!")
-            return
-        return PaymentProvider._call("queryProducts", products_id)
-
-    @staticmethod
-    def _queryProductsNotFoundCb():
-        Notification.notify(Notificator.onProductsUpdateDone)
-
-    @staticmethod
     def canUserMakePurchases():
         return bool(PaymentProvider._call("canUserMakePurchases"))
 
@@ -59,6 +41,11 @@ class PaymentProvider(BaseProvider):
     def completeOrder(order_id):
         return bool(PaymentProvider._call("completeOrder", order_id))
 
+    @staticmethod
+    def isOwnedInAppProduct(product_id):
+        """ check if product is owned by user """
+        return bool(PaymentProvider._call("isOwnedInAppProduct", product_id))
+
 
 class DummyPayment(object):
 
@@ -67,8 +54,9 @@ class DummyPayment(object):
         PaymentProvider.setProvider("Dummy", dict(
             pay=DummyPayment.pay,
             restorePurchases=DummyPayment.restorePurchases,
-            queryProducts=DummyPayment.queryProducts,
-            canUserMakePurchases=DummyPayment.canUserMakePurchases
+            canUserMakePurchases=DummyPayment.canUserMakePurchases,
+            completeOrder=DummyPayment.completeOrder,
+            isOwnedInAppProduct=DummyPayment.isOwnedInAppProduct,
         ))
 
     @staticmethod
@@ -102,11 +90,6 @@ class DummyPayment(object):
         Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod
-    def queryProducts(product_ids):
-        Trace.msg("DUMMY queryProducts {} - no actions, products are the same".format(product_ids))
-        Notification.notify(Notificator.onProductsUpdateDone)
-
-    @staticmethod
     def canUserMakePurchases():
         Trace.msg("DUMMY user CAN make purchases")
         return True
@@ -115,5 +98,10 @@ class DummyPayment(object):
     def completeOrder(order_id):
         Trace.msg("DUMMY completeOrder {!r}".format(order_id))
         return True
+
+    @staticmethod
+    def isOwnedInAppProduct(product_id):
+        Trace.msg("DUMMY isOwnedInAppProduct {!r} - always False".format(product_id))
+        return False
 
 

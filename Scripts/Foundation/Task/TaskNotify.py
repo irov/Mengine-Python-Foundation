@@ -10,7 +10,7 @@ class TaskNotify(Task):
 
         self.ID = params.get("ID")
         self.Args = params.get("Args", ())
-        self.Kwds = params.get("Kwds", {})
+        self.Kwargs = params.get("Kwargs", {})
         pass
 
     def _onInitialize(self):
@@ -24,7 +24,7 @@ class TaskNotify(Task):
         pass
 
     def _onRun(self):
-        Notification.notify(self.ID, *self.Args, **self.Kwds)
+        Notification.notify(self.ID, *self.Args, **self.Kwargs)
 
         return True
         pass

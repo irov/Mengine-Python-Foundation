@@ -80,6 +80,8 @@ def onInitialize():
         , "TaskScopeListener"
         , "TaskDebugBreak"
 
+        , "TaskSetCapture"
+
         , "TaskDelay"
         , "TaskPipe"
         , "TaskWait"
@@ -202,6 +204,7 @@ def onInitialize():
         , "TaskObjectAnimatableInterrupt"
 
         , "TaskObjectPlay"
+        , "TaskObjectInterrupt"
 
         , "TaskMovieSlotAddChild"
         , "TaskMovieSlotAddObject"
@@ -734,6 +737,10 @@ def onInitialize():
         , "onPaySuccess"
         , "onPayFailed"
         , "onPayComplete"
+        , "onPayLaunchFlowSuccess"
+        , "onPayLaunchFlowFailed"
+        , "onPayLaunchFlowError"
+        , "onPayPending"
         , "onProductsUpdate"
         , "onProductsUpdateDone"
         , "onDelayPurchased"

@@ -12,33 +12,28 @@ class TaskNodeSocketClick(TaskNodeSocketBase):
     def _onRun(self):
         super(TaskNodeSocketClick, self)._onRun()
 
-        def __onHandleMouseButtonEvent(touchId, x, y, button, pressure, isDown, isPressed):
+        def __onHandleMouseButtonEvent(context, event):
             Handle = self.Socket.getDefaultHandle()
 
-            if self.Button != button:
+            if self.Button != event.button:
                 return Handle
-                pass
 
-            if self.isDown is not isDown:
+            if self.isDown is not event.isDown:
                 return Handle
-                pass
 
             if self.isPressed is not None:
-                if self.isDown is False and self.isPressed is not isPressed:
+                if self.isDown is False and self.isPressed is not event.isPressed:
                     return Handle
-                    pass
                 pass
 
-            if self._onBaseFilter(touchId, x, y, button, isDown, isPressed) is False:
+            if self._onBaseFilter(event.touchId, event.x, event.y, event.button, event.isDown, event.isPressed) is False:
                 return Handle
-                pass
 
-            Notification.notify(Notificator.onNodeSocketClickSuccess, self.Socket, touchId, x, y, button, isDown, isPressed)
+            Notification.notify(Notificator.onNodeSocketClickSuccess, self.Socket, event.touchId, event.x, event.y, event.button, event.isDown, event.isPressed)
 
             self.complete()
 
             return Handle
-            pass
 
         self.Socket.setEventListener(onHandleMouseButtonEvent=__onHandleMouseButtonEvent)
 

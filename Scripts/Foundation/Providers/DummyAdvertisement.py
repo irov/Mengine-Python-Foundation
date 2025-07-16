@@ -1,9 +1,11 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
-
 from Foundation.TaskManager import TaskManager
 
 class DummyAdvertisement(object):
     """ Dummy Provider """
+    _banner_dp_height = 50.0
+    _banner_dp_width = 320.0
+    _scale_factor = None
 
     @staticmethod
     def showBanner():
@@ -25,10 +27,21 @@ class DummyAdvertisement(object):
         return True
 
     @staticmethod
-    def getBannerHeight():
-        height = 50.0
+    def _getBannerScale():
+        if DummyAdvertisement._scale_factor is None:
+            viewport = Mengine.getGameViewport()
+            game_width = viewport.end.x - viewport.begin.x
+            DummyAdvertisement._scale_factor = game_width / DummyAdvertisement._banner_dp_width
 
-        return height
+        return DummyAdvertisement._scale_factor
+
+    @staticmethod
+    def getBannerHeight():
+        return DummyAdvertisement._banner_dp_height * DummyAdvertisement._getBannerScale()
+
+    @staticmethod
+    def getBannerWidth():
+        return DummyAdvertisement._banner_dp_width * DummyAdvertisement._getBannerScale()
 
     @staticmethod
     def hasInterstitialAdvert():
@@ -141,6 +154,8 @@ class DummyAdvertisement(object):
             return DummyAdvertisement.hideBanner()
         def _GetBannerHeight():
             return DummyAdvertisement.getBannerHeight()
+        def _GetBannerWidth():
+            return DummyAdvertisement.getBannerWidth()
         def _ShowConsentFlow():
             return DummyAdvertisement.showConsentFlow()
         def _IsConsentFlow():
@@ -151,6 +166,7 @@ class DummyAdvertisement(object):
             ShowBanner=_ShowBanner,
             HideBanner=_HideBanner,
             GetBannerHeight=_GetBannerHeight,
+            GetBannerWidth=_GetBannerWidth,
             # interstitial:
             HasInterstitialAdvert=_HasInterstitialAdvert,
             CanYouShowInterstitialAdvert=_CanYouShowInterstitialAdvert,
