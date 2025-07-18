@@ -54,6 +54,7 @@ class Main(object):
         for slot in sceneSlots:
             layer = self.node.createChild(slot.type)
             layer.setSize((slot.width, slot.height))
+            layer.setLocalPosition((slot.x, slot.y))
             layer.setName(slot.name)
             layer.enable()
 

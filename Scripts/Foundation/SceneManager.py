@@ -239,11 +239,13 @@ class SceneManager(object):
         pass
 
     class SceneSlot(object):
-        __slots__ = "name", "type", "width", "height", "main"
+        __slots__ = "name", "type", "x", "y", "width", "height", "main"
 
-        def __init__(self, name, type, width, height, main):
+        def __init__(self, name, type, x, y, width, height, main):
             self.name = name
             self.type = type
+            self.x = x
+            self.y = y
             self.width = width
             self.height = height
             self.main = main
@@ -358,12 +360,13 @@ class SceneManager(object):
 
         if records is None:
             return False
-            pass
 
         slots = []
         for record in records:
             Name = record.get("Name")
             Type = record.get("Type")
+            X = record.get("X", 0.0)
+            Y = record.get("Y", 0.0)
             Width = record.get("Width")
             Height = record.get("Height")
             Main = bool(record.get("Main"))
@@ -371,16 +374,13 @@ class SceneManager(object):
             if Width is None or Height is None:
                 Trace.log("SceneManager", 0, "SceneManager.loadSceneSlot: scene %s invalid size %s:%s" % (Name, Width, Height))
                 return False
-                pass
 
-            slot = SceneManager.SceneSlot(Name, Type, Width, Height, Main)
+            slot = SceneManager.SceneSlot(Name, Type, X, Y, Width, Height, Main)
             slots.append(slot)
-            pass
 
         SceneManager.s_slots[name] = slots
 
         return True
-        pass
 
     @staticmethod
     def loadSceneSlots(module, param):
