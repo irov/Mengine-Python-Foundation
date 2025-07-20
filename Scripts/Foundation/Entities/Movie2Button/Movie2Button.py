@@ -135,20 +135,16 @@ class Movie2Button(BaseEntity):
     def getCompositionBounds(self):
         current_movie = self.getCurrentMovie()
 
-        if not current_movie:
-            Trace.log("Entity", 0, "Movie2Button.getCompositionBounds: {} has no state {} "
-                                   "in self.Movies".format(self.getName(), self.state))
-            return None
+        if current_movie is None:
+            current_movie = self.getStateMovie('Idle')
 
         return current_movie.getCompositionBounds()
 
     def hasCompositionBounds(self):
         current_movie = self.getCurrentMovie()
 
-        if not current_movie:
-            Trace.log("Entity", 0, "Movie2Button.hasCompositionBounds: {} has no state {} "
-                                   "in self.Movies".format(self.getName(), self.state))
-            return None
+        if current_movie is None:
+            current_movie = self.getStateMovie('Idle')
 
         return current_movie.hasCompositionBounds()
 
@@ -175,13 +171,15 @@ class Movie2Button(BaseEntity):
         return Movie
 
     def getCurrentMovieSocketCenter(self):
-        movie = self.getCurrentMovie()
+        current_movie = self.getCurrentMovie()
 
-        if movie is not None:
-            socket = movie.getSocket('socket')
-            center_position = socket.getWorldPolygonCenter()
+        if current_movie is None:
+            current_movie = self.getStateMovie('Idle')
 
-            return center_position
+        socket = current_movie.getSocket('socket')
+        center_position = socket.getWorldPolygonCenter()
+
+        return center_position
 
     def _onInitialize(self, obj):
         super(Movie2Button, self)._onInitialize(obj)
