@@ -241,8 +241,6 @@ class SystemAppleServices(System):
             "onPaymentQueueUpdatedTransactionFailed": SystemAppleServices._cbPaymentFailed,
             "onPaymentQueueUpdatedTransactionRestored": SystemAppleServices._cbPaymentRestored,
             "onPaymentQueueUpdatedTransactionDeferred": SystemAppleServices._cbPaymentDeferred,
-            "onPaymentQueueShouldShowPriceConsent": SystemAppleServices._cbPaymentQueueShouldShowPriceConsent,
-            "onPaymentQueueShouldContinueTransaction": SystemAppleServices._cbPaymentQueueShouldContinueTransaction,
         })
         PaymentProvider.setProvider("Apple", dict(
             pay=SystemAppleServices.pay,
@@ -397,25 +395,6 @@ class SystemAppleServices(System):
         """ (CALLBACK onPaymentQueueUpdatedTransactionDeferred) something went wrong during purchase """
         product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment Deferred {}".format(product_id))
-
-    @staticmethod
-    def _cbPaymentQueueShouldShowPriceConsent(transaction):
-        """
-            (CALLBACK onPaymentQueueShouldShowPriceConsent)
-            Sent if there is a pending price consent confirmation from the App Store for the current user.
-        Return YES to immediately show the price consent UI.
-        Return NO if you intend to show it at a later time. Defaults to YES.
-            This may be called at any time that you have transaction observers on the payment queue,
-        so make sure to set the delegate before adding any transaction observers
-        if you intend to implement this method.
-        """
-        _Log("[InAppPurchase] (callback) _cbPaymentQueueShouldShowPriceConsent: {}".format(transaction))
-
-    @staticmethod
-    def _cbPaymentQueueShouldContinueTransaction():
-        """ (CALLBACK onPaymentQueueShouldContinueTransaction)
-            Sent when the storefront changes while a payment is processing. """
-        _Log("[InAppPurchase] (callback) _cbPaymentQueueShouldContinueTransaction")
 
     @staticmethod
     def _finishPaymentTransaction(transaction, product_id):
