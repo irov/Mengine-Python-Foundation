@@ -34,17 +34,13 @@ class TaskListener(MixinObserver, Task):
         if self.Check is not None:
             if self.Check() is True:
                 return False
-                pass
-            pass
 
         return True
-        pass
 
     def _onRun(self):
         self.addObserver(self.ID, self._onNotifyFilter)
 
         return False
-        pass
 
     def _onNotifyFilter(self, *args, **kwargs):
         if self.Filter is not None:
@@ -53,8 +49,6 @@ class TaskListener(MixinObserver, Task):
                     self.log("%s filter %s is bad arguments or kwargs" % (self.ID, self.Filter))
 
                     return False
-                    pass
-                pass
 
             result = self.Filter(*args, **kwargs)
 
@@ -62,17 +56,13 @@ class TaskListener(MixinObserver, Task):
                 self.log("%s filter %s must return bool [True|False] but return %s" % (self.ID, self.Filter, result))
 
                 return False
-                pass
 
             if result is False:
                 return False
-                pass
-            pass
 
         if self.Capture is not None:
             self.Capture.setValue(self.ID, *args, **kwargs)
             pass
 
         return True
-        pass
     pass
