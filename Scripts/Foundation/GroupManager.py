@@ -335,7 +335,7 @@ class GroupManager(object):
         pass
 
     @staticmethod
-    def generateObjectUnique(objectName, groupName, prototypeName, **params):
+    def generateObjectUnique(objectName, groupName, prototypeName, EntityHierarchy=True, **prototypeParams):
         if GroupManager.hasGroup(groupName) is False:
             Trace.log("GroupManager", 0, "GroupManager.generateObjectUnique: not found group '%s')" % (groupName))
             return None
@@ -344,11 +344,11 @@ class GroupManager(object):
         group = GroupManager.getGroup(groupName)
 
         if group.hasPrototype(prototypeName) is False:
-            Trace.log("GroupManager", 0, "GroupManager.generateObjectUnique: group '%s' not found prototype '%s')" % (groupName, prototypeName))
+            Trace.log("GroupManager", 0, "GroupManager.generateObjectUnique: group '%s' not found prototype '%s' params '%s')" % (groupName, prototypeName, prototypeParams))
             return None
             pass
 
-        obj = group.generateObjectUnique(objectName, prototypeName, **params)
+        obj = group.generateObjectUnique(objectName, prototypeName, EntityHierarchy=EntityHierarchy, **prototypeParams)
 
         return obj
         pass

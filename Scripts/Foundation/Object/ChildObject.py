@@ -31,7 +31,7 @@ class ChildObject(BaseObject):
     def hasPrototype(self, prototypeName):
         return prototypeName in self.prototypes
 
-    def generateObject(self, objectName, prototypeName, prototypeParams=None):
+    def generateObject(self, objectName, prototypeName, prototypeParams=None, EntityHierarchy=True):
         if self.hasObject(objectName) is True:
             Trace.log("Object", 0, "ChildObject.generateObject: %s prototype [%s] already has [%s]" % (self.getName(), prototypeName, objectName))
             return None
@@ -72,18 +72,20 @@ class ChildObject(BaseObject):
 
         obj.setSaving(False)
 
-        obj_entityNode = obj.getEntityNode()
-        self.entity.addChild(obj_entityNode)
+        if EntityHierarchy is True:
+            obj_entityNode = obj.getEntityNode()
+            self.entity.addChild(obj_entityNode)
+            pass
 
         return obj
 
-    def tryGenerateObject(self, objectName, prototypeName, prototypeParams=None):
+    def tryGenerateObject(self, objectName, prototypeName, prototypeParams=None, EntityHierarchy=True):
         if self.hasPrototype(prototypeName) is False:
             return None
 
-        return self.generateObject(objectName, prototypeName, prototypeParams)
+        return self.generateObject(objectName, prototypeName, prototypeParams, EntityHierarchy=EntityHierarchy)
 
-    def generateObjectUnique(self, objectName, prototypeName, **prototypeParams):
+    def generateObjectUnique(self, objectName, prototypeName, EntityHierarchy=True, **prototypeParams):
         Prototype = self.getPrototype(prototypeName)
 
         if Prototype is None:
@@ -113,16 +115,18 @@ class ChildObject(BaseObject):
 
         obj.setSaving(False)
 
-        obj_entityNode = obj.getEntityNode()
-        self.entity.addChild(obj_entityNode)
+        if EntityHierarchy is True:
+            obj_entityNode = obj.getEntityNode()
+            self.entity.addChild(obj_entityNode)
+            pass
 
         return obj
 
-    def tryGenerateObjectUnique(self, objectName, prototypeName, **prototypeParams):
+    def tryGenerateObjectUnique(self, objectName, prototypeName, EntityHierarchy=True, **prototypeParams):
         if self.hasPrototype(prototypeName) is False:
             return None
 
-        return self.generateObjectUnique(objectName, prototypeName, **prototypeParams)
+        return self.generateObjectUnique(objectName, prototypeName, EntityHierarchy=EntityHierarchy, **prototypeParams)
 
     def onLoader(self):
         super(ChildObject, self).onLoader()
