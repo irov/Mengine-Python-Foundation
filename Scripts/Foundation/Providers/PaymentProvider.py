@@ -6,8 +6,6 @@ class PaymentProvider(BaseProvider):
     s_allowed_methods = [
         "pay",
         "restorePurchases",
-        "canUserMakePurchases",
-        "completeOrder",
         "isOwnedInAppProduct"
     ]
 
@@ -30,18 +28,6 @@ class PaymentProvider(BaseProvider):
         return PaymentProvider._call("restorePurchases")
 
     @staticmethod
-    def canUserMakePurchases():
-        return bool(PaymentProvider._call("canUserMakePurchases"))
-
-    @staticmethod
-    def _canUserMakePurchasesNotFoundCb():
-        return True
-
-    @staticmethod
-    def completeOrder(order_id):
-        return bool(PaymentProvider._call("completeOrder", order_id))
-
-    @staticmethod
     def isOwnedInAppProduct(product_id):
         """ check if product is owned by user """
         return bool(PaymentProvider._call("isOwnedInAppProduct", product_id))
@@ -54,8 +40,6 @@ class DummyPayment(object):
         PaymentProvider.setProvider("Dummy", dict(
             pay=DummyPayment.pay,
             restorePurchases=DummyPayment.restorePurchases,
-            canUserMakePurchases=DummyPayment.canUserMakePurchases,
-            completeOrder=DummyPayment.completeOrder,
             isOwnedInAppProduct=DummyPayment.isOwnedInAppProduct,
         ))
 
@@ -88,16 +72,6 @@ class DummyPayment(object):
     def restorePurchases():
         Trace.msg("DUMMY restorePurchases - no actions")
         Notification.notify(Notificator.onRestorePurchasesDone)
-
-    @staticmethod
-    def canUserMakePurchases():
-        Trace.msg("DUMMY user CAN make purchases")
-        return True
-
-    @staticmethod
-    def completeOrder(order_id):
-        Trace.msg("DUMMY completeOrder {!r}".format(order_id))
-        return True
 
     @staticmethod
     def isOwnedInAppProduct(product_id):

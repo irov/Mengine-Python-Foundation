@@ -242,12 +242,15 @@ class SystemAppleServices(System):
             "onPaymentQueueUpdatedTransactionRestored": SystemAppleServices._cbPaymentRestored,
             "onPaymentQueueUpdatedTransactionDeferred": SystemAppleServices._cbPaymentDeferred,
         })
+
         PaymentProvider.setProvider("Apple", dict(
             pay=SystemAppleServices.pay,
-            canUserMakePurchases=SystemAppleServices.canUserMakePurchases,
             restorePurchases=SystemAppleServices.restorePurchases,
             isOwnedInAppProduct=SystemAppleServices.isOwnedInAppProduct,
         ))
+
+        Mengine.waitSemaphore("AppleStoreInAppPurchaseReady", SystemAppleServices.__cbAppleStoreInAppPurchaseReady)
+
         SystemAppleServices._InAppPurchase_provider_status = True
 
     @staticmethod
@@ -308,6 +311,14 @@ class SystemAppleServices(System):
         Mengine.appleStoreInAppPurchasePurchaseProduct(product)
 
     # callbacks
+
+    @staticmethod
+    def __cbAppleStoreInAppPurchaseReady():
+        """ (CALLBACK) AppleStoreInAppPurchase is ready """
+        _Log("[InAppPurchase] AppleStoreInAppPurchase is ready", optional=True)
+        productIds = ProductsProvider.getQueryProductIds()
+        SystemAppleServices.requestProducts(productIds)
+        pass
 
     @staticmethod
     def _cbProductResponse(request, products):

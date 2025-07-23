@@ -48,41 +48,41 @@ class SystemGoogleServices(System):
                 Mengine.addAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
 
             # sign in:
-            _setCallback("onGoogleGameSocialSignInIntentSuccess", self.__cbSignSuccess)
-            _setCallback("onGoogleGameSocialSignInIntentFailed", self.__cbSignFailed)
-            _setCallback("onGoogleGameSocialSignInIntentError", self.__cbSignError)
+            _setCallback("onGoogleGameSocialSignInIntentSuccess", SystemGoogleServices.__cbSignSuccess)
+            _setCallback("onGoogleGameSocialSignInIntentFailed", SystemGoogleServices.__cbSignFailed)
+            _setCallback("onGoogleGameSocialSignInIntentError", SystemGoogleServices.__cbSignError)
             # incrementAchievement:
-            _setCallback("onGoogleGameSocialIncrementAchievementSuccess", self.__cbAchievementIncSuccess)
-            _setCallback("onGoogleGameSocialIncrementAchievementError", self.__cbAchievementIncError)
+            _setCallback("onGoogleGameSocialIncrementAchievementSuccess", SystemGoogleServices.__cbAchievementIncSuccess)
+            _setCallback("onGoogleGameSocialIncrementAchievementError", SystemGoogleServices.__cbAchievementIncError)
             # unlockAchievement:
-            _setCallback("onGoogleGameSocialUnlockAchievementSuccess", self.__cbAchievementUnlockSuccess)
-            _setCallback("onGoogleGameSocialUnlockAchievementError", self.__cbAchievementUnlockError)
+            _setCallback("onGoogleGameSocialUnlockAchievementSuccess", SystemGoogleServices.__cbAchievementUnlockSuccess)
+            _setCallback("onGoogleGameSocialUnlockAchievementError", SystemGoogleServices.__cbAchievementUnlockError)
             # revealAchievement:
-            _setCallback("onGoogleGameSocialRevealAchievementSuccess", self.__cbAchievementRevealSuccess)
-            _setCallback("onGoogleGameSocialRevealAchievementError", self.__cbAchievementRevealError)
+            _setCallback("onGoogleGameSocialRevealAchievementSuccess", SystemGoogleServices.__cbAchievementRevealSuccess)
+            _setCallback("onGoogleGameSocialRevealAchievementError", SystemGoogleServices.__cbAchievementRevealError)
             # showAchievements:
-            _setCallback("onGoogleGameSocialShowAchievementSuccess", self.__cbAchievementShowSuccess)
-            _setCallback("onGoogleGameSocialShowAchievementError", self.__cbAchievementShowError)
+            _setCallback("onGoogleGameSocialShowAchievementSuccess", SystemGoogleServices.__cbAchievementShowSuccess)
+            _setCallback("onGoogleGameSocialShowAchievementError", SystemGoogleServices.__cbAchievementShowError)
 
-            _setCallback("onGoogleGameSocialIncrementEventSuccess", self.__cbEventIncrementSuccess)
-            _setCallback("onGoogleGameSocialIncrementEventError", self.__cbEventIncrementError)
-
-
-            _setCallback("onGoogleGameSocialLeaderboardScoreSuccess", self.__cbLeaderboardScoreSuccess)
-            _setCallback("onGoogleGameSocialLeaderboardScoreError", self.__cbLeaderboardScoreError)
+            _setCallback("onGoogleGameSocialIncrementEventSuccess", SystemGoogleServices.__cbEventIncrementSuccess)
+            _setCallback("onGoogleGameSocialIncrementEventError", SystemGoogleServices.__cbEventIncrementError)
 
 
+            _setCallback("onGoogleGameSocialLeaderboardScoreSuccess", SystemGoogleServices.__cbLeaderboardScoreSuccess)
+            _setCallback("onGoogleGameSocialLeaderboardScoreError", SystemGoogleServices.__cbLeaderboardScoreError)
 
             AchievementsProvider.setProvider("Google", dict(
-                unlockAchievement=self.unlockAchievement,
-                incrementAchievement=self.incrementAchievement,
-                showAchievements=self.showAchievements,
+                unlockAchievement=SystemGoogleServices.unlockAchievement,
+                incrementAchievement=SystemGoogleServices.incrementAchievement,
+                showAchievements=SystemGoogleServices.showAchievements,
             ))
+
             AuthProvider.setProvider("Google", dict(
-                login=self.signIn,
-                logout=self.signOut,
-                isLoggedIn=self.isLoggedIn,
+                login=SystemGoogleServices.signIn,
+                logout=SystemGoogleServices.signOut,
+                isLoggedIn=SystemGoogleServices.isLoggedIn,
             ))
+
             PolicyManager.setPolicy("Authorize", "PolicyAuthGoogleService")    # deprecated
 
         if self.b_plugins[GOOGLE_PLAY_BILLING_PLUGIN] is True:
@@ -90,62 +90,62 @@ class SystemGoogleServices(System):
                 Mengine.addAndroidCallback(GOOGLE_PLAY_BILLING_PLUGIN, method_name, *callback)
 
             # purchase status
-            _setCallback("onGooglePlayBillingPurchasesUpdatedServiceTimeout", self.__cbBillingPurchaseError, "ServiceTimeout")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedFeatureNotSupported", self.__cbBillingPurchaseError, "FeatureNotSupported")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedServiceDisconnected", self.__cbBillingPurchaseError, "ServiceDisconnected")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedServiceUnavailable", self.__cbBillingPurchaseError, "ServiceUnavailable")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedBillingUnavailable", self.__cbBillingPurchaseError, "BillingUnavailable")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedItemUnavailable", self.__cbBillingPurchaseError, "ItemUnavailable")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedDeveloperError", self.__cbBillingPurchaseError, "DeveloperError")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedError", self.__cbBillingPurchaseError, "Error")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedItemAlreadyOwned", self.__cbBillingPurchaseItemAlreadyOwned)
-            _setCallback("onGooglePlayBillingPurchasesUpdatedItemNotOwned", self.__cbBillingPurchaseError, "ItemNotOwned")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedNetworkError", self.__cbBillingPurchaseError, "NetworkError")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedUnknown", self.__cbBillingPurchaseErrorUnknown)
-            _setCallback("onGooglePlayBillingPurchasesUpdatedUserCanceled", self.__cbBillingPurchaseError, "UserCanceled")
-            _setCallback("onGooglePlayBillingPurchasesUpdatedOk", self.__cbBillingPurchaseOk)
+            _setCallback("onGooglePlayBillingPurchasesUpdatedServiceTimeout", SystemGoogleServices.__cbBillingPurchaseError, "ServiceTimeout")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedFeatureNotSupported", SystemGoogleServices.__cbBillingPurchaseError, "FeatureNotSupported")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedServiceDisconnected", SystemGoogleServices.__cbBillingPurchaseError, "ServiceDisconnected")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedServiceUnavailable", SystemGoogleServices.__cbBillingPurchaseError, "ServiceUnavailable")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedBillingUnavailable", SystemGoogleServices.__cbBillingPurchaseError, "BillingUnavailable")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedItemUnavailable", SystemGoogleServices.__cbBillingPurchaseError, "ItemUnavailable")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedDeveloperError", SystemGoogleServices.__cbBillingPurchaseError, "DeveloperError")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedError", SystemGoogleServices.__cbBillingPurchaseError, "Error")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedItemAlreadyOwned", SystemGoogleServices.__cbBillingPurchaseItemAlreadyOwned)
+            _setCallback("onGooglePlayBillingPurchasesUpdatedItemNotOwned", SystemGoogleServices.__cbBillingPurchaseError, "ItemNotOwned")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedNetworkError", SystemGoogleServices.__cbBillingPurchaseError, "NetworkError")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedUnknown", SystemGoogleServices.__cbBillingPurchaseErrorUnknown)
+            _setCallback("onGooglePlayBillingPurchasesUpdatedUserCanceled", SystemGoogleServices.__cbBillingPurchaseError, "UserCanceled")
+            _setCallback("onGooglePlayBillingPurchasesUpdatedOk", SystemGoogleServices.__cbBillingPurchaseOk)
             # query products & purchases (for restore)
-            _setCallback("onGooglePlayBillingQueryProductSuccess", self.__cbBillingQueryProductsSuccess)
-            _setCallback("onGooglePlayBillingQueryProductFailed", self.__cbBillingQueryProductsFail)
-            _setCallback("onGooglePlayBillingQueryProductError", self.__cbBillingQueryProductsError)
-            _setCallback("onGooglePlayBillingRestorePurchasesSuccess", self.__cbBillingRestorePurchasesSuccess)
-            _setCallback("onGooglePlayBillingRestorePurchasesFailed", self.__cbBillingRestorePurchasesFailed)
-            _setCallback("onGooglePlayBillingRestorePurchasesError", self.__cbBillingRestorePurchasesError)
+            _setCallback("onGooglePlayBillingQueryProductSuccess", SystemGoogleServices.__cbBillingQueryProductsSuccess)
+            _setCallback("onGooglePlayBillingQueryProductFailed", SystemGoogleServices.__cbBillingQueryProductsFail)
+            _setCallback("onGooglePlayBillingQueryProductError", SystemGoogleServices.__cbBillingQueryProductsError)
+            _setCallback("onGooglePlayBillingRestorePurchasesSuccess", SystemGoogleServices.__cbBillingRestorePurchasesSuccess)
+            _setCallback("onGooglePlayBillingRestorePurchasesFailed", SystemGoogleServices.__cbBillingRestorePurchasesFailed)
+            _setCallback("onGooglePlayBillingRestorePurchasesError", SystemGoogleServices.__cbBillingRestorePurchasesError)
             # purchase flow
-            _setCallback("onGooglePlayBillingPurchaseUnspecifiedState", self.__cbBillingPurchaseUnspecifiedState)
-            _setCallback("onGooglePlayBillingPurchaseIsConsumable", self.__cbBillingPurchaseIsConsumable)
-            _setCallback("onGooglePlayBillingPurchasePending", self.__cbBillingPurchasePending)
+            _setCallback("onGooglePlayBillingPurchaseUnspecifiedState", SystemGoogleServices.__cbBillingPurchaseUnspecifiedState)
+            _setCallback("onGooglePlayBillingPurchaseIsConsumable", SystemGoogleServices.__cbBillingPurchaseIsConsumable)
+            _setCallback("onGooglePlayBillingPurchasePending", SystemGoogleServices.__cbBillingPurchasePending)
 
-            _setCallback("onGooglePlayBillingBuyInAppLaunchFlowSuccess", self.__cbBillingBuyInAppLaunchFlowSucces)
-            _setCallback("onGooglePlayBillingBuyInAppLaunchFlowFailed", self.__cbBillingBuyInAppLaunchFlowFailed)
-            _setCallback("onGooglePlayBillingBuyInAppLaunchFlowError", self.__cbBillingBuyInAppLaunchFlowError)
+            _setCallback("onGooglePlayBillingBuyInAppLaunchFlowSuccess", SystemGoogleServices.__cbBillingBuyInAppLaunchFlowSucces)
+            _setCallback("onGooglePlayBillingBuyInAppLaunchFlowFailed", SystemGoogleServices.__cbBillingBuyInAppLaunchFlowFailed)
+            _setCallback("onGooglePlayBillingBuyInAppLaunchFlowError", SystemGoogleServices.__cbBillingBuyInAppLaunchFlowError)
             #  - consumable
-            _setCallback("onGooglePlayBillingPurchasesOnConsumeSuccess", self.__cbBillingPurchaseOnConsumeSuccess)
-            _setCallback("onGooglePlayBillingPurchasesOnConsumeFailed", self.__cbBillingPurchaseOnConsumeFail)
+            _setCallback("onGooglePlayBillingPurchasesOnConsumeSuccess", SystemGoogleServices.__cbBillingPurchaseOnConsumeSuccess)
+            _setCallback("onGooglePlayBillingPurchasesOnConsumeFailed", SystemGoogleServices.__cbBillingPurchaseOnConsumeFail)
             #  - non-consumable
-            _setCallback("onGooglePlayBillingPurchaseAcknowledged", self.__cbBillingPurchaseAcknowledged)
-            _setCallback("onGooglePlayBillingPurchaseAcknowledgeSuccess", self.__cbBillingPurchaseAcknowledgeSuccess)
-            _setCallback("onGooglePlayBillingPurchaseAcknowledgeFailed", self.__cbBillingPurchaseAcknowledgeFail)
-
-            self.startBillingClient()
+            _setCallback("onGooglePlayBillingPurchaseAcknowledged", SystemGoogleServices.__cbBillingPurchaseAcknowledged)
+            _setCallback("onGooglePlayBillingPurchaseAcknowledgeSuccess", SystemGoogleServices.__cbBillingPurchaseAcknowledgeSuccess)
+            _setCallback("onGooglePlayBillingPurchaseAcknowledgeFailed", SystemGoogleServices.__cbBillingPurchaseAcknowledgeFail)
 
             PaymentProvider.setProvider("Google", dict(
-                pay=self.buy,
-                restorePurchases=self.restorePurchases,
-                isOwnedInAppProduct=self.isOwnedInAppProduct,
+                pay=SystemGoogleServices.buy,
+                restorePurchases=SystemGoogleServices.restorePurchases,
+                isOwnedInAppProduct=SystemGoogleServices.isOwnedInAppProduct,
             ))
+
+            Mengine.waitSemaphore("GooglePlayBillingReady", SystemGoogleServices.__cbGooglePlayBillingInitialized)
 
         if self.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is True:
             def _setCallback(callback_name, *callback):
                 Mengine.addAndroidCallback(GOOGLE_IN_APP_REVIEWS_PLUGIN, callback_name, *callback)
 
-            Mengine.waitSemaphore("onGoogleInAppReviewsGettingReviewObject", self.__cbReviewsGettingReviewObject)
+            Mengine.waitSemaphore("GoogleInAppReviewsReady", SystemGoogleServices.__cbGoogleInAppReviewsReady)
 
-            _setCallback("onGoogleInAppReviewsRequestReviewError", self.__cbReviewsRequestError)
-            _setCallback("onGoogleInAppReviewsLaunchingTheReviewSuccess", self.__cbReviewsLaunchingSuccess)
-            _setCallback("onGoogleInAppReviewsLaunchingTheReviewError", self.__cbReviewsLaunchingError)
+            _setCallback("onGoogleInAppReviewsRequestReviewError", SystemGoogleServices.__cbReviewsRequestError)
+            _setCallback("onGoogleInAppReviewsLaunchingTheReviewSuccess", SystemGoogleServices.__cbReviewsLaunchingSuccess)
+            _setCallback("onGoogleInAppReviewsLaunchingTheReviewError", SystemGoogleServices.__cbReviewsLaunchingError)
 
-            RatingAppProvider.setProvider("Google", dict(rateApp=self.rateApp))
+            RatingAppProvider.setProvider("Google", dict(rateApp=SystemGoogleServices.rateApp))
 
         if self.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is True:
             # google do auto login on create app, so we don't need to do it manually here
@@ -301,14 +301,11 @@ class SystemGoogleServices(System):
     # --- GooglePlayBilling --------------------------------------------------------------------------------------------
 
     @staticmethod
-    def startBillingClient():
-        # callbacks:
-        #    __cbBillingClientDisconnected
-        #    __cbBillingClientSetupFinishedFail
-        #    __cbBillingClientSetupFinishedSuccess   - OK
-
+    def __cbGooglePlayBillingInitialized():
         _Log("Start connect to the billing client...")
-        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts")
+        productIds = ProductsProvider.getQueryProductIds()
+        _Log("[Billing] query products: {!r}".format(productIds))
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts", productIds)
 
     @staticmethod
     def buy(product_id):
@@ -638,7 +635,7 @@ class SystemGoogleServices(System):
     # callbacks
 
     @staticmethod
-    def __cbReviewsGettingReviewObject():
+    def __cbGoogleInAppReviewsReady():
         # on initialize success
         _Log("[Reviews cb] GettingReviewObject")
         pass
