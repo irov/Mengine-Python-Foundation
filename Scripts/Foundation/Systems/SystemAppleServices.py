@@ -2,6 +2,7 @@ from Foundation.System import System
 from Foundation.Utils import SimpleLogger
 from Foundation.Providers.RatingAppProvider import RatingAppProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
+from Foundation.Providers.ProductsProvider import ProductsProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Foundation.TaskManager import TaskManager
 
@@ -249,7 +250,9 @@ class SystemAppleServices(System):
             isOwnedInAppProduct=SystemAppleServices.isOwnedInAppProduct,
         ))
 
-        Mengine.waitSemaphore("AppleStoreInAppPurchaseReady", SystemAppleServices.__cbAppleStoreInAppPurchaseReady)
+        _Log("[InAppPurchase] AppleStoreInAppPurchase is ready", optional=True)
+        productIds = ProductsProvider.getQueryProductIds()
+        SystemAppleServices.requestProducts(productIds)
 
         SystemAppleServices._InAppPurchase_provider_status = True
 
@@ -311,14 +314,6 @@ class SystemAppleServices(System):
         Mengine.appleStoreInAppPurchasePurchaseProduct(product)
 
     # callbacks
-
-    @staticmethod
-    def __cbAppleStoreInAppPurchaseReady():
-        """ (CALLBACK) AppleStoreInAppPurchase is ready """
-        _Log("[InAppPurchase] AppleStoreInAppPurchase is ready", optional=True)
-        productIds = ProductsProvider.getQueryProductIds()
-        SystemAppleServices.requestProducts(productIds)
-        pass
 
     @staticmethod
     def _cbProductResponse(request, products):
