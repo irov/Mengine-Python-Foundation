@@ -87,7 +87,6 @@ class SessionManager(object):
     def removeCurrentSession():
         if SessionManager.s_currentSession is None:
             return False
-            pass
 
         Notification.notify(Notificator.onSessionRemove)
 
@@ -119,7 +118,6 @@ class SessionManager(object):
             Trace.log("Manager", 0, "SessionManager.removeSession write 'session.dat'")
 
             return False
-            pass
 
         Mengine.changeCurrentAccountSetting("SessionSave", unicode(True))
         Mengine.changeCurrentAccountSetting("Save", unicode(True))

@@ -40,13 +40,7 @@ class SaveManager(object):
 
         if obj.isSavable() is True:
             save_obj = obj._onSave()
-            try:
-                save_value = SaveManager._saveValue(save_obj)
-            except Exception as e:
-                traceback.print_exc()
-
-                raise Exception("Object save %s:%s - ex %s" % (obj.getName(), obj.getType(), e.args))
-                pass
+            save_value = SaveManager._saveValue(save_obj)
 
             save_data = (name, save_value)
 
@@ -181,11 +175,17 @@ class SaveManager(object):
 
     @staticmethod
     def _saveValue(value):
-        save_value = None
+        if value is None:
+            return None
 
         if isinstance(value, DefaultParam) is True:
             value = value.value
             pass
+
+        if isinstance(value, (unicode, str, float, long, int, bool)) is True:
+            return value
+
+        save_value = None
 
         if isinstance(value, tuple) is True:
             temp_save_value = []
@@ -261,9 +261,6 @@ class SaveManager(object):
                 raise Exception("isinstance('%s', Mengine.pybind_base_type) is True" % (value))
                 pass
             pass
-        elif isinstance(value, (unicode, str, float, long, int, bool)) is True or value is None:
-            save_value = value
-            pass
         else:
             raise Exception("_saveValue '%s' invalid pickle type '%s'" % (value, type(value)))
             pass
@@ -279,6 +276,12 @@ class SaveManager(object):
 
     @staticmethod
     def _loadValue(load_value):
+        if load_value is None:
+            return None
+
+        if isinstance(load_value, (unicode, str, float, long, int, bool)) is True:
+            return load_value
+
         value = None
 
         if isinstance(load_value, tuple) is True:
@@ -327,7 +330,7 @@ class SaveManager(object):
             value = load_value.value
             pass
         else:
-            value = load_value
+            raise Exception("_loadValue '%s' invalid pickle type '%s'" % (load_value, type(load_value)))
             pass
 
         return value
@@ -342,7 +345,6 @@ class SaveManager(object):
 
             if group.getSave() is False:
                 continue
-                pass
 
             save_group = SaveManager.saveGroup(group)
             save_groups.append(save_group)
