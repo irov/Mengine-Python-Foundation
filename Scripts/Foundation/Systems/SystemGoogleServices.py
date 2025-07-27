@@ -361,10 +361,15 @@ class SystemGoogleServices(System):
         # after we call buyInApp, we need to setup consumable status for purchase
         #    cb is `MengineFunctorBoolean cb = (Boolean isConsumable)`
         #    if product is acknowledged, Mengine sends onGooglePlayBillingPurchaseAcknowledged
+        isConsumable = False
         for prod_id in products:
-            isConsumable = ProductsProvider.isProductConsumable(prod_id)
-            _Log("[Billing cb] onGooglePlayBillingPurchaseIsConsumable: {!r} consumable={!r}".format(prod_id, isConsumable))
-            cb(True, dict(isConsumable=isConsumable))
+            prod_consumable = ProductsProvider.isProductConsumable(prod_id)
+            _Log("[Billing cb] onGooglePlayBillingPurchaseIsConsumable: {!r} consumable={!r}".format(prod_id, prod_consumable))
+            if prod_consumable is True:
+                isConsumable = True
+            pass
+
+        cb(True, dict(isConsumable=isConsumable))
 
     @staticmethod
     def __cbBillingPurchasePending(products):
