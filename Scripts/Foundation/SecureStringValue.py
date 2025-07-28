@@ -1,5 +1,4 @@
 class SecureStringValue(object):
-
     def __init__(self, value_id, value):
         self.id = value_id
         self.value = self.__makeSecureValue(value)
