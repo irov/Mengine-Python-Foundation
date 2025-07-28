@@ -28,7 +28,7 @@ class AliasShowRewardedAdvert(TaskAlias):
     def _scopeShowAdvert(self, source):
         with source.addParallelTask(2) as (display_respond, show):
             # check is advert shown
-            with display_respond.addRaceTask(4) as (completed, reached_limit):
+            with display_respond.addRaceTask(2) as (completed, reached_limit):
                 completed.addListener(Notificator.onAdShowCompleted)
                 reached_limit.addListener(Notificator.onAvailableAdsEnded)
 
