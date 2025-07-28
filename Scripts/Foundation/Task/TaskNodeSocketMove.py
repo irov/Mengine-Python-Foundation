@@ -21,10 +21,10 @@ class TaskNodeSocketMove(TaskNodeSocketBase):
         def __onHandleMouseMove(context, event):
             handle = self.Socket.getDefaultHandle()
 
-            if self._onBaseFilter(event.touchId, event.x, event.y, event.dx, event.dy) is False:
+            if self._onBaseFilter(event.touchId, event.position.world.x, event.position.world.y, event.worldDelta.x, event.worldDelta.y) is False:
                 return handle
 
-            if self.Tracker(event.touchId, event.x, event.y, event.dx, event.dy) is False:
+            if self.Tracker(event.touchId, event.position.world.x, event.position.world.y, event.worldDelta.x, event.worldDelta.y) is False:
                 return handle
 
             self.complete()

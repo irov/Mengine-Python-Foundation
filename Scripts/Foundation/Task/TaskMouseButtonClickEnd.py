@@ -26,7 +26,7 @@ class TaskMouseButtonClickEnd(MixinObserver, Task):
             pass
 
         if self.Filter is not None:
-            if self.Filter(event.touchId, event.x, event.y, event.button, event.isDown) is False:
+            if self.Filter(event.touchId, event.position.world.x, event.position.world.y, event.button, event.isDown) is False:
                 return False
                 pass
             pass

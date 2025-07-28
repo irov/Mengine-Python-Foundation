@@ -121,7 +121,7 @@ class Interaction(BaseEntity):
     def _onMouseEnter(self, context, event):
         Block = self.Block
 
-        self._mouseEnter(event.x, event.y)
+        self._mouseEnter(event.position.world.x, event.position.world.y)
 
         return Block
 
@@ -136,9 +136,9 @@ class Interaction(BaseEntity):
             return False
 
         if event.isDown is True:
-            self._mouseClickBegin(event.x, event.y)
+            self._mouseClickBegin(event.position.world.x, event.position.world.y)
         else:
-            self._mouseClickUpBegin(event.x, event.y)
+            self._mouseClickUpBegin(event.position.world.x, event.position.world.y)
 
         return False
 
@@ -149,9 +149,9 @@ class Interaction(BaseEntity):
             return Block
 
         if event.isDown is True:
-            self._mouseClick(event.x, event.y)
+            self._mouseClick(event.position.world.x, event.position.world.y)
         else:
-            self._mouseClickUp(event.x, event.y)
+            self._mouseClickUp(event.position.world.x, event.position.world.y)
 
         return Block
 
@@ -160,9 +160,9 @@ class Interaction(BaseEntity):
             return False
 
         if event.isDown is True:
-            self._mouseClickEnd(event.x, event.y)
+            self._mouseClickEnd(event.position.world.x, event.position.world.y)
         else:
-            self._mouseClickEndUp(event.x, event.y)
+            self._mouseClickEndUp(event.position.world.x, event.position.world.y)
 
         return False
 

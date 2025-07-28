@@ -259,7 +259,7 @@ class Movie(BaseAnimatable):
 
     def __onHandleMouseEnter(self, context, event, name, hotspot):
         if self.object is not None:
-            self.object.onMovieSocketEnterEvent(self.object, name, hotspot, event.x, event.y)
+            self.object.onMovieSocketEnterEvent(self.object, name, hotspot, event.position.world.x, event.position.world.y)
             pass
 
         if self.socketParams is None:
@@ -280,7 +280,7 @@ class Movie(BaseAnimatable):
 
     def __onHandleMouseButtonEvent(self, context, event, name, hotspot):
         if self.object is not None:
-            self.object.onMovieSocketButtonEvent(self.object, name, hotspot, event.touchId, event.x, event.y, event.button, event.isDown, event.isPressed)
+            self.object.onMovieSocketButtonEvent(self.object, name, hotspot, event.touchId, event.position.world.x, event.position.world.y, event.button, event.isDown, event.isPressed)
             pass
 
         if self.socketParams is None:
@@ -293,7 +293,7 @@ class Movie(BaseAnimatable):
 
     def __onHandleMouseMove(self, context, event, name, hotspot):
         if self.object is not None:
-            self.object.onMovieSocketMoveEvent(self.object, name, hotspot, event.touchId, event.x, event.y, event.dx, event.dy)
+            self.object.onMovieSocketMoveEvent(self.object, name, hotspot, event.touchId, event.position.world.x, event.position.world.y, event.worldDelta.x, event.worldDelta.y)
             pass
 
         if self.socketParams is None:

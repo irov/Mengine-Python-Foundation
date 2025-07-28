@@ -128,7 +128,7 @@ class Slider(BaseEntity):
 
             sliderPos = self.object.getPosition()
 
-            self.offset = (event.x - sliderPos[0], event.y - sliderPos[1])
+            self.offset = (event.position.world.x - sliderPos[0], event.position.world.y - sliderPos[1])
             pass
 
         return True

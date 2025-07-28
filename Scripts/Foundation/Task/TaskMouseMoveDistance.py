@@ -23,10 +23,10 @@ class TaskMouseMoveDistance(Task):
         pass
 
     def _onMouseMove(self, event):
-        distance = pow(pow(event.dx, 2.0) + pow(event.dy, 2.0), 0.5)
+        distance = pow(pow(event.worldDelta.x, 2.0) + pow(event.worldDelta.y, 2.0), 0.5)
 
         self.currentDistance = self.currentDistance + distance
-        self.oldXY = (event.dx, event.dy)
+        self.oldXY = (event.worldDelta.x, event.worldDelta.y)
 
         if self.currentDistance < self.Distance:
             return

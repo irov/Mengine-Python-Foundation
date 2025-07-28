@@ -26,10 +26,10 @@ class TaskNodeSocketClick(TaskNodeSocketBase):
                     return Handle
                 pass
 
-            if self._onBaseFilter(event.touchId, event.x, event.y, event.button, event.isDown, event.isPressed) is False:
+            if self._onBaseFilter(event.touchId, event.position.world.x, event.position.world.y, event.button, event.isDown, event.isPressed) is False:
                 return Handle
 
-            Notification.notify(Notificator.onNodeSocketClickSuccess, self.Socket, event.touchId, event.x, event.y, event.button, event.isDown, event.isPressed)
+            Notification.notify(Notificator.onNodeSocketClickSuccess, self.Socket, event.touchId, event.position.world.x, event.position.world.y, event.button, event.isDown, event.isPressed)
 
             self.complete()
 
