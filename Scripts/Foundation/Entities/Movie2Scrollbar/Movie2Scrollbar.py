@@ -142,7 +142,7 @@ class Movie2Scrollbar(BaseEntity):
         pass
 
     def _on_mouse_move(self, event):
-        self._move(event.dx, event.dy)
+        self._move(event.worldDelta.x, event.worldDelta.y)
 
     def _on_mouse_up(self):
         self.object.onScrollEnd(self.get_percentage())

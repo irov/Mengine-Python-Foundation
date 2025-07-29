@@ -118,7 +118,7 @@ class DummyAdvertisement(object):
             else:
                 source.addDelay(FakeWatchDelay)
 
-                source.addNotify(Notificator.onAdUserRewarded, placement, {"gold": GoldReward})
+                source.addNotify(Notificator.onAdUserRewarded, "Rewarded", placement, {"gold": GoldReward})
 
                 source.addNotify(Notificator.onAdShowCompleted, "Rewarded", True, {"placement": placement})
                 source.addNotify(Notificator.onAdRevenuePaid, "Rewarded", {"placement": placement, "revenue": revenue})

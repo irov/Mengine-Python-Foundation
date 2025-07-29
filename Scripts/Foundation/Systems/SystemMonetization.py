@@ -40,12 +40,25 @@ class SystemMonetization(System):
         return True
 
     def _onInitialize(self):
+        super(SystemMonetization, self)._onInitialize()
+
         if SystemMonetization.__isActive() is False:
             return
 
         SystemMonetization.game_store_name = MonetizationManager.getGeneralSetting("GameStoreName", "GameStore")
 
         AccountManager.addCreateAccountExtra(SystemMonetization.addExtraAccountSettings)
+
+    def _onFinalize(self):
+        super(SystemMonetization, self)._onFinalize()
+
+        if SystemMonetization.__isActive() is False:
+            return
+
+        SystemMonetization.storage = {}
+        SystemMonetization.components = {}
+        SystemMonetization._session_purchased_products = []
+        SystemMonetization._session_delayed_products = []
 
     def _onRun(self):
         if SystemMonetization.__isActive() is False:

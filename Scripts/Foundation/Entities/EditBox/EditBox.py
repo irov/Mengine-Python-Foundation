@@ -161,7 +161,7 @@ class EditBox(BaseEntity):
             self.valueByDefault = None
             self.carriage = 0
 
-        self.mouseXToCarriage(event.x)
+        self.mouseXToCarriage(event.position.world.x)
 
         self.updateCarriage()
 

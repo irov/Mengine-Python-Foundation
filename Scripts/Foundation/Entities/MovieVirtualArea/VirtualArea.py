@@ -316,7 +316,7 @@ class VirtualArea(Initializer):
             handle = self._socket.getDefaultHandle()
             if event.isDown:
                 self.on_touch(event.touchId)
-                self._target.mouse_press(event.x, event.y)
+                self._target.mouse_press(event.position.world.x, event.position.world.y)
                 Mengine.enableGlobalHandler(self._mouse_move_handler, not self._frozen)
                 Mengine.enableGlobalHandler(self._mouse_release_handler, not self._frozen)
                 Mengine.enableGlobalHandler(self._mouse_leave_handler, not self._frozen)
@@ -371,12 +371,12 @@ class VirtualArea(Initializer):
                     self._touch_ids.pop(event.touchId)
                 return
 
-            if not self._is_dragging and self._target.check_drag_start(event.x, event.y) is True:
+            if not self._is_dragging and self._target.check_drag_start(event.position.world.x, event.position.world.y) is True:
                 self._is_dragging = True
                 self.on_drag_start()
 
             if self._is_dragging is True:
-                self._target.mouse_move(event.touchId, event.x, event.y, event.dx, event.dy)
+                self._target.mouse_move(event.touchId, event.position.world.x, event.position.world.y, event.worldDelta.x, event.worldDelta.y)
 
         def mouse_release(event):
             if event.isDown is True:

@@ -55,8 +55,8 @@ class TaskMovieSocketSwipe(TaskAlias, MixinMovie):
 
         def __detector(isSkip, cb):
             def __mouseMove(event):
-                x = event.x
-                y = event.y
+                x = event.position.world.x
+                y = event.position.world.y
                 if self.startXY is None:
                     self.startXY = (x, y)
 

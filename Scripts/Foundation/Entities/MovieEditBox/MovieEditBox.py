@@ -268,7 +268,7 @@ class MovieEditBox(BaseEntity):
         if event.isDown is False:
             return True
         self.__activate_slider(True)
-        cursor_pos = event.x - self.startPos[0]
+        cursor_pos = event.position.world.x - self.startPos[0]
         self.carriage = self.__get_new_carriage_pos(cursor_pos)
         self.updateCarriage()
         return True
@@ -598,7 +598,7 @@ class MovieEditBox(BaseEntity):
         return new_carriage - 1
 
     def on_mouse_move(self, event):
-        new_slider_pos = (event.x - self.startPos[0], self.Movies.get("Slider").getEntityNode().getWorldPosition().y)
+        new_slider_pos = (event.position.world.x - self.startPos[0], self.Movies.get("Slider").getEntityNode().getWorldPosition().y)
         self.Movies.get("Slider").getEntityNode().setWorldPosition(new_slider_pos)
         if new_slider_pos[0] < 0:
             self.Movies.get("Carriage").getEntityNode().setWorldPosition((0, new_slider_pos[1]))

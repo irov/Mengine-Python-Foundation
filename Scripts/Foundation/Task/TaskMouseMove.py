@@ -16,7 +16,7 @@ class TaskMouseMove(Task):
         pass
 
     def _onMouseMove(self, event):
-        if self.Tracker(event.touchId, event.x, event.y, event.dx, event.dy) is False:
+        if self.Tracker(event.touchId, event.position.world.x, event.position.world.y, event.worldDelta.x, event.worldDelta.y) is False:
             return
             pass
 

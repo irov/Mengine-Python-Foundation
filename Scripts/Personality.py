@@ -181,8 +181,8 @@ def onHandleKeyEvent(event):
         if event.code not in exception_array:
             return False
 
-    Notification.notify(Notificator.onKeyEvent, event.code, event.x, event.y, event.isDown, event.isRepeat)
-    Notification.notify(Notificator.onKeyEventEnd, event.code, event.x, event.y, event.isDown, event.isRepeat)
+    Notification.notify(Notificator.onKeyEvent, event.code, event.position.world.x, event.position.world.y, event.isDown, event.isRepeat)
+    Notification.notify(Notificator.onKeyEventEnd, event.code, event.position.world.x, event.position.world.y, event.isDown, event.isRepeat)
     return False
 
 def onHandleTextEvent(event):
