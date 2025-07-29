@@ -859,8 +859,11 @@ class TaskSource(object):
         with self.addParallelTask(2) as (source_request, source_notify):
             source_notify.addNotify(ID, *Args, **Kwargs)
             return source_request.addRaceTask(Count)
-            pass
-        pass
+
+    def addFunctionRequest(self, Count, Fn, *Args, **Kwargs):
+        with self.addParallelTask(2) as (source_request, source_function):
+            source_function.addFunction(Fn, *Args, **Kwargs)
+            return source_request.addRaceTask(Count)
 
     def addShiftCollect(self, index, shiftCollect):
         self.checkComplete()
