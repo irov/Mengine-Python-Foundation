@@ -6,7 +6,6 @@ class TaskSoundEffect(Task):
     def __init__(self):
         super(TaskSoundEffect, self).__init__()
         self.playId = None
-        pass
 
     def _onParams(self, params):
         super(TaskSoundEffect, self)._onParams(params)
@@ -21,22 +20,18 @@ class TaskSoundEffect(Task):
 
         if self.Important is False:
             return
-            pass
 
         if _DEVELOPMENT is True:
             if Mengine.hasSound(self.SoundName) is False:
                 self.initializeFailed("TaskSoundEffect invalid sound %s" % (self.SoundName))
                 pass
-            pass
         pass
 
     def _onCheck(self):
         if self.Important is False:
             return False
-            pass
 
         return True
-        pass
 
     def _onRun(self):
         if self.Wait is True:
@@ -44,7 +39,6 @@ class TaskSoundEffect(Task):
 
             if self.playId is None:
                 return True
-                pass
 
             return False
         else:
@@ -52,16 +46,13 @@ class TaskSoundEffect(Task):
 
             if self.playId is None:
                 return True
-                pass
 
             return True
-            pass
         pass
 
     def _onSoundEnd(self, method, playId):
         if self.playId.getId() != playId.getId():
             return
-            pass
 
         self.playId = None
 
@@ -71,10 +62,12 @@ class TaskSoundEffect(Task):
     def _onSkip(self):
         if self.playId is None:
             return
-            pass
-        stopId = self.playId
-        self.playId = None
 
-        Mengine.soundStop(stopId)
+        if self.playId is not None:
+            stopId = self.playId
+            self.playId = None
+
+            Mengine.soundStop(stopId)
+            pass
         pass
     pass
