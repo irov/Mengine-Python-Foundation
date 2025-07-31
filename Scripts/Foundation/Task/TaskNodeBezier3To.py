@@ -13,7 +13,8 @@ class TaskNodeBezier3To(MixinNode, Task):
         self.speed = params.get("Speed", None)
         self.time = params.get("Time", None)
         self.easing = params.get("Easing", "easyLinear")
-        self.id = 0
+
+        self.affector = None
         pass
 
     def _onInitialize(self):
@@ -38,30 +39,25 @@ class TaskNodeBezier3To(MixinNode, Task):
             self.time = (length / self.speed) * 1000.0
             pass
 
-        def __onBezierTo(node, id, isEnd):
-            if self.id != id:
-                return
-                pass
+        def __onBezierTo(node, isEnd):
+            self.affector = None
 
-            self.id = None
-
-            self.complete()
+            self.complete(isSkiped=isEnd is False)
             pass
 
-        self.id = self.node.bezier3To(self.time, self.positionTo, self.Point0, self.Point1, self.easing, __onBezierTo)
+        self.affector = self.node.bezier3To(self.time, self.positionTo, self.Point0, self.Point1, self.easing, __onBezierTo)
 
-        if self.id == 0:
+        if self.affector is None:
             self.log("[%s] not active" % (self.node.getName()))
 
             return True
-            pass
 
         return False
-        pass
 
     def _onSkip(self):
-        self.id = None
+        self.affector = None
         self.node.moveStop()
+
         self.node.setLocalPosition(self.positionTo)
         pass
     pass

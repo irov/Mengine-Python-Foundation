@@ -14,7 +14,7 @@ class TaskNodeAccelerateTo(MixinNode, MixinTime, Task):
         self.interrupt = params.get("Interrupt", False)
         self.easing = params.get("Easing", "easyLinear")
 
-        self.id = None
+        self.affector = None
         pass
 
     def _onInitialize(self):
@@ -39,29 +39,23 @@ class TaskNodeAccelerateTo(MixinNode, MixinTime, Task):
             self.time = (length / self.speed) * 1000.0
             pass
 
-        def __onMoveTo(node, id, isEnd):
-            if self.id != id:
-                return
-                pass
-
-            self.id = None
+        def __onMoveTo(node, isEnd):
+            self.affector = None
 
             self.complete(isSkiped=isEnd is False)
             pass
 
-        self.id = self.node.accMoveTo(self.time, self.positionTo, self.easing, __onMoveTo)
+        self.affector = self.node.accMoveTo(self.time, self.positionTo, self.easing, __onMoveTo)
 
-        if self.id == 0:
+        if self.affector is None:
             self.log("[%s] not active" % (self.node.getName()))
 
             return True
-            pass
 
         return False
-        pass
 
     def _onSkip(self):
-        self.id = None
+        self.affector = None
 
         self.node.moveStop()
 

@@ -20,7 +20,7 @@ class Fade(BaseEntity):
 
         self.sprite = None
 
-        self.alphaId = 0
+        self.affector = None
         self.state = Fade.FADE_IDLE
 
     def _onActivate(self):
@@ -54,7 +54,7 @@ class Fade(BaseEntity):
         self.sprite = sprite
 
         self.state = Fade.FADE_IDLE
-        self.alphaId = 0
+        self.affector = None
         pass
 
     def _onDeactivate(self):
@@ -65,7 +65,7 @@ class Fade(BaseEntity):
         self.sprite = None
 
         self.state = Fade.FADE_DISABLE
-        self.alphaId = 0
+        self.affector = None
         pass
 
     def fadeIn(self, fadeTo, time, cb, easing):
@@ -84,12 +84,10 @@ class Fade(BaseEntity):
         elif self.state == Fade.FADE_IN_COMPLETE:
             cb(True)
             return
-            pass
 
         if self.state == Fade.FADE_DISABLE:
             cb(True)
             return
-            pass
 
         if self.sprite.isEnable() is False:
             self.sprite.enable()
@@ -97,24 +95,20 @@ class Fade(BaseEntity):
 
         self.state = Fade.FADE_IN
 
-        self.alphaId = self.sprite.alphaTo(time, fadeTo, easing, self.__onFadeInComplete, cb)
+        def __onFadeInComplete(node, isEnd, cb):
+            self.state = Fade.FADE_IN_COMPLETE
 
-        if self.alphaId == 0:
+            self.affector = None
+
+            cb(isEnd is True)
+            pass
+
+        self.affector = self.sprite.alphaTo(time, fadeTo, easing, __onFadeInComplete, cb)
+
+        if self.affector is None:
             self.state = Fade.FADE_IDLE
             cb(True)
             pass
-        pass
-
-    def __onFadeInComplete(self, node, alphaId, isEnd, cb):
-        if self.alphaId != alphaId:
-            return
-            pass
-
-        self.state = Fade.FADE_IN_COMPLETE
-
-        self.alphaId = 0
-
-        cb(isEnd is True)
         pass
 
     def fadeOut(self, fadeFrom, time, cb, easing):
@@ -138,7 +132,6 @@ class Fade(BaseEntity):
         if self.state == Fade.FADE_DISABLE:
             cb(True)
             return
-            pass
 
         if self.sprite.isEnable() is False:
             self.sprite.enable()
@@ -146,26 +139,22 @@ class Fade(BaseEntity):
 
         self.state = Fade.FADE_OUT
 
-        self.alphaId = self.sprite.alphaTo(time, 0, easing, self.__onFadeOutComplete, cb)
+        def __onFadeOutComplete(node, isEnd, cb):
+            node.disable()
 
-        if self.alphaId == 0:
+            self.state = Fade.FADE_IDLE
+
+            self.affector = None
+
+            cb(isEnd is True)
+            pass
+
+        self.affector = self.sprite.alphaTo(time, 0, easing, __onFadeOutComplete, cb)
+
+        if self.affector is None:
             self.state = Fade.FADE_IDLE
             cb(True)
             pass
-        pass
-
-    def __onFadeOutComplete(self, node, alphaId, isEnd, cb):
-        if self.alphaId != alphaId:
-            return
-            pass
-
-        node.disable()
-
-        self.state = Fade.FADE_IDLE
-
-        self.alphaId = 0
-
-        cb(isEnd is True)
         pass
 
     def stopFade(self):
@@ -173,11 +162,10 @@ class Fade(BaseEntity):
 
         if self.state == Fade.FADE_DISABLE:
             return
-            pass
 
         self.sprite.disable()
 
         self.state = Fade.FADE_IDLE
-        self.alphaId = 0
+        self.affector = None
         pass
     pass

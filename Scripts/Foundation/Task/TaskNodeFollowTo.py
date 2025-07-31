@@ -18,37 +18,32 @@ class TaskNodeFollowTo(MixinNode, Task):
         self.RotationAcceleration = params.get("RotationAcceleration", 0.0)
         self.RotationLimit = params.get("RotationLimit", 0.0)
         self.easing = params.get("Easing", "easyLinear")
+
+        self.affector = None
         pass
 
     def _onInitialize(self):
         super(TaskNodeFollowTo, self)._onInitialize()
-
         pass
 
     def _onRun(self):
-        def __onFollowTo(node, id, isEnd):
-            if self.id != id:
-                return
-                pass
+        def __onFollowTo(node, isEnd):
+            self.affector = None
 
-            self.id = None
-
-            self.complete()
+            self.complete(isSkiped=isEnd is False)
             pass
 
-        self.id = self.node.followTo(self.Target, self.Offset, self.Distance, self.MoveSpeed, self.MoveAcceleration, self.MoveLimit, self.Rotation, self.RotationSpeed, self.RotationAcceleration, self.RotationLimit, self.easing, __onFollowTo)
+        self.affector = self.node.followTo(self.Target, self.Offset, self.Distance, self.MoveSpeed, self.MoveAcceleration, self.MoveLimit, self.Rotation, self.RotationSpeed, self.RotationAcceleration, self.RotationLimit, self.easing, __onFollowTo)
 
-        if self.id == 0:
+        if self.affector is None:
             self.log("[%s] not active" % (self.node.getName()))
 
             return True
-            pass
 
         return False
-        pass
 
     def _onSkip(self):
-        self.id = None
+        self.affector = None
         self.node.moveStop()
         pass
     pass

@@ -12,7 +12,8 @@ class TaskNodeParabolaTo(MixinNode, Task):
         self.speed = params.get("Speed", None)
         self.time = params.get("Time", None)
         self.easing = params.get("Easing", "easyLinear")
-        self.id = 0
+
+        self.affector = None
         pass
 
     def _onInitialize(self):
@@ -37,29 +38,23 @@ class TaskNodeParabolaTo(MixinNode, Task):
             self.time = (length / self.speed) * 1000.0
             pass
 
-        def __onParabolaTo(node, id, isEnd):
-            if self.id != id:
-                return
-                pass
+        def __onParabolaTo(node, isEnd):
+            self.affector = None
 
-            self.id = None
-
-            self.complete()
+            self.complete(isSkiped=isEnd is False)
             pass
 
-        self.id = self.node.parabolaTo(self.time, self.positionTo, self.Height, self.easing, __onParabolaTo)
+        self.affector = self.node.parabolaTo(self.time, self.positionTo, self.Height, self.easing, __onParabolaTo)
 
-        if self.id == 0:
+        if self.affector is None:
             self.log("[%s] not active" % (self.node.getName()))
 
             return True
-            pass
 
         return False
-        pass
 
     def _onSkip(self):
-        self.id = None
+        self.affector = None
         self.node.moveStop()
         self.node.setLocalPosition(self.positionTo)
         pass

@@ -11,35 +11,29 @@ class TaskNodeColorTo(MixinNode, MixinTime, Task):
         self.colorTo = params.get("To", (1.0, 1.0, 1.0, 1.0))
         self.easing = params.get("Easing", "easyLinear")
 
-        self.id = None
+        self.affector = None
         pass
 
     def _onRun(self):
-        self.id = self.node.colorTo(self.time, self.colorTo, self.easing, self._onColorTo)
+        def __onColorTo(node, isEnd):
+            self.affector = None
 
-        if self.id == 0:
+            self.complete(isSkiped=isEnd is False)
+            pass
+
+        self.affector = self.node.colorTo(self.time, self.colorTo, self.easing, __onColorTo)
+
+        if self.affector is None:
             self.log("[%s] not active" % (self.node.getName()))
 
             return True
-            pass
 
         return False
-        pass
 
     def _onSkip(self):
-        self.id = None
+        self.affector = None
 
         self.node.colorStop()
         self.node.setLocalColor(self.colorTo)
-        pass
-
-    def _onColorTo(self, node, id, isEnd):
-        if self.id != id:
-            return
-            pass
-
-        self.id = 0
-
-        self.complete()
         pass
     pass

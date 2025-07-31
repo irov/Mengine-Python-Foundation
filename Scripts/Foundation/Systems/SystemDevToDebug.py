@@ -168,11 +168,11 @@ class SystemDevToDebug(System):
                     return True
                 return False
 
-            affector_id = Mengine.addAffector(_upd, d)
-            if affector_id == 0:
+            affector = Mengine.addAffector(_upd, d)
+            if affector is None:
                 Trace.msg_err("[DevToDebu] addAffector initialize failed")
             else:
-                Trace.msg("[DevToDebug] addAffector (stop={}) {}".format(z, affector_id))
+                Trace.msg("[DevToDebug] addAffector (stop={}) {}".format(z, affector))
 
         w_affector = Mengine.createDevToDebugWidgetCommandLine("affector")
         w_affector.setTitle("Try affector")

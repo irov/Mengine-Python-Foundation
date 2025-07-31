@@ -12,7 +12,8 @@ class TaskNodeBezier2WorldFollow(MixinNode, Task):
         self.Speed = params.get("Speed", None)
         self.Offset = params.get("Offset", (0.0, 0.0, 0.0))
         self.Easing = params.get("Easing", "easyLinear")
-        self.id = 0
+
+        self.affector = None
         pass
 
     def _onInitialize(self):
@@ -29,29 +30,24 @@ class TaskNodeBezier2WorldFollow(MixinNode, Task):
         pass
 
     def _onRun(self):
-        self.id = self.node.bezier2WorldFollower(self.Time, self.Follow, self.Offset, self.Easing, self._onBezierTo)
+        def __onBezierTo(node, isEnd):
+            self.affector = None
 
-        if self.id == 0:
+            self.complete(isSkiped=isEnd is False)
+            pass
+
+        self.affector = self.node.bezier2WorldFollower(self.Time, self.Follow, self.Offset, self.Easing, __onBezierTo)
+
+        if self.affector is None:
             self.log("[%s] not active" % (self.node.getName()))
 
             return True
-            pass
 
         return False
-        pass
 
     def _onSkip(self):
-        self.id = 0
+        self.affector = None
+
         self.node.moveStop()
         return
-
-    def _onBezierTo(self, node, id, isEnd):
-        if self.id != id:
-            return
-            pass
-
-        self.id = 0
-
-        self.complete()
-        pass
     pass

@@ -16,7 +16,7 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
         self.isTemp = params.get("IsTemp", False)  # restore node original render local alpha when task complete/skipped
         self.alphaOrig = 1.0  # original node alpha value
 
-        self.affectorId = None
+        self.affector = None
 
     def _onRun(self):
         render = self.node.getRender()
@@ -34,9 +34,15 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
             #       Try to do this task after onArrowActivate listened. You can get Arrow by Mengine.getArrow()
             return True
 
-        self.affectorId = self.node.alphaTo(self.time, self.alphaTo, self.easing, self._onAlphaTo)
+        def __onAlphaTo(node, isEnd):
+            self.affector = None
 
-        if self.affectorId == 0:
+            self.complete(isSkiped=isEnd is False)
+            pass
+
+        self.affector = self.node.alphaTo(self.time, self.alphaTo, self.easing, __onAlphaTo)
+
+        if self.affector is None:
             self.log("[%s] not active - affectorId==0" % (self.node.getName()))
             return True
 
@@ -47,42 +53,37 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
         if render is not None:
             if self.isTemp:  # if isTemp restore original alpha
                 render.setLocalAlpha(self.alphaOrig)
-
             else:
                 render.setLocalAlpha(self.alphaTo)
 
         return True
 
     def _onSkip(self):
-        self.affectorId = None
+        self.affector = None
 
         self.node.colorStop()
 
         if self.isTemp:  # if isTemp restore original alpha
-
             render = self.node.getRender()
 
             if render is not None:
                 render.setLocalAlpha(self.alphaOrig)
-
+                pass
         elif self.interrupt is False:
             render = self.node.getRender()
 
             if render is not None:
                 render.setLocalAlpha(self.alphaTo)
-
-    def _onAlphaTo(self, node, affectorId, isEnd):
-        if self.affectorId != affectorId:
-            return
-
-        self.affectorId = None
-
-        self.complete(isSkiped=isEnd is False)
+                pass
+            pass
+        pass
 
     def _onComplete(self):
         if self.isTemp:  # if isTemp restore original alpha
-
             render = self.node.getRender()
 
             if render is not None:
                 render.setLocalAlpha(self.alphaOrig)
+                pass
+            pass
+        pass

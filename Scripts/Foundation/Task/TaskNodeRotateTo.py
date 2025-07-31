@@ -13,7 +13,7 @@ class TaskNodeRotateTo(MixinNode, MixinTime, Task):
         self.easing = params.get("Easing", "easyLinear")
         self.additive = params.get("Additive", False)
 
-        self.id = None
+        self.affector = None
         pass
 
     def _onInitialize(self):
@@ -26,36 +26,29 @@ class TaskNodeRotateTo(MixinNode, MixinTime, Task):
         pass
 
     def _onRun(self):
-        self.id = self.node.angleTo(self.time, self.rotateTo, self.easing, self._onRotateTo)
+        def __onRotateTo(node, isEnd):
+            self.affector = None
 
-        if self.id == 0:
-            self.log("[%s] not active" % (self.node.getName()))
-            return True
+            self.complete(isSkiped=isEnd is False)
             pass
 
+        self.affector = self.node.angleTo(self.time, self.rotateTo, self.easing, __onRotateTo)
+
+        if self.affector is None:
+            self.log("[%s] not active" % (self.node.getName()))
+            return True
+
         return False
-        pass
 
     def _onFastSkip(self):
         self.node.setAngle(self.rotateTo)
 
         return True
-        pass
 
     def _onSkip(self):
-        self.id = None
+        self.affector = None
 
         self.node.angleStop()
         self.node.setAngle(self.rotateTo)
-        pass
-
-    def _onRotateTo(self, node, id, isEnd):
-        if self.id != id:
-            return
-            pass
-
-        self.id = 0
-
-        self.complete()
         pass
     pass
