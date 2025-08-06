@@ -99,7 +99,7 @@ class Text(BaseEntity):
         if wrap is None:
             self.text_field.removeMaxLength()
         else:
-            maxlen = wrap[1][0] - wrap[0][0]
+            maxlen = abs(wrap[1][0] - wrap[0][0])
             self.text_field.setMaxLength(maxlen)
             pass
         pass
