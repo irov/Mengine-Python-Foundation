@@ -171,14 +171,15 @@ class Movie2Button(BaseEntity):
         return Movie
 
     def getCurrentMovieSocketCenter(self):
-        current_movie = self.getCurrentMovie()
-
+        current_movie = self.getCurrentMovie() or self.getStateMovie("Idle")
         if current_movie is None:
-            current_movie = self.getStateMovie('Idle')
+            return None
 
-        socket = current_movie.getSocket('socket')
+        socket = current_movie.getSocket("socket")
+        if socket is None:
+            return None
+
         center_position = socket.getWorldPolygonCenter()
-
         return center_position
 
     def _onInitialize(self, obj):
