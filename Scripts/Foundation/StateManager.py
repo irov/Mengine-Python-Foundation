@@ -1,7 +1,5 @@
 from Foundation.Manager import Manager
 
-from Notification import Notification
-
 class StateManager(Manager):
     s_states = {}
 

@@ -1,7 +1,6 @@
 from Foundation.Task.MixinObject import MixinObject
 from Foundation.Task.MixinObserver import MixinObserver
 from Foundation.Task.Task import Task
-from Notification import Notification
 
 class TaskFilter(MixinObject, MixinObserver, Task):
     def _onParams(self, params):

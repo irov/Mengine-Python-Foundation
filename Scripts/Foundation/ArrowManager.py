@@ -1,6 +1,4 @@
 from Foundation.Manager import Manager
-from Foundation.Notificator import Notificator
-from Notification import Notification
 
 class ArrowManager(Manager):
     s_attach = None

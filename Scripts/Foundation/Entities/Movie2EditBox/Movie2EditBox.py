@@ -1,7 +1,6 @@
 from Foundation.Entity.BaseEntity import BaseEntity
 from Foundation.ObjectManager import ObjectManager
 from Foundation.TaskManager import TaskManager
-from Notification import Notification
 
 class Movie2EditBox(BaseEntity):
     @staticmethod

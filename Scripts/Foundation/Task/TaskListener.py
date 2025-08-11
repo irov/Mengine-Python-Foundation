@@ -1,6 +1,5 @@
 from Foundation.Task.MixinObserver import MixinObserver
 from Foundation.Task.Task import Task
-from Notification import Notification
 
 class TaskListener(MixinObserver, Task):
     Skiped = False

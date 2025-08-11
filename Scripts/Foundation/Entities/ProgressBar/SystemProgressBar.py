@@ -1,7 +1,5 @@
 from Foundation.System import System
 
-from Notification import Notification
-
 class SystemProgressBar(System):
     def _onParams(self, params):
         super(SystemProgressBar, self)._onParams(params)

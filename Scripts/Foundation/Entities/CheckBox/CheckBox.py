@@ -1,7 +1,5 @@
 from Foundation.Entity.BaseEntity import BaseEntity
 
-from Notification import Notification
-
 class CheckBox(BaseEntity):
     s_keys = dict(Esc=Mengine.KC_ESCAPE, Enter=Mengine.KC_RETURN)
 

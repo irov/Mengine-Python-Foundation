@@ -1,7 +1,5 @@
 from Foundation.Task.Task import Task
 
-from Notification import Notification
-
 class MixinObserver(Task):
     __slots__ = "observer", "observerWait", "observerSkip"
 

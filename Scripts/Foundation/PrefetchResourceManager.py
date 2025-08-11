@@ -1,6 +1,5 @@
 from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
-from Notification import Notification
 
 class PrefetchResourceManager(Manager):
     s_resources = []

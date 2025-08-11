@@ -1,7 +1,6 @@
 from Foundation.Initializer import Initializer
 from Foundation.Params import Params
 from Foundation.TaskManager import TaskManager
-from Notification import Notification
 
 class System(Params, Initializer):
     def __init__(self):

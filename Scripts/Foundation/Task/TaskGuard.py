@@ -1,6 +1,5 @@
 from Foundation.Notificator import Notificator
 from Foundation.Task.Task import Task
-from Notification import Notification
 
 class TaskGuard(Task):
     Skiped = False

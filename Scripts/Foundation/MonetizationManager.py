@@ -5,7 +5,6 @@ from Foundation.CurrencyManager import CurrencyManager
 from Foundation.Providers.ProductsProvider import ProductsProvider
 from Foundation.Utils import getCurrentPlatformParams, getCurrentPublisher, getCurrentBusinessModel
 from Foundation.Utils import isCollectorEdition
-from Notification import Notification
 
 
 # DEFAULT_GAME_CURRENCIES = ["Gold", "Energy", "Real", "Advert", "Technical"]

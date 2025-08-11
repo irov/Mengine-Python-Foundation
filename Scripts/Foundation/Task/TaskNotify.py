@@ -1,7 +1,5 @@
 from Foundation.Task.Task import Task
 
-from Notification import Notification
-
 class TaskNotify(Task):
     Skiped = True
 

@@ -3,7 +3,6 @@ from Foundation.Task.MixinObserver import MixinObserver
 from Foundation.Task.Task import Task
 from Foundation.Task.TaskGenerator import TaskGenerator
 from Foundation.Task.TaskGenerator import TaskSource
-from Notification import Notification
 
 class TaskScopeListener(MixinGroup, MixinObserver, Task):
     Skiped = False

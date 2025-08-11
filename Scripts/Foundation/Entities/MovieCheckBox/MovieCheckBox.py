@@ -1,8 +1,6 @@
 from Foundation.Entity.BaseEntity import BaseEntity
 from Foundation.ObjectManager import ObjectManager
 
-from Notification import Notification
-
 class MovieCheckBox(BaseEntity):
     @staticmethod
     def declareORM(Type):

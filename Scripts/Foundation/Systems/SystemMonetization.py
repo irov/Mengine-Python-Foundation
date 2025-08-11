@@ -10,7 +10,6 @@ from Foundation.Systems.SystemAnalytics import SystemAnalytics
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger, getCurrentPublisher
 from Foundation.Providers.PaymentProvider import PaymentProvider
-from Notification import Notification
 
 _Log = SimpleLogger("SystemMonetization", option="monetization")
 

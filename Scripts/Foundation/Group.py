@@ -1,6 +1,5 @@
 from Foundation.LayerManager import LayerManager
 from Foundation.Object.ChildObject import ChildObject
-from Notification import Notification
 
 class Group(ChildObject):
     Category = "Resources"  # FIXME

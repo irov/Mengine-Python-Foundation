@@ -4,7 +4,7 @@ from Foundation.DefaultManager import DefaultManager
 from Foundation.GroupManager import GroupManager
 from Foundation.SaveManager import SaveManager
 from Foundation.TaskManager import TaskManager
-from Notification import Notification
+
 from Session import Session
 
 class SessionManager(Manager):

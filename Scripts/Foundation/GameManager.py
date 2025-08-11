@@ -1,5 +1,4 @@
 from Foundation.Manager import Manager
-from Notification import Notification
 
 class GameManager(Manager):
     s_block_game = 0

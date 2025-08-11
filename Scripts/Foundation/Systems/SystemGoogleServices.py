@@ -8,7 +8,6 @@ from Foundation.Providers.AuthProvider import AuthProvider
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
-from Notification import Notification
 
 _Log = SimpleLogger("SystemGoogleServices")
 

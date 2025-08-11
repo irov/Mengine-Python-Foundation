@@ -1,7 +1,5 @@
 from Foundation.Entity.BaseEntity import BaseEntity
 
-from Notification import Notification
-
 class Slider(BaseEntity):
     @staticmethod
     def declareORM(Type):

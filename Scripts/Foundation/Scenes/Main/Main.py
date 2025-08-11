@@ -1,6 +1,5 @@
 from Foundation.GroupManager import GroupManager
 from Foundation.SceneManager import SceneManager
-from Notification import Notification
 
 class Main(object):
     def __init__(self):

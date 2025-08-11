@@ -1,7 +1,5 @@
 from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
-from Notification import Notification
-
 
 class PrefetchGroupNotifyManager(Manager):
     STATUS_NO = 0

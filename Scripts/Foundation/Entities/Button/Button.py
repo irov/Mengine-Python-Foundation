@@ -1,5 +1,3 @@
-from Notification import Notification
-
 Interaction = Mengine.importEntity("Interaction")
 
 class Button(Interaction):

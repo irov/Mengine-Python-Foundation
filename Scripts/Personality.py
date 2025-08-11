@@ -1,7 +1,5 @@
 import sys
 
-from Notification import Notification
-
 from Foundation.AccountManager import AccountManager
 from Foundation.Bootstrapper import Bootstrapper
 from Foundation.DefaultManager import DefaultManager

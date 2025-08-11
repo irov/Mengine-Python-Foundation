@@ -1,7 +1,6 @@
 from Foundation.SceneManager import SceneManager
 from Foundation.Task.MixinObserver import MixinObserver
 from Foundation.Task.Task import Task
-from Notification import Notification
 
 class TaskTransition(MixinObserver, Task):
     Skiped = False
