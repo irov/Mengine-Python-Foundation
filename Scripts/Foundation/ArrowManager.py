@@ -1,16 +1,18 @@
+from Foundation.Manager import Manager
 from Foundation.Notificator import Notificator
 from Notification import Notification
 
-class ArrowManager(object):
+class ArrowManager(Manager):
     s_attach = None
 
     @staticmethod
-    def onInitialize():
+    def _onInitialize():
         pass
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         ArrowManager.s_attach = None
+        pass
 
     @staticmethod
     def attachArrow(attach, movieAttach=True):
@@ -49,5 +51,3 @@ class ArrowManager(object):
         Notification.notify(Notificator.onArrowDeattach, attach)
 
         return attach
-        pass
-    pass

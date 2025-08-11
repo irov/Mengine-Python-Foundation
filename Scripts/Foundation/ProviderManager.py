@@ -1,4 +1,6 @@
-class ProviderManager(object):
+from Foundation.Manager import Manager
+
+class ProviderManager(Manager):
     s_providers = {}
 
     @staticmethod
@@ -51,7 +53,10 @@ class ProviderManager(object):
         return True
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         for provider in ProviderManager.s_providers.values():
             provider.removeProvider()
+            pass
+
         ProviderManager.s_providers = {}
+        pass

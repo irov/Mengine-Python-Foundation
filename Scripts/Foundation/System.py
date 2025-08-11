@@ -4,7 +4,6 @@ from Foundation.TaskManager import TaskManager
 from Notification import Notification
 
 class System(Params, Initializer):
-
     def __init__(self):
         super(System, self).__init__()
 
@@ -15,9 +14,11 @@ class System(Params, Initializer):
         self.__observers = []
         self.__events = []
         self.__task_chains = {}
+        pass
 
     def _onParams(self, params):
         super(System, self)._onParams(params)
+        pass
 
     def setName(self, name):
         self.name = name
@@ -42,7 +43,7 @@ class System(Params, Initializer):
         try:
             successful = self._onRun()
         except Exception as ex:
-            Trace.log("System", 0, "System.run %s except '%s'\n%s" % (self.name, ex, traceback.format_exc()))
+            Trace.log("System", 0, "System.run %s except '%s'" % (self.name, ex))
             return False
 
         if isinstance(successful, bool) is False:
@@ -62,12 +63,14 @@ class System(Params, Initializer):
 
     def _onInitialize(self):
         super(System, self)._onInitialize()
+        pass
 
     def _onFinalize(self):
         super(System, self)._onFinalize()
 
         if self.active is True:
             self.stop()
+        pass
 
     def existTaskChain(self, Name):
         return Name in self.__task_chains

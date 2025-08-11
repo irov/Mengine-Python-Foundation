@@ -1,24 +1,26 @@
+from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
 
 from Contract import Contract
 
-class ContractManager(object):
+class ContractManager(Manager):
     s_contracts = {}
 
     s_scheduler = None
 
     @staticmethod
-    def onInitialize():
+    def _onInitialize():
         ContractManager.s_scheduler = Mengine.createScheduler()
 
         return True
-        pass
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         if ContractManager.s_scheduler is not None:
             Mengine.destroyScheduler(ContractManager.s_scheduler)
             ContractManager.s_scheduler = None
+
+        ContractManager.s_contracts = {}
         pass
 
     @staticmethod

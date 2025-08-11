@@ -1,12 +1,12 @@
+from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
 from Foundation.GroupManager import GroupManager
 
-
-class DemonManager(object):
+class DemonManager(Manager):
     s_demons = {}
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         DemonManager.s_demons = {}
 
     @staticmethod

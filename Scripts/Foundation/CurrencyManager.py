@@ -1,7 +1,7 @@
+from Foundation.Manager import Manager
 from Foundation.DefaultManager import DefaultManager
 
-
-class CurrencyManager(object):
+class CurrencyManager(Manager):
     s_current_currency = None
 
     CURRENCY_TEXTS_IDS = {  # find them in Framework Texts.xml

@@ -1,3 +1,4 @@
+from Foundation.Manager import Manager
 from Foundation.Group import Group
 from Foundation.GroupManager import GroupManager
 from Foundation.Object.BaseObject import BaseObject
@@ -28,7 +29,7 @@ class SaveGroupRef(object):
         pass
     pass
 
-class SaveManager(object):
+class SaveManager(Manager):
     @staticmethod
     def getPickleTypes():
         return [SaveDict, SaveConstString, SaveObjectRef, SaveGroupRef]
@@ -233,15 +234,11 @@ class SaveManager(object):
                 if isinstance(group, Group) is True:
                     groupName = group.getName()
                     return groupName
-                    pass
                 elif isinstance(group, BaseObject) is True:
                     objectPath = __getObjectPath(group, path)
                     return objectPath
-                    pass
                 else:
                     raise Exception("__getObjectPath '%s' invalid group type '%s' for object '%s' type '%s'" % (group, type(group), value.getName(), type(value)))
-                    pass
-                pass
 
             groupName = __getObjectPath(value, object_path)
 
@@ -259,11 +256,9 @@ class SaveManager(object):
                 pass
             else:
                 raise Exception("isinstance('%s', Mengine.pybind_base_type) is True" % (value))
-                pass
             pass
         else:
             raise Exception("_saveValue '%s' invalid pickle type '%s'" % (value, type(value)))
-            pass
 
         return save_value
     pass
@@ -272,7 +267,6 @@ class SaveManager(object):
     def getValue(load_value):
         value = SaveManager._loadValue(load_value)
         return value
-        pass
 
     @staticmethod
     def _loadValue(load_value):
@@ -331,10 +325,8 @@ class SaveManager(object):
             pass
         else:
             raise Exception("_loadValue '%s' invalid pickle type '%s'" % (load_value, type(load_value)))
-            pass
 
         return value
-        pass
 
     @staticmethod
     def saveGroups():
@@ -351,5 +343,4 @@ class SaveManager(object):
             pass
 
         return save_groups
-        pass
     pass

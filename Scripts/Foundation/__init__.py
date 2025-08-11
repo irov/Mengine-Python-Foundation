@@ -20,9 +20,6 @@ def onInitialize():
     import Utils
     Mengine.addGlobalModule("Utils", Utils)
 
-    # import Enum
-    # Mengine.addGlobalModule("Enum", Enum.make_enum)
-
     from Enum import Enum
     Mengine.addGlobalModule("Enum", Enum)
 
@@ -52,6 +49,8 @@ def onInitialize():
 
     from GoogleAnalytics import GoogleAnalytics
     Mengine.addGlobalModule("GoogleAnalytics", GoogleAnalytics)
+
+    Trace.msg("Foundation.onInitialize")
 
     from Foundation.ArrowManager import ArrowManager
 
@@ -865,37 +864,25 @@ def onInitialize():
     from Foundation.ProviderManager import ProviderManager
     ProviderManager.importProviders("Foundation.Providers", providers)
 
-    Trace.msg("Foundation.onInitialize")
+    from Foundation.Managers import Managers
+    Managers.onInitialize()
 
-    from Foundation.DatabaseManager import DatabaseManager
-    DatabaseManager.onInitialize()
+    Managers.importManager("Foundation", "DefaultManager")
+    Managers.importManager("Foundation", "TaskManager")
+    Managers.importManager("Foundation", "GroupManager")
+    Managers.importManager("Foundation", "ArrowManager")
+    Managers.importManager("Foundation", "SceneManager")
+    Managers.importManager("Foundation", "EntityManager")
+    Managers.importManager("Foundation", "StateManager")
+    Managers.importManager("Foundation", "DatabaseManager")
+    Managers.importManager("Foundation", "ProviderManager")
 
-    from Foundation.ArrowManager import ArrowManager
-    ArrowManager.onInitialize()
-
-    from Foundation.SceneManager import SceneManager
-    SceneManager.onInitialize()
-
-    from Foundation.GroupManager import GroupManager
-    GroupManager.onInitialize()
-
-    from Foundation.Business.ContractManager import ContractManager
-    ContractManager.onInitialize()
-
-    from Foundation.Business.BankManager import BankManager
-    BankManager.onInitialize()
-
-    from Foundation.PrefetchResourceManager import PrefetchResourceManager
-    PrefetchResourceManager.onInitialize()
-
-    from Foundation.PrefetchGroupManager import PrefetchGroupManager
-    PrefetchGroupManager.onInitialize()
-
-    from Foundation.PrefetchGroupNotifyManager import PrefetchGroupNotifyManager
-    PrefetchGroupNotifyManager.onInitialize()
-
-    from Foundation.SessionManager import SessionManager
-    SessionManager.onInitialize()
+    Managers.importManager("Foundation.Business", "ContractManager")
+    Managers.importManager("Foundation.Business", "BankManager")
+    Managers.importManager("Foundation", "PrefetchResourceManager")
+    Managers.importManager("Foundation", "PrefetchGroupManager")
+    Managers.importManager("Foundation", "PrefetchGroupNotifyManager")
+    Managers.importManager("Foundation", "SessionManager")
 
     return True
 
@@ -903,53 +890,28 @@ def onInitialize():
 def onFinalize():
     Trace.msg("Foundation.onFinalize")
 
-    from Foundation.SessionManager import SessionManager
-    SessionManager.onFinalize()
+    from Foundation.Managers import Managers
 
-    from Foundation.Business.ContractManager import ContractManager
-    ContractManager.onFinalize()
+    Managers.removeManager("SessionManager")
+    Managers.removeManager("ContractManager")
+    Managers.removeManager("BankManager")
+    Managers.removeManager("TaskManager")
+    Managers.removeManager("ArrowManager")
+    Managers.removeManager("SystemManager")
+    Managers.removeManager("EntityManager")
+    Managers.removeManager("SceneManager")
+    Managers.removeManager("GroupManager")
+    Managers.removeManager("DemonManager")
+    Managers.removeManager("StateManager")
+    Managers.removeManager("DefaultManager")
+    Managers.removeManager("PrefetchGroupManager")
+    Managers.removeManager("PrefetchResourceManager")
+    Managers.removeManager("PrefetchGroupNotifyManager")
+    Managers.removeManager("DatabaseManager")
+    Managers.removeManager("ProviderManager")
 
-    from Foundation.Business.BankManager import BankManager
-    BankManager.onFinalize()
-
-    from Foundation.TaskManager import TaskManager
-    TaskManager.onFinalize()
-
-    from Foundation.ArrowManager import ArrowManager
-    ArrowManager.onFinalize()
-
-    from Foundation.SystemManager import SystemManager
-    SystemManager.onFinalize()
-
-    from Foundation.EntityManager import EntityManager
-    EntityManager.onFinalize()
-
-    from Foundation.SceneManager import SceneManager
-    SceneManager.onFinalize()
-
-    from Foundation.GroupManager import GroupManager
-    GroupManager.onFinalize()
-
-    from Foundation.DemonManager import DemonManager
-    DemonManager.onFinalize()
-
-    from Foundation.StateManager import StateManager
-    StateManager.onFinalize()
-
-    from Foundation.DefaultManager import DefaultManager
-    DefaultManager.onFinalize()
-
-    from Foundation.PrefetchGroupManager import PrefetchGroupManager
-    PrefetchGroupManager.onFinalize()
-
-    from Foundation.PrefetchResourceManager import PrefetchResourceManager
-    PrefetchResourceManager.onFinalize()
-
-    from Foundation.DatabaseManager import DatabaseManager
-    DatabaseManager.onFinalize()
+    Managers.onFinalize()
 
     from Notification import Notification
     Notification.onFinalize()
-
-    from Foundation.ProviderManager import ProviderManager
-    ProviderManager.onFinalize()
+    pass

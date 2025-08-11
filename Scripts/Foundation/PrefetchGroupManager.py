@@ -1,25 +1,20 @@
+from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
-from Notification import Notification
 
-class PrefetchGroupManager(object):
+class PrefetchGroupManager(Manager):
     s_groups = []
     s_onInitializeRenderResourcesComplete = False
-    s_onInitializeRenderResourcesObserver = None
 
     @staticmethod
-    def onInitialize():
+    def _onInitialize(*args):
         PrefetchGroupManager.s_onInitializeRenderResourcesComplete = False
-        PrefetchGroupManager.s_onInitializeRenderResourcesObserver = Notification.addObserver(Notificator.onInitializeRenderResources, PrefetchGroupManager.__onInitializeRenderResources)
-        PrefetchGroupManager.s_onFinalizeRenderResources = Notification.addObserver(Notificator.onFinalizeRenderResources, PrefetchGroupManager.__onFinalizeRenderResources)
+
+        PrefetchGroupManager.addObserver(Notificator.onInitializeRenderResources, PrefetchGroupManager.__onInitializeRenderResources)
+        PrefetchGroupManager.addObserver(Notificator.onFinalizeRenderResources, PrefetchGroupManager.__onFinalizeRenderResources)
         pass
 
     @staticmethod
-    def onFinalize():
-        Notification.removeObserver(PrefetchGroupManager.s_onInitializeRenderResourcesObserver)
-        Notification.removeObserver(PrefetchGroupManager.s_onFinalizeRenderResources)
-        PrefetchGroupManager.s_onInitializeRenderResourcesObserver = None
-        PrefetchGroupManager.s_onFinalizeRenderResources = None
-
+    def _onFinalize():
         PrefetchGroupManager.s_groups = []
         pass
 
@@ -45,7 +40,6 @@ class PrefetchGroupManager(object):
         PrefetchGroupManager.prefetchGroupsTagged(None)
 
         return True
-        pass
 
     @staticmethod
     def __onFinalizeRenderResources():
@@ -54,7 +48,6 @@ class PrefetchGroupManager(object):
         PrefetchGroupManager.unfetchGroupsTagged(None)
 
         return True
-        pass
 
     @staticmethod
     def mergeGroupsTagged(PrefetchTag, UnfetchTag):
@@ -109,7 +102,6 @@ class PrefetchGroupManager(object):
         for GroupName, Prefetch, GroupTag in PrefetchGroupManager.s_groups:
             if GroupTag != Tag:
                 continue
-                pass
 
             if Prefetch == 0:
                 pass
@@ -130,7 +122,6 @@ class PrefetchGroupManager(object):
         for GroupName, Prefetch, GroupTag in PrefetchGroupManager.s_groups:
             if GroupTag != Tag:
                 continue
-                pass
 
             if Prefetch == 0:
                 pass

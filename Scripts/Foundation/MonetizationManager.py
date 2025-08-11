@@ -12,7 +12,7 @@ from Notification import Notification
 ALLOWED_STORE_PROVIDERS = ["Store", "GameStore", None]
 
 
-class MonetizationManager(Manager, CurrencyManager):
+class MonetizationManager(CurrencyManager):
     __PARAMS_TABLE_NAMES = {
         "general": "MonetizationGeneral",
         "store_items": "StoreItems",

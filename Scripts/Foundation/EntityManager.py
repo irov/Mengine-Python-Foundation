@@ -1,6 +1,7 @@
+from Foundation.Manager import Manager
 from Foundation.Params import ParamsException
 
-class EntityManager(object):
+class EntityManager(Manager):
     s_type = {}
     s_typeDemain = {}
 
@@ -85,9 +86,10 @@ class EntityManager(object):
         return Type
 
     @staticmethod
-    def onInitialize():
+    def _onInitialize():
         pass
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         EntityManager.s_type = {}
+        pass

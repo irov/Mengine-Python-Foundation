@@ -1,3 +1,5 @@
+from Foundation.Manager import Manager
+
 from Foundation.DefaultManager import DefaultManager
 from Foundation.GroupManager import GroupManager
 from Foundation.SaveManager import SaveManager
@@ -5,44 +7,32 @@ from Foundation.TaskManager import TaskManager
 from Notification import Notification
 from Session import Session
 
-class SessionManager(object):
-    s_onSelectAccountObserver = None
-    s_onUnselectAccountObserver = None
-    s_onDeleteProfileObserver = None
+class SessionManager(Manager):
     s_sessionType = None
     s_currentSession = None
     s_invalidLoad = False
     s_selectAccount = None
 
     @staticmethod
-    def onInitialize():
-        SessionManager.s_onSelectAccountObserver = Notification.addObserver(Notificator.onSelectAccount, SessionManager.__onSelectAccount)
-        SessionManager.s_onUnselectAccountObserver = Notification.addObserver(Notificator.onUnselectAccount, SessionManager.__onUnselectAccount)
-        SessionManager.s_onDeleteProfileObserver = Notification.addObserver(Notificator.onDeleteAccount, SessionManager.__onDeleteProfile)
+    def _onInitialize():
+        SessionManager.addObserver(Notificator.onSelectAccount, SessionManager.__onSelectAccount)
+        SessionManager.addObserver(Notificator.onUnselectAccount, SessionManager.__onUnselectAccount)
+        SessionManager.addObserver(Notificator.onDeleteAccount, SessionManager.__onDeleteProfile)
 
         if Mengine.hasCurrentAccount() is False:
             return
-            pass
 
         currentAccountName = Mengine.getCurrentAccountName()
         SessionManager.__onSelectAccount(currentAccountName)
         pass
 
     @staticmethod
-    def onFinalize():
-        Notification.removeObserver(SessionManager.s_onSelectAccountObserver)
-        Notification.removeObserver(SessionManager.s_onUnselectAccountObserver)
-        Notification.removeObserver(SessionManager.s_onDeleteProfileObserver)
-
-        SessionManager.s_onSelectAccountObserver = None
-        SessionManager.s_onSelectAccountObserver = None
-        SessionManager.s_onDeleteProfileObserver = None
+    def _onFinalize():
         pass
 
     @staticmethod
     def isInvalidLoad():
         return SessionManager.s_invalidLoad
-        pass
 
     @staticmethod
     def loadSaveData(load_session):
@@ -63,7 +53,6 @@ class SessionManager(object):
         hasSaveStage = Mengine.getCurrentAccountSettingBool("Save")
         if hasSaveStage is False:
             return
-            pass
 
         pickleTypes = SaveManager.getPickleTypes()
 
@@ -78,7 +67,6 @@ class SessionManager(object):
 
             Notification.notify(Notificator.onSessionLoadInvalid)
             return
-            pass
 
         SessionManager.loadSaveData(load_session)
         pass
@@ -142,14 +130,12 @@ class SessionManager(object):
         save_types = SaveManager.getPickleTypes()
 
         return (save_session, save_types)
-        pass
 
     @staticmethod
     def saveSession():
         if SessionManager.s_currentSession is None:
-            # Trace.log("Manager", 0, "SessionManager not setup current session")
+            Trace.log("Manager", 0, "SessionManager not setup current session")
             return False
-            pass
 
         save_session, save_types = SessionManager.getSaveData()
 
@@ -158,7 +144,6 @@ class SessionManager(object):
         if Mengine.writeAccountPickleFile(AccountID, u"session.dat", save_session, save_types) is False:
             Trace.log("Manager", 0, "SessionManager.saveSession can't write 'session.dat'")
             return False
-            pass
 
         SessionManager.s_invalidLoad = False
 
@@ -168,7 +153,6 @@ class SessionManager(object):
         Mengine.saveAccounts()
 
         return True
-        pass
 
     @staticmethod
     def __onSelectAccount(accountID):
@@ -176,18 +160,15 @@ class SessionManager(object):
 
         if check is False:
             return False
-            pass
 
         if accountID == SessionManager.s_selectAccount:
             return False
-            pass
 
         SessionManager.selectAccount(accountID, True)
 
         Notification.notify(Notificator.onSessionNew, accountID)
 
         return False
-        pass
 
     @staticmethod
     def selectAccount(accountID, isLoad):
@@ -195,11 +176,9 @@ class SessionManager(object):
 
         if Default is True:
             return False
-            pass
 
         if SessionManager.s_sessionType is None:
             return False
-            pass
 
         newSession = SessionManager.s_sessionType()
 
@@ -207,7 +186,6 @@ class SessionManager(object):
 
         if newSession.onInitialize(accountID) is False:
             return False
-            pass
 
         newSession.onRun()
 
@@ -223,21 +201,18 @@ class SessionManager(object):
             pass
 
         return False
-        pass
 
     @staticmethod
     def __onDeleteProfile(accountID):
         SessionManager.removeCurrentSession()
 
         return False
-        pass
 
     @staticmethod
     def __onUnselectAccount(accountID):
         SessionManager.removeCurrentSession()
 
         return False
-        pass
 
     @staticmethod
     def setSessionType(type):

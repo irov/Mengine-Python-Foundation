@@ -1,10 +1,12 @@
+from Foundation.Manager import Manager
+
 from Notification import Notification
 
-class StateManager(object):
+class StateManager(Manager):
     s_states = {}
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         StateManager.s_states = {}
         pass
 
@@ -21,7 +23,6 @@ class StateManager(object):
     def changeState(id, value, *args):
         if id not in StateManager.s_states:
             return
-            pass
 
         StateManager.s_states[id] = value
         Notification.notify(Notificator.onStateChange, id, value, *args)
@@ -33,11 +34,7 @@ class StateManager(object):
             return None
             pass
         return StateManager.s_states[id]
-        pass
 
     @staticmethod
     def hasState(id):
         return id in StateManager.s_states
-        pass
-
-    pass

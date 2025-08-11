@@ -1,5 +1,6 @@
-class TraceManager(object):
+from Foundation.Manager import Manager
 
+class TraceManager(Manager):
     s_traceConfig = {}
     s_levelRange = range(5)
 

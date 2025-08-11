@@ -1,9 +1,8 @@
-# coding=utf-8
+from Foundation.Manager import Manager
 from Foundation.Bootstrapper import checkBuildMode, checkPlatform
 from Foundation.DatabaseManager import DatabaseManager
 
-
-class GroupManager(object):
+class GroupManager(Manager):
     class EmptyGroup(object):
         def __init__(self):
             pass
@@ -23,25 +22,20 @@ class GroupManager(object):
     s_groups = {}
     s_groupsType = {}
     s_groupsDynamicInfos = {}
-    s_initialized = False
 
     @staticmethod
-    def onInitialize():
-        GroupManager.s_initialized = True
+    def _onInitialize(*args):
         return True
-        pass
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         # copy for delete in remove parent group
         for group in GroupManager.s_groups.values():
             if isinstance(group, GroupManager.EmptyGroup):
                 continue
-                pass
 
             if group.isDestroy() is True:
                 continue
-                pass
 
             ParentGroupName = group.getParentGroupName()
             if ParentGroupName is not None:
@@ -56,13 +50,7 @@ class GroupManager(object):
         GroupManager.s_groupsStage = {}
         GroupManager.s_groupsType = {}
         GroupManager.s_groupsDynamicInfos = {}
-
-        GroupManager.s_initialized = False
         pass
-
-    @staticmethod
-    def isInitialized():
-        return GroupManager.s_initialized
 
     @staticmethod
     def loadParams(module, param):

@@ -1,12 +1,13 @@
+from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
 
-
-class PolicyManager(object):
+class PolicyManager(Manager):
     s_policy = {}
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         PolicyManager.s_policy = {}
+        pass
 
     @staticmethod
     def loadParams(module, param):

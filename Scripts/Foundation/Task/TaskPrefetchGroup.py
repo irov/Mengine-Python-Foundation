@@ -24,6 +24,7 @@ class TaskPrefetchGroup(Task):
         if self.Prefetch == 0:
             pass
         elif self.Prefetch == 1:
+            print "PrefetchGroup: incrementing resources for group '%s'" % self.GroupName
             Mengine.incrementResources(self.GroupName)
             pass
         elif Prefetch == 2:

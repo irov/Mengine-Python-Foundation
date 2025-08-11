@@ -1,9 +1,10 @@
+from Foundation.Manager import Manager
+
 from Foundation.Task.MixinGroup import MixinGroup
 from Foundation.Task.MixinNode import MixinNode
 
-class TaskManager(object):
+class TaskManager(Manager):
     s_skiped = False
-    s_finalize = False
 
     s_types = {}
     s_typesDomain = {}
@@ -15,12 +16,10 @@ class TaskManager(object):
     s_idleChain = []
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         for chain in TaskManager.s_runningChain[:]:
             chain.cancel()
             pass
-
-        TaskManager.s_finalize = True
 
         TaskManager.s_runningNamedChain = {}
         TaskManager.s_idleNamedChain = {}
@@ -29,6 +28,7 @@ class TaskManager(object):
         TaskManager.s_idleChain = []
 
         TaskManager.s_types = {}
+        TaskManager.s_typesDomain = {}
         pass
 
     @staticmethod
@@ -97,7 +97,7 @@ class TaskManager(object):
 
     @staticmethod
     def createTask(taskType, base, chain, group, params):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "create Task %s after finalize" % (taskType))
             return None
             pass
@@ -196,7 +196,7 @@ class TaskManager(object):
 
     @staticmethod
     def createTaskChain(Caller=None, CallerDeep=0, **params):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "create TaskChain after finalize")
             return
             pass
@@ -232,7 +232,7 @@ class TaskManager(object):
 
     @staticmethod
     def runAlias(name, cb, **params):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "run Alias after finalize")
             return
             pass
@@ -244,7 +244,7 @@ class TaskManager(object):
 
     @staticmethod
     def runningTaskChain(chain, named):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "running TaskChain after finalize")
             return
             pass
@@ -260,7 +260,7 @@ class TaskManager(object):
 
     @staticmethod
     def endTaskChain(chain, named):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "end TaskChain after finalize")
             return
             pass
@@ -281,7 +281,7 @@ class TaskManager(object):
 
     @staticmethod
     def skipTasks(exceptOfTask=None, skipGlobal=True):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "skip Tasks after finalize")
             return
             pass
@@ -310,7 +310,7 @@ class TaskManager(object):
 
     @staticmethod
     def addTaskChain(chain, named):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "add TaskChain after finalize")
             return
             pass
@@ -336,7 +336,7 @@ class TaskManager(object):
 
     @staticmethod
     def removeTaskChain(chain, named):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "remove TaskChain after finalize")
             return
             pass
@@ -358,7 +358,7 @@ class TaskManager(object):
 
     @staticmethod
     def runTaskChain(name):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "run TaskChain after finalize")
             return False
             pass
@@ -377,7 +377,7 @@ class TaskManager(object):
 
     @staticmethod
     def cancelTaskChain(name, exist=True):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "cancel TaskChain after finalize")
             return
             pass
@@ -397,7 +397,7 @@ class TaskManager(object):
 
     @staticmethod
     def skipTaskChain(name):
-        if TaskManager.s_finalize is True:
+        if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "skip TaskChain after finalize")
             return
             pass

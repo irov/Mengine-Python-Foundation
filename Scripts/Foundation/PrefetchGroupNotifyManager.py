@@ -1,8 +1,9 @@
+from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
 from Notification import Notification
 
 
-class PrefetchGroupNotifyManager(object):
+class PrefetchGroupNotifyManager(Manager):
     STATUS_NO = 0
     STATUS_START = 1
     STATUS_FINISHED = 2
@@ -10,20 +11,15 @@ class PrefetchGroupNotifyManager(object):
     s_status = STATUS_NO
     s_prefetch_list = {}
     s_groups = []
-    s_onInitializeRenderResourcesObserver = None
 
     @staticmethod
-    def onInitialize():
-        PrefetchGroupNotifyManager.s_onInitializeRenderResourcesObserver = Notification.addObserver(Notificator.onInitializeRenderResources, PrefetchGroupNotifyManager.__onInitializeRenderResources)
-        PrefetchGroupNotifyManager.s_onFinalizeRenderResourcesObserver = Notification.addObserver(Notificator.onFinalizeRenderResources, PrefetchGroupNotifyManager.__onFinalizeRenderResources)
+    def _onInitialize(*args):
+        PrefetchGroupNotifyManager.addObserver(Notificator.onInitializeRenderResources, PrefetchGroupNotifyManager.__onInitializeRenderResources)
+        PrefetchGroupNotifyManager.addObserver(Notificator.onFinalizeRenderResources, PrefetchGroupNotifyManager.__onFinalizeRenderResources)
+        pass
 
     @staticmethod
-    def onFinalize():
-        Notification.removeObserver(PrefetchGroupNotifyManager.s_onInitializeRenderResourcesObserver)
-        Notification.removeObserver(PrefetchGroupNotifyManager.s_onFinalizeRenderResourcesObserver)
-        PrefetchGroupNotifyManager.s_onInitializeRenderResourcesObserver = None
-        PrefetchGroupNotifyManager.s_onFinalizeRenderResourcesObserver = None
-
+    def _onFinalize():
         for GroupName, Prefetch, Tag in PrefetchGroupNotifyManager.s_groups:
             if Prefetch == 0:
                 pass
@@ -33,6 +29,7 @@ class PrefetchGroupNotifyManager(object):
                 Mengine.unfetchResources(GroupName)
 
         PrefetchGroupNotifyManager.s_groups = []
+        pass
 
     @staticmethod
     def loadParams(module, param):
@@ -51,12 +48,14 @@ class PrefetchGroupNotifyManager(object):
     def __onInitializeRenderResources():
         PrefetchGroupNotifyManager.s_status = PrefetchGroupNotifyManager.STATUS_START
         PrefetchGroupNotifyManager.prefetchGroupsTagged(None)
+
         return True
 
     @staticmethod
     def __onFinalizeRenderResources():
         PrefetchGroupNotifyManager.s_status = PrefetchGroupNotifyManager.STATUS_FINISHED
         PrefetchGroupNotifyManager.unfetchGroupsTagged(None)
+
         return True
 
     @staticmethod
@@ -108,6 +107,7 @@ class PrefetchGroupNotifyManager(object):
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
+                print "PrefetchGroupNotifyManager: incrementing resources for group '%s'" % GroupName
                 Mengine.incrementResources(GroupName)
             elif Prefetch == 2:
                 def __cb(successful, tag, group_name):
@@ -150,6 +150,7 @@ class PrefetchGroupNotifyManager(object):
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
+                print "PrefetchGroupNotifyManager: incrementing resources for group '%s'" % GroupName
                 Mengine.incrementResources(GroupName)
             elif Prefetch == 2:
                 def __cb(successful, GroupName):

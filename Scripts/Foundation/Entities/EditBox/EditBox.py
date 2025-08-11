@@ -118,6 +118,7 @@ class EditBox(BaseEntity):
     def _onPreparation(self):
         super(EditBox, self)._onPreparation()
         self._SceneRestartBeginID = Notification.addObserver(Notificator.onSceneRestartBegin, self._onSceneRestartBegin)
+        pass
 
     def _onActivate(self):
         super(EditBox, self)._onActivate()

@@ -1,7 +1,8 @@
+from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
 from Foundation.GroupManager import GroupManager
 
-class ArrowBlackListManager(object):
+class ArrowBlackListManager(Manager):
     s_ignores = {}
 
     class Ignored(object):

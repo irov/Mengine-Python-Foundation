@@ -1,6 +1,7 @@
 from Foundation.BuildModeManager import BuildModeManager
 from Foundation.DatabaseManager import DatabaseManager
 from Foundation.Manager import Manager
+from Foundation.Managers import Managers
 from Foundation.SystemManager import SystemManager
 
 
@@ -60,7 +61,6 @@ def checkPlatform(platform):
 
 class Bootstrapper(object):
     s_sessionSystems = []
-    s_managers = {}
 
     @staticmethod
     def loadManagers(module, param):
@@ -88,7 +88,7 @@ class Bootstrapper(object):
                 continue
 
             if Development is _DEVELOPMENT or Development is None:
-                Manager = Bootstrapper.__importManager(Module, Name)
+                Manager = Managers.importManager(Module, Name)
 
                 if Manager is None:
                     Trace.log("Manager", 0, "Bootstrapper.loadManagers manager %s invalid import %s.%s" % (Name, Module, Name))
@@ -113,34 +113,10 @@ class Bootstrapper(object):
         return True
 
     @staticmethod
-    def __importManager(module, name):
-        manager = Bootstrapper.s_managers.get(name)
-
-        if manager is not None:
-            return manager
-
-        new_manager = Utils.importType(module, name)
-
-        if new_manager is None:
-            Trace.log("Manager", 0, "Bootstrapper.importManager: invalid import %s:%s" % (module, name))
-
-            return None
-
-        if issubclass(new_manager, Manager) is True:
-            if new_manager.onInitialize() is False:
-                Trace.log("Manager", 0, "Bootstrapper.importManager: manager '%s' invalid initialize" % name)
-
-                return None
-
-        Bootstrapper.s_managers[name] = new_manager
-
-        return new_manager
-
-    @staticmethod
     def loadSystems(module, param):
         records = DatabaseManager.getDatabaseRecords(module, param)
 
-        if SystemManager.onInitialize() is False:
+        if Managers.importManager("Foundation", "SystemManager") is None:
             Trace.log("Manager", 0, "Bootstrapper.loadSystems invalid initialize system manager")
             return False
 
@@ -194,9 +170,4 @@ class Bootstrapper(object):
 
     @staticmethod
     def shutdown():
-        for name, manager in Bootstrapper.s_managers.iteritems():
-            if issubclass(manager, Manager) is True:
-                manager.onFinalize()
-
-        Bootstrapper.s_managers = {}
         Bootstrapper.s_sessionSystems = []

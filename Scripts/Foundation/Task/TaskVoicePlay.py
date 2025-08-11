@@ -5,7 +5,7 @@ class TaskVoicePlay(Task):
 
     def __init__(self):
         super(TaskVoicePlay, self).__init__()
-        self.playId = None
+        self.identity = None
         pass
 
     def _onParams(self, params):
@@ -17,51 +17,39 @@ class TaskVoicePlay(Task):
         pass
 
     def _onRun(self):
-        if self.Wait is True:
-            self.playId = Mengine.voicePlay(self.VoiceID, self.Loop, self._onVoiceEnd)
+        if self.Wait is False:
+            self.identity = Mengine.voicePlay(self.VoiceID, self.Loop, None)
 
-            if self.playId == 0:
+            if self.identity is None:
                 return True
-                pass
-
-            return False
-        else:
-            self.playId = Mengine.voicePlay(self.VoiceID, self.Loop, None)
-
-            if self.playId == 0:
-                return True
-                pass
 
             return True
+
+        cbs = dict(onSoundPause=None, onSoundResume=None, onSoundStop=self._onVoiceStop, onSoundEnd=self._onVoiceEnd)
+
+        self.identity = Mengine.voicePlay(self.VoiceID, self.Loop, cbs)
+
+        if self.identity is None:
+            return True
+
+        return False
+
+    def _onVoiceStop(self, identity):
+        self.complete(isSkiped=True)
         pass
 
     def _onVoiceEnd(self, method, playId):
-        """
-        Voice play callback
-        :param playId: SoundIdentity
-        :param isEnd: sound play state, 0 - stop, 1 - end
-        :return: None
-        """
-        if playId is None:
-            return
-
-        if self.playId is None:
-            return
-
-        if self.playId.getId() != playId.getId():
-            return
-
-        self.playId = None
-
-        self.complete()
+        self.complete(isSkiped=False)
         pass
 
     def _onSkip(self):
-        if self.playId is not None:
-            stopId = self.playId
+        if self.identity is None:
+            return
 
-            self.playId = None
-            Mengine.voiceStop(stopId)
-            pass
+        Mengine.voiceStop(self.identity)
+        pass
+
+    def _onFinally(self):
+        self.identity = None
         pass
     pass

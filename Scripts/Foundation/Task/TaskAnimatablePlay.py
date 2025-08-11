@@ -112,8 +112,6 @@ class TaskAnimatablePlay(MixinEvent, Task):
         pass
 
     def _onSkip(self):
-        super(TaskAnimatablePlay, self)._onSkip()
-
         if self.Wait is False:
             return
 
@@ -129,8 +127,6 @@ class TaskAnimatablePlay(MixinEvent, Task):
         pass
 
     def _onFinally(self):
-        super(TaskAnimatablePlay, self)._onFinally()
-
         if self.Wait is False:
             return
             pass

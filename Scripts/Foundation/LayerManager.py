@@ -1,4 +1,6 @@
-class LayerManager(object):
+from Foundation.Manager import Manager
+
+class LayerManager(Manager):
     s_LayerType = {}
 
     @staticmethod
@@ -18,7 +20,6 @@ class LayerManager(object):
 
         if Type not in LayerManager.s_LayerType:
             return None
-            pass
 
         LayerType = LayerManager.s_LayerType.get(Type)
 
@@ -28,5 +29,3 @@ class LayerManager(object):
         layer.onParams(params)
 
         return layer
-        pass
-    pass

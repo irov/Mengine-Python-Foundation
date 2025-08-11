@@ -1,6 +1,7 @@
+from Foundation.Manager import Manager
 from Foundation.Object.BaseObject import BaseObject
 
-class ObjectManager(object):
+class ObjectManager(Manager):
     s_typesDemain = {}
     s_types = {}
 
@@ -23,7 +24,6 @@ class ObjectManager(object):
         ObjectManager.s_typesDemain[name] = (module_pure, type)
 
         return True
-        pass
 
     @staticmethod
     def __importDemainObject(module, type):
@@ -42,7 +42,6 @@ class ObjectManager(object):
             Trace.log("Manager", 0, "ObjectManager.__importDemainObject %s:%s error import '%s'\n%s" % (module, type, ex, traceback.format_exc()))
 
             return None
-            pass
 
         try:
             Type = getattr(Module, type)
@@ -50,10 +49,8 @@ class ObjectManager(object):
             Trace.log("Manager", 0, "ObjectManager.__importDemainObject %s:%s module not found type '%s'\n%s" % (module, type, ex, traceback.format_exc()))
 
             return None
-            pass
 
         return Type
-        pass
 
     @staticmethod
     def getObjectType(typeName):
@@ -61,7 +58,6 @@ class ObjectManager(object):
             Trace.log("ObjectManager", 0, "ObjectManager.createObject: not register type %s maybe you forgot add in Pak.xml(Entity) or init in ObjectManager" % (typeName))
 
             return None
-            pass
 
         ObjectType = ObjectManager.s_types.get(typeName)
 
@@ -72,14 +68,12 @@ class ObjectManager(object):
 
             if ObjectType is None:
                 return None
-                pass
 
             ObjectType.declareORM(ObjectType)
 
             ObjectManager.s_types[typeName] = ObjectType
 
         return ObjectType
-        pass
 
     @staticmethod
     def createObject(typeName, name, group, params):
@@ -87,7 +81,6 @@ class ObjectManager(object):
 
         if ObjectType is None:
             return None
-            pass
 
         obj = ObjectType()
 
@@ -98,10 +91,8 @@ class ObjectManager(object):
         if obj.onParams(params) is False:
             Trace.log("ObjectManager", 0, "ObjectManager.createObject: Object %s type %s invalid params" % (name, typeName))
             return None
-            pass
 
         return obj
-        pass
 
     @staticmethod
     def createObjectUnique(typeName, name, group, **params):
@@ -111,7 +102,6 @@ class ObjectManager(object):
                     Trace.log("ObjectManager", 0, "ObjectManager.createObjectUnique: invalid group %s is not subclass BaseObject" % (group))
 
                     return None
-                    pass
                 pass
             pass
 
@@ -121,7 +111,6 @@ class ObjectManager(object):
             Trace.log("ObjectManager", 0, "ObjectManager.createObjectUnique: invalid create")
 
             return None
-            pass
 
         obj.onInitialize()
         obj.onActivate()
@@ -130,5 +119,4 @@ class ObjectManager(object):
         obj.setSaving(False)
 
         return obj
-        pass
     pass

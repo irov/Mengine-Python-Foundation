@@ -1,3 +1,5 @@
+from Foundation.Manager import Manager
+
 import random
 
 class RPGUnit(object):
@@ -34,7 +36,7 @@ class RPGUnit(object):
         pass
     pass
 
-class RPGManager(object):
+class RPGManager(Manager):
     def __init__(self):
         self.formules = {}
         pass
@@ -43,13 +45,10 @@ class RPGManager(object):
     def __Rand(Value):
         if Value == 0.0:
             return False
-            pass
         elif Value == 1.0:
             return True
-            pass
 
         return random.random() <= Value
-        pass
 
     def __makeFormulaCode(self, name, code):
         c = compile(code, '<string>', 'exec')

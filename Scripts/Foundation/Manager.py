@@ -1,8 +1,12 @@
 class Manager(object):
-    s__observers = []
+    s__allowInitialize = False
 
     @classmethod
     def onInitialize(cls, *args):
+        if not cls.s__allowInitialize:
+            Trace.log("Manager", 0, "Manager.onInitialize %s not allowed to initialize" % (cls.__name__))
+            return False
+
         if cls._onSave is not Manager._onSave:
             cls.addObserver(Notificator.onSessionSave, cls.__onSessionSave)
             pass
@@ -13,27 +17,36 @@ class Manager(object):
 
         cls._onInitialize(*args)
 
-        return True
-        pass
+        cls.s__initialized = True
 
-    @classmethod
-    def _onInitialize(cls, *args):
+        return True
+
+    @staticmethod
+    def _onInitialize(*args):
         pass
 
     @classmethod
     def onFinalize(cls):
-        for observer in cls.s__observers:
-            Notification.removeObserver(observer)
+        if hasattr(cls, "s__observers") is False:
+            for observer in cls.s__observers:
+                Notification.removeObserver(observer)
+                pass
+
+            cls.s__observers = []
             pass
 
-        cls.s__observers = []
-
         cls._onFinalize()
+
+        cls.s__initialized = False
+        pass
+
+    @staticmethod
+    def _onFinalize():
         pass
 
     @classmethod
-    def _onFinalize(cls):
-        pass
+    def isInitialized(cls):
+        return getattr(cls, "s__initialized", False)
 
     @classmethod
     def __onSessionSave(cls, dict_global):
@@ -43,22 +56,22 @@ class Manager(object):
             Trace.log("Manager", 0, "Manager.__onSessionSave %s save return 'None'" % (cls))
 
             return False
-            pass
 
         dict_global.setdefault("Manager", {})
         dict_global["Manager"][cls.__name__] = dict_save
 
         return False
-        pass
 
-    @classmethod
-    def _onSave(cls):
+    @staticmethod
+    def _onSave():
         return {}
-        pass
 
     @classmethod
     def __onSessionLoad(cls, dict_global):
         dict_save = dict_global.get("Manager", {}).get(cls.__name__, {})
+
+        if dict_save is None:
+            return False
 
         try:
             cls._onLoad(dict_save)
@@ -68,10 +81,9 @@ class Manager(object):
             Mengine.changeCurrentAccountSetting("InvalidLoad", u"True")
 
         return False
-        pass
 
-    @classmethod
-    def _onLoad(cls, dict_save):
+    @staticmethod
+    def _onLoad(dict_save):
         pass
 
     @classmethod
@@ -80,7 +92,9 @@ class Manager(object):
 
         if observer is None:
             return
-            pass
+
+        if not hasattr(cls, 's__observers'):
+            cls.s__observers = []
 
         cls.s__observers.append(observer)
 

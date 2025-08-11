@@ -5,7 +5,7 @@ class TaskSoundEffect(Task):
 
     def __init__(self):
         super(TaskSoundEffect, self).__init__()
-        self.playId = None
+        self.identity = None
 
     def _onParams(self, params):
         super(TaskSoundEffect, self)._onParams(params)
@@ -34,40 +34,39 @@ class TaskSoundEffect(Task):
         return True
 
     def _onRun(self):
-        if self.Wait is True:
-            self.playId = Mengine.soundPlay(self.SoundName, False, self._onSoundEnd)
+        if self.Wait is False:
+            self.identity = Mengine.soundPlay(self.SoundName, False, None)
 
-            if self.playId is None:
-                return True
-
-            return False
-        else:
-            self.playId = Mengine.soundPlay(self.SoundName, False, None)
-
-            if self.playId is None:
+            if self.identity is None:
                 return True
 
             return True
+
+        cbs = dict(onSoundPause=None, onSoundResume=None, onSoundStop=self._onSoundStop, onSoundEnd=self._onSoundEnd)
+
+        self.identity = Mengine.soundPlay(self.SoundName, False, cbs)
+
+        if self.identity is None:
+            return True
+
+        return False
+
+    def _onSoundStop(self, identity):
+        self.complete(isSkiped=True)
         pass
 
-    def _onSoundEnd(self, method, playId):
-        if self.playId.getId() != playId.getId():
-            return
-
-        self.playId = None
-
-        self.complete()
+    def _onSoundEnd(self, identity):
+        self.complete(isSkiped=False)
         pass
 
     def _onSkip(self):
-        if self.playId is None:
+        if self.identity is None:
             return
 
-        if self.playId is not None:
-            stopId = self.playId
-            self.playId = None
+        Mengine.soundStop(self.identity)
+        pass
 
-            Mengine.soundStop(stopId)
-            pass
+    def _onFinally(self):
+        self.identity = None
         pass
     pass

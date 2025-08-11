@@ -1,7 +1,9 @@
+from Foundation.Manager import Manager
+
 from Foundation.DatabaseManager import DatabaseManager
 from Foundation.GroupManager import GroupManager
 
-class SnapManager(object):
+class SnapManager(Manager):
     s_Snaps = {}  # group # item [][]
 
     class Snap(object):

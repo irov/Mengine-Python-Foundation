@@ -1,16 +1,16 @@
+from Foundation.Manager import Manager
 from Foundation.Database import Database
 
-
-class DatabaseManager(object):
+class DatabaseManager(Manager):
     s_cache_databases = {}
     s_cache_enable = False
 
     @staticmethod
-    def onInitialize():
+    def _onInitialize():
         DatabaseManager.s_cache_enable = Mengine.getConfigBool("Python", "DatabaseCache", False)
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         DatabaseManager.s_cache_databases = {}
         DatabaseManager.s_cache_enable = False
 

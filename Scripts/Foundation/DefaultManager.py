@@ -1,23 +1,19 @@
-import Keys
-
+from Foundation.Manager import Manager
 from DatabaseManager import DatabaseManager
 
-class DefaultManager(object):
+import Keys
+
+class DefaultManager(Manager):
     s_defaults = {}
-    s_initialize = False
+    s_loaded = False
 
     @staticmethod
-    def onInitialize():
+    def _onInitialize():
         pass
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
         DefaultManager.s_defaults = {}
-        pass
-
-    @staticmethod
-    def isInitialize():
-        return DefaultManager.s_initialize
         pass
 
     @staticmethod
@@ -34,12 +30,10 @@ class DefaultManager(object):
                 if Debug_Value is None:
                     Trace.log("Manager", 0, "DefaultManager.loadParams invalid setup Value(%s) for Param %s" % ("Debug", Param))
                     return False
-                    pass
 
                 if Master_Value is None:
                     Trace.log("Manager", 0, "DefaultManager.loadParams invalid setup Value(%s) for Param %s" % ("Master", Param))
                     return False
-                    pass
                 pass
 
         for record in records:
@@ -54,7 +48,7 @@ class DefaultManager(object):
             DefaultManager.addDefault(Param, Value)
             pass
 
-        DefaultManager.s_initialize = True
+        DefaultManager.s_loaded = True
 
         return True
         pass
@@ -66,10 +60,9 @@ class DefaultManager(object):
 
     @staticmethod
     def getDefault(name, default=None):
-        if DefaultManager.s_initialize is False:
+        if DefaultManager.s_loaded is False:
             Trace.log("Manager", 0, "DefaultManager not initialize")
             return None
-            pass
 
         if name not in DefaultManager.s_defaults:
             return default
@@ -82,7 +75,7 @@ class DefaultManager(object):
 
     @staticmethod
     def hasDefault(name):
-        if DefaultManager.s_initialize is False:
+        if DefaultManager.s_loaded is False:
             Trace.log("Manager", 0, "DefaultManager not initialize")
             return False
             pass
@@ -160,12 +153,10 @@ class DefaultManager(object):
 
         if value is None:
             return default
-            pass
 
         boolValue = bool(int(value))
 
         return boolValue
-        pass
 
     @staticmethod
     def getDefaultFloat(name, default):
@@ -173,10 +164,8 @@ class DefaultManager(object):
 
         if value is None:
             return default
-            pass
 
         return float(value)
-        pass
 
     @staticmethod
     def getDefaultInt(name, default):
@@ -184,10 +173,8 @@ class DefaultManager(object):
 
         if value is None:
             return default
-            pass
 
         return int(value)
-        pass
 
     @staticmethod
     def getDefaultTuple(name, default, valueType=float, divider=','):
@@ -195,7 +182,6 @@ class DefaultManager(object):
 
         if value is None:
             return default
-            pass
 
         valuesRaw = value.split(divider)
         # todo: refactor on regular
@@ -219,7 +205,6 @@ class DefaultManager(object):
             pass
 
         return tuple(values)
-        pass
 
     @staticmethod
     def removeDefault(name):

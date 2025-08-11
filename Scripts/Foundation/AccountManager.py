@@ -1,6 +1,7 @@
+from Foundation.Manager import Manager
 from Foundation.DefaultManager import DefaultManager
 
-class AccountManager(object):
+class AccountManager(Manager):
     @staticmethod
     def onCreateAccount(accountID, isGlobal):
         pass
@@ -151,7 +152,6 @@ class AccountManager(object):
     @staticmethod
     def getVersionFiles():
         return Mengine.getGlobalSettingStrings('VersionFiles')
-        pass
 
     @staticmethod
     def setVersionFiles(version):
@@ -161,7 +161,6 @@ class AccountManager(object):
     @staticmethod
     def getVersionDate():
         return Mengine.getGlobalSetting('VersionDate')
-        pass
 
     @staticmethod
     def setVersionDate(value):

@@ -1,7 +1,7 @@
+from Foundation.Manager import Manager
 from Notification import Notification
 
-
-class GameManager(object):
+class GameManager(Manager):
     s_block_game = 0
     s_block_keyboard = 0
 

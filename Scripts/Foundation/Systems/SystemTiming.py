@@ -39,8 +39,7 @@ class SystemTiming(System):
 
     def __removeSchedule(self):
         if self.isOnSchedule() is not True:
-            return False
-            pass
+            return
 
         self.textNode.removeFromParent()
         Mengine.destroyNode(self.textNode)

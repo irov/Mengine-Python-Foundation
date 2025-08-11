@@ -181,7 +181,7 @@ class SystemDevToDebug(System):
         widgets.append(w_affector)
 
         for widget in widgets:
-            if tab.findWidget(widget.getId()) is not None:
+            if tab.findWidget(widget.getWidgetId()) is not None:
                 continue
             tab.addWidget(widget)
 

@@ -1,23 +1,18 @@
+from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
 from Notification import Notification
 
-class PrefetchResourceManager(object):
+class PrefetchResourceManager(Manager):
     s_resources = []
-    s_onInitializeRenderResourcesObserver = None
 
     @staticmethod
-    def onInitialize():
-        PrefetchResourceManager.s_onInitializeRenderResourcesObserver = Notification.addObserver(Notificator.onInitializeRenderResources, PrefetchResourceManager.__prefetchGroups)
-        PrefetchResourceManager.s_onFinalizeRenderResourcesObserver = Notification.addObserver(Notificator.onFinalizeRenderResources, PrefetchResourceManager.__unfetchGroups)
+    def _onInitialize():
+        PrefetchResourceManager.addObserver(Notificator.onInitializeRenderResources, PrefetchResourceManager.__prefetchGroups)
+        PrefetchResourceManager.addObserver(Notificator.onFinalizeRenderResources, PrefetchResourceManager.__unfetchGroups)
         pass
 
     @staticmethod
-    def onFinalize():
-        Notification.removeObserver(PrefetchResourceManager.s_onInitializeRenderResourcesObserver)
-        Notification.removeObserver(PrefetchResourceManager.s_onFinalizeRenderResourcesObserver)
-        PrefetchResourceManager.s_onInitializeRenderResourcesObserver = None
-        PrefetchResourceManager.s_onFinalizeRenderResourcesObserver = None
-
+    def _onFinalize():
         PrefetchResourceManager.s_resources = []
         pass
 
@@ -33,7 +28,6 @@ class PrefetchResourceManager(object):
             pass
 
         return True
-        pass
 
     @staticmethod
     def __prefetchGroups():
@@ -46,7 +40,6 @@ class PrefetchResourceManager(object):
             pass
 
         return True
-        pass
 
     @staticmethod
     def __unfetchGroups():
@@ -59,5 +52,4 @@ class PrefetchResourceManager(object):
             pass
 
         return True
-        pass
     pass

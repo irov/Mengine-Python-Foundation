@@ -1,17 +1,18 @@
+from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
 
 from Bank import Bank
 
-class BankManager(object):
+class BankManager(Manager):
     s_wealthes = {}
 
     @staticmethod
-    def onInitialize():
+    def _onInitialize():
         return True
-        pass
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
+        BankManager.s_wealthes = {}
         pass
 
     @staticmethod
@@ -19,7 +20,6 @@ class BankManager(object):
         if name in BankManager.s_wealthes:
             Trace.log("Manager", 0, "BankManager.addWealth %s already exist" % (name))
             return
-            pass
 
         BankManager.s_wealthes[name] = wealth
         pass
@@ -29,12 +29,10 @@ class BankManager(object):
         if name not in BankManager.s_wealthes:
             Trace.log("Manager", 0, "BankManager.getWealth %s not exist" % (name))
             return None
-            pass
 
         wealth = BankManager.s_wealthes[name]
 
         return wealth
-        pass
 
     @staticmethod
     def loadParams(module, param):
@@ -42,14 +40,12 @@ class BankManager(object):
 
         if ORMs is None:
             return False
-            pass
 
         for ORM in ORMs:
             BankManager.addWealth(ORM.Name, ORM)
             pass
 
         return True
-        pass
 
     @staticmethod
     def createBank(name):
@@ -57,14 +53,12 @@ class BankManager(object):
         if wealth is None:
             Trace.log("Manager", 0, "BankManager.createBank %s not exist" % (name))
             return None
-            pass
 
         bank = Bank(name)
 
         if hasattr(wealth, "Resource") is False:
             Trace.log("Manager", 0, "BankManager.createBank %s wealth resource not exist" % (name))
             return None
-            pass
 
         resource = wealth.Resource.copy()
 
@@ -75,8 +69,6 @@ class BankManager(object):
 
         if bank.initialize(resource, limit) is False:
             return None
-            pass
 
         return bank
-        pass
     pass

@@ -1,3 +1,4 @@
+from Foundation.Manager import Manager
 from Foundation.DatabaseManager import DatabaseManager
 
 import Inspector
@@ -6,12 +7,12 @@ class InspectorManager(object):
     s_compares = {}
 
     @staticmethod
-    def onInitialize():
+    def _onInitialize():
         return True
-        pass
 
     @staticmethod
-    def onFinalize():
+    def _onFinalize():
+        InspectorManager.s_compares = {}
         pass
 
     @staticmethod
