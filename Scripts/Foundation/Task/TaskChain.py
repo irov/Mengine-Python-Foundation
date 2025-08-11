@@ -269,16 +269,15 @@ class TaskChain(MixinGroup, Params, Initializer):
                 Trace.log("TaskChain", 0, "%s Anti Stack Cycle %s:%s doc('%s')" % (self, self.caller[0], self.caller[1], self.caller[2]))
 
                 return False
-                pass
 
             self.__runTask()
 
-            if isSkip is True:
-                self.skip()
-                pass
+            #ToDo: check if we need to skip the task
+            #if isSkip is True:
+            #    self.skip()
+            #    pass
 
             return
-            pass
 
         cb = self.cb
         cbArgs = self.cbArgs

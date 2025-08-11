@@ -546,7 +546,7 @@ class TaskSource(object):
         return tg_guard_source
 
     def addGuardTask(self, enable, guard, *args):
-        source = self.makeGuardSource(enable, guard, args)
+        source = self.makeGuardSource(enable, guard, *args)
 
         return TaskSourceTg(source)
 
