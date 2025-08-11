@@ -615,8 +615,6 @@ class SceneManager(Manager):
             if isinstance(GroupManager.getGroup(groupName), GroupManager.EmptyGroup):
                 continue
 
-            print "<SceneManager> cache scene '%s' group '%s' resources" % (newSceneName, groupName)
-
             resources = Mengine.cacheResources(Group.name)
 
             cache_groups_resource.append(resources)
@@ -696,15 +694,8 @@ class SceneManager(Manager):
 
         SceneManager.s_prevSceneName = SceneManager.s_currentSceneName
 
-        print "<SceneManager> change scene from '%s' to '%s'" % (SceneManager.s_currentSceneName, sceneName)
-
-        Trace.trace()
-
         cache_resources_groups = SceneManager.__cacheResourcesGroups(SceneManager.s_currentSceneName, sceneName)
         cache_active_groups = SceneManager.__cacheActiveGroups(SceneManager.s_currentSceneName, sceneName)
-
-        print "cache_resources_groups", cache_resources_groups
-        print "cache_active_groups", cache_active_groups
 
         SceneManager.s_currentScene = None
         SceneManager.s_currentSceneName = None
@@ -717,8 +708,6 @@ class SceneManager(Manager):
         Trace.msg_dev("<SceneManager> change scene to '%s'" % sceneName)
 
         if Mengine.createCurrentScene("Main", sceneName, immediately, True, SceneManager._onChangeScene, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb) is False:
-            print "<SceneManager> change scene to '%s' failed" % sceneName
-
             for resources in cache_resources_groups:
                 Mengine.uncacheResources(resources)
                 pass
@@ -731,8 +720,6 @@ class SceneManager(Manager):
 
     @staticmethod
     def _onChangeScene(scene, isActive, isError, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb):
-        print "_onChangeScene", scene, isActive, isError, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb
-
         if isError is True:
             Trace.log("SceneManager", 0, "SceneManager._onChangeScene: change scene '%s' failed" % sceneName)
 
@@ -756,8 +743,6 @@ class SceneManager(Manager):
             Notification.notify(Notificator.onSceneRemoved, SceneManager.s_prevSceneName)
             return
 
-        print "<SceneManager> change scene '%s' isActive %s" % (sceneName, isActive)
-
         if isActive is False:
             SceneManager.s_currentScene = scene
             SceneManager.s_currentSceneName = sceneName
@@ -773,10 +758,7 @@ class SceneManager(Manager):
             Notification.notify(Notificator.onScenePreparation, sceneName)
             return
 
-        print "<SceneManager> uncache resources %s" %(cache_resources_groups)
-
         for resources in cache_resources_groups:
-            print "<SceneManager> uncache scene '%s' resources '%s' group '%s'" % (sceneName, resources, resources.getGroupName())
             Mengine.uncacheResources(resources)
             pass
 
