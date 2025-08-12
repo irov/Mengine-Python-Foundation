@@ -460,6 +460,7 @@ class SystemMonetization(System):
                 continue
 
             fn = rewards.get(reward_type)
+
             if callable(fn) is False:
                 _Log("Reward function for type {!r} is not callable (prod_id={!r})".format(reward_type, prod_id), err=True)
                 continue
@@ -480,23 +481,6 @@ class SystemMonetization(System):
             Notification.notify(Notificator.onEnergySet, "inf")
         else:
             _Log("Invalid infinity energy code {} - must be 1 to set infinity".format(code), err=True)
-
-    @staticmethod
-    def unlockChapter(chapter_id):
-        Notification.notify(Notificator.onChapterSelectionBlock, chapter_id, False)
-        _Log("unlock chapter '{}'".format(chapter_id))
-
-        if MonetizationManager.getGeneralSetting("CompleteProductsOnChapterUnlock", True) is False:
-            return
-
-        for product in MonetizationManager.getProductsInfo().values():
-            reward_chapter_id = product.reward.get("Chapter")
-            if reward_chapter_id != chapter_id:
-                continue
-            if SystemMonetization.isProductPurchased(product.id) is False:
-                SystemMonetization.addStorageListValue("purchased", product.id)
-                _Log("autosave product {!r} - chapter {!r} is already unlocked!".format(
-                    product.id, chapter_id), optional=True)
 
     @staticmethod
     def disableInterstitialAds(*args):
@@ -663,9 +647,14 @@ class SystemMonetization(System):
         if MonetizationManager.isMonetizationEnable() is False:
             return False
 
-        is_owned = PaymentProvider.isOwnedInAppProduct(prod_id)
+        items = SystemMonetization.getStorageListValues("purchased")
 
-        return is_owned
+        if items is None:
+            return False
+
+        is_purchased = str(prod_id) in items
+
+        return is_purchased
 
     @staticmethod
     def isProductGroupPurchased(group_id):
@@ -871,7 +860,7 @@ class SystemMonetization(System):
     def getStorageValue(key):
         if key not in SystemMonetization.storage:
             Trace.log("System", 0, "SystemMonetization getStorageValue {!r} not found".format(key))
-            return
+            return None
 
         value = SystemMonetization.storage[key].getValue()
         return value
