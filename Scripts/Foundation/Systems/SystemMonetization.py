@@ -91,21 +91,21 @@ class SystemMonetization(System):
 
     # --- Payment ------------------------------------------------------------------------------------------------------
 
-    @staticmethod
-    def pay(prod_id):
-        if SystemMonetization.__isActive() is False:
+    @classmethod
+    def pay(cls, prod_id):
+        if cls.__isActive() is False:
             return
 
         real_prod_id = MonetizationManager.getProductRealId(prod_id)
 
-        if SystemMonetization.isPurchaseDelayed(real_prod_id) is True:
+        if cls.isPurchaseDelayed(real_prod_id) is True:
             Notification.notify(Notificator.onReleasePurchased, real_prod_id)
             return
 
         PaymentProvider.pay(real_prod_id)
 
-    @staticmethod
-    def scopePay(source, prod_id, scopeSuccess=None, scopeFail=None, scopeTimeout=None):
+    @classmethod
+    def scopePay(cls, source, prod_id, scopeSuccess=None, scopeFail=None, scopeTimeout=None):
         TIMEOUT = 30 * 1000  # ms
 
         def __filter(_id):
@@ -126,7 +126,7 @@ class SystemMonetization(System):
                 if callable(scopeFail) is True:
                     fail.addScope(scopeFail)
 
-            pay.addFunction(SystemMonetization.pay, prod_id=prod_id)
+            pay.addFunction(cls.pay, prod_id=prod_id)
 
     # observers
 
@@ -209,11 +209,11 @@ class SystemMonetization(System):
 
     # --- Gold ---------------------------------------------------------------------------------------------------------
 
-    @staticmethod
-    def _onPayGold(gold=None, descr=None):
+    @classmethod
+    def _onPayGold(cls, gold=None, descr=None):
         """ Main method for pay gold, where 'gold' may be None, but you need
             setup special 'descr' (i.e. 'Hint', 'SkipPuzzle'... check more in class attr 'components') """
-        component = SystemMonetization.components[descr] if descr in SystemMonetization.components else None
+        component = cls.components[descr] if descr in cls.components else None
 
         if component is not None:
             gold = component.getProductPrice()
@@ -224,7 +224,7 @@ class SystemMonetization(System):
             return False
 
         if gold > 0:
-            balance = SystemMonetization.getBalance()
+            balance = cls.getBalance()
             if balance < gold:
                 _Log("Not enough money: you have {} only, but you need {} (descr: {!r})".format(balance, gold, descr), err=True, optional=True)
 
@@ -234,7 +234,7 @@ class SystemMonetization(System):
                 Notification.notify(Notificator.onGameStoreNotEnoughGold, gold - balance, descr)
                 return False
 
-            SystemMonetization.withdrawGold(gold)
+            cls.withdrawGold(gold)
         else:
             _Log("gold wasn't withdrawn - current price for {} is 0".format(descr), optional=True)
 
@@ -242,41 +242,41 @@ class SystemMonetization(System):
 
         return False
 
-    @staticmethod
-    def scopePayGold(source, gold=None, descr=None, scopeSuccess=None, scopeFail=None, **kwargs):
+    @classmethod
+    def scopePayGold(cls, source, gold=None, descr=None, scopeSuccess=None, scopeFail=None, **kwargs):
         """ Payment logic. Params 'gold' and 'descr' are must have.
                 - scopeSuccess: scope method will be called if gold is paid successfully;
                 - scopeFail: scope method will be called if gold payment failed;
             Use this kwargs:
                 - ShouldAcceptPrice: if user decline - payment will be failed;
         """
-        if SystemMonetization.isGameStoreEnable() is False:
+        if cls.isGameStoreEnable() is False:
             Trace.log("System", 0, "Try to pay gold while store is not enable!!!!!!!!!!!!")
             return False
 
-        should_accept_price = kwargs.get("ShouldAcceptPrice", False) or SystemMonetization.shouldAcceptPrice()
-        price = SystemMonetization.components[descr].getProductPrice() if descr in SystemMonetization.components else gold
+        should_accept_price = kwargs.get("ShouldAcceptPrice", False) or cls.shouldAcceptPrice()
+        price = cls.components[descr].getProductPrice() if descr in cls.components else gold
 
         def _isPriceAccepted():
             if price == 0:
                 return True
             if should_accept_price is False:
                 return True
-            return SystemMonetization.isPriceAccepted(descr) is True
+            return cls.isPriceAccepted(descr) is True
 
         if price != 0 and should_accept_price is True:
-            source.addScope(SystemMonetization.scopeTryAcceptPrice, amount=price, currency="Gold", descr=descr)
+            source.addScope(cls.scopeTryAcceptPrice, amount=price, currency="Gold", descr=descr)
 
         with source.addIfTask(_isPriceAccepted) as (true, false):
             with true.addParallelTask(2) as (response, pay):
-                response.addScope(SystemMonetization._scopePGResponse, scopeSuccess, scopeFail)
+                response.addScope(cls._scopePGResponse, scopeSuccess, scopeFail)
                 pay.addNotify(Notificator.onGameStorePayGold, gold=gold, descr=descr)
             false.addDummy()
         return True
 
-    @staticmethod
-    def scopeTryAcceptPrice(source, amount, currency, descr):
-        if SystemMonetization.isPriceAccepted(descr) is True:
+    @classmethod
+    def scopeTryAcceptPrice(cls, source, amount, currency, descr):
+        if cls.isPriceAccepted(descr) is True:
             return
 
         if DemonManager.hasDemon("DialogWindow") is False:
@@ -319,7 +319,7 @@ class SystemMonetization(System):
 
         with source.addRaceTask(2) as (confirm, cancel):
             confirm.addListener(Notificator.onDialogWindowConfirm)
-            confirm.addFunction(SystemMonetization.acceptPrice, descr)
+            confirm.addFunction(cls.acceptPrice, descr)
             cancel.addListener(Notificator.onDialogWindowCancel)
 
         with source.addRaceTask(2) as (close, leave):
@@ -345,35 +345,35 @@ class SystemMonetization(System):
                 confirm.addListener(Notificator.onDialogWindowConfirm)
                 cancel.addListener(Notificator.onDialogWindowCancel)
 
-    @staticmethod
-    def withdrawGold(num, immediately_save=True):
+    @classmethod
+    def withdrawGold(cls, num, immediately_save=True):
         _Log("withdrawGold num={}".format(num), optional=True)
-        SystemMonetization.storage["gold"].subtractValue(num)
+        cls.storage["gold"].subtractValue(num)
         if immediately_save is True:
-            SystemMonetization.saveData("gold")
-        Notification.notify(Notificator.onUpdateGoldBalance, SystemMonetization.getBalance())
+            cls.saveData("gold")
+        Notification.notify(Notificator.onUpdateGoldBalance, cls.getBalance())
         return True
 
-    @staticmethod
-    def addGold(num, immediately_save=True):
+    @classmethod
+    def addGold(cls, num, immediately_save=True):
         _Log("addGold num={}".format(num), optional=True)
-        SystemMonetization.storage["gold"].additiveValue(num)
+        cls.storage["gold"].additiveValue(num)
         if immediately_save is True:
-            SystemMonetization.saveData("gold")
-        Notification.notify(Notificator.onUpdateGoldBalance, SystemMonetization.getBalance())
+            cls.saveData("gold")
+        Notification.notify(Notificator.onUpdateGoldBalance, cls.getBalance())
         return True
 
-    @staticmethod
-    def setGold(num, immediately_save=True):
+    @classmethod
+    def setGold(cls, num, immediately_save=True):
         _Log("set num={}".format(num), optional=True)
-        SystemMonetization.storage["gold"].setValue(num)
+        cls.storage["gold"].setValue(num)
         if immediately_save is True:
-            SystemMonetization.saveData("gold")
-        Notification.notify(Notificator.onUpdateGoldBalance, SystemMonetization.getBalance())
+            cls.saveData("gold")
+        Notification.notify(Notificator.onUpdateGoldBalance, cls.getBalance())
         return True
 
-    @staticmethod
-    def rollbackCurrency(prod_id=None, component_tag=None):
+    @classmethod
+    def rollbackCurrency(cls, prod_id=None, component_tag=None):
         _prod_id = None
 
         if prod_id is not None:
@@ -390,14 +390,14 @@ class SystemMonetization(System):
 
         currency = product.getCurrency()
         if currency == "Gold":
-            return SystemMonetization.addGold(product.price)
+            return cls.addGold(product.price)
         elif currency == "Energy":
-            return SystemMonetization.addEnergy(product.price)
+            return cls.addEnergy(product.price)
 
-    @staticmethod
-    def rollbackGold(prod_id=None, component_tag=None):    # DEPRECATED
+    @classmethod
+    def rollbackGold(cls, prod_id=None, component_tag=None):    # DEPRECATED
         _Log("DEPRECATED warning: `rollbackGold` is deprecated, use `rollbackCurrency` instead", err=True)
-        return SystemMonetization.rollbackCurrency(prod_id, component_tag)
+        return cls.rollbackCurrency(prod_id, component_tag)
 
     @staticmethod
     def getBalance():
@@ -421,18 +421,18 @@ class SystemMonetization(System):
 
     # --- Rewards ------------------------------------------------------------------------------------------------------
 
-    @staticmethod
-    def _getPossibleRewards():
+    @classmethod
+    def _getPossibleRewards(cls):
         rewards = {
-            "Gold": SystemMonetization.addGold,
-            "Energy": SystemMonetization.addEnergy,
-            "EnergyInfinity": SystemMonetization.setInfinityEnergy,
-            "DisableInterstitialAds": SystemMonetization.disableInterstitialAds
+            "Gold": cls.addGold,
+            "Energy": cls.addEnergy,
+            "EnergyInfinity": cls.setInfinityEnergy,
+            "DisableInterstitialAds": cls.disableInterstitialAds
         }
         return rewards
 
-    @staticmethod
-    def sendReward(rew_dict=None, prod_id=None):
+    @classmethod
+    def sendReward(cls, rew_dict=None, prod_id=None):
         """ sends reward according to custom dict or product reward info. Select one: `rew_dict` or `prod_id`.
             @param rew_dict: dict with reward info, allowed keys:
                 "Gold" (adds gold), "Chapter" (unlocks chapter), "SceneUnlock" (unlocks scene),
@@ -453,7 +453,7 @@ class SystemMonetization(System):
                 Trace.log("System", 0, "SystemMonetization.sendReward wrong reward dict {!r} (your input: {!r}, id={!r})".format(reward, rew_dict, prod_id))
             return False
 
-        rewards = SystemMonetization._getPossibleRewards()
+        rewards = cls._getPossibleRewards()
         for reward_type, arg in reward.items():
             fn = rewards.get(reward_type)
             if callable(fn):
