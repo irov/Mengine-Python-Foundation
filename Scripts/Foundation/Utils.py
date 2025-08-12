@@ -1158,7 +1158,7 @@ class SimpleLogger(object):
         if option is not None and option in Mengine.getOptionValues("debug"):
             self._optional = True
 
-    def __call__(self, msg, err=False, force=False, optional=False):
+    def __call__(self, msg, warn=False, err=False, force=False, optional=False):
         if self._enable is False:
             return
         if force is False:
@@ -1171,6 +1171,8 @@ class SimpleLogger(object):
         f_message = " <%s> %s" % (self.title, msg)
         if err is True:
             Trace.msg_err(f_message)
+        elif warn is True:
+            Trace.msg_warn(f_message)
         else:
             Trace.msg(f_message)
 

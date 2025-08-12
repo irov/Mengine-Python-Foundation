@@ -456,7 +456,7 @@ class SystemMonetization(System):
         rewards = cls._getPossibleRewards()
         for reward_type, arg in reward.items():
             if reward_type not in rewards:
-                _Log("Unknown reward type {!r} (prod_id={!r})".format(reward_type, prod_id), err=True)
+                _Log("Unknown reward type {!r} (prod_id={!r})".format(reward_type, prod_id), warn=True)
                 continue
 
             fn = rewards.get(reward_type)

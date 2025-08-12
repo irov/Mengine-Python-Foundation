@@ -16,6 +16,11 @@ def msg_err(text, *args):
     message = __tryFormatMessage(text, *args)
     Mengine.logError(message)
 
+def msg_warn(text, *args):
+    __validateMessage(text)
+
+    message = __tryFormatMessage(text, *args)
+    Mengine.logWarning(message)
 
 def msg_dev(text, *args):
     if _DEVELOPMENT is True:
