@@ -455,11 +455,17 @@ class SystemMonetization(System):
 
         rewards = cls._getPossibleRewards()
         for reward_type, arg in reward.items():
+            if reward_type not in rewards:
+                _Log("Unknown reward type {!r} (prod_id={!r})".format(reward_type, prod_id), err=True)
+                continue
+
             fn = rewards.get(reward_type)
-            if callable(fn):
-                fn(arg)
-            else:
-                _Log("Not found reward function for type {!r} (prod_id={!r})".format(reward_type, prod_id), err=True)
+            if callable(fn) is False:
+                _Log("Reward function for type {!r} is not callable (prod_id={!r})".format(reward_type, prod_id), err=True)
+                continue
+
+            fn(arg)
+            pass
 
         Notification.notify(Notificator.onGameStoreSentRewards, prod_id, reward)
         return True
