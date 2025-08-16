@@ -25,7 +25,15 @@ class TaskVoicePlay(Task):
 
             return True
 
-        cbs = dict(onSoundPause=None, onSoundResume=None, onSoundStop=self._onVoiceStop, onSoundEnd=self._onVoiceEnd)
+        def __onVoiceStop(identity):
+            self.complete(isSkiped=True)
+            pass
+
+        def __onVoiceEnd(identity):
+            self.complete(isSkiped=False)
+            pass
+
+        cbs = dict(onSoundPause=None, onSoundResume=None, onSoundStop=__onVoiceStop, onSoundEnd=__onVoiceEnd)
 
         self.identity = Mengine.voicePlay(self.VoiceID, self.Loop, cbs)
 
@@ -33,14 +41,6 @@ class TaskVoicePlay(Task):
             return True
 
         return False
-
-    def _onVoiceStop(self, identity):
-        self.complete(isSkiped=True)
-        pass
-
-    def _onVoiceEnd(self, method, playId):
-        self.complete(isSkiped=False)
-        pass
 
     def _onSkip(self):
         if self.identity is None:
