@@ -436,28 +436,26 @@ class TaskSource(object):
         self.__addDesc("TaskObjectInterrupt", dict(Object=Object, **Kwargs))
         pass
 
-    def addEnable(self, object, check=True):
+    def addEnable(self, Object, check=True):
+        if check is False:
+            if Object is None:
+                return
+            pass
+
+        self.__addDesc("TaskEnable", dict(Object=Object, Value=True))
+        pass
+
+    def addDisable(self, Object, check=True):
         if check is False:
             if object is None:
                 return
-                pass
             pass
 
-        self.__addDesc("TaskEnable", dict(Object=object, Value=True))
+        self.__addDesc("TaskEnable", dict(Object=Object, Value=False))
         pass
 
-    def addDisable(self, object, check=True):
-        if check is False:
-            if object is None:
-                return
-                pass
-            pass
-
-        self.__addDesc("TaskEnable", dict(Object=object, Value=False))
-        pass
-
-    def addReturn(self, object):
-        self.__addDesc("TaskObjectReturn", dict(Object=object))
+    def addReturn(self, Object):
+        self.__addDesc("TaskObjectReturn", dict(Object=Object))
         pass
 
     def addDummy(self, **kwrds):
