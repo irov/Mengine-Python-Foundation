@@ -16,7 +16,6 @@ class MixinEvent(Task):
         if self.event is not None:
             Trace.log("Task", 0, "MixinEvent.addEvent %s already add event %s" % (self.event, self.eventFn))
             return
-            pass
 
         self.event = event
         self.eventFn = fn
@@ -28,7 +27,6 @@ class MixinEvent(Task):
         if self.event is None:
             Trace.log("Task", 0, "MixinEvent.removeEvent %s already remove %s" % (self, self.eventFn))
             return
-            pass
 
         self.event -= self.__eventComplete
 
@@ -44,18 +42,15 @@ class MixinEvent(Task):
         try:
             result = self.eventFn(*args, **kwargs)
         except TypeError as ex:
-            Trace.log("Task", 0, "MixinEvent.__eventComplete %s event fn %s:%s except %s" % (self.event.name, self.eventFn.__module__, self.eventFn.__name__, ex))
+            Trace.log_exception("Task", 0, "MixinEvent.__eventComplete %s event fn %s:%s except %s" % (self.event.name, self.eventFn.__module__, self.eventFn.__name__, ex))
             return
-            pass
 
         if isinstance(result, bool) is False:
             Trace.log("Task", 0, "MixinEvent.__eventComplete %s event fn %s mast return boolean[True|False] but return %s" % (self.event.name, self.eventFn, result))
             return
-            pass
 
         if result is False:
             return
-            pass
 
         self.removeEvent()
 

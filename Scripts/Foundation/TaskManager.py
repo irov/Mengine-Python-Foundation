@@ -115,7 +115,7 @@ class TaskManager(Manager):
         try:
             task.onParams(params)
         except KeyError as ex:
-            Trace.log("TaskManager", 0, "TaskManager.createTask: Task %s except %s" % (taskType, ex))
+            Trace.log_exception("TaskManager", 0, "TaskManager.createTask: Task %s except %s" % (taskType, ex))
 
             return None
             pass
@@ -284,7 +284,6 @@ class TaskManager(Manager):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "skip Tasks after finalize")
             return
-            pass
 
         TaskManager.s_skiped = True
 
@@ -400,12 +399,10 @@ class TaskManager(Manager):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "skip TaskChain after finalize")
             return
-            pass
 
         if name not in TaskManager.s_idleNamedChain:
             Trace.log("TaskManager", 0, "TaskManager.skipChain %s not exist" % (name))
             return
-            pass
 
         chain = TaskManager.s_idleNamedChain.get(name)
 

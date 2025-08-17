@@ -8,7 +8,6 @@ class TaskException(Exception):
 
     def __str__(self):
         return str(self.value)
-        pass
     pass
 
 class ValidateException(Exception):
@@ -18,7 +17,6 @@ class ValidateException(Exception):
 
     def __str__(self):
         return str(self.value)
-        pass
     pass
 
 class Task(Params, Initializer):
@@ -39,7 +37,6 @@ class Task(Params, Initializer):
 
     def _onCheck(self):
         return True
-        pass
 
     def _onCheckSkip(self):
         pass
@@ -56,15 +53,12 @@ class Task(Params, Initializer):
 
     def _onRun(self):
         return True
-        pass
 
     def isSkiped(self):
         return self.base.skiped
-        pass
 
     def _onFastSkip(self):
         return False
-        pass
 
     def _onSkip(self):
         pass
@@ -81,7 +75,6 @@ class Task(Params, Initializer):
     def complete(self, isRunning=True, isSkiped=False):
         if self.base is None:
             return
-            pass
 
         self.base.complete(isRunning, isSkiped)
         pass
@@ -89,7 +82,6 @@ class Task(Params, Initializer):
     def skip(self):
         if self.base is None:
             return
-            pass
 
         self.base.skip()
         pass
@@ -105,30 +97,24 @@ class Task(Params, Initializer):
         pass
 
     def onValidate(self):
-        if self.isSkiped() is True:
-            return True
-            pass
-
+        #print "Task %s onValidate, skiped: %d" % (self.base, self.isSkiped())
         try:
             self._onValidate()
         except Exception as ex:
-            self._onValidateFailed("%s\n%s" % (ex, traceback.format_exc()))
+            self._onValidateFailed(ex)
 
             return False
-            pass
 
         return True
-        pass
 
     def _onValidate(self):
         pass
 
     def validateFailed(self, value):
         raise ValidateException(value)
-        pass
 
     def _onValidateFailed(self, ex):
-        self.base._traceError("Task %s is not validate %s" % (self.base, ex))
+        self.base._traceException("Task %s is not validate %s" % (self.base, ex))
         pass
 
     def _onInitializeFailed(self, msg):
@@ -141,7 +127,6 @@ class Task(Params, Initializer):
 
     def invalidTask(self, msg):
         raise TaskException(msg)
-        pass
 
     def log(self, msg, *args):
         Trace.log("Task", 0, "TaskChain [%s] Caller %s:%s doc %s | [%s] %s" % (self.base.chain, self.base.caller[0], self.base.caller[1], self.base.caller[2], self.__class__.__name__, msg % args))

@@ -42,7 +42,7 @@ class System(Params, Initializer):
         try:
             successful = self._onRun()
         except Exception as ex:
-            Trace.log("System", 0, "System.run %s except '%s'" % (self.name, ex))
+            Trace.log_exception("System", 0, "System.run %s except '%s'" % (self.name, ex))
             return False
 
         if isinstance(successful, bool) is False:
@@ -187,7 +187,7 @@ class System(Params, Initializer):
         try:
             self._onStop()
         except TypeError as ex:
-            Trace.log("System", 0, "System '%s' _onStop %s error: %s" % (self.name, self._onStop, ex))
+            Trace.log_exception("System", 0, "System '%s' _onStop %s error: %s" % (self.name, self._onStop, ex))
             return
 
     def _onStop(self):
@@ -197,7 +197,7 @@ class System(Params, Initializer):
         try:
             self._onPreparation(source)
         except Exception as ex:
-            Trace.log("System", 0, "System '%s' _onPreparation %s error: %s" % (self.name, self._onPreparation, ex))
+            Trace.log_exception("System", 0, "System '%s' _onPreparation %s error: %s" % (self.name, self._onPreparation, ex))
 
     def _onPreparation(self, source):
         pass

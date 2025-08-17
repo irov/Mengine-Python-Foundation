@@ -15,7 +15,6 @@ class MixinObserver(Task):
         if self.observer is not None:
             Trace.log("Object", 0, "MixinObserver.addObserver '%s' already add" % (identity))
             return
-            pass
 
         self.observerWait = wait
         self.observer = Notification.addObserverExt(identity, fn, Cb=Functor(self.__onObserverComplete, None))
@@ -25,15 +24,12 @@ class MixinObserver(Task):
         if self.observer is not None:
             Trace.log("Object", 0, "MixinObserver.addObserverFilter '%s' already add" % (identity))
             return
-            pass
 
         def __filter(obj, *args, **kwargs):
             if obj is not obj_filter:
                 return False
-                pass
 
             return True
-            pass
 
         self.observerWait = wait
         self.observer = Notification.addObserverExt(identity, fn, Cb=Functor(self.__onObserverComplete, obj_filter), Filter=__filter)
@@ -43,7 +39,6 @@ class MixinObserver(Task):
         if self.observer is None:
             Trace.log("Task", 0, "MixinObserver.removeObserver invalid remove observer %s" % (self))
             return
-            pass
 
         Notification.removeObserver(self.observer)
 
@@ -69,7 +64,6 @@ class MixinObserver(Task):
             pass
 
         return True
-        pass
 
     def _onObserverComplete(self, obj_filter):
         pass

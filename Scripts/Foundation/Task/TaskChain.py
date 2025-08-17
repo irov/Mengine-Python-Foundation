@@ -69,7 +69,6 @@ class TaskChain(MixinGroup, Params, Initializer):
 
     def __repr__(self):
         return "TaskChain '{}' [{}] caller '{}:{}' doc '{}'".format(self.name, id(self), self.caller[0], self.caller[1], self.caller[2])
-        pass
 
     def _onParams(self, params):
         super(TaskChain, self)._onParams(params)
@@ -97,7 +96,6 @@ class TaskChain(MixinGroup, Params, Initializer):
 
     def getName(self):
         return self.name
-        pass
 
     def setSource(self, source):
         self.source = source
@@ -105,7 +103,6 @@ class TaskChain(MixinGroup, Params, Initializer):
 
     def getSource(self):
         return self.source
-        pass
 
     def setCaller(self, caller):
         self.caller = caller
@@ -113,25 +110,20 @@ class TaskChain(MixinGroup, Params, Initializer):
 
     def getCaller(self):
         return self.caller
-        pass
 
     def createTaskSource(self):
         return TaskSource(self.source)
-        pass
 
     def __enter__(self):
         return self.createTaskSource()
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if len(self.source) == 0:
             Trace.log("TaskChain", 0, "%s empty source task, maybe you forget [with + as]" % (self))
             return True
-            pass
 
         if self.AutoRun is True:
             self.run()
@@ -140,7 +132,6 @@ class TaskChain(MixinGroup, Params, Initializer):
             pass
 
         return True
-        pass
 
     def _onInitialize(self):
         super(TaskChain, self)._onInitialize()
@@ -197,7 +188,6 @@ class TaskChain(MixinGroup, Params, Initializer):
             Trace.log("TaskChain", 0, "__initializeSourceTask %s invalid initialize SourceTask" % (self))
 
             return None
-            pass
 
         taskCb = self.createTaskBase("TaskCallback", self.Group, Caller=Caller, Cb=self.__complete)
         lastTask.addNext(taskCb)
@@ -207,7 +197,6 @@ class TaskChain(MixinGroup, Params, Initializer):
             pass
 
         return beginTask
-        pass
 
     def __finializeSourceTask(self):
         for task in self.runningTasks:
@@ -219,7 +208,6 @@ class TaskChain(MixinGroup, Params, Initializer):
 
     def isGlobal(self):
         return self.__global
-        pass
 
     def setRepeat(self, value):
         self.repeat = value
@@ -228,7 +216,6 @@ class TaskChain(MixinGroup, Params, Initializer):
     def __checkRepeat(self):
         if self.repeat is False:
             return False
-            pass
 
         if self.until is not None:
             result = self.until()
@@ -237,15 +224,12 @@ class TaskChain(MixinGroup, Params, Initializer):
                 Trace.log("TaskChain", 0, "%s result invalid return %s value not [True|False] but %s" % (self, self.until, result))
 
                 return False
-                pass
 
             if result is True:
                 return False
-                pass
             pass
 
         return True
-        pass
 
     def __complete(self, isSkip, onComplete):
         # if self.name is not None:
@@ -299,12 +283,10 @@ class TaskChain(MixinGroup, Params, Initializer):
 
         if self.setupTaskBase(taskBaseRace, taskType, group, caller, {}) is False:
             return None
-            pass
 
         self.tasks.append(taskBaseRace)
 
         return taskBaseRace
-        pass
 
     def createTaskBase(self, typeName, group, **params):
         caller = None
@@ -315,19 +297,16 @@ class TaskChain(MixinGroup, Params, Initializer):
         taskBase = self.createTaskBaseParams(typeName, group, caller, params)
 
         return taskBase
-        pass
 
     def createTaskBaseTypeParams(self, taskType, group, caller, params):
         taskBase = TaskBase()
 
         if self.setupTaskBase(taskBase, taskType, group, caller, params) is False:
             return None
-            pass
 
         self.tasks.append(taskBase)
 
         return taskBase
-        pass
 
     def createTaskBaseParams(self, typeName, group, caller, params):
         taskBase = TaskBase()
@@ -336,16 +315,13 @@ class TaskChain(MixinGroup, Params, Initializer):
 
         if taskType is None:
             return None
-            pass
 
         if self.setupTaskBase(taskBase, taskType, group, caller, params) is False:
             return None
-            pass
 
         self.tasks.append(taskBase)
 
         return taskBase
-        pass
 
     def setupTaskBase(self, taskBase, taskType, group, caller, params):
         taskBase.setTaskType(taskType)
@@ -366,13 +342,11 @@ class TaskChain(MixinGroup, Params, Initializer):
             Trace.log("TaskChain", 0, "createTaskBaseParams %s invalid initialize TaskBase %s" % (self, taskType.__name__))
 
             return False
-            pass
 
         if taskBase.isIdle() is False:
             Trace.log("TaskChain", 0, "createTaskBaseParams %s invalid state TaskBase %s state %d" % (self, taskType.__name__, taskBase.state))
 
             return False
-            pass
 
         Skiped = params.get("Skiped", None)
 
@@ -386,7 +360,6 @@ class TaskChain(MixinGroup, Params, Initializer):
     def run(self):
         if self.onInitialize() is False:
             return False
-            pass
 
         # print("%s run %s [%s]" % (self, self.state, id(self)))
 
@@ -394,14 +367,12 @@ class TaskChain(MixinGroup, Params, Initializer):
             Trace.log("TaskChain", 0, "%s invalid run Task" % (self))
 
             return False
-            pass
 
         if TaskManager.isTaskChainSkiping() is True:
             self.skip()
             pass
 
         return True
-        pass
 
     def __runTask(self):
         self.state = TaskChain.RUN
@@ -414,7 +385,6 @@ class TaskChain(MixinGroup, Params, Initializer):
             Trace.log("TaskChain", 0, "__runTask %s invalid initialize SourceTask" % (self))
 
             return False
-            pass
 
         # if beginTask.run() is False:
         #     return False
@@ -428,7 +398,6 @@ class TaskChain(MixinGroup, Params, Initializer):
         #     pass
 
         return True
-        pass
 
     def processTask(self, task, skip):
         self.queue.push(task, skip)
@@ -437,7 +406,6 @@ class TaskChain(MixinGroup, Params, Initializer):
     def __skipRunningTasks(self):
         if self.skipInProgress is True:
             return
-            pass
 
         self.skipInProgress = True
 
@@ -457,14 +425,12 @@ class TaskChain(MixinGroup, Params, Initializer):
 
         if self.state is TaskChain.IDLE:
             return
-            pass
 
         if _DEVELOPMENT is True:
             if self.processing is not None:
                 Trace.log("TaskChain", 0, "%s skip already processing [%s]" % (self, self.processing))
 
                 return
-                pass
 
             self.processing = Trace.caller(0)
             pass
@@ -480,7 +446,6 @@ class TaskChain(MixinGroup, Params, Initializer):
 
     def getRunningTasks(self):
         return self.runningTasks
-        pass
 
     def cancel(self):
         if _DEVELOPMENT is True:
@@ -488,7 +453,6 @@ class TaskChain(MixinGroup, Params, Initializer):
                 Trace.log("TaskChain", 0, "%s cancel already processing [%s]" % (self, self.processing))
 
                 return
-                pass
 
             self.processing = Trace.caller(0)
             pass
@@ -536,7 +500,6 @@ class TaskChain(MixinGroup, Params, Initializer):
             Trace.log("TaskChain", 0, "%s completeTask %s" % (self.name, task))
 
             return
-            pass
 
         if self.DebugPrintTask is True:
             Trace.msg("- chain [%s] task [%s]" % (self.name, task))

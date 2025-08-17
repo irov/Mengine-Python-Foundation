@@ -33,7 +33,6 @@ class Group(ChildObject):
 
     def getSave(self):
         return self.save
-        pass
 
     def setStageName(self, stageName):
         self.stageName = stageName
@@ -41,32 +40,26 @@ class Group(ChildObject):
 
     def getStageName(self):
         return self.stageName
-        pass
 
     def getParentGroupName(self):
         return self.ParentGroupName
-        pass
 
     def getLayerParams(self):
         params = self._getLayerParams()
 
         return params
-        pass
 
     def getScene(self):
         return self.scene
-        pass
 
     def getMainLayer(self):
         return self.main_layer.node
-        pass
 
     def createLayer(self, name, **params):
         if name in self.layers_desc:
             layer = self.layers_desc[name]
 
             return layer
-            pass
 
         self.setCurrentLayerName(name)
 
@@ -75,27 +68,22 @@ class Group(ChildObject):
         if layer is None:
             Trace.log("Main", 0, "invalid create layer %s type %s" % (name, Type))
             return None
-            pass
 
         self.layers_desc[name] = layer
         self.layers_order.append(layer)
 
         return layer
-        pass
 
     def getLayer(self, Name):
         if Name is None:
             return self.main_layer.node
-            pass
 
         if Name not in self.layers:
             return None
-            pass
 
         layer = self.layers.get(Name)
 
         return layer
-        pass
 
     def _onInitialize(self):
         super(Group, self)._onInitialize()
@@ -159,7 +147,6 @@ class Group(ChildObject):
                 Trace.log("Object", 0, "'%s' invalid node %s get entity" % (self.getName(), obj.getName()))
 
                 return False
-                pass
 
             obj_entity.disable()
 
@@ -171,7 +158,6 @@ class Group(ChildObject):
                 Trace.log("Object", 0, "'%s' invalid node %s get layer %s" % (self.getName(), obj.getName(), layerName))
 
                 return False
-                pass
 
             layer.addChild(obj_entity)
 
@@ -179,7 +165,6 @@ class Group(ChildObject):
             pass
 
         return True
-        pass
 
     def _onDestroy(self):
         super(Group, self)._onDestroy()
@@ -195,7 +180,6 @@ class Group(ChildObject):
             pass
 
         return True
-        pass
 
     def addState(self, state, value):
         if state in self.states:
@@ -209,7 +193,6 @@ class Group(ChildObject):
         if state not in self.states:
             Trace.log("Object", 0, "'%s' not exist state %s" % (self.name, state))
             return
-            pass
 
         self.states[state] = value
         pass
@@ -218,11 +201,10 @@ class Group(ChildObject):
         if state not in self.states:
             Trace.log("Object", 0, "'%s' not exist state %s" % (self.name, state))
             return
-            pass
 
         value = self.states[state]
+
         return value
-        pass
 
     def disableObject(self, *disabled):
         for name in disabled:
@@ -231,21 +213,19 @@ class Group(ChildObject):
             if obj is None:
                 Trace.log("Object", 0, "failed disable object '%s'" % (name))
                 return
-                pass
 
             obj.setParam("Enable", False)
             pass
         pass
 
     def _onInitializeFailed(self, ex):
-        Trace.log("Group", 0, "Group '%s' initialize failed: %s" % (self.name, ex))
+        Trace.log_exception("Group", 0, "Group '%s' initialize failed: %s" % (self.name, ex))
         pass
 
     def onPreparation(self):
         if self.isInitialized() is False:
             Trace.log("Group", 0, "Group '%s' invalid enable, not initialized" % (self.name))
             return
-            pass
 
         Notification.notify(Notificator.onLayerGroupPreparation, self.name)
         pass
@@ -254,17 +234,14 @@ class Group(ChildObject):
         if self.enable is True:
             Trace.log("Group", 0, "Group '%s' already enable" % (self.name))
             return
-            pass
 
         if self.isInitialized() is False:
             Trace.log("Group", 0, "Group '%s' invalid enable, not initialized" % (self.name))
             return
-            pass
 
         if self.isActive() is False:
             Trace.log("Group", 0, "Group '%s' invalid enable, not activate" % (self.name))
             return
-            pass
 
         self.enable = True
 
@@ -278,7 +255,6 @@ class Group(ChildObject):
     def onDisable(self):
         if self.enable is False:
             return
-            pass
 
         self.enable = False
 
@@ -292,5 +268,4 @@ class Group(ChildObject):
 
     def getEnable(self):
         return self.enable
-        pass
     pass

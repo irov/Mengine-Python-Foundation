@@ -1,7 +1,6 @@
 from Foundation.Task.MixinEvent import MixinEvent
 from Foundation.Task.Task import Task
 
-
 class TaskObjectAnimatablePlay(MixinEvent, Task):
     Skiped = True
 
@@ -35,8 +34,7 @@ class TaskObjectAnimatablePlay(MixinEvent, Task):
             AnimatableParent = Animatable.getParent()
 
             if AnimatableParent is not None and AnimatableParent.getEnable() is False:
-                self.validateFailed("Animatable '%s' error: Parent '%s' is Disable" % (
-                    Animatable.getName(), AnimatableParent.getName()))
+                self.validateFailed("Animatable '%s' error: Parent '%s' is Disable" % (Animatable.getName(), AnimatableParent.getName()))
 
     def _onFastSkip(self):
         Animatable = self.getAnimatable()

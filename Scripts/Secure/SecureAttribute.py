@@ -52,7 +52,7 @@ class SecureAttribute(object):
         return self.__value
 
     def _onGetValueFailed(self, ex):
-        Trace.log("Object", 0, "SecureAttribute._onGetFailed {}".format(ex))
+        Trace.log_exception("Object", 0, "SecureAttribute._onGetFailed {}".format(ex))
 
     def hashValue(self):
         return self._hashValue(self.__value)

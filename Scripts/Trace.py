@@ -60,6 +60,24 @@ def log(category, level, text, *args):
     Mengine.logError(message)
     pass
 
+def log_exception(category, level, text, *args):
+    __validateMessage(text)
+
+    if TraceManager.existIn(category) is False:
+        Mengine.logError("trace log unknown category '%s'" % category)
+        return
+
+    if level > TraceManager.getLevel(category):
+        return
+
+    message = "-----------------------------------------------"
+    message += "\nException: " + __tryFormatMessage(text, *args) + ""
+    message += "\n-----------------------------------------------"
+    message += traceback.format_exc()
+    message += "\n-----------------------------------------------"
+
+    Mengine.logError(message)
+
 def log_dev_err(category, level, text, *args):
     if _DEVELOPMENT is True:
         log(category, level, text, *args)
