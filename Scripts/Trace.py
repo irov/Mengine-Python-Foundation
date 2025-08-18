@@ -1,7 +1,5 @@
 import sys
-import traceback
 from TraceManager import TraceManager
-
 
 def msg(text, *args):
     __validateMessage(text)

@@ -10,20 +10,13 @@ class Initializer(object):
         pass
 
     def isInitialized(self):
-        return self._initialized is True
+        return self._initialized is not None
 
     def onInitialize(self, *args, **kwargs):
         if self._initialized is not None:
-            if self._initialized is True:
-                self.onInitializeFailed("already initialized")
-                pass
-
-            if self._initialized is False:
-                self.onInitializeFailed("is finalized")
-                pass
+            self.onInitializeFailed("already initialized")
 
             return False
-            pass
 
         try:
             self._onInitialize(*args, **kwargs)
@@ -32,9 +25,13 @@ class Initializer(object):
 
             return False
 
-        Initializer.InitializerReferences[self.__class__] = Initializer.InitializerReferences.get(self.__class__, 0) + 1
+        if _DEVELOPMENT is True:
+            Initializer.InitializerReferences.setdefault(self.__class__, []).append(self)
 
-        self._initialized = True
+            self._initialized = traceback.extract_stack()
+        else:
+            self._initialized = True
+            pass
 
         return True
 
@@ -59,20 +56,16 @@ class Initializer(object):
         raise Exception(msg % args)
 
     def onFinalize(self):
-        if self._initialized is not True:
-            if self._initialized is False:
-                self.onFinalizeFailed("already finalized")
-                pass
-
-            if self._initialized is None:
-                self.onFinalizeFailed("not initialized")
-                pass
+        if self._initialized is None:
+            self.onFinalizeFailed("not initialized")
 
             return
 
-        Initializer.InitializerReferences[self.__class__] = Initializer.InitializerReferences.get(self.__class__, 0) - 1
+        if _DEVELOPMENT is True:
+            Initializer.InitializerReferences.setdefault(self.__class__, []).remove(self)
+            pass
 
-        self._initialized = False
+        self._initialized = None
 
         try:
             self._onFinalize()
@@ -98,12 +91,13 @@ class Initializer(object):
 
     @classmethod
     def validate(cls):
-        print "Validating Initializers..."
-        for initializer, count in Initializer.InitializerReferences.items():
-            if count == 0:
-                continue
-
-            print "Initializer '%s' is not finalized, count = %d" % (initializer.__name__, count)
+        if _DEVELOPMENT is True:
+            print "Validating Initializers..."
+            for initializer, objs in Initializer.InitializerReferences.items():
+                for obj in objs:
+                    print "Initializer '%s' is not finalized, trace:\n%s" % (initializer.__name__, "".join(traceback.format_list(obj._initialized)))
+                    pass
+                pass
             pass
         pass
     pass
