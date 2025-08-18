@@ -20,7 +20,6 @@ def Fmax(*arg):
             pass
         pass
     return max
-    pass
 
 def Fmin(*arg):
     min = arg[0]
@@ -30,7 +29,6 @@ def Fmin(*arg):
             pass
         pass
     return min
-    pass
 
 def HsvToRgb360(hsv):
     h, s, v = hsv

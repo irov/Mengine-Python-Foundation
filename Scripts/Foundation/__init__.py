@@ -7,6 +7,9 @@ def onInitialize():
     import traceback
     Mengine.addGlobalModule("traceback", traceback)
 
+    from Notificator import Notificator
+    Mengine.addGlobalModule("Notificator", Notificator)
+
     from Holder import Holder
     Mengine.addGlobalModule("Holder", Holder)
 
@@ -46,9 +49,6 @@ def onInitialize():
 
     from Foundation.Task.Refcount import Refcount
     Mengine.addGlobalModule("Refcount", Refcount)
-
-    from GoogleAnalytics import GoogleAnalytics
-    Mengine.addGlobalModule("GoogleAnalytics", GoogleAnalytics)
 
     Trace.msg("Foundation.onInitialize")
 
@@ -438,9 +438,6 @@ def onInitialize():
 
     from TraceManager import TraceManager
     TraceManager.addTraces(traces)
-
-    from Foundation.Notificator import Notificator
-    Mengine.addGlobalModule("Notificator", Notificator)
 
     notifiers = [
         #    Notificator.onSave
@@ -914,4 +911,7 @@ def onFinalize():
 
     from Notification import Notification
     Notification.onFinalize()
+
+    from Initializer import Initializer
+    Initializer.validate()
     pass

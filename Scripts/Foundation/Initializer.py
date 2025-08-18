@@ -1,6 +1,8 @@
 class Initializer(object):
     __metaclass__ = baseslots("_initialized")
 
+    InitializerReferences = {}
+
     def __init__(self):
         super(Initializer, self).__init__()
 
@@ -9,7 +11,6 @@ class Initializer(object):
 
     def isInitialized(self):
         return self._initialized is True
-        pass
 
     def onInitialize(self, *args, **kwargs):
         if self._initialized is not None:
@@ -30,12 +31,12 @@ class Initializer(object):
             self.onInitializeFailed("onInitialize exception %s\n%s" % (ex, traceback.format_exc()))
 
             return False
-            pass
+
+        Initializer.InitializerReferences[self.__class__] = Initializer.InitializerReferences.get(self.__class__, 0) + 1
 
         self._initialized = True
 
         return True
-        pass
 
     def _onInitialize(self, *args, **kwargs):
         pass
@@ -56,7 +57,6 @@ class Initializer(object):
         assert type(msg) == str
 
         raise Exception(msg % args)
-        pass
 
     def onFinalize(self):
         if self._initialized is not True:
@@ -69,7 +69,8 @@ class Initializer(object):
                 pass
 
             return
-            pass
+
+        Initializer.InitializerReferences[self.__class__] = Initializer.InitializerReferences.get(self.__class__, 0) - 1
 
         self._initialized = False
 
@@ -93,5 +94,16 @@ class Initializer(object):
 
     def _onFinalizeFailed(self, msg):
         Trace.log("Object", 0, "Initialize.onFinalizeFailed %s" % (msg))
+        pass
+
+    @classmethod
+    def validate(cls):
+        print "Validating Initializers..."
+        for initializer, count in Initializer.InitializerReferences.items():
+            if count == 0:
+                continue
+
+            print "Initializer '%s' is not finalized, count = %d" % (initializer.__name__, count)
+            pass
         pass
     pass

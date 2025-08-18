@@ -27,7 +27,7 @@ class Manager(object):
 
     @classmethod
     def onFinalize(cls):
-        if hasattr(cls, "s__observers") is False:
+        if hasattr(cls, "s__observers") is True:
             for observer in cls.s__observers:
                 Notification.removeObserver(observer)
                 pass

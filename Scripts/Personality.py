@@ -12,9 +12,6 @@ sys.setrecursionlimit(500)
 exception_array = {Mengine.KC_TAB, Mengine.KC_OEM_4, Mengine.KC_OEM_6, Mengine.KC_F1, Mengine.KC_F2, Mengine.KC_F3, Mengine.KC_F4, Mengine.KC_F5, Mengine.KC_F6, Mengine.KC_F7, Mengine.KC_F, Mengine.KC_F9, Mengine.KC_F10, Mengine.KC_F11, Mengine.KC_F12}
 
 def onPreparation(isDebug):
-    from Foundation.Notificator import Notificator
-    Mengine.addGlobalModule("Notificator", Notificator)
-
     notifiers = [
         "onFocus"
         , "onAppMouseEnter"

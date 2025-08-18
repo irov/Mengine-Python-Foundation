@@ -1,7 +1,8 @@
 from Foundation.Task.Task import Task
 
-class TaskSendAnalyticsScreenView(Task):
+from Foundation.GoogleAnalytics import GoogleAnalytics
 
+class TaskSendAnalyticsScreenView(Task):
     def _onParams(self, params):
         super(TaskSendAnalyticsScreenView, self)._onParams(params)
         self.type = params.get('type', 'screenview')
@@ -16,6 +17,4 @@ class TaskSendAnalyticsScreenView(Task):
         data = dict(cid=self.cid, t=self.type, cd=self.screenName, an=self.appName, av=self.appVersion)
         GoogleAnalytics.send_analytics(data)
         return True
-        pass
-
     pass
