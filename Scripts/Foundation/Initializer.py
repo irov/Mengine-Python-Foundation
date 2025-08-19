@@ -25,7 +25,7 @@ class Initializer(object):
 
             return False
 
-        if _DEVELOPMENT is True:
+        if _VALIDATION is True:
             Initializer.InitializerReferences.setdefault(self.__class__, []).append(self)
 
             self._initialized = traceback.extract_stack()
@@ -61,7 +61,7 @@ class Initializer(object):
 
             return
 
-        if _DEVELOPMENT is True:
+        if _VALIDATION is True:
             Initializer.InitializerReferences.setdefault(self.__class__, []).remove(self)
             pass
 
@@ -91,7 +91,7 @@ class Initializer(object):
 
     @classmethod
     def validate(cls):
-        if _DEVELOPMENT is True:
+        if _VALIDATION is True:
             print "Validating Initializers..."
             for initializer, objs in Initializer.InitializerReferences.items():
                 for obj in objs:
