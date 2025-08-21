@@ -194,13 +194,11 @@ class Movie(BaseAnimatable):
         submovie = self.movie.getSubMovie(name)
 
         return submovie
-        pass
 
     def hasSubMovie(self, name):
         result = self.movie.hasSubMovie(name)
 
         return result
-        pass
 
     def _onInitialize(self, obj):
         super(Movie, self)._onInitialize(obj)
