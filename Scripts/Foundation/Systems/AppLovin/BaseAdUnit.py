@@ -80,13 +80,11 @@ class BaseAdUnit(object):
 
     def show(self, placement):
         if self.__checkInit() is False:
-            self._cbShowCompleted(False, {"placement": placement})
             return False
 
         self._log("[{}] show {}".format(self.ad_type, placement))
 
         if self._show(placement) is False:
-            self._cbShowCompleted(False, {"placement": placement})
             return False
 
         return True
@@ -96,13 +94,11 @@ class BaseAdUnit(object):
 
     def hide(self, placement):
         if self.__checkInit() is False:
-            self._cbShowCompleted(False, {"placement": placement})
             return False
 
         self._log("[{}] hide {}".format(self.ad_type, placement))
 
         if self._hide(placement) is False:
-            self._cbShowCompleted(False, {"placement": placement})
             return False
 
         return True

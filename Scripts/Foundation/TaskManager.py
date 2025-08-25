@@ -62,12 +62,10 @@ class TaskManager(Manager):
             Trace.log("Manager", 0, "TaskManager.__importTaskDomain %s:%s import error %s" % (module, name, ex))
 
             return None
-            pass
 
         Type = getattr(Module, Name)
 
         return Type
-        pass
 
     @staticmethod
     def getTaskType(typeName):
@@ -75,7 +73,6 @@ class TaskManager(Manager):
             Trace.log("TaskManager", 0, "TaskManager.getTaskType: not found %s" % (typeName))
 
             return None
-            pass
 
         type = TaskManager.s_typesDomain.get(typeName)
 
@@ -87,26 +84,22 @@ class TaskManager(Manager):
                 Trace.log("TaskManager", 0, "TaskManager.getTaskType: invalid import task %s from module %s" % (typeName, module))
 
                 return None
-                pass
 
             TaskManager.s_typesDomain[typeName] = type
             pass
 
         return type
-        pass
 
     @staticmethod
     def createTask(taskType, base, chain, group, params):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "create Task %s after finalize" % (taskType))
             return None
-            pass
 
         if taskType is None:
             Trace.log("TaskManager", 0, "TaskManager.createTask: taskType is None")
 
             return None
-            pass
 
         task = taskType()
 
@@ -118,62 +111,49 @@ class TaskManager(Manager):
             Trace.log_exception("TaskManager", 0, "TaskManager.createTask: Task %s except %s" % (taskType, ex))
 
             return None
-            pass
 
         if issubclass(taskType, MixinGroup) is True:
             def __updateMixinGroupParams(params, chain, group):
                 if "GroupName" in params:
                     return None
-                    pass
 
                 params_group = params.get("Group")
 
                 if params_group is not None:
                     return params_group
-                    pass
 
                 if group is not None:
                     return group
-                    pass
 
                 if chain.Group is not None:
                     return chain.Group
-                    pass
 
                 return None
-                pass
 
             def __updateMixinGroupNameParams(params, chain, group):
                 params_group_name = params.get("GroupName")
 
                 if params_group_name is not None:
                     return params_group_name
-                    pass
 
                 if group is not None:
                     return group.name
-                    pass
 
                 if chain.GroupName is not None:
                     return chain.GroupName
-                    pass
 
                 return None
-                pass
 
             def __updateMixinDemonNameParams(params, chain):
                 params_demon_name = params.get("DemonName")
 
                 if params_demon_name is not None:
                     return params_demon_name
-                    pass
 
                 if chain.DemonName is not None:
                     return chain.DemonName
-                    pass
 
                 return None
-                pass
 
             Group = __updateMixinGroupParams(params, chain, group)
             task.setGroup(Group)
@@ -192,14 +172,12 @@ class TaskManager(Manager):
             pass
 
         return task
-        pass
 
     @staticmethod
     def createTaskChain(Caller=None, CallerDeep=0, **params):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "create TaskChain after finalize")
             return
-            pass
 
         taskChainType = TaskManager.getTaskType("TaskChain")
 
@@ -207,7 +185,6 @@ class TaskManager(Manager):
             Trace.log("TaskManager", 0, "TaskManager.createTaskChain: Task type 'TaskChain' not register")
 
             return None
-            pass
 
         taskChain = taskChainType()
 
@@ -217,7 +194,6 @@ class TaskManager(Manager):
             Trace.log("TaskManager", 0, "TaskManager.createTaskChain: onParams except %s" % (ex))
 
             return None
-            pass
 
         if _DEVELOPMENT is True:
             if Caller is None:
@@ -228,14 +204,12 @@ class TaskManager(Manager):
             pass
 
         return taskChain
-        pass
 
     @staticmethod
     def runAlias(name, cb, **params):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "run Alias after finalize")
             return
-            pass
 
         with TaskManager.createTaskChain(CallerDeep=1, Cb=cb) as tc:
             tc.addTask(name, **params)
@@ -247,7 +221,6 @@ class TaskManager(Manager):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "running TaskChain after finalize")
             return
-            pass
 
         Trace.log("TaskManager", 1, "TaskManager.runTaskChain %s" % (chain.name))
 
@@ -263,7 +236,6 @@ class TaskManager(Manager):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "end TaskChain after finalize")
             return
-            pass
 
         Trace.log("TaskManager", 1, "TaskManager.endTaskChain %s" % (chain.name))
 
@@ -273,7 +245,6 @@ class TaskManager(Manager):
             if chain.name not in TaskManager.s_runningNamedChain:
                 Trace.log("TaskManager", 0, "TaskManager.endTaskChain %s not exist" % (chain.name))
                 return
-                pass
 
             TaskManager.s_runningNamedChain.pop(chain.name)
             pass
@@ -291,7 +262,6 @@ class TaskManager(Manager):
             if skipGlobal is False:
                 if task.isGlobal() is True:
                     continue
-                    pass
                 pass
 
             if exceptOfTask is not task:
@@ -305,14 +275,12 @@ class TaskManager(Manager):
     @staticmethod
     def isTaskChainSkiping():
         return TaskManager.s_skiped
-        pass
 
     @staticmethod
     def addTaskChain(chain, named):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "add TaskChain after finalize")
             return
-            pass
 
         Trace.log("TaskManager", 1, "TaskManager.addTaskChain %s" % (chain.name))
 
@@ -320,7 +288,6 @@ class TaskManager(Manager):
             if chain.name in TaskManager.s_idleNamedChain:
                 Trace.log("TaskManager", 0, "TaskManager.addTaskChain %s already exist" % (chain.name))
                 return
-                pass
 
             TaskManager.s_idleNamedChain[chain.name] = chain
             pass
@@ -338,16 +305,13 @@ class TaskManager(Manager):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "remove TaskChain after finalize")
             return
-            pass
 
         Trace.log("TaskManager", 1, "TaskManager.removeTaskChain %s" % (chain.name))
 
         if named is True:
             if chain.name not in TaskManager.s_idleNamedChain:
                 Trace.log("TaskManager", 0, "TaskManager.removeTaskChain %s not exist" % (chain.name))
-
                 return
-                pass
 
             TaskManager.s_idleNamedChain.pop(chain.name)
             pass
@@ -360,26 +324,22 @@ class TaskManager(Manager):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "run TaskChain after finalize")
             return False
-            pass
 
         if name not in TaskManager.s_idleNamedChain:
             Trace.log("TaskManager", 0, "TaskManager.runChain %s not exist" % (name))
             return False
-            pass
 
         chain = TaskManager.s_idleNamedChain.get(name)
 
         isValid = chain.run()
 
         return isValid
-        pass
 
     @staticmethod
     def cancelTaskChain(name, exist=True):
         if TaskManager.isInitialized() is False:
             Trace.log("TaskManager", 0, "cancel TaskChain after finalize")
             return
-            pass
 
         if name not in TaskManager.s_idleNamedChain:
             if exist is True:
@@ -387,7 +347,6 @@ class TaskManager(Manager):
                 pass
 
             return
-            pass
 
         chain = TaskManager.s_idleNamedChain.get(name)
 
