@@ -49,7 +49,7 @@ class SystemAdvertising(System):
 
         return True
 
-    def tryInterstitial(self, TransitionData, Placement, Cb, Skip = False):
+    def tryInterstitial(self, TransitionData, Placement, Cb=None, Skip=False):
         if self.__checkAdInterstitial(TransitionData, Placement) is False:
             if Skip is False:
                 TaskManager.runAlias("AliasTransition", None, Bypass=True, **TransitionData)
