@@ -1041,6 +1041,28 @@ def make_text_node(name, text_id, font=None, v_align=None, h_align=None, *args):
     else:
         text_field.setTextFormatArgs(args)
 
+def isTabletByAspectRatio(width, height):
+    """
+    Heuristic tablet detection using only aspect ratio.
+    True => tablet-likely; False => phone or ambiguous.
+    """
+    if width <= 0 or height <= 0:
+        return False
+
+    w = float(width)
+    h = float(height)
+    r = max(w, h) / min(w, h)  # r >= 1
+
+    # Bands:
+    # >= 2.10  -> 20:9, 21:9 phones -> False
+    # 1.90–2.10 -> 18–19.5:9 phones  -> False
+    # 1.70–1.90 -> 16:9 ambiguous    -> False
+    # 1.50–1.70 -> 16:10, 3:2        -> True
+    # 1.30–1.50 -> 4:3               -> True
+    # Tablet ranges: 1.30–1.70
+
+    return 1.30 <= r < 1.70
+
 def getCurrentPlatformParams():
     """ :returns: dict where keys are 'Android', 'IOS', 'WINDOWS' and values is bool """
     # todo: return to 'platform' when crushes disappear

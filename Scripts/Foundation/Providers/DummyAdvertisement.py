@@ -1,52 +1,59 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.TaskManager import TaskManager
 
+
 class DummyAdvertisement(object):
     """ Dummy Provider """
-    _banner_dp_height = 50.0
-    _banner_dp_width = 320.0
-    _scale_factor = None
+
+# ----- Banner ---------------------------------------------------------------------------------------------------------
 
     @staticmethod
     def showBanner():
         AdType = "Banner"
-
         display_failed = Mengine.rand(20) < 5
-
-        Trace.msg("<DummyAdvertisement> show advert {} (fail: {})...".format(
-            AdType, display_failed))
-
+        Trace.msg("<DummyAdvertisement> show advert {} (fail: {})...".format(AdType, display_failed))
         return True
 
     @staticmethod
     def hideBanner():
         AdType = "Banner"
-
         Notification.notify(Notificator.onAdShowCompleted, AdType, True, {})
-
         return True
 
     @staticmethod
-    def _getBannerScale():
-        if DummyAdvertisement._scale_factor is None:
-            viewport = Mengine.getGameViewport()
-            game_width = viewport.end.x - viewport.begin.x
-            DummyAdvertisement._scale_factor = game_width / DummyAdvertisement._banner_dp_width
-
-        return DummyAdvertisement._scale_factor
-
-    @staticmethod
     def getBannerHeight():
-        return DummyAdvertisement._banner_dp_height * DummyAdvertisement._getBannerScale()
+        viewport = Mengine.getGameViewport()
+        game_width = viewport.end.x - viewport.begin.x
+        game_height = viewport.end.y - viewport.begin.y
+
+        if Utils.isTabletByAspectRatio(game_width, game_height) is True:
+            banner_height = DummyAdvertisement.getTabletAdaptiveBannerHeight(game_width)
+        else:
+            banner_height = DummyAdvertisement.getPhoneAdaptiveBannerHeight(game_width)
+
+        return banner_height
 
     @staticmethod
     def getBannerWidth():
-        return DummyAdvertisement._banner_dp_width * DummyAdvertisement._getBannerScale()
+        viewport = Mengine.getGameViewport()
+        game_width = viewport.end.x - viewport.begin.x
+        return game_width
+
+    @staticmethod
+    def getPhoneAdaptiveBannerHeight(width):
+        """ Applovin Banners are automatically sized to 320x50 on phones """
+        return 50.0 * width / 320.0
+
+    @staticmethod
+    def getTabletAdaptiveBannerHeight(width):
+        """ Applovin Banners are automatically sized to 728x90 on tablets """
+        return 90.0 * width / 728.0
+
+# ----------------------------------------------------------------------------------------------------------------------
 
     @staticmethod
     def hasInterstitialAdvert():
         status = True
-
         Trace.msg("<DummyAdvertisement> hasInterstitialAdvert result = {}".format(status))
         return status
 
@@ -59,9 +66,7 @@ class DummyAdvertisement(object):
     @staticmethod
     def showInterstitialAdvert(placement):
         FakeWatchDelay = 5000
-
         display_failed = Mengine.rand(20) < 5
-
         revenue = 0.02
 
         with TaskManager.createTaskChain(Name="DummyShowInterstitialAdvert") as source:
@@ -82,14 +87,12 @@ class DummyAdvertisement(object):
     @staticmethod
     def hasRewardedAdvert():
         status = True
-
         Trace.msg("<DummyAdvertisement> hasRewardedAdvert result = {}".format(status))
         return status
 
     @staticmethod
     def canOfferRewardedAdvert(placement):
         status = Mengine.rand(20) < 15
-
         Trace.msg("<DummyAdvertisement> canOfferRewardedAdvert {} result = {}".format(placement, status))
         return status
 
@@ -103,9 +106,7 @@ class DummyAdvertisement(object):
     def showRewardedAdvert(placement):
         FakeWatchDelay = 5000
         GoldReward = 1
-
         display_failed = Mengine.rand(20) < 5
-
         revenue = 0.05
 
         with TaskManager.createTaskChain(Name="DummyShowRewardedAdvert") as source:
