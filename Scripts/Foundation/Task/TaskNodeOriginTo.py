@@ -8,7 +8,7 @@ class TaskNodeOriginTo(MixinNode, Task):
         super(TaskNodeOriginTo, self)._onParams(params)
 
         self.time = params.get("Time", None)
-        self.origin = params.get("Origin")
+        self.origin = params.get("To")
         self.easing = params.get("Easing", "easyLinear")
 
         self.affector = None
