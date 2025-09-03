@@ -63,7 +63,7 @@ class SystemAdvertising(System):
         MovieIn = TransitionData.pop("MovieIn", None)
         ZoomEffectTransitionObject = TransitionData.pop("ZoomEffectTransitionObject", None)
 
-        TaskManager.runAlias("AliasTransition", None, SceneName=SystemAdvertising.ADVERTISING_SCENE, MovieIn=MovieIn, ZoomEffectTransitionObject=ZoomEffectTransitionObject)
+        TaskManager.runAlias("AliasTransition", Cb, SceneName=SystemAdvertising.ADVERTISING_SCENE, MovieIn=MovieIn, ZoomEffectTransitionObject=ZoomEffectTransitionObject)
 
         return True
         pass
