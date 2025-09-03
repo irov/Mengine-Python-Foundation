@@ -523,21 +523,21 @@ class SystemMonetization(System):
         return today_date
 
     @staticmethod
-    def __getAdvertStorageKeys(ad_name="Rewarded"):
+    def __getAdvertStorageKeys(Placement="Rewarded"):
         """ returns storage keys for adverts """
         # deprecated keys: "lastViewedAdDate", "todayViewedAds"
         return {
-            "last_viewed_date": "LastViewed{}AdDate".format(ad_name),
-            "today_viewed_ads": "TodayViewed{}Ads".format(ad_name),
+            "last_viewed_date": "LastViewed{}AdDate".format(Placement),
+            "today_viewed_ads": "TodayViewed{}Ads".format(Placement),
         }
 
     @staticmethod
-    def isAdsEnded(AdUnitName="Rewarded"):
+    def isAdsEnded(Placement="Rewarded"):
         if MonetizationManager.isMonetizationEnable() is False:
             return False
 
         """ :return: True if ads ended """
-        today_viewed_ads = SystemMonetization.getAdvertStorageKey(AdUnitName, "today_viewed_ads")
+        today_viewed_ads = SystemMonetization.getAdvertStorageKey(Placement, "today_viewed_ads")
 
         viewed_ads = SystemMonetization.getStorageValue(today_viewed_ads)
         ads_per_day = MonetizationManager.getGeneralSetting("AdsPerDay")    # todo: make it unique for each ad unit
@@ -562,15 +562,17 @@ class SystemMonetization(System):
     # callbacks
 
     @staticmethod
-    def _onAdUserRewarded(ad_type, ad_name, params):  # react on showAd()
-        _Log("onAdvertisementReward type: {} name: {} params: {}".format(ad_type, ad_name, params))
+    def _onAdUserRewarded(ad_type, params):  # react on showAd()
+        _Log("onAdvertisementReward type: {} params: {}".format(ad_type, params))
 
-        advert_product = MonetizationManager.findProduct(lambda pr: pr.currency == "Advert" and pr.name == ad_name)
+        placement = params["placement"]
+
+        advert_product = MonetizationManager.findProduct(lambda pr: pr.currency == "Advert" and pr.name == placement)
         if advert_product is None:
-            Trace.log("System", 0, "Not found advert product for ad {!r} (set product currency to 'Advert' and name to {!r})".format(ad_name, ad_name))
+            Trace.log("System", 0, "Not found advert product for ad {!r} (set product currency to 'Advert' and name to {!r})".format(placement, placement))
             return False
 
-        storage_keys = SystemMonetization.__getAdvertStorageKeys(ad_name)
+        storage_keys = SystemMonetization.__getAdvertStorageKeys(placement)
         last_viewed_date = storage_keys["last_viewed_date"]
         today_viewed_ads = storage_keys["today_viewed_ads"]
 
@@ -578,7 +580,7 @@ class SystemMonetization(System):
         today_date = SystemMonetization.__getTodayDate()
         SystemMonetization.storage[last_viewed_date].setValue(today_date)
 
-        if SystemMonetization.isAdsEnded(ad_name) is False:
+        if SystemMonetization.isAdsEnded(placement) is False:
             SystemMonetization.sendReward(prod_id=advert_product.id)
 
             if last_date == today_date:
@@ -587,11 +589,11 @@ class SystemMonetization(System):
                 SystemMonetization.storage[today_viewed_ads].setValue(1)
 
         SystemMonetization.saveData(today_viewed_ads, last_viewed_date, "gold")
-        SystemMonetization._updateAdvertCounterText(ad_name)
+        SystemMonetization._updateAdvertCounterText(placement)
 
-        if SystemMonetization.isAdsEnded(ad_name) is True:
-            Notification.notify(Notificator.onAvailableAdsEnded, ad_name)
-            _Log("onAvailableAdsEnded {!r}".format(ad_name))
+        if SystemMonetization.isAdsEnded(placement) is True:
+            Notification.notify(Notificator.onAvailableAdsEnded, placement)
+            _Log("onAvailableAdsEnded {!r}".format(placement))
 
         return False
 

@@ -155,8 +155,8 @@ class BaseAdUnit(object):
         self._cbUserRewarded(params)
 
     def _cbUserRewarded(self, params):
-        self._log("[{} cb] user rewarded: {}".format(self.name, params))
-        Notification.notify(Notificator.onAdUserRewarded, self.ad_type, self.name, params)
+        self._log("[{} cb] user rewarded: {}".format(self.ad_type, params))
+        Notification.notify(Notificator.onAdUserRewarded, self.ad_type, params)
 
     # devtodebug
 
