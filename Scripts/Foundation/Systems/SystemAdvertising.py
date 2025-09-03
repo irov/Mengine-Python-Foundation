@@ -31,26 +31,23 @@ class SystemAdvertising(System):
 
         return True
 
-    def __checkAdInterstitial(self, TransitionData, Placement):
-        if TransitionData.get("SceneName") in SystemAdvertising.IGNORE_SCENES:
-            return False
-
-        if self.isInterstitialEnabled() is False:
-            return False
-
-        if Placement is None:
-            return False
-
-        if AdvertisementProvider.hasInterstitialAdvert() is False:
-            return False
-
-        if AdvertisementProvider.canYouShowInterstitialAdvert(Placement) is False:
-            return False
-
-        return True
-
     def tryInterstitial(self, next_scene, placement, Skip = False):
-        if self.__checkAdInterstitial(placement) is False:
+        def __checkAdInterstitial(placement):
+            if self.isInterstitialEnabled() is False:
+                return False
+
+            if placement is None:
+                return False
+
+            if AdvertisementProvider.hasInterstitialAdvert() is False:
+                return False
+
+            if AdvertisementProvider.canYouShowInterstitialAdvert(placement) is False:
+                return False
+
+            return True
+
+        if __checkAdInterstitial(placement) is False:
             if Skip is False:
                 Notification.notify(Notificator.onChangeScene, next_scene)
                 pass
