@@ -3,12 +3,12 @@ from Foundation.DatabaseManager import DatabaseManager
 
 import Inspector
 
-class InspectorManager(object):
+class InspectorManager(Manager):
     s_compares = {}
 
     @staticmethod
-    def _onInitialize():
-        return True
+    def _onInitialize(*args):
+        pass
 
     @staticmethod
     def _onFinalize():
@@ -20,7 +20,6 @@ class InspectorManager(object):
         if name in InspectorManager.s_compares:
             Trace.log("Manager", 0, "InspectorManager.addCompare %s already exist" % (name))
             return
-            pass
 
         InspectorManager.s_compares[name] = compare
         pass
@@ -30,12 +29,10 @@ class InspectorManager(object):
         if name not in InspectorManager.s_compares:
             Trace.log("Manager", 0, "InspectorManager.getCompare %s not exist" % (name))
             return None
-            pass
 
         compare = InspectorManager.s_compares[name]
 
         return compare
-        pass
 
     @staticmethod
     def loadParams(module, param):
@@ -46,7 +43,6 @@ class InspectorManager(object):
             pass
 
         return True
-        pass
 
     @staticmethod
     def createInspector(name, cb):
@@ -54,15 +50,12 @@ class InspectorManager(object):
         if compare is None:
             Trace.log("Manager", 0, "InspectorManager.createInspector %s not exist" % (name))
             return
-            pass
 
         inspector = Inspector.InspectorResource()
         if inspector.initialize(compare.Comp, cb) is False:
             return None
-            pass
 
         return inspector
-        pass
 
     @staticmethod
     def createInspectorEmpty(cb):
@@ -70,10 +63,8 @@ class InspectorManager(object):
 
         if inspector.initialize(cb) is False:
             return None
-            pass
 
         return inspector
-        pass
 
     @staticmethod
     def createInspectorFull(cb):
@@ -81,10 +72,8 @@ class InspectorManager(object):
 
         if inspector.initialize(cb) is False:
             return None
-            pass
 
         return inspector
-        pass
 
     @staticmethod
     def createInspectorChange(cb):
@@ -92,8 +81,6 @@ class InspectorManager(object):
 
         if inspector.initialize(cb) is False:
             return None
-            pass
 
         return inspector
-        pass
     pass
