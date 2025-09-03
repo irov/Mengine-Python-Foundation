@@ -57,6 +57,6 @@ class SystemAdvertising(System):
         AdvertisingScene.setParam("NextScene", next_scene)
         AdvertisingScene.setParam("AdPlacement", placement)
 
-        Notification.notify(Notificator.onChangeScene, SystemAdvertising.base_scene_name)
+        Notification.notify(Notificator.onChangeScene, SystemAdvertising.ADVERTISING_SCENE)
 
         return True
