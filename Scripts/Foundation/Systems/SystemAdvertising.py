@@ -49,21 +49,17 @@ class SystemAdvertising(System):
 
         return True
 
-    def tryInterstitial(self, TransitionData, Placement, Cb=None, Skip=False):
-        if self.__checkAdInterstitial(TransitionData, Placement) is False:
+    def tryInterstitial(self, next_scene, placement, Skip = False):
+        if self.__checkAdInterstitial(placement) is False:
             if Skip is False:
-                TaskManager.runAlias("AliasTransition", None, Bypass=True, **TransitionData)
+                Notification.notify(Notificator.onChangeScene, next_scene)
                 pass
             return False
 
         AdvertisingScene = DemonManager.getDemon("AdvertisingScene")
-        AdvertisingScene.setParam("TransitionData", TransitionData)
-        AdvertisingScene.setParam("Placement", Placement)
+        AdvertisingScene.setParam("NextScene", next_scene)
+        AdvertisingScene.setParam("AdPlacement", placement)
 
-        MovieIn = TransitionData.pop("MovieIn", None)
-        ZoomEffectTransitionObject = TransitionData.pop("ZoomEffectTransitionObject", None)
-
-        TaskManager.runAlias("AliasTransition", Cb, SceneName=SystemAdvertising.ADVERTISING_SCENE, MovieIn=MovieIn, ZoomEffectTransitionObject=ZoomEffectTransitionObject)
+        Notification.notify(Notificator.onChangeScene, SystemAdvertising.base_scene_name)
 
         return True
-        pass
