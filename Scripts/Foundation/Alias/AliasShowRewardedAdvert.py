@@ -53,13 +53,12 @@ class AliasShowRewardedAdvert(TaskAlias):
             cb()
 
     def _onGenerate(self, source):
-        if self.in_processing is True:
+        if AliasShowRewardedAdvert.in_processing is True:
             if self.Bypass is True:
                 Trace.msg_err("AliasShowRewardedAdvert warning [{}] [{}] - already in processing, but Bypass is True"
                               .format(self.AdPlacement, AdvertisementProvider.getName()))
             else:
-                Trace.log("Task", 0, "AliasShowRewardedAdvert failed [{}] [{}] - already in processing"
-                          .format(self.AdPlacement, AdvertisementProvider.getName()))
+                Trace.log("Task", 0, "AliasShowRewardedAdvert failed [{}] [{}] - already in processing".format(self.AdPlacement, AdvertisementProvider.getName()))
                 source.addDummy()
                 return
 
