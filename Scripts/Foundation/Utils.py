@@ -1053,14 +1053,6 @@ def isTabletByAspectRatio(width, height):
     h = float(height)
     r = max(w, h) / min(w, h)  # r >= 1
 
-    # Bands:
-    # >= 2.10  -> 20:9, 21:9 phones -> False
-    # 1.90–2.10 -> 18–19.5:9 phones  -> False
-    # 1.70–1.90 -> 16:9 ambiguous    -> False
-    # 1.50–1.70 -> 16:10, 3:2        -> True
-    # 1.30–1.50 -> 4:3               -> True
-    # Tablet ranges: 1.30–1.70
-
     return 1.30 <= r < 1.70
 
 def getCurrentPlatformParams():

@@ -202,12 +202,6 @@ def getSizeHotSpot(size, center=False, left=0, top=0, right=0, bottom=0):
     points.append(Mengine.vec2f(0 - width / 2 * center - left, height - height / 2 * center + bottom))
 
     return points
-    pass
-
-def clearActiveTasksArray():
-    global activatedTasks
-    activatedTasks = []
-    pass
 
 blocketScenes = {}
 

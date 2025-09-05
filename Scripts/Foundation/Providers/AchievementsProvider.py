@@ -13,7 +13,7 @@ class AchievementsProvider(BaseProvider):
     def incrementAchievement(achievement_id, steps):
         if steps is not None and steps < 1:
             Trace.log("Provider", 0, "ValueError: steps cannot be a positive value (not {})".format(steps))
-            return
+            return False
 
         return AchievementsProvider._call("incrementAchievement", achievement_id, steps)
 

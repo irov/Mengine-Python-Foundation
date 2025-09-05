@@ -23,3 +23,6 @@ class AndroidAppLovinInterstitialAd(AndroidAppLovinAdUnit):
 
     def _show(self, placement):
         return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showInterstitial", placement)
+
+    def _isShowing(self):
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "isInterstitialAdShowing")

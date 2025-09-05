@@ -147,6 +147,10 @@ class DummyAdvertisement(object):
             return DummyAdvertisement.canYouShowRewardedAdvert(placement)
         def _ShowInterstitialAdvert(placement):
             return DummyAdvertisement.showInterstitialAdvert(placement)
+        def _IsShowingInterstitialAdvert():
+            return False
+        def _IsShowingRewardedAdvert():
+            return False
         def _CanYouShowInterstitialAdvert(placement):
             return DummyAdvertisement.canYouShowInterstitialAdvert(placement)
         def _ShowBanner():
@@ -172,11 +176,13 @@ class DummyAdvertisement(object):
             HasInterstitialAdvert=_HasInterstitialAdvert,
             CanYouShowInterstitialAdvert=_CanYouShowInterstitialAdvert,
             ShowInterstitialAdvert=_ShowInterstitialAdvert,
+            IsShowingInterstitialAdvert=_IsShowingInterstitialAdvert,
             # rewarded:
             HasRewardedAdvert=_HasRewardedAdvert,
             CanOfferRewardedAdvert=_CanOfferRewardedAdvert,
             CanYouShowRewardedAdvert=_CanYouShowRewardedAdvert,
             ShowRewardedAdvert=_ShowRewardedAdvert,
+            IsShowingRewardedAdvert=_IsShowingRewardedAdvert,
             # consent flow:
             ShowConsentFlow=_ShowConsentFlow,
             IsConsentFlow=_IsConsentFlow,

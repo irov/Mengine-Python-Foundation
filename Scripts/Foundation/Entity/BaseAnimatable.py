@@ -23,19 +23,16 @@ class BaseAnimatable(BaseEntity):
 
     def getAnimatable(self):
         return None
-        pass
 
     def getAnimation(self):
         animatable = self.getAnimatable()
 
         if animatable is None:
             return None
-            pass
 
         animation = animatable.getAnimation()
 
         return animation
-        pass
 
     def __updatePlay(self, value):
         if value is True:

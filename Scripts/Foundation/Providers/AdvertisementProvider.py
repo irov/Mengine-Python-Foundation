@@ -14,10 +14,12 @@ class AdvertisementProvider(BaseProvider):
         "HasInterstitialAdvert",
         "CanYouShowInterstitialAdvert",
         "ShowInterstitialAdvert",
+        "IsShowingInterstitialAdvert",
         "HasRewardedAdvert",
         "CanOfferRewardedAdvert",
         "CanYouShowRewardedAdvert",
         "ShowRewardedAdvert",
+        "IsShowingRewardedAdvert",
         "ShowConsentFlow",
         "IsConsentFlow",
         "GetBannerHeight",
@@ -50,6 +52,10 @@ class AdvertisementProvider(BaseProvider):
         return AdvertisementProvider._call("ShowInterstitialAdvert", placement)
 
     @staticmethod
+    def isShowingInterstitialAdvert():
+        return AdvertisementProvider._call("IsShowingInterstitialAdvert")
+
+    @staticmethod
     def hasRewardedAdvert():
         return AdvertisementProvider._call("HasRewardedAdvert")
 
@@ -64,6 +70,10 @@ class AdvertisementProvider(BaseProvider):
     @staticmethod
     def showRewardedAdvert(placement):
         return AdvertisementProvider._call("ShowRewardedAdvert", placement)
+
+    @staticmethod
+    def isShowingRewardedAdvert():
+        return AdvertisementProvider._call("IsShowingRewardedAdvert")
 
     # GDPR
 

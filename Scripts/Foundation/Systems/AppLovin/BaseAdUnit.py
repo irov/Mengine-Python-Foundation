@@ -106,6 +106,18 @@ class BaseAdUnit(object):
     def _hide(self, placement):
         raise NotImplementedError
 
+    def isShowing(self):
+        if self.__checkInit() is False:
+            return False
+
+        if self._isShowing() is False:
+            return False
+
+        return True
+
+    def _isShowing(self):
+        raise NotImplementedError
+
     # utils
 
     def __checkInit(self, init_if_no=False):

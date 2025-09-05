@@ -85,11 +85,13 @@ class SystemApplovin(System):
             HasInterstitialAdvert=self.hasInterstitial,
             CanYouShowInterstitialAdvert=self.canYouShowInterstitial,
             ShowInterstitialAdvert=self.showInterstitial,
+            IsShowingInterstitialAdvert=self.isShowingInterstitial,
             # rewarded:
             HasRewardedAdvert=self.hasRewarded,
             CanOfferRewardedAdvert=self.canOfferRewarded,
             CanYouShowRewardedAdvert=self.canYouShowRewarded,
             ShowRewardedAdvert=self.showRewarded,
+            IsShowingRewardedAdvert=self.isShowingRewarded,
             # consent flow:
             ShowConsentFlow=self.showConsentFlow,
             IsConsentFlow=self.isConsentFlow,
@@ -171,6 +173,9 @@ class SystemApplovin(System):
     def showInterstitial(self, placement):
         return self.interstitial.show(placement)
 
+    def isShowingInterstitial(self, placement):
+        return self.interstitial.isShowing(placement)
+
     def hasRewarded(self):
         return self.rewarded.has()
 
@@ -182,6 +187,9 @@ class SystemApplovin(System):
 
     def showRewarded(self, placement):
         return self.rewarded.show(placement)
+
+    def isShowingRewarded(self, placement):
+        return self.rewarded.isShowing(placement)
 
     # debug
 
