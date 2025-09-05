@@ -173,8 +173,8 @@ class SystemApplovin(System):
     def showInterstitial(self, placement):
         return self.interstitial.show(placement)
 
-    def isShowingInterstitial(self, placement):
-        return self.interstitial.isShowing(placement)
+    def isShowingInterstitial(self):
+        return self.interstitial.isShowing()
 
     def hasRewarded(self):
         return self.rewarded.has()
@@ -188,8 +188,8 @@ class SystemApplovin(System):
     def showRewarded(self, placement):
         return self.rewarded.show(placement)
 
-    def isShowingRewarded(self, placement):
-        return self.rewarded.isShowing(placement)
+    def isShowingRewarded(self):
+        return self.rewarded.isShowing()
 
     # debug
 
