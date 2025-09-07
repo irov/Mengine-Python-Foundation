@@ -69,7 +69,7 @@ class BaseProvider(object):
         if callable(fail_cb) is True:
             return fail_cb(*args, **kwargs)
 
-        Trace.log("Provider", cls.trace_level, "Provider {} Not found method {} in {}".format(cls.s_name, name, cls.s_methods))
+        Trace.log("Provider", cls.trace_level, "Class {} Provider {} Not found method '{}' in {}".format(cls, cls.s_name, name, cls.s_methods))
 
     @classmethod
     def __callException(cls, e, name, *args, **kwargs):
