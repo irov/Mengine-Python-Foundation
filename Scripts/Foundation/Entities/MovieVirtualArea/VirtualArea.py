@@ -342,11 +342,11 @@ class VirtualArea(Initializer):
             touch0 = self._touch_ids[0]
             touch1 = self._touch_ids[1]
 
-            touch0_cur_pos = Mengine.vec2f(touch0.x, touch0.y)
-            touch1_cur_pos = Mengine.vec2f(touch1.x, touch1.y)
+            touch0_cur_pos = Mengine.vec2f(touch0.position.world.x, touch0.position.world.y)
+            touch1_cur_pos = Mengine.vec2f(touch1.position.world.x, touch1.position.world.y)
 
-            touch0_prev_pos = touch0_cur_pos + Mengine.vec2f(touch0.dx, touch0.dy)
-            touch1_prev_pos = touch1_cur_pos + Mengine.vec2f(touch1.dx, touch1.dy)
+            touch0_prev_pos = touch0_cur_pos + Mengine.vec2f(touch0.worldDelta.x, touch0.worldDelta.y)
+            touch1_prev_pos = touch1_cur_pos + Mengine.vec2f(touch1.worldDelta.x, touch1.worldDelta.y)
 
             def magnitude(vec1, vec2):
                 vec = (vec1 - vec2)
