@@ -15,9 +15,9 @@ class SystemAdvertising(System):
         pass
 
     def _onInitialize(self):
-        AdvertisingTransitionPolicyName = DefaultManager.getDefault("AdvertisingTransitionPolicyName", default="PolicyTransitionAdvertising")
+        PolicyAliasTransitionAdvertising = DefaultManager.getDefault("AliasTransition", default="PolicyAliasTransitionAdvertising")
 
-        PolicyManager.setPolicy("Transition", AdvertisingTransitionPolicyName)
+        PolicyManager.setPolicy("AliasTransition", PolicyAliasTransitionAdvertising)
         pass
 
     def isInterstitialEnabled(self):

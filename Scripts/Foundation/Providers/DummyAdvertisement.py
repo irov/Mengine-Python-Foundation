@@ -70,8 +70,7 @@ class DummyAdvertisement(object):
         revenue = 0.02
 
         with TaskManager.createTaskChain(Name="DummyShowInterstitialAdvert") as source:
-            source.addPrint("<DummyAdvertisement> watch showInterstitialAdvert {}, delay {}s (fail: {})...".format(
-                placement, round(float(FakeWatchDelay) / 1000, 1), display_failed))
+            source.addPrint("<DummyAdvertisement> watch showInterstitialAdvert {}, delay {}s (fail: {})...".format(placement, round(float(FakeWatchDelay) / 1000, 1), display_failed))
 
             if display_failed:
                 source.addDelay(FakeWatchDelay)
