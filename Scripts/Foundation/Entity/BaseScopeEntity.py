@@ -29,9 +29,14 @@ class BaseScopeEntity(BaseEntity):
         pass
 
     def _onDeactivate(self):
+        self._onScopeDeactivate()
+
         if self.tc is not None:
             self.tc.cancel()
             self.tc = None
             pass
+        pass
+
+    def _onScopeDeactivate(self):
         pass
     pass
