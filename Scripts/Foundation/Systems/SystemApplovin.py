@@ -134,14 +134,14 @@ class SystemApplovin(System):
 
     def getBannerHeight(self):
         if _IOS:
-            return Mengine.appleAppLovinGetBannerHeight()
+            return Mengine.appleAdvertisementGetBannerWidth()
         elif _ANDROID:
             return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerHeight")
         return None
 
     def getBannerWidth(self):
         if _IOS:
-            return Mengine.appleAppLovinGetBannerWidth()
+            return Mengine.appleAdvertisementGetBannerHeight()
         elif _ANDROID:
             return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerWidth")
         return None
