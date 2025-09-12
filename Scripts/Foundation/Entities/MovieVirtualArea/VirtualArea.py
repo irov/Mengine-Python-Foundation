@@ -44,7 +44,7 @@ class VirtualArea(Initializer):
     def _onInitialize(self, *args, **kwargs):
         enable_scale = kwargs.get('enable_scale', True)
         scale_factor = kwargs.get('scale_factor', 0.375)
-        viewport = kwargs.get('viewport_node', None)
+        viewport = kwargs.get('viewport', None)
         content_size = kwargs.get('content_size', (0.0, 0.0, 2736.0, 1536.0))
         drag_object_params = {
             "friction": kwargs.get('friction', 0.5),
@@ -58,6 +58,13 @@ class VirtualArea(Initializer):
         name = kwargs.get('name', 'VirtualArea')
         camera_name = kwargs.get('camera_name', 'VirtualAreaRenderCameraOrthogonal')
         viewport_name = kwargs.get('viewport_name', 'VirtualAreaRenderViewport')
+
+        self.on_drag = Event('onDrag')
+        self.on_drag_start = Event('onDragStart')
+        self.on_drag_move = Event('onDragMove')
+        self.on_drag_end = Event('onDragEnd')
+        self.on_scale = Event('onScale')
+        self.on_touch = Event('onTouch')
 
         self._enable_scale = enable_scale
         self._scale_factor = scale_factor
@@ -74,20 +81,13 @@ class VirtualArea(Initializer):
         self._viewport = self._root.createChild('RenderViewport')
         self._viewport.setName(viewport_name)
 
-        if viewport:
-            self.setup_viewport(viewport)
+        if viewport is not None:
+            self.setup_viewport(*viewport)
             pass
 
         root_render = self._root.getRender()
         root_render.setRenderViewport(self._viewport)
         root_render.setRenderCamera(self._camera)
-
-        self.on_drag = Event('onDrag')
-        self.on_drag_start = Event('onDragStart')
-        self.on_drag_move = Event('onDragMove')
-        self.on_drag_end = Event('onDragEnd')
-        self.on_scale = Event('onScale')
-        self.on_touch = Event('onTouch')
 
     def _onFinalize(self):
         if self._socket is not None:
@@ -141,10 +141,12 @@ class VirtualArea(Initializer):
         """
         self._camera.setLocalPositionX(-x)
         self._camera.setLocalPositionY(-y)
-        self.on_drag(*self.get_percentage())
+
+        percentage = self.get_percentage()
+        self.on_drag(*percentage)
 
         if self.is_dragging() is True:
-            self.on_drag_move(*self.get_percentage())
+            self.on_drag_move(*percentage)
 
     def set_snapping(self, bounds, content, radius):
         self._target._snapping.set(bounds, content, radius)
@@ -286,7 +288,7 @@ class VirtualArea(Initializer):
         :return: None
         """
         def __set(vp):
-            self._target.set_bounds(vp.begin.x, vp.begin.y, vp.end.x, vp.end.y, )
+            self._target.set_bounds(vp.begin.x, vp.begin.y, vp.end.x, vp.end.y)
             self._viewport.setViewport(vp)
 
             self._camera.setOrthogonalViewport(vp)
