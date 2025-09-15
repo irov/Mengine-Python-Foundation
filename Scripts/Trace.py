@@ -4,20 +4,25 @@ from TraceManager import TraceManager
 def msg(text, *args):
     __validateMessage(text)
 
-    message = __tryFormatMessage(text, *args)
+    message = __tryPrintMessage(text, *args)
     Mengine.logMessage(message)
 
+def fmsg(text, *args):
+    __validateMessage(text)
+
+    message = __tryFormatMessage(text, *args)
+    Mengine.logMessage(message)
 
 def msg_err(text, *args):
     __validateMessage(text)
 
-    message = __tryFormatMessage(text, *args)
+    message = __tryPrintMessage(text, *args)
     Mengine.logError(message)
 
 def msg_warn(text, *args):
     __validateMessage(text)
 
-    message = __tryFormatMessage(text, *args)
+    message = __tryPrintMessage(text, *args)
     Mengine.logWarning(message)
 
 def msg_dev(text, *args):
@@ -33,7 +38,7 @@ def msg_dev_err(text, *args):
 def msg_release(text, *args):
     __validateMessage(text)
 
-    message = __tryFormatMessage(text, *args)
+    message = __tryPrintMessage(text, *args)
     Mengine.logMessageRelease(message)
 
 
@@ -48,7 +53,7 @@ def log(category, level, text, *args):
         return
 
     message =  "-----------------------------------------------"
-    message += "\nError: " + __tryFormatMessage(text, *args) + ""
+    message += "\nError: " + __tryPrintMessage(text, *args) + ""
     message += "\n-----------------------------------------------"
 
     if level == 0:
@@ -69,7 +74,7 @@ def log_exception(category, level, text, *args):
         return
 
     message = "-----------------------------------------------"
-    message += "\nException: " + __tryFormatMessage(text, *args) + ""
+    message += "\nException: " + __tryPrintMessage(text, *args) + ""
     message += "\n-----------------------------------------------"
     message += traceback.format_exc()
     message += "\n-----------------------------------------------"
@@ -104,11 +109,18 @@ def __getTraceback():
         message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
     return message
 
-def __tryFormatMessage(text, *args):
+def __tryPrintMessage(text, *args):
     try:
         message = text % args
     except Exception as ex:
         message = "{} % {}, Exception: {}".format(text, args, ex)
+    return message
+
+def __tryFormatMessage(text, *args):
+    try:
+        message = text.format(*args)
+    except Exception as ex:
+        message = "{} .format({}), Exception: {}".format(text, args, ex)
     return message
 
 def __validateMessage(text):
