@@ -22,7 +22,11 @@ class TaskNotify(Task):
         pass
 
     def _onRun(self):
-        Notification.notify(self.ID, *self.Args, **self.Kwargs)
+        try:
+            Notification.notify(self.ID, *self.Args, **self.Kwargs)
+        except Exception as ex:
+            self.log("Error notify '%s' args: %s exception: %s" % (self.ID, ex, self.Args))
+            pass
 
         return True
         pass
