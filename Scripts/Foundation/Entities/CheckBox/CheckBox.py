@@ -69,7 +69,6 @@ class CheckBox(BaseEntity):
             Sprite_Uncheck = self.object.getObject("Sprite_Uncheck")
             Sprite_Uncheck.setEnable(not value)
             pass
-        pass
 
     def _onActivate(self):
         super(CheckBox, self)._onActivate()
@@ -94,5 +93,4 @@ class CheckBox(BaseEntity):
         self.object.setParam("State", new_state)
 
         Notification.notify(Notificator.onCheckBox, self.object, new_state)
-        pass
     pass

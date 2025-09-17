@@ -46,10 +46,10 @@ class SystemGoogleServices(System):
             def _setCallback(method_name, *callback):
                 Mengine.addAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
 
-            # sign in:
-            _setCallback("onGoogleGameSocialSignInIntentSuccess", SystemGoogleServices.__cbSignSuccess)
-            _setCallback("onGoogleGameSocialSignInIntentFailed", SystemGoogleServices.__cbSignFailed)
-            _setCallback("onGoogleGameSocialSignInIntentError", SystemGoogleServices.__cbSignError)
+            # request achievements state
+            _setCallback("onGoogleGameSocialRequestAchievementsStateSuccessful", SystemGoogleServices.__cbRequestAchievementsStateSuccessful)
+            _setCallback("onGoogleGameSocialRequestAchievementsStateCanceled", SystemGoogleServices.__cbRequestAchievementsStateCanceled)
+            _setCallback("onGoogleGameSocialRequestAchievementsStateError", SystemGoogleServices.__cbRequestAchievementsStateError)
             # incrementAchievement:
             _setCallback("onGoogleGameSocialIncrementAchievementSuccess", SystemGoogleServices.__cbAchievementIncSuccess)
             _setCallback("onGoogleGameSocialIncrementAchievementError", SystemGoogleServices.__cbAchievementIncError)
@@ -83,6 +83,8 @@ class SystemGoogleServices(System):
             ))
 
             PolicyManager.setPolicy("Authorize", "PolicyAuthGoogleService")    # deprecated
+
+            Mengine.waitSemaphore("GoogleGameSocialAuthenticated", self.__cbSignSuccess)
 
         if self.b_plugins[GOOGLE_PLAY_BILLING_PLUGIN] is True:
             def _setCallback(method_name, *callback):
@@ -236,21 +238,13 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbSignSuccess():
+        _Log("[Auth cb] successfully login in")
         SystemGoogleServices.login_event(True)
         Notification.notify(Notificator.onUserLoggedIn)
 
         SystemGoogleServices.__cbRestoreTasks()
-        _Log("[Auth cb] successfully login in")
 
-    @staticmethod
-    def __cbSignFailed():
-        SystemGoogleServices.login_event(False)
-        _Log("[Auth cb] login failed", err=True, force=True)
-
-    @staticmethod
-    def __cbSignError(exception):
-        SystemGoogleServices.login_event(False)
-        _Log("[Auth cb] login error: {}".format(exception), err=True, force=True)
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "requestAchievementsState")
 
     @staticmethod
     def __cbNeedIntentSign():
@@ -462,6 +456,19 @@ class SystemGoogleServices(System):
             else:
                 Notification.notify(Notificator.onPayFailed, prod_id)
             Notification.notify(Notificator.onPayComplete, prod_id)
+
+    @staticmethod
+    def __cbRequestAchievementsStateSuccessful(achievements):
+        _Log("[Billing cb] requestAchievementsState successful: achievements={!r}".format(achievements))
+        pass
+
+    @staticmethod
+    def __cbRequestAchievementsStateCanceled():
+        _Log("[Billing cb] requestAchievementsState canceled", err=True, force=True)
+
+    @staticmethod
+    def __cbRequestAchievementsStateError(exception):
+        _Log("[Billing cb] requestAchievementsState error: exception={!r}".format(exception), err=True, force=True)
 
     @staticmethod
     def __cbBillingPurchaseError(reason):
