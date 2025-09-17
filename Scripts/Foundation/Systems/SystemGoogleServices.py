@@ -41,7 +41,6 @@ class SystemGoogleServices(System):
     s_products = {}
 
     def _onInitialize(self):
-
         if self.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is True:
             def _setCallback(method_name, *callback):
                 Mengine.addAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
@@ -244,7 +243,7 @@ class SystemGoogleServices(System):
 
         SystemGoogleServices.__cbRestoreTasks()
 
-        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "requestAchievementsState")
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "requestAchievementsState")
 
     @staticmethod
     def __cbNeedIntentSign():
