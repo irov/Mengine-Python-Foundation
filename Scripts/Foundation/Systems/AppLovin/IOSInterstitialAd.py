@@ -21,3 +21,6 @@ class IOSInterstitialAd(BaseAdUnit):
 
     def _show(self, placement):
         return Mengine.appleAdvertisementShowInterstitial(placement)
+
+    def _isShowing(self):
+        return Mengine.appleAdvertisementIsShowingInterstitial()

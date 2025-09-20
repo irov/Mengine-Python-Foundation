@@ -29,4 +29,4 @@ class AndroidAppLovinRewardedAd(AndroidAppLovinAdUnit):
         return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showRewarded", placement)
 
     def _isShowing(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "isRewardedAdShowing")
+        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "isShowingRewarded")

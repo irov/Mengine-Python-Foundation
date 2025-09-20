@@ -24,3 +24,6 @@ class IOSRewardedAd(BaseAdUnit):
 
     def _show(self, placement):
         return Mengine.appleAdvertisementShowRewarded(placement)
+
+    def _isShowing(self):
+        return Mengine.appleAdvertisementIsShowingRewarded()
