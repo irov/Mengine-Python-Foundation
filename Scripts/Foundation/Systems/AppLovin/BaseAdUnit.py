@@ -142,16 +142,14 @@ class BaseAdUnit(object):
 
     @ad_callback
     def cbShowSuccess(self, params):
-        print ("cbShowSuccess", params)
         self._cbShowCompleted(True, params)
 
     @ad_callback
     def cbShowFailed(self, params):
-        print ("cbShowFailed", params)
         self._cbShowCompleted(False, params)
 
     def _cbShowCompleted(self, successful, params):
-        self._log("[{} cb] completed {}".format(self.ad_type, params))
+        self._log("[{} cb] show completed: {}, params: {}".format(self.ad_type, successful, params))
         Notification.notify(Notificator.onAdShowCompleted, self.ad_type, successful, params)
 
     @ad_callback
