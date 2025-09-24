@@ -4,6 +4,7 @@ from Foundation.Providers.ProductsProvider import ProductsProvider
 
 class PaymentProvider(BaseProvider):
     s_allowed_methods = [
+        "isBillingSupported",
         "pay",
         "restorePurchases",
         "isOwnedInAppProduct"
