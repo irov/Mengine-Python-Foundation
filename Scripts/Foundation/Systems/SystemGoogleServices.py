@@ -300,10 +300,6 @@ class SystemGoogleServices(System):
         Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts", productIds)
 
     @staticmethod
-    def isBillingSupported():
-        return SystemGoogleServices.b_plugins.get(GOOGLE_PLAY_BILLING_PLUGIN, False)
-
-    @staticmethod
     def buy(product_id):
         _Log("[Billing] buy {!r}".format(product_id))
         SystemGoogleServices.__lastProductId = product_id

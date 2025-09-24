@@ -4,7 +4,6 @@ from Foundation.Providers.ProductsProvider import ProductsProvider
 
 class PaymentProvider(BaseProvider):
     s_allowed_methods = [
-        "isBillingSupported",
         "pay",
         "restorePurchases",
         "isOwnedInAppProduct"
@@ -13,11 +12,6 @@ class PaymentProvider(BaseProvider):
     @staticmethod
     def _setDevProvider():
         DummyPayment.setProvider()
-
-    @staticmethod
-    def isBillingSupported():
-        """ check if billing supported on current platform """
-        return bool(PaymentProvider._call("isBillingSupported"))
 
     @staticmethod
     def pay(product_id):
@@ -38,20 +32,14 @@ class PaymentProvider(BaseProvider):
         """ check if product is owned by user """
         return bool(PaymentProvider._call("isOwnedInAppProduct", product_id))
 
-
 class DummyPayment(object):
     @staticmethod
     def setProvider():
         PaymentProvider.setProvider("Dummy", dict(
-            isBillingSupported=DummyPayment.isBillingSupported,
             pay=DummyPayment.pay,
             restorePurchases=DummyPayment.restorePurchases,
             isOwnedInAppProduct=DummyPayment.isOwnedInAppProduct,
         ))
-
-    @staticmethod
-    def isBillingSupported():
-        return False
 
     @staticmethod
     def pay(product_id):
