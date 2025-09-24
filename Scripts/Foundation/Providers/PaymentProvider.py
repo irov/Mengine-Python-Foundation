@@ -14,6 +14,11 @@ class PaymentProvider(BaseProvider):
         DummyPayment.setProvider()
 
     @staticmethod
+    def isBillingSupported():
+        """ check if billing supported on current platform """
+        return bool(PaymentProvider._call("isBillingSupported"))
+
+    @staticmethod
     def pay(product_id):
         """ starts payment process,
              - onPaySuccess prod_id: all ok
@@ -34,14 +39,18 @@ class PaymentProvider(BaseProvider):
 
 
 class DummyPayment(object):
-
     @staticmethod
     def setProvider():
         PaymentProvider.setProvider("Dummy", dict(
+            isBillingSupported=DummyPayment.isBillingSupported,
             pay=DummyPayment.pay,
             restorePurchases=DummyPayment.restorePurchases,
             isOwnedInAppProduct=DummyPayment.isOwnedInAppProduct,
         ))
+
+    @staticmethod
+    def isBillingSupported():
+        return False
 
     @staticmethod
     def pay(product_id):

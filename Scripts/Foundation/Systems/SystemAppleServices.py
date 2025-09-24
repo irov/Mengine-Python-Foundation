@@ -278,6 +278,11 @@ class SystemAppleServices(System):
         })
 
     @staticmethod
+    def isBillingSupported():
+        """ returns True if billing supported on current platform """
+        return SystemAppleServices.b_plugins.get("InAppPurchase", False)
+
+    @staticmethod
     def restorePurchases():
         """ returns list of purchased products via cb _cbPaymentRestored """
         _Log("[InAppPurchase] restore purchases...", optional=True)
