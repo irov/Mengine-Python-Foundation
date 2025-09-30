@@ -114,7 +114,6 @@ class SaveManager(Manager):
         for obj in objs:
             if obj.isSaving() is False:
                 continue
-                pass
 
             save_obj = SaveManager.saveObject(obj)
 
@@ -126,7 +125,6 @@ class SaveManager(Manager):
         save_data = (groupName, save_objs)
 
         return save_data
-        pass
 
     @staticmethod
     def loadGroup(load_group):

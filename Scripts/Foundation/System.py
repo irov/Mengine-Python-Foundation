@@ -10,6 +10,7 @@ class System(Params, Initializer):
         self.name = None
         self.type = None
 
+        self.__pipes = []
         self.__observers = []
         self.__events = []
         self.__task_chains = {}
@@ -118,11 +119,20 @@ class System(Params, Initializer):
 
         return tc
 
+    def addPipe(self, Pipe, Timing, Event, *Args):
+        pipe = Mengine.pipe(Pipe, Timing, Event, *Args)
+
+        if pipe is None:
+            return None
+
+        self.__pipes.append(pipe)
+        return pipe
+
     def addObserver(self, ID, Function, *Args, **Kwargs):
         observer = Notification.addObserver(ID, Function, *Args, **Kwargs)
 
         if observer is None:
-            return
+            return None
 
         self.__observers.append(observer)
         return observer
@@ -168,6 +178,11 @@ class System(Params, Initializer):
             return
 
         self.active = False
+
+        for pipe in self.__pipes:
+            Mengine.scheduleGlobalRemove(pipe)
+
+        self.__pipes = []
 
         for observer in self.__observers:
             Notification.removeObserver(observer)
