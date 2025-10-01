@@ -43,7 +43,7 @@ class SystemAutoLanguage(System):
     def disable(self):
         self.disabled = True
         if Mengine.hasCurrentAccountSetting("AutoLanguageDisable"):
-            Mengine.changeCurrentAccountSetting("AutoLanguageDisable", u'True')
+            Mengine.changeCurrentAccountSettingBool("AutoLanguageDisable", True)
             Mengine.saveAccounts()
 
     @staticmethod

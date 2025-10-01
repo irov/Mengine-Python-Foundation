@@ -3,6 +3,38 @@ from Foundation.DefaultManager import DefaultManager
 
 class AccountManager(Manager):
     @staticmethod
+    def _onInitialize(*args):
+        AccountManager.addObserver(Notificator.onCreateAccount, AccountManager.__onCreateAccount)
+        AccountManager.addObserver(Notificator.onCreateDefaultAccount, AccountManager.__onCreateDefaultAccount)
+        AccountManager.addObserver(Notificator.onCreateGlobalAccount, AccountManager.__onCreateGlobalAccount)
+        AccountManager.addObserver(Notificator.onLoadAccounts, AccountManager.__onLoadAccounts)
+        pass
+
+    @staticmethod
+    def _onFinalize():
+        pass
+
+    @staticmethod
+    def __onCreateAccount(accountID, isGlobal):
+        AccountManager.callCreateAccount(accountID, isGlobal)
+        return False
+
+    @staticmethod
+    def __onCreateDefaultAccount():
+        AccountManager.callCreateDefaultAccount()
+        return False
+
+    @staticmethod
+    def __onCreateGlobalAccount():
+        AccountManager.callCreateGlobalAccount()
+        return False
+
+    @staticmethod
+    def __onLoadAccounts():
+        AccountManager.callLoadAccounts()
+        return False
+
+    @staticmethod
     def onCreateAccount(accountID, isGlobal):
         pass
 
@@ -17,22 +49,22 @@ class AccountManager(Manager):
         Mengine.changeCurrentAccountSetting("Name", u"Default")
 
         DefaultMusicVolume = DefaultManager.getDefaultFloat("DefaultMusicVolume", "0.5")
-        Mengine.changeCurrentAccountSetting("MusicVolume", unicode(DefaultMusicVolume))
+        Mengine.changeCurrentAccountSettingFloat("MusicVolume", DefaultMusicVolume)
 
         DefaultSoundVolume = DefaultManager.getDefaultFloat("DefaultSoundVolume", "0.5")
-        Mengine.changeCurrentAccountSetting("SoundVolume", unicode(DefaultSoundVolume))
+        Mengine.changeCurrentAccountSettingFloat("SoundVolume", DefaultSoundVolume)
 
         DefaultVoiceVolume = DefaultManager.getDefaultFloat("DefaultVoiceVolume", "0.5")
-        Mengine.changeCurrentAccountSetting("VoiceVolume", unicode(DefaultVoiceVolume))
+        Mengine.changeCurrentAccountSettingFloat("VoiceVolume", DefaultVoiceVolume)
 
         DefaultAccountFullscreen = DefaultManager.getDefaultBool("DefaultAccountFullscreen", False)
-        Mengine.changeCurrentAccountSetting("Fullscreen", unicode(DefaultAccountFullscreen))
+        Mengine.changeCurrentAccountSettingBool("Fullscreen", DefaultAccountFullscreen)
         #
         DefaultAccountCursor = DefaultManager.getDefaultBool("DefaultAccountCursor", False)
-        Mengine.changeCurrentAccountSetting("Cursor", unicode(DefaultAccountCursor))
+        Mengine.changeCurrentAccountSettingBool("Cursor", DefaultAccountCursor)
         #
         DefaultAccountMute = DefaultManager.getDefaultBool("DefaultAccountMute", False)
-        Mengine.changeCurrentAccountSetting("Mute", unicode(DefaultAccountMute))
+        Mengine.changeCurrentAccountSettingBool("Mute", DefaultAccountMute)
 
         return DefaultAccount
         pass

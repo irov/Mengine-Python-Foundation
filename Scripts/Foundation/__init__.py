@@ -880,6 +880,7 @@ def onInitialize():
     Managers.importManager("Foundation", "PrefetchGroupManager")
     Managers.importManager("Foundation", "PrefetchGroupNotifyManager")
     Managers.importManager("Foundation", "SessionManager")
+    Managers.importManager("Foundation", "AccountManager")
 
     return True
 
@@ -889,6 +890,7 @@ def onFinalize():
 
     from Foundation.Managers import Managers
 
+    Managers.removeManager("AccountManager")
     Managers.removeManager("SessionManager")
     Managers.removeManager("ContractManager")
     Managers.removeManager("BankManager")

@@ -1,6 +1,5 @@
 import sys
 
-from Foundation.AccountManager import AccountManager
 from Foundation.Bootstrapper import Bootstrapper
 from Foundation.DefaultManager import DefaultManager
 from Foundation.GameManager import GameManager
@@ -41,7 +40,7 @@ def onPreparation(isDebug):
         , "onDeleteAccount"
         , "onInitializeRenderResources"
         , "onFinalizeRenderResources"
-        , "onCreateAccout"
+        , "onCreateAccount"
         , "onCreateDefaultAccount"
         , "onCreateGlobalAccount"
         , "onLoadAccounts"
@@ -204,12 +203,12 @@ def onSettingChange(setting, key):
 
 def onFullscreen(fullscreen):
     if Mengine.hasCurrentAccountSetting("Fullscreen") is True:
-        Mengine.changeCurrentAccountSetting("Fullscreen", unicode(fullscreen))
+        Mengine.changeCurrentAccountSettingBool("Fullscreen", fullscreen)
     Notification.notify(Notificator.onFullscreen, fullscreen)
 
 def onFixedContentResolution(widescreen):
     if Mengine.hasCurrentAccountSetting("Widescreen") is True:
-        Mengine.changeCurrentAccountSetting("Widescreen", unicode(widescreen))
+        Mengine.changeCurrentAccountSettingBool("Widescreen", widescreen)
     Notification.notify(Notificator.onFixedContentResolution, widescreen)
 
 def onCursorMode(mode):
@@ -237,19 +236,15 @@ def onFinalizeRenderResources():
     Notification.notify(Notificator.onFinalizeRenderResources)
 
 def onCreateAccount(accountID, isGlobal):
-    AccountManager.callCreateAccount(accountID, isGlobal)
-    Notification.notify(Notificator.onCreateAccout, accountID, isGlobal)
+    Notification.notify(Notificator.onCreateAccount, accountID, isGlobal)
 
 def onCreateDefaultAccount():
-    AccountManager.callCreateDefaultAccount()
     Notification.notify(Notificator.onCreateDefaultAccount)
 
 def onCreateGlobalAccount():
-    AccountManager.callCreateGlobalAccount()
     Notification.notify(Notificator.onCreateGlobalAccount)
 
 def onLoadAccounts():
-    AccountManager.callLoadAccounts()
     Notification.notify(Notificator.onLoadAccounts)
 
 def onChangeSoundVolume(soundVolume, musicVolume, voiceVolume):

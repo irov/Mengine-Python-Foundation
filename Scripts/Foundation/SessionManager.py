@@ -107,8 +107,8 @@ class SessionManager(Manager):
 
             return False
 
-        Mengine.changeCurrentAccountSetting("SessionSave", unicode(True))
-        Mengine.changeCurrentAccountSetting("Save", unicode(True))
+        Mengine.changeCurrentAccountSettingBool("SessionSave", True)
+        Mengine.changeCurrentAccountSettingBool("Save", True)
 
         GroupManager.reloadGroups()
         SessionManager.s_selectAccount = None
@@ -147,8 +147,8 @@ class SessionManager(Manager):
 
         SessionManager.s_invalidLoad = False
 
-        Mengine.changeCurrentAccountSetting("SessionSave", unicode(True))
-        Mengine.changeCurrentAccountSetting("Save", unicode(True))
+        Mengine.changeCurrentAccountSettingBool("SessionSave", True)
+        Mengine.changeCurrentAccountSettingBool("Save", True)
 
         Mengine.saveAccounts()
 
