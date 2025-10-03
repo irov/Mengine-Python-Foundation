@@ -62,6 +62,8 @@ def onInitialize():
 
     SceneManager.importScenes("Foundation.Scenes", Scenes)
 
+    from Foundation.DefaultManager import DefaultManager
+
     tasks = [
         "TaskChain"
         , "TaskQuitApplication"
@@ -757,10 +759,112 @@ def onInitialize():
     from Foundation.AccountManager import AccountManager
 
     def accountSetuper(accountID, isGlobal):
+        print "Foundation Account setup", accountID, isGlobal
         if isGlobal is True:
             return
 
-        Mengine.addCurrentAccountSetting("InvalidLoad", u"False", None)
+        Mengine.addCurrentAccountSetting("Default", u"False", None)
+
+        Mengine.addCurrentAccountSetting("SelectedLanguage", u"", None)
+
+        def __changeMute(account_id, value):
+            Mute = value == "True"
+            Mengine.soundMute(Mute)
+            Notification.notify(Notificator.onMute, Mute)
+
+        Mute = Mengine.isMute()
+        Mengine.addCurrentAccountSetting("Mute", unicode(Mute), __changeMute)
+
+        # SOUND\MUSIC params
+
+        def __updateMuteMusic(account_id, value):
+            if value == "True":
+                Mengine.musicSetVolume(0.0)
+                return
+            music_volume_percent = float(Mengine.getCurrentAccountSetting("MusicVolume"))
+            Mengine.musicSetVolume(music_volume_percent)
+
+        def __updateMuteVoice(account_id, value):
+            if value == "True":
+                Mengine.voiceSetVolume(0.0)
+                return
+            voice_volume_percent = float(Mengine.getCurrentAccountSetting("VoiceVolume"))
+            Mengine.voiceSetVolume(voice_volume_percent)
+
+        def __updateMuteSound(account_id, value):
+            if value == "True":
+                Mengine.soundSetVolume(0.0)
+                return
+            sound_volume_percent = float(Mengine.getCurrentAccountSetting("SoundVolume"))
+            Mengine.soundSetVolume(sound_volume_percent)
+
+        default_music_mute = DefaultManager.getDefaultFloat("DefaultMusicMute", 1.0)
+        default_voice_mute = DefaultManager.getDefaultFloat("DefaultVoiceMute", 1.0)
+        default_sound_mute = DefaultManager.getDefaultFloat("DefaultSoundMute", 1.0)
+
+        Mengine.addCurrentAccountSetting("MuteMusic", unicode(default_music_mute), __updateMuteMusic)
+        Mengine.addCurrentAccountSetting("MuteVoice", unicode(default_voice_mute), __updateMuteVoice)
+        Mengine.addCurrentAccountSetting("MuteSound", unicode(default_sound_mute), __updateMuteSound)
+
+        def __updateMusicVolume(account_id, value):
+            Mengine.musicSetVolume(float(value))
+
+        def __updateVoiceVolume(account_id, value):
+            Mengine.voiceSetVolume(float(value))
+
+        def __updateSoundVolume(account_id, value):
+            Mengine.soundSetVolume(float(value))
+
+        default_music_volume = DefaultManager.getDefaultFloat("DefaultMusicVolume", 1.0)
+        default_voice_volume = DefaultManager.getDefaultFloat("DefaultVoiceVolume", 1.0)
+        default_sound_volume = DefaultManager.getDefaultFloat("DefaultSoundVolume", 1.0)
+
+        Mengine.addCurrentAccountSetting("MusicVolume", unicode(default_music_volume), __updateMusicVolume)
+        Mengine.addCurrentAccountSetting("VoiceVolume", unicode(default_voice_volume), __updateVoiceVolume)
+        Mengine.addCurrentAccountSetting("SoundVolume", unicode(default_sound_volume), __updateSoundVolume)
+
+        Mengine.addCurrentAccountSetting("MuteVibration", u"False", None)
+
+        def __changeCursor(account_id, value):
+            Cursor = value == u"True"
+            if Cursor == Mengine.getCursorMode():
+                return
+            Mengine.setCursorMode(Cursor)
+
+        Cursor = Mengine.getCursorMode()
+
+        Mengine.addCurrentAccountSetting("Cursor", unicode(Cursor), __changeCursor)
+
+        def __changeCustomCursor(account_id, value):
+            print "__changeCustomCursor", value
+            is_custom_cursor = value == u"True"
+            Notification.notify(Notificator.onCustomCursor, is_custom_cursor)
+
+        CustomCursor = Mengine.getGameParamBool("CustomCursor", True)
+        print "CustomCursor", CustomCursor
+        Mengine.addCurrentAccountSetting("CustomCursor", unicode(CustomCursor), __changeCustomCursor)
+
+        def __changeFullscreen(account_id, value):
+            Fullscreen = value == u"True"
+            if Fullscreen == Mengine.getFullscreenMode():
+                return
+            Mengine.setFullscreenMode(Fullscreen)
+
+        Fullscreen = Mengine.getGameParamBool("Fullscreen", Mengine.getFullscreenMode())
+        Mengine.addCurrentAccountSetting("Fullscreen", unicode(Fullscreen), __changeFullscreen)
+
+        def __changeWidescreen(account_id, value):
+            Widescreen = value == u"True"
+            if Widescreen == Mengine.getFixedDisplayResolution():
+                return
+            Mengine.setFixedDisplayResolution(Widescreen)
+
+        Widescreen = Mengine.getGameParamBool("Widescreen", Mengine.getFixedDisplayResolution())
+        Mengine.addCurrentAccountSetting("Widescreen", unicode(Widescreen), __changeWidescreen)
+
+        Mengine.addCurrentAccountSetting("Save", unicode(False), None)
+        Mengine.addCurrentAccountSetting("SessionSave", unicode(False), None)
+        Mengine.addCurrentAccountSetting("InvalidLoad", unicode(False), None)
 
     AccountManager.addCreateAccountExtra(accountSetuper)
 
