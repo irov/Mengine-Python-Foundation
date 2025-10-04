@@ -297,7 +297,10 @@ class SystemGoogleServices(System):
         _Log("Start connect to the billing client...")
         productIds = ProductsProvider.getQueryProductIds()
         _Log("[Billing] query products: {!r}".format(productIds))
-        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts", productIds)
+
+        if productIds is not None:
+            Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts", productIds)
+            pass
 
     @staticmethod
     def buy(product_id):
