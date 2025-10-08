@@ -101,13 +101,17 @@ class LayoutBox(object):
                         self.buildSubVerticalComponent(width, component, element.elements)
                         pass
                     elif isinstance(element, LayoutBox.ElementFixed):
-                        def __setter(offset, size):
-                            offsetX = component.getOffsetX()
-                            offsetY = component.getOffsetY()
-                            element.setter(self.box, (offsetX + offset, offsetY), (size, height))
-                            pass
+                        if element.setter is not None:
+                            def __setter(offset, size):
+                                offsetX = component.getOffsetX()
+                                offsetY = component.getOffsetY()
+                                element.setter(self.box, (offsetX + offset, offsetY), (size, height))
+                                pass
 
-                        layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
+                            layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
+                        else:
+                            layout.addElement(Mengine.LET_FIXED, element.getter, None)
+                            pass
                     elif isinstance(element, LayoutBox.ElementPadding):
                         layout.addElement(Mengine.LET_PAD, element.getWeight, None)
                         pass
@@ -146,13 +150,17 @@ class LayoutBox(object):
                         self.buildSubHorizontalComponent(height, component, element.elements)
                         pass
                     elif isinstance(element, LayoutBox.ElementFixed):
-                        def __setter(offset, size):
-                            offsetX = component.getOffsetX()
-                            offsetY = component.getOffsetY()
-                            element.setter(self.box, (offsetX, offsetY + offset), (width, size))
-                            pass
+                        if element.setter is not None:
+                            def __setter(offset, size):
+                                offsetX = component.getOffsetX()
+                                offsetY = component.getOffsetY()
+                                element.setter(self.box, (offsetX, offsetY + offset), (width, size))
+                                pass
 
-                        layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
+                            layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
+                        else:
+                            layout.addElement(Mengine.LET_FIXED, element.getter, None)
+                            pass
                     elif isinstance(element, LayoutBox.ElementPadding):
                         layout.addElement(Mengine.LET_PAD, element.getWeight, None)
                         pass
@@ -245,13 +253,17 @@ class LayoutBox(object):
                         self.buildSubVerticalComponent(width, component, element.elements)
                         pass
                     elif isinstance(element, LayoutBox.ElementFixed):
-                        def __setter(offset, size):
-                            w, h = self.box.sizer()
-                            offsetX = component.getOffsetX()
-                            offsetY = component.getOffsetY()
-                            element.setter(self.box, (offsetX, offsetY + offset), (w, size))
+                        if element.setter is not None:
+                            def __setter(offset, size):
+                                w, h = self.box.sizer()
+                                offsetX = component.getOffsetX()
+                                offsetY = component.getOffsetY()
+                                element.setter(self.box, (offsetX, offsetY + offset), (w, size))
 
-                        layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
+                            layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
+                        else:
+                            layout.addElement(Mengine.LET_FIXED, element.getter, None)
+                            pass
                     elif isinstance(element, LayoutBox.ElementPadding):
                         layout.addElement(Mengine.LET_PAD, element.getWeight, None)
                         pass
@@ -294,13 +306,17 @@ class LayoutBox(object):
                         self.buildSubHorizontalComponent(height, component, element.elements)
                         pass
                     elif isinstance(element, LayoutBox.ElementFixed):
-                        def __setter(offset, size):
-                            w, h = self.box.sizer()
-                            offsetX = component.getOffsetX()
-                            offsetY = component.getOffsetY()
-                            element.setter(self.box, (offsetX + offset, offsetY), (size, h))
+                        if element.setter is not None:
+                            def __setter(offset, size):
+                                w, h = self.box.sizer()
+                                offsetX = component.getOffsetX()
+                                offsetY = component.getOffsetY()
+                                element.setter(self.box, (offsetX + offset, offsetY), (size, h))
 
-                        layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
+                            layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
+                        else:
+                            layout.addElement(Mengine.LET_FIXED, element.getter, None)
+                            pass
                     elif isinstance(element, LayoutBox.ElementPadding):
                         layout.addElement(Mengine.LET_PAD, element.getWeight, None)
                         pass
