@@ -775,34 +775,34 @@ def onInitialize():
 
         # SOUND\MUSIC params
 
-        def __updateMuteMusic(account_id, value):
+        def __updateMusicMute(account_id, value):
             if value == "True":
                 Mengine.musicSetVolume(0.0)
                 return
             music_volume_percent = float(Mengine.getCurrentAccountSetting("MusicVolume"))
             Mengine.musicSetVolume(music_volume_percent)
 
-        def __updateMuteVoice(account_id, value):
+        def __updateVoiceMute(account_id, value):
             if value == "True":
                 Mengine.voiceSetVolume(0.0)
                 return
             voice_volume_percent = float(Mengine.getCurrentAccountSetting("VoiceVolume"))
             Mengine.voiceSetVolume(voice_volume_percent)
 
-        def __updateMuteSound(account_id, value):
+        def __updateSoundMute(account_id, value):
             if value == "True":
                 Mengine.soundSetVolume(0.0)
                 return
             sound_volume_percent = float(Mengine.getCurrentAccountSetting("SoundVolume"))
             Mengine.soundSetVolume(sound_volume_percent)
 
-        default_music_mute = DefaultManager.getDefaultFloat("DefaultMusicMute", 1.0)
-        default_voice_mute = DefaultManager.getDefaultFloat("DefaultVoiceMute", 1.0)
-        default_sound_mute = DefaultManager.getDefaultFloat("DefaultSoundMute", 1.0)
+        default_music_mute = DefaultManager.getDefaultBool("DefaultMusicMute", False)
+        default_voice_mute = DefaultManager.getDefaultBool("DefaultVoiceMute", False)
+        default_sound_mute = DefaultManager.getDefaultBool("DefaultSoundMute", False)
 
-        Mengine.addCurrentAccountSetting("MuteMusic", unicode(default_music_mute), __updateMuteMusic)
-        Mengine.addCurrentAccountSetting("MuteVoice", unicode(default_voice_mute), __updateMuteVoice)
-        Mengine.addCurrentAccountSetting("MuteSound", unicode(default_sound_mute), __updateMuteSound)
+        Mengine.addCurrentAccountSetting("MuteMusic", unicode(default_music_mute), __updateMusicMute)
+        Mengine.addCurrentAccountSetting("MuteVoice", unicode(default_voice_mute), __updateVoiceMute)
+        Mengine.addCurrentAccountSetting("MuteSound", unicode(default_sound_mute), __updateSoundMute)
 
         def __updateMusicVolume(account_id, value):
             Mengine.musicSetVolume(float(value))

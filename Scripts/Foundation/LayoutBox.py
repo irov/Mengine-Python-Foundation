@@ -13,7 +13,7 @@ class LayoutBox(object):
         if self.component is not None:
             self.component.finalize()
             self.component = None
-        pass
+            pass
 
     class ElementFixed(object):
         def __init__(self, getter, setter):
@@ -27,6 +27,7 @@ class LayoutBox(object):
 
         def getWeight(self):
             return self.weight
+        pass
 
     class Component(object):
         def __init__(self, x, y, sizer, layout, parent):
@@ -269,6 +270,7 @@ class LayoutBox(object):
                         pass
 
                 __process(element)
+                pass
 
             layout.flush()
             pass
@@ -323,7 +325,7 @@ class LayoutBox(object):
                     pass
 
                 __process(element)
-            pass
+                pass
 
             layout.flush()
-        pass
+            pass
