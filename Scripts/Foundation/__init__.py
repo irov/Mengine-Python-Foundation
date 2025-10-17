@@ -759,12 +759,10 @@ def onInitialize():
     from Foundation.AccountManager import AccountManager
 
     def accountSetuper(accountID, isGlobal):
-        print "Foundation Account setup", accountID, isGlobal
         if isGlobal is True:
             return
 
         Mengine.addCurrentAccountSetting("Default", u"False", None)
-
         Mengine.addCurrentAccountSetting("SelectedLanguage", u"", None)
 
         def __changeMute(account_id, value):
@@ -832,16 +830,13 @@ def onInitialize():
             Mengine.setCursorMode(Cursor)
 
         Cursor = Mengine.getCursorMode()
-
         Mengine.addCurrentAccountSetting("Cursor", unicode(Cursor), __changeCursor)
 
         def __changeCustomCursor(account_id, value):
-            print "__changeCustomCursor", value
             is_custom_cursor = value == u"True"
             Notification.notify(Notificator.onCustomCursor, is_custom_cursor)
 
         CustomCursor = Mengine.getGameParamBool("CustomCursor", True)
-        print "CustomCursor", CustomCursor
         Mengine.addCurrentAccountSetting("CustomCursor", unicode(CustomCursor), __changeCustomCursor)
 
         def __changeFullscreen(account_id, value):
