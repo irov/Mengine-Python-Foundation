@@ -9,8 +9,8 @@ class MovieTabsGroup(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addActionActivate(Type, "Tabs")
-        Type.addActionActivate(Type, "Choice", Update=Type._updateChoice)
+        Type.addActionActivate("Tabs")
+        Type.addActionActivate("Choice", Update=Type._updateChoice)
         pass
 
     def _updateChoice(self, value):

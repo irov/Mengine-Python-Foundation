@@ -4,7 +4,7 @@ class Viewport(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-        Type.addAction(Type, "Size")
+        Type.addAction("Size")
         pass
 
     def _onActivate(self):

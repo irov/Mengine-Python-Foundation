@@ -4,19 +4,19 @@ class ObjectMovieButton(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addConst(Type, "ResourceMovieIdle")
-        Type.addConst(Type, "ResourceMovieEnter")
-        Type.addConst(Type, "ResourceMovieOver")
-        Type.addConst(Type, "ResourceMovieClick")
-        Type.addConst(Type, "ResourceMovieLeave")
+        Type.declareConst("ResourceMovieIdle")
+        Type.declareConst("ResourceMovieEnter")
+        Type.declareConst("ResourceMovieOver")
+        Type.declareConst("ResourceMovieClick")
+        Type.declareConst("ResourceMovieLeave")
 
-        Type.addConst(Type, "ResourceMoviePush")
-        Type.addConst(Type, "ResourceMoviePressed")
-        Type.addConst(Type, "ResourceMovieRelease")
+        Type.declareConst("ResourceMoviePush")
+        Type.declareConst("ResourceMoviePressed")
+        Type.declareConst("ResourceMovieRelease")
 
-        Type.addConst(Type, "ResourceMovieBlock")
+        Type.declareConst("ResourceMovieBlock")
 
-        Type.addParam(Type, "Block")
+        Type.declareParam("Block")
         pass
 
     def _onParams(self, params):

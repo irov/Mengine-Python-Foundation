@@ -72,18 +72,18 @@ class EntityManager(Manager):
             return None
 
         try:
-            Type = getattr(Module, type)
+            EntityType = getattr(Module, type)
         except AttributeError as ex:
             Trace.log("Manager", 0, "EntityManager.__importEntityDemain %s:%s module not found type '%s'\n%s" % (module, type, ex, traceback.format_exc()))
             return None
 
         try:
-            Type.declareORM(Type)
-        except ParamsException as pe:
-            Trace.log("Manager", 0, "EntityManager.__importEntityDemain %s:%s params error %s\n%s" % (module, type, pe, traceback.format_exc()))
+            EntityType.declareORM(EntityType)
+        except ParamsException as pex:
+            Trace.log("Manager", 0, "EntityManager.__importEntityDemain %s:%s params error %s\n%s" % (module, type, pex, traceback.format_exc()))
             return None
 
-        return Type
+        return EntityType
 
     @staticmethod
     def _onInitialize():

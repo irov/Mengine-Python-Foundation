@@ -5,8 +5,8 @@ class ObjectStates(DemonObject):
     def declareORM(Type):
         DemonObject.declareORM(Type)
 
-        Type.addConst(Type, "States")
-        Type.addParam(Type, "CurrentState")
+        Type.declareConst("States")
+        Type.declareParam("CurrentState")
         pass
 
     def _onParams(self, params):

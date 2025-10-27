@@ -4,23 +4,23 @@ class Movie2(BaseAnimatable):
     @staticmethod
     def declareORM(Type):
         BaseAnimatable.declareORM(Type)
-        Type.addAction(Type, "ResourceMovie")
-        Type.addAction(Type, "CompositionName")
-        Type.addActionActivate(Type, "DisableLayers",
+        Type.addAction("ResourceMovie")
+        Type.addAction("CompositionName")
+        Type.addActionActivate("DisableLayers",
                                Update=Movie2.__updateDisableLayers,
                                Append=Movie2.__appendDisableLayers,
                                Remove=Movie2.__removeDisableLayers)
-        Type.addActionActivate(Type, "DisableSubMovies",
+        Type.addActionActivate("DisableSubMovies",
                                Update=Movie2.__updateDisableSubMovies,
                                Append=Movie2.__appendDisableSubMovies,
                                Remove=Movie2.__removDisableSubMovies)
-        Type.addActionActivate(Type, "TextAliasEnvironment",
+        Type.addActionActivate("TextAliasEnvironment",
                                Update=Movie2.__updateTextAliasEnvironment)
-        Type.addAction(Type, "LastFrameSubMovies",
+        Type.addAction("LastFrameSubMovies",
                        Update=Movie2.__updateLastFrameSubMovies,
                        Append=Movie2.__appendLastFrameSubMovies,
                        Remove=Movie2.__removeLastFrameSubMovies)
-        Type.addActionActivate(Type, "ExtraOpacityLayers",
+        Type.addActionActivate("ExtraOpacityLayers",
                                Update=Movie2.__updateExtraOpacityLayers,
                                InsertDict=Movie2.__insertExtraOpacityLayers,
                                PopDict=Movie2.__popExtraOpacityLayers)

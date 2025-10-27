@@ -5,8 +5,8 @@ class ObjectSwitch(DemonObject):
     def declareORM(Type):
         DemonObject.declareORM(Type)
 
-        Type.addParam(Type, "Switch")
-        Type.addParam(Type, "Switches")
+        Type.declareParam("Switch")
+        Type.declareParam("Switches")
         pass
 
     def _onParams(self, params):

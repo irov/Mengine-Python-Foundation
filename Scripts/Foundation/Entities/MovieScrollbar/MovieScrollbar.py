@@ -6,9 +6,9 @@ class MovieScrollbar(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-        Type.addAction(Type, "ResourceMovieSlider")
-        Type.addAction(Type, "ResourceMovieBar")
-        Type.addAction(Type, "IsHorizontal")
+        Type.addAction("ResourceMovieSlider")
+        Type.addAction("ResourceMovieBar")
+        Type.addAction("IsHorizontal")
         Type.addAction(Type, 'setToZero')
         Type.addAction(Type, 'Value', Activate=True, Update=MovieScrollbar.__updateValue)
 

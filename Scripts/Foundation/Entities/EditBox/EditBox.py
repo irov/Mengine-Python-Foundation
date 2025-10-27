@@ -7,14 +7,14 @@ class EditBox(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "Polygon", Update=EditBox.__restorePolygon)
-        Type.addAction(Type, "Wrap", Update=EditBox.__restoreWrap)
+        Type.addAction("Polygon", Update=EditBox.__restorePolygon)
+        Type.addAction("Wrap", Update=EditBox.__restoreWrap)
 
-        Type.addAction(Type, "Value", Update=EditBox.updateValue)
-        Type.addAction(Type, "Focus", Update=EditBox._updateFocus)
-        Type.addAction(Type, "PasswordChar", Update=EditBox._updatePasswordChar)
-        Type.addAction(Type, "BlackList")
-        Type.addAction(Type, "TextLengthLimit")
+        Type.addAction("Value", Update=EditBox.updateValue)
+        Type.addAction("Focus", Update=EditBox._updateFocus)
+        Type.addAction("PasswordChar", Update=EditBox._updatePasswordChar)
+        Type.addAction("BlackList")
+        Type.addAction("TextLengthLimit")
 
     def __init__(self):
         super(EditBox, self).__init__()

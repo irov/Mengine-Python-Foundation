@@ -5,11 +5,11 @@ class ObjectLandscape2D(Object):
     def declareORM(Type):
         Object.declareORM(Type)
 
-        Type.addConst(Type, "ElementCountX")
-        Type.addConst(Type, "ElementCountY")
-        Type.addConst(Type, "ElementWidth")
-        Type.addConst(Type, "ElementHeight")
-        Type.addConst(Type, "BackParts")
+        Type.declareConst("ElementCountX")
+        Type.declareConst("ElementCountY")
+        Type.declareConst("ElementWidth")
+        Type.declareConst("ElementHeight")
+        Type.declareConst("BackParts")
         pass
 
     def _onParams(self, params):

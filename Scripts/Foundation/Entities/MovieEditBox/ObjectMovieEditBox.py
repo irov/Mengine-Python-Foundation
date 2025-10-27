@@ -5,21 +5,21 @@ class ObjectMovieEditBox(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addConst(Type, "ResourceMovieIdle")
-        Type.addConst(Type, "ResourceMovieOver")
-        Type.addConst(Type, "ResourceMovieFocus")
-        Type.addConst(Type, "ResourceMovieCarriage")
-        Type.addConst(Type, "ResourceMovieSlider")
-        Type.addConst(Type, "ResourceMovieBlock")
+        Type.declareConst("ResourceMovieIdle")
+        Type.declareConst("ResourceMovieOver")
+        Type.declareConst("ResourceMovieFocus")
+        Type.declareConst("ResourceMovieCarriage")
+        Type.declareConst("ResourceMovieSlider")
+        Type.declareConst("ResourceMovieBlock")
 
-        Type.addParam(Type, "Block")
-        Type.addParam(Type, "Value")
-        Type.addParam(Type, "Focus")
-        Type.addParam(Type, "PasswordChar")
-        Type.addParam(Type, "BlackList")
-        Type.addParam(Type, 'Present')
-        Type.addParam(Type, 'Text_ID')
-        Type.addParam(Type, 'Text_Present_ID')
+        Type.declareParam("Block")
+        Type.declareParam("Value")
+        Type.declareParam("Focus")
+        Type.declareParam("PasswordChar")
+        Type.declareParam("BlackList")
+        Type.declareParam('Present')
+        Type.declareParam('Text_ID')
+        Type.declareParam('Text_Present_ID')
         pass
 
     def _onParams(self, params):

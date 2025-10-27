@@ -5,18 +5,18 @@ class ParamsException(BaseException):
 
     def __str__(self):
         return str(self.value)
-        pass
     pass
 
 class DefaultParam(object):
     __slot__ = "value"
+
     def __init__(self, value):
         self.value = value
         pass
     pass
 
 class Params(object):
-    __metaclass__ = baseslots("consts", "params")
+    __metaclass__ = baseslots("params")
 
     NoDefault = object()
     NotFound = object()
@@ -24,7 +24,6 @@ class Params(object):
     def __init__(self):
         super(Params, self).__init__()
 
-        self.consts = {}
         self.params = {}
         pass
 
@@ -32,43 +31,35 @@ class Params(object):
     def declareORM(typeORM):
         pass
 
-    @staticmethod
-    def releaseORM(typeORM):
-        pass
-
     if _DEVELOPMENT is False:
-        @staticmethod
-        def addParam(typeORM, key, paramType=None):
+        @classmethod
+        def declareParam(cls, key, paramType=None):
             def __get(self):
                 param = self.params[key]
 
                 if isinstance(param, DefaultParam) is True:
                     return param.value
-                    pass
 
                 return param
-                pass
 
             def __set(self, value):
                 self.setParam(key, value)
                 pass
 
-            setattr(typeORM, "get%s" % (key), __get)
-            setattr(typeORM, "set%s" % (key), __set)
+            setattr(cls, "get%s" % (key), __get)
+            setattr(cls, "set%s" % (key), __set)
             pass
         pass
     else:
-        @staticmethod
-        def addParam(typeORM, key, paramType=None):
+        @classmethod
+        def declareParam(cls, key, paramType=None):
             def __get(self):
                 param = self.params[key]
 
                 if isinstance(param, DefaultParam) is True:
                     return param.value
-                    pass
 
                 return param
-                pass
 
             def __set(self, value):
                 if paramType is not None and isinstance(value, paramType) is False:
@@ -78,83 +69,71 @@ class Params(object):
                 self.setParam(key, value)
                 pass
 
-            setattr(typeORM, "get%s" % (key), __get)
-            setattr(typeORM, "set%s" % (key), __set)
+            setattr(cls, "get%s" % (key), __get)
+            setattr(cls, "set%s" % (key), __set)
             pass
         pass
 
-    @staticmethod
-    def addConst(typeORM, key):
+    @classmethod
+    def declareConst(cls, key):
         def __get(self):
-            return self.consts[key]
-            pass
+            return self.params[key]
 
         def __set(self, value):
             self.paramsFailed("Param %s is const" % (key))
             pass
 
-        setattr(typeORM, "get%s" % (key), __get)
-        setattr(typeORM, "set%s" % (key), __set)
+        setattr(cls, "get%s" % (key), __get)
+        setattr(cls, "set%s" % (key), __set)
         pass
 
-    @staticmethod
-    def addResource(typeORM, key):
+    @classmethod
+    def declareResource(cls, key):
         def __get(self):
-            return self.consts[key]
-            pass
+            return self.params[key]
 
         def __set(self, value):
             self.paramsFailed("Resource %s is const" % (key))
             pass
 
-        setattr(typeORM, "get%s" % (key), __get)
-        setattr(typeORM, "set%s" % (key), __set)
+        setattr(cls, "get%s" % (key), __get)
+        setattr(cls, "set%s" % (key), __set)
         pass
 
     def __extractResource(self, key, value, default):
         if value is None:
             return None
-            pass
 
         if isinstance(value, Mengine.Resource) is True:
             return value
-            pass
 
         if isinstance(value, str) is False:
             self.paramsFailed("Param '%s' is not string '%s'" % (key, value))
             return None
-            pass
 
         if Mengine.hasResource(value) is False:
             if default is Params.NoDefault:
                 self.paramsFailed("Param '%s' is not found resource '%s'" % (key, value))
                 return None
-                pass
             else:
                 return default
-                pass
-            pass
 
         resource = Mengine.getResourceReference(value)
 
         return resource
-        pass
 
-    def initParam(self, key, params, Default=NoDefault):
-        value = None
-        if Default is Params.NoDefault:
+    def initParam(self, key, params, default=NoDefault):
+        if default is Params.NoDefault:
             value = params[key]
             pass
         else:
-            value = params.get(key, Default)
+            value = params.get(key, default)
             pass
 
         self.params[key] = value
         pass
 
     def initResource(self, key, params, default=NoDefault):
-        value = None
-
         if default is Params.NoDefault:
             value = params[key]
             pass
@@ -164,11 +143,10 @@ class Params(object):
 
         resource = self.__extractResource(key, value, default)
 
-        self.consts[key] = resource
+        self.params[key] = resource
         pass
 
     def initConst(self, key, params, default=NoDefault):
-        value = None
         if default is Params.NoDefault:
             value = params[key]
         else:
@@ -179,9 +157,9 @@ class Params(object):
         pass
 
     def setConst(self, key, value):
-        self.consts[key] = value
+        self.params[key] = value
 
-        self.__callAction(key, "Update", value)
+        self.__callUpdateAction(key, value)
         pass
 
     def onParams(self, params):
@@ -195,10 +173,8 @@ class Params(object):
             Trace.log("Manager", 0, "Params.onParams error %s" % (pe))
 
             return False
-            pass
 
         return True
-        pass
 
     def _onCheckParams(self):
         pass
@@ -212,26 +188,15 @@ class Params(object):
         pass
 
     def hasParam(self, key):
-        if key in self.params:
-            return True
-            pass
-
-        if key in self.consts:
-            return True
-            pass
-
-        return False
-        pass
+        return key in self.params
 
     def setParam(self, key, value):
         if self.superParam(key, value) is False:
             return False
-            pass
 
-        self.__callAction(key, "Update", value)
+        self.__callUpdateAction(key, value)
 
         return True
-        pass
 
     def superParam(self, key, value):
         if _DEVELOPMENT is True:
@@ -239,25 +204,21 @@ class Params(object):
                 Trace.log("Object", 0, "Params.superParam %s invalid exist param %s value %s type %s" % (self.getName(), key, value, type(value)))
 
                 return False
-                pass
 
             if self.__checkParamValue(value) is False:
                 Trace.log("Object", 0, "Params.superParam %s invalid key %s value %s type %s" % (self.getName(), key, value, type(value)))
 
                 return False
-                pass
             pass
 
         self.params[key] = value
 
         return True
-        pass
 
     def setParams(self, **params):
         for key, value in params.iteritems():
             if self.superParam(key, value) is False:
                 return False
-                pass
 
             self.params[key] = value
             pass
@@ -280,13 +241,11 @@ class Params(object):
                 Trace.log("Object", 0, "Params.appendParam exist list param %s - %s:%s" % (self.getName(), key, value))
 
                 return False
-                pass
 
             if self.__checkParamValue(value) is False:
                 Trace.log("Object", 0, "Params.appendParam check param value %s - %s:%s" % (self.getName(), key, value))
 
                 return False
-                pass
             pass
 
         param = self.params[key]
@@ -299,10 +258,9 @@ class Params(object):
         index = len(param)
         param.append(value)
 
-        self.__callAction(key, "Append", index, value)
+        self.__callAppendAction(key, index, value)
 
         return True
-        pass
 
     def updateParam(self, key):
         if _DEVELOPMENT is True:
@@ -311,24 +269,21 @@ class Params(object):
                 pass
             pass
 
-        param = self.params[key]
+        value = self.params[key]
 
-        self.__callAction(key, "Update", param)
+        self.__callUpdateAction(key, value)
 
         return True
-        pass
 
     def changeParam(self, key, index, value):
         if _DEVELOPMENT is True:
             if self.__existChangeParam(key, index) is False:
                 return False
-                pass
 
             if self.__checkParamValue(value) is False:
                 Trace.log("Object", 0, "Params.superParam %s - %s:%s" % (self.getName(), key, value))
 
                 return False
-                pass
             pass
 
         param = self.params[key]
@@ -340,22 +295,19 @@ class Params(object):
 
         param[index] = value
 
-        self.__callAction(key, "Change", index, value)
+        self.__callChangeAction(key, index, value)
 
         return True
-        pass
 
     def insertParam(self, key, index, value):
         if _DEVELOPMENT is True:
             if self.__existListParam(key) is False:
                 return
-                pass
 
             if self.__checkParamValue(value) is False:
                 Trace.log("Object", 0, "Params.insertParam %s - %s:%s" % (self.getName(), key, value))
 
                 return False
-                pass
             pass
 
         param = self.params[key]
@@ -367,20 +319,18 @@ class Params(object):
 
         param.insert(index, value)
 
-        self.__callAction(key, "Append", index, value)
+        self.__callAppendAction(key, index, value)
         pass
 
     def delParam(self, key, value):
         if _DEVELOPMENT is True:
             if self.__existListParam(key) is False:
                 return
-                pass
 
             if self.__checkParamValue(value) is False:
                 Trace.log("Object", 0, "Params.delParam %s - %s:%s" % (self.getName(), key, value))
 
                 return False
-                pass
             pass
 
         param = self.params[key]
@@ -396,21 +346,21 @@ class Params(object):
 
         param.remove(value)
 
-        self.__callAction(key, "Remove", index, value, old)
+        self.__callRemoveAction(key, index, value, old)
         pass
 
-    def insertDictParam(self, key, pair_0, pair_1):
-        """
-        'key' is actual param
-        'pair_0' is key of dict param to update
-        'pair_1' is value by pair_0 key in 'key' dict
-        """
+    def insertDictParam(self, key, dict_key, dict_value):
         if _DEVELOPMENT is True:
             if self.__existDictParam(key) is False:
                 return
 
-            if self.__checkParamValue(pair_0) is False:
-                Trace.log("Object", 0, "Params.delParam %s - %s:%s" % (self.getName(), key, pair_0))
+            if self.__checkParamValue(dict_key) is False:
+                Trace.log("Object", 0, "Params.insertDictParam %s - %s:%s" % (self.getName(), key, dict_key))
+
+                return False
+
+            if self.__checkParamValue(dict_value) is False:
+                Trace.log("Object", 0, "Params.insertDictParam %s - %s:%s" % (self.getName(), key, dict_value))
 
                 return False
 
@@ -420,21 +370,17 @@ class Params(object):
             param = param.value[:]
             self.params[key] = param
 
-        param[pair_0] = pair_1
+        param[dict_key] = dict_value
 
-        self.__callAction(key, "InsertDict", pair_0, pair_1)
+        self.__callInsertDictAction(key, dict_key, dict_value)
 
-    def popDictParam(self, key, pair_0):
-        """
-        'key' is actual param
-        'pair_0' is key of dict param to update
-        """
+    def popDictParam(self, key, dict_key):
         if _DEVELOPMENT is True:
             if self.__existDictParam(key) is False:
                 return
 
-            if self.__checkParamValue(pair_0) is False:
-                Trace.log("Object", 0, "Params.delParam %s - %s:%s" % (self.getName(), key, pair_0))
+            if self.__checkParamValue(dict_key) is False:
+                Trace.log("Object", 0, "Params.popDictParam %s - %s:%s" % (self.getName(), key, dict_key))
 
                 return False
 
@@ -444,44 +390,29 @@ class Params(object):
             param = param.value[:]
             self.params[key] = param
 
-        pair_1 = param.pop(pair_0, None)
+        dict_value = param.pop(dict_key, None)
 
-        self.__callAction(key, "PopDict", pair_0, pair_1)
+        self.__callPopDictAction(key, dict_key, dict_value)
 
     def getParam(self, key):
-        const = self.consts.get(key, Params.NotFound)
-
-        if const is not Params.NotFound:
-            if isinstance(const, DefaultParam) is True:
-                return const.value
-                pass
-
-            return const
-            pass
-
         param = self.params.get(key, Params.NotFound)
 
-        if param is not Params.NotFound:
-            if isinstance(param, DefaultParam) is True:
-                return param.value
-                pass
+        if param is Params.NotFound:
+            self.paramsFailed("Params '%s' not found key" % (key))
 
-            return param
-            pass
+            return None
 
-        self.paramsFailed("Params '%s' not found key" % (key))
+        if isinstance(param, DefaultParam) is True:
+            return param.value
 
-        return None
-        pass
+        return param
 
     def __existParam(self, key):
         if key not in self.params:
             self.paramsFailed("Params not found key '%s'" % (key))
             return False
-            pass
 
         return True
-        pass
 
     def __existListParam(self, key):
         param = self.getParam(key)
@@ -489,12 +420,10 @@ class Params(object):
         if param is None:
             self.paramsFailed("Params key '%s' must be list, not 'None'" % (key))
             return False
-            pass
 
         if isinstance(param, list) is False:
             self.paramsFailed("Params key '%s' must be list but not '%s'" % (key, param))
             return False
-            pass
 
         return True
         pass
@@ -519,7 +448,6 @@ class Params(object):
             self.paramsFailed("Params key '%s' must be [list, dict], not 'None'" % (key))
 
             return False
-            pass
 
         if isinstance(param, DefaultParam) is True:
             param = param.value
@@ -530,7 +458,6 @@ class Params(object):
                 self.paramsFailed("Params key '%s' change index %s more list size %d" % (key, len(param), index))
 
                 return False
-                pass
             pass
         elif isinstance(param, dict) is True:
             # if index not in param:
@@ -542,134 +469,148 @@ class Params(object):
             self.paramsFailed("Params key '%s' must be [list, dict] but not %s" % (key, param))
 
             return False
-            pass
 
         return True
-        pass
 
     def getParams(self):
         return self.params
-        pass
 
-    def getConsts(self):
-        return self.consts
-        pass
 
     def removeParams(self):
         self.params = {}
-        self.consts = {}
         pass
 
-    def __callAction(self, key, type, *value):
+    def __callUpdateAction(self, key, value):
         actor = self._getActor()
 
         if actor is None:
             return False
-            pass
 
-        if actor.callAction(key, False, type, *value) is False:
-            return False
-            pass
+        actor.callUpdateAction(key, False, value)
 
         return True
-        pass
+
+    def __callAppendAction(self, key, index, value):
+        actor = self._getActor()
+
+        if actor is None:
+            return False
+
+        actor.callAppendAction(key, False, index, value)
+
+        return True
+
+    def __callRemoveAction(self, key, index, value, old):
+        actor = self._getActor()
+
+        if actor is None:
+            return False
+
+        actor.callRemoveAction(key, False, index, value, old)
+
+        return True
+
+    def __callChangeAction(self, key, index, value):
+        actor = self._getActor()
+
+        if actor is None:
+            return False
+
+        actor.callChangeAction(key, False, index, value)
+
+        return True
+
+    def __callInsertDictAction(self, key, dict_key, dict_value):
+        actor = self._getActor()
+
+        if actor is None:
+            return False
+
+        actor.callInsertDictAction(key, False, dict_key, dict_value)
+
+        return True
+
+    def __callPopDictAction(self, key, dict_key, dict_value):
+        actor = self._getActor()
+
+        if actor is None:
+            return False
+
+        actor.callPopDictAction(key, False, dict_key, dict_value)
+
+        return True
 
     def __updateParams(self, params):
         actor = self._getActor()
 
         if actor is None:
             return
-            pass
 
-        actor.callActions(params, False, False, "Update")
+        actor.callUpdateActions(params, False, False)
         pass
 
     def _getActor(self):
         return None
-        pass
 
     def paramsFailed(self, msg):
         new_msg = self._paramsFailed(msg)
         raise ParamsException(new_msg)
-        pass
 
     def _paramsFailed(self, msg):
         return msg
-        pass
 
     def __checkParamValue(self, value):
         if value is None:
             return True
-            pass
         elif isinstance(value, bool) is True:
             return True
-            pass
         elif isinstance(value, int) is True:
             return True
-            pass
         elif isinstance(value, long) is True:
             return True
-            pass
         elif isinstance(value, float) is True:
             return True
-            pass
         elif isinstance(value, str) is True:
             return True
-            pass
         elif isinstance(value, unicode) is True:
             return True
-            pass
-        elif Mengine.is_class(value) is True:
-            if isinstance(value, Mengine.vec2f) is True:
-                return True
-                pass
-            elif isinstance(value, Mengine.vec3f) is True:
-                return True
-                pass
-            elif isinstance(value, Mengine.ConstString) is True:
-                return True
-                pass
-
-            return False
-            pass
         elif isinstance(value, tuple) is True:
             for v in value:
                 if self.__checkParamValue(v) is False:
                     return False
-                    pass
                 pass
 
             return True
-            pass
         elif isinstance(value, list) is True:
             for v in value:
                 if self.__checkParamValue(v) is False:
                     return False
-                    pass
                 pass
 
             return True
-            pass
         elif isinstance(value, dict) is True:
             for k, v in value.iteritems():
                 if self.__checkParamValue(k) is False:
                     return False
-                    pass
                 if self.__checkParamValue(v) is False:
                     return False
-                    pass
                 pass
 
             return True
-            pass
+        elif Mengine.is_class(value) is True:
+            if isinstance(value, Mengine.vec2f) is True:
+                return True
+            elif isinstance(value, Mengine.vec3f) is True:
+                return True
+            elif isinstance(value, Mengine.ConstString) is True:
+                return True
+
+            return False
         elif self._checkParamExtraValue(value) is True:
             return True
-            pass
 
         return False
-        pass
 
     def _checkParamExtraValue(self, value):
         return True
-        pass
     pass

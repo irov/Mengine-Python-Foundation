@@ -5,14 +5,14 @@ class BaseAnimatable(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "PlayOnActivate")
-        Type.addAction(Type, "LastFrameOnPlay")
-        Type.addAction(Type, "Play", Activate=True, Update=BaseAnimatable.__updatePlay)
-        Type.addAction(Type, "Pause", Activate=True, Update=BaseAnimatable.__updatePause)
-        Type.addAction(Type, "Loop", Update=BaseAnimatable.__updateLoop)
-        Type.addAction(Type, "StartTiming")
-        Type.addAction(Type, "LastFrame", Activate=True, Update=BaseAnimatable.__updateLastFrame)
-        Type.addActionActivate(Type, "SpeedFactor", Update=BaseAnimatable.__updateSpeedFactor)
+        Type.addAction("PlayOnActivate")
+        Type.addAction("LastFrameOnPlay")
+        Type.addAction("Play", Activate=True, Update=BaseAnimatable.__updatePlay)
+        Type.addAction("Pause", Activate=True, Update=BaseAnimatable.__updatePause)
+        Type.addAction("Loop", Update=BaseAnimatable.__updateLoop)
+        Type.addAction("StartTiming")
+        Type.addAction("LastFrame", Activate=True, Update=BaseAnimatable.__updateLastFrame)
+        Type.addActionActivate("SpeedFactor", Update=BaseAnimatable.__updateSpeedFactor)
         pass
 
     def __init__(self):

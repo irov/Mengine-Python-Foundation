@@ -8,25 +8,25 @@ class Movie2EditBox(BaseEntity):
         BaseEntity.declareORM(Type)
 
         # MovieButton part
-        Type.addActionActivate(Type, "ResourceMovie")
+        Type.addActionActivate("ResourceMovie")
 
-        Type.addActionActivate(Type, "CompositionNameIdle")
-        Type.addActionActivate(Type, "CompositionNameOver")
-        Type.addActionActivate(Type, "CompositionNameFocus")
-        Type.addActionActivate(Type, "CompositionNameCarriage", Update=Type.__updateCarriage)
-        Type.addActionActivate(Type, "CompositionNameSlider")
-        Type.addActionActivate(Type, "CompositionNameBlock")
+        Type.addActionActivate("CompositionNameIdle")
+        Type.addActionActivate("CompositionNameOver")
+        Type.addActionActivate("CompositionNameFocus")
+        Type.addActionActivate("CompositionNameCarriage", Update=Type.__updateCarriage)
+        Type.addActionActivate("CompositionNameSlider")
+        Type.addActionActivate("CompositionNameBlock")
 
         # EditBox
-        Type.addActionActivate(Type, "Text_ID")
-        Type.addActionActivate(Type, "TextLengthLimit")
-        Type.addActionActivate(Type, "Text_Present_ID")
-        Type.addActionActivate(Type, "Value", Update=Type._updateValue)
-        Type.addActionActivate(Type, "Focus", Update=Type._updateFocus)
-        Type.addActionActivate(Type, "PasswordChar", Update=Type._updatePasswordChar)
-        Type.addActionActivate(Type, "BlackList")
-        Type.addActionActivate(Type, "Block", Update=Type.__updateBlock)
-        Type.addActionActivate(Type, "Present", Update=Type.__updatePresent)
+        Type.addActionActivate("Text_ID")
+        Type.addActionActivate("TextLengthLimit")
+        Type.addActionActivate("Text_Present_ID")
+        Type.addActionActivate("Value", Update=Type._updateValue)
+        Type.addActionActivate("Focus", Update=Type._updateFocus)
+        Type.addActionActivate("PasswordChar", Update=Type._updatePasswordChar)
+        Type.addActionActivate("BlackList")
+        Type.addActionActivate("Block", Update=Type.__updateBlock)
+        Type.addActionActivate("Present", Update=Type.__updatePresent)
         pass
 
     def __updateCarriage(self, value):

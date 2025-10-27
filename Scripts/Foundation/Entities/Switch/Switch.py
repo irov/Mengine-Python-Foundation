@@ -5,8 +5,8 @@ class Switch(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "Switch", Update=Switch._updateSwitch)
-        Type.addAction(Type, "Switches")
+        Type.addAction("Switch", Update=Switch._updateSwitch)
+        Type.addAction("Switches")
         pass
 
     def __init__(self):

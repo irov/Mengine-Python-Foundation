@@ -5,7 +5,7 @@ class ObjectFade(DemonObject):
     def declareORM(Type):
         DemonObject.declareORM(Type)
 
-        Type.addParam(Type, "Size")
+        Type.declareParam("Size")
 
     def _onParams(self, params):
         super(ObjectFade, self)._onParams(params)

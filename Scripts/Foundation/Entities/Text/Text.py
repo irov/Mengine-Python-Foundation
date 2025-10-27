@@ -5,20 +5,20 @@ class Text(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "TextID", Update=Text.__updateTextID)
-        Type.addAction(Type, "TextArgs", Update=Text.__updateTextArgs)
+        Type.addAction("TextID", Update=Text.__updateTextID)
+        Type.addAction("TextArgs", Update=Text.__updateTextArgs)
 
-        Type.addAction(Type, "Font", Update=Text.__updateFont)
-        Type.addAction(Type, "FontRGBA", Update=Text.__updateFontRGBA)
+        Type.addAction("Font", Update=Text.__updateFont)
+        Type.addAction("FontRGBA", Update=Text.__updateFontRGBA)
 
-        Type.addAction(Type, "LineOffset", Update=Text.__updateLineOffset)
-        Type.addAction(Type, "CharOffset", Update=Text.__updateCharOffset)
+        Type.addAction("LineOffset", Update=Text.__updateLineOffset)
+        Type.addAction("CharOffset", Update=Text.__updateCharOffset)
 
-        Type.addAction(Type, "MaxLength", Update=Text.__updateMaxLength)
-        Type.addAction(Type, "MaxVisibleChar", Update=Text.__updateMaxVisibleChar)
-        Type.addAction(Type, "Align", Update=Text.__updateAlign)
-        Type.addAction(Type, "VerticalAlign", Update=Text.__updateVerticalAlign)
-        Type.addAction(Type, "Pixelsnap", Update=Text.__updatePixelsnap)
+        Type.addAction("MaxLength", Update=Text.__updateMaxLength)
+        Type.addAction("MaxVisibleChar", Update=Text.__updateMaxVisibleChar)
+        Type.addAction("Align", Update=Text.__updateAlign)
+        Type.addAction("VerticalAlign", Update=Text.__updateVerticalAlign)
+        Type.addAction("Pixelsnap", Update=Text.__updatePixelsnap)
         pass
 
     def __init__(self):

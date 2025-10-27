@@ -5,7 +5,7 @@ class ObjectViewport(Object):
     def declareORM(Type):
         Object.declareORM(Type)
 
-        Type.addParam(Type, "Size")
+        Type.declareParam("Size")
 
     def _onParams(self, params):
         super(ObjectViewport, self)._onParams(params)

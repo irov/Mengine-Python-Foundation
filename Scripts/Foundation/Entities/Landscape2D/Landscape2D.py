@@ -5,11 +5,11 @@ class Landscape2D(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "ElementCountX")
-        Type.addAction(Type, "ElementCountY")
-        Type.addAction(Type, "ElementWidth")
-        Type.addAction(Type, "ElementHeight")
-        Type.addAction(Type, "BackParts")
+        Type.addAction("ElementCountX")
+        Type.addAction("ElementCountY")
+        Type.addAction("ElementWidth")
+        Type.addAction("ElementHeight")
+        Type.addAction("BackParts")
         pass
 
     def __init__(self):

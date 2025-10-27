@@ -16,32 +16,32 @@ class Movie2Button(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-        Type.addAction(Type, "ResourceMovie")
-        Type.addAction(Type, "CompositionNameIdle")
-        Type.addAction(Type, "CompositionNameAppear")
-        Type.addAction(Type, "CompositionNameEnter")
-        Type.addAction(Type, "CompositionNameOver")
-        Type.addAction(Type, "CompositionNameClick")
-        Type.addAction(Type, "CompositionNameLeave")
+        Type.addAction("ResourceMovie")
+        Type.addAction("CompositionNameIdle")
+        Type.addAction("CompositionNameAppear")
+        Type.addAction("CompositionNameEnter")
+        Type.addAction("CompositionNameOver")
+        Type.addAction("CompositionNameClick")
+        Type.addAction("CompositionNameLeave")
 
-        Type.addAction(Type, "CompositionNamePush")
-        Type.addAction(Type, "CompositionNamePressed")
-        Type.addAction(Type, "CompositionNameRelease")
+        Type.addAction("CompositionNamePush")
+        Type.addAction("CompositionNamePressed")
+        Type.addAction("CompositionNameRelease")
 
-        Type.addAction(Type, "CompositionNameBlock")
-        Type.addAction(Type, "CompositionNameBlockEnter")
-        Type.addAction(Type, "CompositionNameBlockEnd")
+        Type.addAction("CompositionNameBlock")
+        Type.addAction("CompositionNameBlockEnter")
+        Type.addAction("CompositionNameBlockEnd")
 
-        Type.addAction(Type, "CompositionNameSelected")
-        Type.addAction(Type, "CompositionNameSelectedEnter")
-        Type.addAction(Type, "CompositionNameSelectedEnd")
+        Type.addAction("CompositionNameSelected")
+        Type.addAction("CompositionNameSelectedEnter")
+        Type.addAction("CompositionNameSelectedEnd")
 
-        Type.addActionActivate(Type, "Block", Update=Type.__updateBlock)
-        Type.addActionActivate(Type, "Selected", Update=Type.__updateSelected)
+        Type.addActionActivate("Block", Update=Type.__updateBlock)
+        Type.addActionActivate("Selected", Update=Type.__updateSelected)
 
-        Type.addAction(Type, "BlockKeys")
-        Type.addAction(Type, "KeyTag")
-        Type.addAction(Type, "Synchronize")
+        Type.addAction("BlockKeys")
+        Type.addAction("KeyTag")
+        Type.addAction("Synchronize")
 
     def __init__(self):
         super(Movie2Button, self).__init__()
@@ -201,8 +201,7 @@ class Movie2Button(BaseEntity):
             if resource.hasComposition(comp) is False:
                 return None
 
-            mov = ObjectManager.createObjectUnique("Movie2", name, self.object,
-                                                   ResourceMovie=resource, CompositionName=comp)
+            mov = ObjectManager.createObjectUnique("Movie2", name, self.object, ResourceMovie=resource, CompositionName=comp)
             mov.setEnable(False)
             mov.setPlay(play)
             mov.setLoop(loop)

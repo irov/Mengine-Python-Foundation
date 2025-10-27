@@ -5,17 +5,17 @@ class ObjectText(Object):
     def declareORM(Type):
         Object.declareORM(Type)
 
-        Type.addParam(Type, "Font")
-        Type.addParam(Type, "TextID")
-        Type.addParam(Type, "TextArgs")
-        Type.addParam(Type, "FontRGBA")
-        Type.addParam(Type, "LineOffset")
-        Type.addParam(Type, "CharOffset")
-        Type.addParam(Type, "MaxLength")
-        Type.addParam(Type, "MaxVisibleChar")
-        Type.addParam(Type, "Align")
-        Type.addParam(Type, "VerticalAlign")
-        Type.addParam(Type, "Pixelsnap")
+        Type.declareParam("Font")
+        Type.declareParam("TextID")
+        Type.declareParam("TextArgs")
+        Type.declareParam("FontRGBA")
+        Type.declareParam("LineOffset")
+        Type.declareParam("CharOffset")
+        Type.declareParam("MaxLength")
+        Type.declareParam("MaxVisibleChar")
+        Type.declareParam("Align")
+        Type.declareParam("VerticalAlign")
+        Type.declareParam("Pixelsnap")
 
     def _onParams(self, params):
         super(ObjectText, self)._onParams(params)

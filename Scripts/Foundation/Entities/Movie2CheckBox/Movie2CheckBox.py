@@ -9,31 +9,31 @@ class Movie2CheckBox(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-        Type.addActionActivate(Type, "Value", Update=Movie2CheckBox.__updateValue)
+        Type.addActionActivate("Value", Update=Movie2CheckBox.__updateValue)
 
-        Type.addAction(Type, "ResourceMovie")
+        Type.addAction("ResourceMovie")
 
-        Type.addAction(Type, "CompositionNameTrue_Idle")
-        Type.addAction(Type, "CompositionNameTrue_Enter")
-        Type.addAction(Type, "CompositionNameTrue_Over")
-        Type.addAction(Type, "CompositionNameTrue_Click")
-        Type.addAction(Type, "CompositionNameTrue_Leave")
+        Type.addAction("CompositionNameTrue_Idle")
+        Type.addAction("CompositionNameTrue_Enter")
+        Type.addAction("CompositionNameTrue_Over")
+        Type.addAction("CompositionNameTrue_Click")
+        Type.addAction("CompositionNameTrue_Leave")
 
-        Type.addAction(Type, "CompositionNameTrue_Push")
-        Type.addAction(Type, "CompositionNameTrue_Pressed")
-        Type.addAction(Type, "CompositionNameTrue_Release")
+        Type.addAction("CompositionNameTrue_Push")
+        Type.addAction("CompositionNameTrue_Pressed")
+        Type.addAction("CompositionNameTrue_Release")
 
-        Type.addAction(Type, "CompositionNameFalse_Idle")
-        Type.addAction(Type, "CompositionNameFalse_Enter")
-        Type.addAction(Type, "CompositionNameFalse_Over")
-        Type.addAction(Type, "CompositionNameFalse_Click")
-        Type.addAction(Type, "CompositionNameFalse_Leave")
+        Type.addAction("CompositionNameFalse_Idle")
+        Type.addAction("CompositionNameFalse_Enter")
+        Type.addAction("CompositionNameFalse_Over")
+        Type.addAction("CompositionNameFalse_Click")
+        Type.addAction("CompositionNameFalse_Leave")
 
-        Type.addAction(Type, "CompositionNameFalse_Push")
-        Type.addAction(Type, "CompositionNameFalse_Pressed")
-        Type.addAction(Type, "CompositionNameFalse_Release")
+        Type.addAction("CompositionNameFalse_Push")
+        Type.addAction("CompositionNameFalse_Pressed")
+        Type.addAction("CompositionNameFalse_Release")
 
-        Type.addAction(Type, "BlockState")
+        Type.addAction("BlockState")
 
     def __init__(self):
         super(Movie2CheckBox, self).__init__()

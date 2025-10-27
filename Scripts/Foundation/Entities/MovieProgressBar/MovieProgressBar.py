@@ -8,18 +8,18 @@ class MovieProgressBar(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addActionActivate(Type, "DoubleValue", Update=Type._updateDoubleValue)
-        Type.addActionActivate(Type, "Text_ID")
-        Type.addActionActivate(Type, "Full_Text_ID")
-        Type.addActionActivate(Type, "MaxValue", Update=Type._updateMaxValue)
-        Type.addActionActivate(Type, "Value", Update=Type._updateValue)
+        Type.addActionActivate("DoubleValue", Update=Type._updateDoubleValue)
+        Type.addActionActivate("Text_ID")
+        Type.addActionActivate("Full_Text_ID")
+        Type.addActionActivate("MaxValue", Update=Type._updateMaxValue)
+        Type.addActionActivate("Value", Update=Type._updateValue)
 
-        Type.addActionActivate(Type, "ResourceMovieIdle")
-        Type.addActionActivate(Type, "ResourceMovieOver")
-        Type.addActionActivate(Type, "ResourceMovieBlock")
-        Type.addActionActivate(Type, "ResourceMovieProgress")
-        Type.addActionActivate(Type, "ResourceMovieFullProgress")
-        Type.addActionActivate(Type, "ResourceMovieHolder")
+        Type.addActionActivate("ResourceMovieIdle")
+        Type.addActionActivate("ResourceMovieOver")
+        Type.addActionActivate("ResourceMovieBlock")
+        Type.addActionActivate("ResourceMovieProgress")
+        Type.addActionActivate("ResourceMovieFullProgress")
+        Type.addActionActivate("ResourceMovieHolder")
         pass
 
     def _updateDoubleValue(self, value):

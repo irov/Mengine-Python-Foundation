@@ -9,21 +9,21 @@ class Movie2ProgressBar(BaseEntity):
         BaseEntity.declareORM(Type)
 
         # EditBox
-        Type.addActionActivate(Type, "DoubleValue", Update=Type._updateDoubleValue)
-        Type.addActionActivate(Type, "Text_ID")
-        Type.addActionActivate(Type, "Full_Text_ID")
-        Type.addActionActivate(Type, "MaxValue", Update=Type._updateMaxValue)
-        Type.addActionActivate(Type, "Value", Update=Type._updateValue)
-        Type.addActionActivate(Type, "Block", Update=Type._updateBlock)
+        Type.addActionActivate("DoubleValue", Update=Type._updateDoubleValue)
+        Type.addActionActivate("Text_ID")
+        Type.addActionActivate("Full_Text_ID")
+        Type.addActionActivate("MaxValue", Update=Type._updateMaxValue)
+        Type.addActionActivate("Value", Update=Type._updateValue)
+        Type.addActionActivate("Block", Update=Type._updateBlock)
 
-        Type.addActionActivate(Type, "ResourceMovie")
+        Type.addActionActivate("ResourceMovie")
 
-        Type.addActionActivate(Type, "CompositionNameIdle")
-        Type.addActionActivate(Type, "CompositionNameOver")
-        Type.addActionActivate(Type, "CompositionNameBlock")
-        Type.addActionActivate(Type, "CompositionNameProgress")
-        Type.addActionActivate(Type, "CompositionNameFullProgress")
-        Type.addActionActivate(Type, "CompositionNameHolder")
+        Type.addActionActivate("CompositionNameIdle")
+        Type.addActionActivate("CompositionNameOver")
+        Type.addActionActivate("CompositionNameBlock")
+        Type.addActionActivate("CompositionNameProgress")
+        Type.addActionActivate("CompositionNameFullProgress")
+        Type.addActionActivate("CompositionNameHolder")
         pass
 
     def __init__(self):

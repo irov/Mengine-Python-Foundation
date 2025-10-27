@@ -5,21 +5,21 @@ class ObjectMovieCheckBox(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addParam(Type, "Value")
+        Type.declareParam("Value")
 
-        Type.addConst(Type, "ResourceMovieTrue_Idle")
-        Type.addConst(Type, "ResourceMovieTrue_Enter")
-        Type.addConst(Type, "ResourceMovieTrue_Over")
-        Type.addConst(Type, "ResourceMovieTrue_Click")
-        Type.addConst(Type, "ResourceMovieTrue_Leave")
+        Type.declareConst("ResourceMovieTrue_Idle")
+        Type.declareConst("ResourceMovieTrue_Enter")
+        Type.declareConst("ResourceMovieTrue_Over")
+        Type.declareConst("ResourceMovieTrue_Click")
+        Type.declareConst("ResourceMovieTrue_Leave")
 
-        Type.addConst(Type, "ResourceMovieFalse_Idle")
-        Type.addConst(Type, "ResourceMovieFalse_Enter")
-        Type.addConst(Type, "ResourceMovieFalse_Over")
-        Type.addConst(Type, "ResourceMovieFalse_Click")
-        Type.addConst(Type, "ResourceMovieFalse_Leave")
+        Type.declareConst("ResourceMovieFalse_Idle")
+        Type.declareConst("ResourceMovieFalse_Enter")
+        Type.declareConst("ResourceMovieFalse_Over")
+        Type.declareConst("ResourceMovieFalse_Click")
+        Type.declareConst("ResourceMovieFalse_Leave")
 
-        Type.addParam(Type, "BlockState")
+        Type.declareParam("BlockState")
         pass
 
     def _onParams(self, params):

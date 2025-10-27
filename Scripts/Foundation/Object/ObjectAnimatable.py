@@ -5,13 +5,13 @@ class ObjectAnimatable(Object):
     def declareORM(Type):
         Object.declareORM(Type)
 
-        Type.addConst(Type, "PlayOnActivate")
-        Type.addParam(Type, "LastFrameOnPlay")
-        Type.addParam(Type, "Play")
-        Type.addParam(Type, "Pause")
-        Type.addParam(Type, "Loop")
-        Type.addParam(Type, "StartTiming")
-        Type.addParam(Type, "LastFrame")
+        Type.declareConst("PlayOnActivate")
+        Type.declareParam("LastFrameOnPlay")
+        Type.declareParam("Play")
+        Type.declareParam("Pause")
+        Type.declareParam("Loop")
+        Type.declareParam("StartTiming")
+        Type.declareParam("LastFrame")
         pass
 
     def __init__(self):

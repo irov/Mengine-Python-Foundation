@@ -5,8 +5,8 @@ class ObjectVideo(Object):
     def declareORM(Type):
         Object.declareORM(Type)
 
-        Type.addResource(Type, "VideoResourceName")
-        Type.addParam(Type, "Play")
+        Type.declareResource("VideoResourceName")
+        Type.declareParam("Play")
 
     def _onParams(self, params):
         super(ObjectVideo, self)._onParams(params)

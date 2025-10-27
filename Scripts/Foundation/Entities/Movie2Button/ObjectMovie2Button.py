@@ -5,32 +5,32 @@ class ObjectMovie2Button(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addConst(Type, "ResourceMovie")
-        Type.addConst(Type, "CompositionNameIdle")
-        Type.addConst(Type, "CompositionNameAppear")
-        Type.addConst(Type, "CompositionNameEnter")
-        Type.addConst(Type, "CompositionNameOver")
-        Type.addConst(Type, "CompositionNameClick")
-        Type.addConst(Type, "CompositionNameLeave")
+        Type.declareConst("ResourceMovie")
+        Type.declareConst("CompositionNameIdle")
+        Type.declareConst("CompositionNameAppear")
+        Type.declareConst("CompositionNameEnter")
+        Type.declareConst("CompositionNameOver")
+        Type.declareConst("CompositionNameClick")
+        Type.declareConst("CompositionNameLeave")
 
-        Type.addConst(Type, "CompositionNamePush")
-        Type.addConst(Type, "CompositionNamePressed")
-        Type.addConst(Type, "CompositionNameRelease")
+        Type.declareConst("CompositionNamePush")
+        Type.declareConst("CompositionNamePressed")
+        Type.declareConst("CompositionNameRelease")
 
-        Type.addConst(Type, "CompositionNameBlock")
-        Type.addConst(Type, "CompositionNameBlockEnd")
-        Type.addConst(Type, "CompositionNameBlockEnter")
+        Type.declareConst("CompositionNameBlock")
+        Type.declareConst("CompositionNameBlockEnd")
+        Type.declareConst("CompositionNameBlockEnter")
 
-        Type.addConst(Type, "CompositionNameSelected")
-        Type.addConst(Type, "CompositionNameSelectedEnd")
-        Type.addConst(Type, "CompositionNameSelectedEnter")
+        Type.declareConst("CompositionNameSelected")
+        Type.declareConst("CompositionNameSelectedEnd")
+        Type.declareConst("CompositionNameSelectedEnter")
 
-        Type.addParam(Type, "Block")
-        Type.addParam(Type, "Selected")
+        Type.declareParam("Block")
+        Type.declareParam("Selected")
 
-        Type.addParam(Type, "KeyTag")
-        Type.addParam(Type, "BlockKeys")
-        Type.addParam(Type, "Synchronize")
+        Type.declareParam("KeyTag")
+        Type.declareParam("BlockKeys")
+        Type.declareParam("Synchronize")
         pass
 
     def _onParams(self, params):

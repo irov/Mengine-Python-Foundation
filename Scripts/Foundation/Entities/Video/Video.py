@@ -5,8 +5,8 @@ class Video(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "VideoResourceName")
-        Type.addAction(Type, "Play", Update=Video._updatePlay)
+        Type.addAction("VideoResourceName")
+        Type.addAction("Play", Update=Video._updatePlay)
         pass
 
     def __init__(self):

@@ -4,9 +4,9 @@ class ProgressBar(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-        Type.addActionActivate(Type, "Value", Update=ProgressBar.__updateValue)
-        Type.addAction(Type, "MaxValue")
-        Type.addAction(Type, "ResourceMovieProgress")
+        Type.addActionActivate("Value", Update=ProgressBar.__updateValue)
+        Type.addAction("MaxValue")
+        Type.addAction("ResourceMovieProgress")
         pass
 
     def __init__(self):

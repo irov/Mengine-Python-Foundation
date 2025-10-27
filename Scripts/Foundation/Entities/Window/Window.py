@@ -5,9 +5,9 @@ class Window(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "WindowResourceName")
-        Type.addAction(Type, "Polygon")
-        Type.addAction(Type, "ClientSize", Update=Window._updateClientSize)
+        Type.addAction("WindowResourceName")
+        Type.addAction("Polygon")
+        Type.addAction("ClientSize", Update=Window._updateClientSize)
         pass
 
     def __init__(self):

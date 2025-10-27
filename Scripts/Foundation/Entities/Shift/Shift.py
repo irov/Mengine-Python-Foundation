@@ -5,8 +5,8 @@ class Shift(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "Shift", Update=Shift._updateShift)
-        Type.addAction(Type, "Shifts")
+        Type.addAction("Shift", Update=Shift._updateShift)
+        Type.addAction("Shifts")
         pass
 
     def __init__(self):

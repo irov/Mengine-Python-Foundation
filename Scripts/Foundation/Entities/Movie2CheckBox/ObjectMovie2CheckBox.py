@@ -5,31 +5,31 @@ class ObjectMovie2CheckBox(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addParam(Type, "Value")
+        Type.declareParam("Value")
 
-        Type.addConst(Type, "ResourceMovie")
+        Type.declareConst("ResourceMovie")
 
-        Type.addConst(Type, "CompositionNameTrue_Idle")
-        Type.addConst(Type, "CompositionNameTrue_Enter")
-        Type.addConst(Type, "CompositionNameTrue_Over")
-        Type.addConst(Type, "CompositionNameTrue_Click")
-        Type.addConst(Type, "CompositionNameTrue_Leave")
+        Type.declareConst("CompositionNameTrue_Idle")
+        Type.declareConst("CompositionNameTrue_Enter")
+        Type.declareConst("CompositionNameTrue_Over")
+        Type.declareConst("CompositionNameTrue_Click")
+        Type.declareConst("CompositionNameTrue_Leave")
 
-        Type.addConst(Type, "CompositionNameTrue_Push")
-        Type.addConst(Type, "CompositionNameTrue_Pressed")
-        Type.addConst(Type, "CompositionNameTrue_Release")
+        Type.declareConst("CompositionNameTrue_Push")
+        Type.declareConst("CompositionNameTrue_Pressed")
+        Type.declareConst("CompositionNameTrue_Release")
 
-        Type.addConst(Type, "CompositionNameFalse_Idle")
-        Type.addConst(Type, "CompositionNameFalse_Enter")
-        Type.addConst(Type, "CompositionNameFalse_Over")
-        Type.addConst(Type, "CompositionNameFalse_Click")
-        Type.addConst(Type, "CompositionNameFalse_Leave")
+        Type.declareConst("CompositionNameFalse_Idle")
+        Type.declareConst("CompositionNameFalse_Enter")
+        Type.declareConst("CompositionNameFalse_Over")
+        Type.declareConst("CompositionNameFalse_Click")
+        Type.declareConst("CompositionNameFalse_Leave")
 
-        Type.addConst(Type, "CompositionNameFalse_Push")
-        Type.addConst(Type, "CompositionNameFalse_Pressed")
-        Type.addConst(Type, "CompositionNameFalse_Release")
+        Type.declareConst("CompositionNameFalse_Push")
+        Type.declareConst("CompositionNameFalse_Pressed")
+        Type.declareConst("CompositionNameFalse_Release")
 
-        Type.addParam(Type, "BlockState")
+        Type.declareParam("BlockState")
         pass
 
     def _onParams(self, params):

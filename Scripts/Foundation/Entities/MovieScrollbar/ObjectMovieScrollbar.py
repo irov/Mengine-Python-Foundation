@@ -8,8 +8,8 @@ class ObjectMovieScrollbar(DemonObject):
         Type.addConst(Type, 'ResourceMovieSlider')
         Type.addConst(Type, 'ResourceMovieBar')
         Type.addConst(Type, 'IsHorizontal')
-        Type.addParam(Type, 'setToZero')
-        Type.addParam(Type, 'Value')
+        Type.declareParam('setToZero')
+        Type.declareParam('Value')
 
     def __init__(self):
         super(ObjectMovieScrollbar, self).__init__()

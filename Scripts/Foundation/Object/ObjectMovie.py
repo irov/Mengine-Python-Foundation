@@ -5,11 +5,11 @@ class ObjectMovie(ObjectAnimatable):
     def declareORM(Type):
         ObjectAnimatable.declareORM(Type)
 
-        Type.addResource(Type, "ResourceMovie")
+        Type.declareResource("ResourceMovie")
 
-        Type.addParam(Type, "ExtraGroupName")
-        Type.addParam(Type, "SpeedFactor")
-        Type.addParam(Type, "DisableLayers")
+        Type.declareParam("ExtraGroupName")
+        Type.declareParam("SpeedFactor")
+        Type.declareParam("DisableLayers")
         pass
 
     def __init__(self):

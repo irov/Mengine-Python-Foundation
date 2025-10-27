@@ -5,9 +5,9 @@ class ObjectAnimation(ObjectAnimatable):
     def declareORM(Type):
         ObjectAnimatable.declareORM(Type)
 
-        Type.addResource(Type, "AnimationResourceName")
-        Type.addParam(Type, "Sequence")
-        Type.addParam(Type, "FrameIndex")
+        Type.declareResource("AnimationResourceName")
+        Type.declareParam("Sequence")
+        Type.declareParam("FrameIndex")
         pass
 
     def _onParams(self, params):

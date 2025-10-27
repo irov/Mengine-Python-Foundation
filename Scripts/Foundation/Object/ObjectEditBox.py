@@ -5,13 +5,13 @@ class ObjectEditBox(DemonObject):
     def declareORM(Type):
         DemonObject.declareORM(Type)
 
-        Type.addParam(Type, "Polygon")
-        Type.addParam(Type, "Wrap")
-        Type.addParam(Type, "Value")
-        Type.addParam(Type, "Focus")
-        Type.addParam(Type, "PasswordChar")
-        Type.addParam(Type, "BlackList")
-        Type.addParam(Type, "TextLengthLimit")
+        Type.declareParam("Polygon")
+        Type.declareParam("Wrap")
+        Type.declareParam("Value")
+        Type.declareParam("Focus")
+        Type.declareParam("PasswordChar")
+        Type.declareParam("BlackList")
+        Type.declareParam("TextLengthLimit")
         pass
 
     def _onParams(self, params):

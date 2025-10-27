@@ -1,9 +1,7 @@
 from Foundation.Initializer import Initializer
 from Foundation.Params import Params
 
-
 class BaseObject(Params, Initializer):
-
     def __init__(self):
         super(BaseObject, self).__init__()
 

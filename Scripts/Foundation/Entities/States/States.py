@@ -6,8 +6,8 @@ class States(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "States")
-        Type.addAction(Type, "CurrentState", Update=States._updateCurrentState)
+        Type.addAction("States")
+        Type.addAction("CurrentState", Update=States._updateCurrentState)
         pass
 
     def visitStates(self, visitor):

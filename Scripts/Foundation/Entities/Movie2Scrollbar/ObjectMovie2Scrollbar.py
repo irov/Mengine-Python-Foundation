@@ -12,7 +12,7 @@ class ObjectMovie2Scrollbar(DemonObject):
         Type.addConst(Type, 'CompositionNameBar')
 
         Type.addConst(Type, 'IsHorizontal')
-        Type.addParam(Type, 'Value')
+        Type.declareParam('Value')
 
     def __init__(self):
         super(ObjectMovie2Scrollbar, self).__init__()

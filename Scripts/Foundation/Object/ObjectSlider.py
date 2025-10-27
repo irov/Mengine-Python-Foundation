@@ -7,9 +7,9 @@ class ObjectSlider(DemonObject):
     def declareORM(Type):
         DemonObject.declareORM(Type)
 
-        Type.addParam(Type, "Slide")
-        Type.addParam(Type, "Polygon")
-        Type.addParam(Type, "Current")
+        Type.declareParam("Slide")
+        Type.declareParam("Polygon")
+        Type.declareParam("Current")
         pass
 
     def _onParams(self, params):

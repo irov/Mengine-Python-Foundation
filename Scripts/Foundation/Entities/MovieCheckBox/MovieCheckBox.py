@@ -5,20 +5,20 @@ class MovieCheckBox(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-        Type.addActionActivate(Type, "Value", Update=MovieCheckBox.__updateValue)
-        Type.addAction(Type, "ResourceMovieTrue_Idle")
-        Type.addAction(Type, "ResourceMovieTrue_Enter")
-        Type.addAction(Type, "ResourceMovieTrue_Over")
-        Type.addAction(Type, "ResourceMovieTrue_Click")
-        Type.addAction(Type, "ResourceMovieTrue_Leave")
+        Type.addActionActivate("Value", Update=MovieCheckBox.__updateValue)
+        Type.addAction("ResourceMovieTrue_Idle")
+        Type.addAction("ResourceMovieTrue_Enter")
+        Type.addAction("ResourceMovieTrue_Over")
+        Type.addAction("ResourceMovieTrue_Click")
+        Type.addAction("ResourceMovieTrue_Leave")
 
-        Type.addAction(Type, "ResourceMovieFalse_Idle")
-        Type.addAction(Type, "ResourceMovieFalse_Enter")
-        Type.addAction(Type, "ResourceMovieFalse_Over")
-        Type.addAction(Type, "ResourceMovieFalse_Click")
-        Type.addAction(Type, "ResourceMovieFalse_Leave")
+        Type.addAction("ResourceMovieFalse_Idle")
+        Type.addAction("ResourceMovieFalse_Enter")
+        Type.addAction("ResourceMovieFalse_Over")
+        Type.addAction("ResourceMovieFalse_Click")
+        Type.addAction("ResourceMovieFalse_Leave")
 
-        Type.addAction(Type, "BlockState")
+        Type.addAction("BlockState")
         pass
 
     def __init__(self):

@@ -54,26 +54,33 @@ class ObjectManager(Manager):
 
     @staticmethod
     def getObjectType(typeName):
-        if typeName not in ObjectManager.s_typesDemain:
-            Trace.log("ObjectManager", 0, "ObjectManager.createObject: not register type %s maybe you forgot add in Pak.xml(Entity) or init in ObjectManager" % (typeName))
+        if _DEVELOPMENT is True:
+            if typeName not in ObjectManager.s_typesDemain:
+                Trace.log("ObjectManager", 0, "ObjectManager.createObject: not register type %s maybe you forgot add in Pak.xml(Entity) or init in ObjectManager" % (typeName))
 
-            return None
+                return None
 
         ObjectType = ObjectManager.s_types.get(typeName)
 
-        if ObjectType is None:
-            module, type = ObjectManager.s_typesDemain[typeName]
+        if ObjectType is not None:
+            return ObjectType
 
-            ObjectType = ObjectManager.__importDemainObject(module, type)
+        module, type = ObjectManager.s_typesDemain[typeName]
 
-            if ObjectType is None:
-                return None
+        NewObjectType = ObjectManager.__importDemainObject(module, type)
 
-            ObjectType.declareORM(ObjectType)
+        if NewObjectType is None:
+            return None
 
-            ObjectManager.s_types[typeName] = ObjectType
+        try:
+            NewObjectType.declareORM(NewObjectType)
+        except ParamsException as pex:
+            Trace.log("Manager", 0, "ObjectManager.getObjectType %s:%s params error %s\n%s" % (module, type, pex, traceback.format_exc()))
+            return None
 
-        return ObjectType
+        ObjectManager.s_types[typeName] = NewObjectType
+
+        return NewObjectType
 
     @staticmethod
     def createObject(typeName, name, group, params):

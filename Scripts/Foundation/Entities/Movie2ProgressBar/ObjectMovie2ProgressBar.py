@@ -4,21 +4,20 @@ class ObjectMovie2ProgressBar(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addConst(Type, "ResourceMovie")
-        Type.addConst(Type, "CompositionNameIdle")
-        Type.addConst(Type, "CompositionNameOver")
-        Type.addConst(Type, "CompositionNameBlock")
-        Type.addConst(Type, "CompositionNameProgress")
-        Type.addConst(Type, "CompositionNameFullProgress")
-        Type.addConst(Type, "CompositionNameHolder")
+        Type.declareConst("ResourceMovie")
+        Type.declareConst("CompositionNameIdle")
+        Type.declareConst("CompositionNameOver")
+        Type.declareConst("CompositionNameBlock")
+        Type.declareConst("CompositionNameProgress")
+        Type.declareConst("CompositionNameFullProgress")
+        Type.declareConst("CompositionNameHolder")
 
-        Type.addParam(Type, 'MaxValue')
-        Type.addParam(Type, 'Value')
-        Type.addParam(Type, 'Text_ID')
-        Type.addParam(Type, 'Full_Text_ID')
-        Type.addParam(Type, 'DoubleValue')
-        Type.addParam(Type, 'Block')
-
+        Type.declareParam('MaxValue')
+        Type.declareParam('Value')
+        Type.declareParam('Text_ID')
+        Type.declareParam('Full_Text_ID')
+        Type.declareParam('DoubleValue')
+        Type.declareParam('Block')
         pass
 
     def _onParams(self, params):

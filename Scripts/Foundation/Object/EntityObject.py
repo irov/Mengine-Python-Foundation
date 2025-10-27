@@ -29,14 +29,14 @@ class EntityObject(BaseObject):
     def declareORM(Type):
         BaseObject.declareORM(Type)
 
-        Type.addParam(Type, "Enable")
-        Type.addParam(Type, "BlockInteractive")
-        Type.addParam(Type, "Position")
-        Type.addParam(Type, "Scale")
-        Type.addParam(Type, "Origin")
-        Type.addParam(Type, "Orientation")
-        Type.addParam(Type, "Alpha")
-        Type.addParam(Type, "RGB")
+        Type.declareParam("Enable")
+        Type.declareParam("BlockInteractive")
+        Type.declareParam("Position")
+        Type.declareParam("Scale")
+        Type.declareParam("Origin")
+        Type.declareParam("Orientation")
+        Type.declareParam("Alpha")
+        Type.declareParam("RGB")
 
     def _onParams(self, params):
         super(EntityObject, self)._onParams(params)

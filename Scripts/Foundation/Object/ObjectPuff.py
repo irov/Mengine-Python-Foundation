@@ -5,8 +5,8 @@ class ObjectPuff(Object):
     def declareORM(Type):
         Object.declareORM(Type)
 
-        Type.addParam(Type, "PuffElements")
-        Type.addParam(Type, "PuffElementsVisible")
+        Type.declareParam("PuffElements")
+        Type.declareParam("PuffElementsVisible")
         pass
 
     def _onParams(self, params):

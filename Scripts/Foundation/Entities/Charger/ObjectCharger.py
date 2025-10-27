@@ -4,21 +4,21 @@ class ObjectCharger(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addConst(Type, "ResourceMovieCharge")
-        Type.addConst(Type, "ResourceMovieCharged")
-        Type.addConst(Type, "ResourceMovieIdle")
-        Type.addConst(Type, "ResourceMovieRelease")
+        Type.declareConst("ResourceMovieCharge")
+        Type.declareConst("ResourceMovieCharged")
+        Type.declareConst("ResourceMovieIdle")
+        Type.declareConst("ResourceMovieRelease")
         ###
-        Type.addConst(Type, "ResourceMovieEnter")
-        Type.addConst(Type, "ResourceMovieOver")
-        Type.addConst(Type, "ResourceMovieLeave")
+        Type.declareConst("ResourceMovieEnter")
+        Type.declareConst("ResourceMovieOver")
+        Type.declareConst("ResourceMovieLeave")
 
-        Type.addParam(Type, "TimeReload")
-        Type.addParam(Type, "WaitCharge")
-        Type.addParam(Type, "NoCharge")
-        Type.addParam(Type, "Empty")
-        Type.addParam(Type, "EmptyStartTimingPercentage")
-        Type.addParam(Type, "State")
+        Type.declareParam("TimeReload")
+        Type.declareParam("WaitCharge")
+        Type.declareParam("NoCharge")
+        Type.declareParam("Empty")
+        Type.declareParam("EmptyStartTimingPercentage")
+        Type.declareParam("State")
         pass
 
     def _onParams(self, params):

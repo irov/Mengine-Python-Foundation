@@ -5,13 +5,13 @@ class ObjectMovie2(ObjectAnimatable):
     def declareORM(Type):
         ObjectAnimatable.declareORM(Type)
 
-        Type.addResource(Type, "ResourceMovie")
-        Type.addParam(Type, "CompositionName")
-        Type.addParam(Type, "DisableLayers")
-        Type.addParam(Type, "DisableSubMovies")
-        Type.addParam(Type, "SpeedFactor")
-        Type.addParam(Type, "TextAliasEnvironment")
-        Type.addParam(Type, "ExtraOpacityLayers")
+        Type.declareResource("ResourceMovie")
+        Type.declareParam("CompositionName")
+        Type.declareParam("DisableLayers")
+        Type.declareParam("DisableSubMovies")
+        Type.declareParam("SpeedFactor")
+        Type.declareParam("TextAliasEnvironment")
+        Type.declareParam("ExtraOpacityLayers")
         pass
 
     def __init__(self):

@@ -5,29 +5,29 @@ class ObjectButton(ObjectInteraction):
     def declareORM(Type):
         ObjectInteraction.declareORM(Type)
 
-        Type.addParam(Type, "Font")
-        Type.addParam(Type, "FontRGBA")
+        Type.declareParam("Font")
+        Type.declareParam("FontRGBA")
 
-        Type.addParam(Type, "TextID")
-        Type.addParam(Type, "TextArgs")
+        Type.declareParam("TextID")
+        Type.declareParam("TextArgs")
 
-        Type.addParam(Type, "TextPosition")
-        Type.addParam(Type, "TextPositionDown")
-        Type.addParam(Type, "TextPositionOver")
-        Type.addParam(Type, "TextAlign")
-        Type.addParam(Type, "TextVerticalAlign")
-        Type.addParam(Type, "TextLineOffset")
+        Type.declareParam("TextPosition")
+        Type.declareParam("TextPositionDown")
+        Type.declareParam("TextPositionOver")
+        Type.declareParam("TextAlign")
+        Type.declareParam("TextVerticalAlign")
+        Type.declareParam("TextLineOffset")
 
-        Type.addParam(Type, "onUp")
-        Type.addParam(Type, "onOver")
-        Type.addParam(Type, "onDown")
+        Type.declareParam("onUp")
+        Type.declareParam("onOver")
+        Type.declareParam("onDown")
 
-        Type.addParam(Type, "KeyTag")
-        Type.addParam(Type, "SoundTag")
-        Type.addParam(Type, "SoundTagEnter")
+        Type.declareParam("KeyTag")
+        Type.declareParam("SoundTag")
+        Type.declareParam("SoundTagEnter")
 
-        Type.addParam(Type, "BlockKeys")
-        Type.addParam(Type, "BlockState")
+        Type.declareParam("BlockKeys")
+        Type.declareParam("BlockState")
 
     def _onParams(self, params):
         super(ObjectButton, self)._onParams(params)

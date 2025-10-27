@@ -6,12 +6,12 @@ class Movie2Scrollbar(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-        Type.addAction(Type, "ResourceMovie")
+        Type.addAction("ResourceMovie")
 
-        Type.addAction(Type, "CompositionNameSlider")
-        Type.addAction(Type, "CompositionNameBar")
+        Type.addAction("CompositionNameSlider")
+        Type.addAction("CompositionNameBar")
 
-        Type.addAction(Type, "IsHorizontal")
+        Type.addAction("IsHorizontal")
         Type.addAction(Type, 'Value', Activate=True, Update=Movie2Scrollbar.__updateValue)
 
     def __init__(self):

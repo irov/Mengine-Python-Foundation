@@ -5,10 +5,10 @@ class ObjectCheckBox(DemonObject):
     def declareORM(Type):
         DemonObject.declareORM(Type)
 
-        Type.addParam(Type, "Polygon")
-        Type.addParam(Type, "State")
-        Type.addParam(Type, "BlockState")
-        Type.addParam(Type, "KeyTag")
+        Type.declareParam("Polygon")
+        Type.declareParam("State")
+        Type.declareParam("BlockState")
+        Type.declareParam("KeyTag")
         pass
 
     def _onParams(self, params):

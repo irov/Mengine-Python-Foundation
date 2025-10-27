@@ -8,22 +8,22 @@ class MovieEditBox(BaseEntity):
         BaseEntity.declareORM(Type)
 
         # MovieButton part
-        Type.addActionActivate(Type, "ResourceMovieIdle")
-        Type.addActionActivate(Type, "ResourceMovieOver")
-        Type.addActionActivate(Type, "ResourceMovieFocus")
-        Type.addActionActivate(Type, "ResourceMovieCarriage", Update=Type.__updateCarriage)
-        Type.addActionActivate(Type, "ResourceMovieSlider")
-        Type.addActionActivate(Type, "ResourceMovieBlock")
+        Type.addActionActivate("ResourceMovieIdle")
+        Type.addActionActivate("ResourceMovieOver")
+        Type.addActionActivate("ResourceMovieFocus")
+        Type.addActionActivate("ResourceMovieCarriage", Update=Type.__updateCarriage)
+        Type.addActionActivate("ResourceMovieSlider")
+        Type.addActionActivate("ResourceMovieBlock")
 
         # EditBox
-        Type.addActionActivate(Type, "Text_ID")
-        Type.addActionActivate(Type, "Text_Present_ID")
-        Type.addActionActivate(Type, "Value", Update=Type._updateValue)
-        Type.addActionActivate(Type, "Focus", Update=Type._updateFocus)
-        Type.addActionActivate(Type, "PasswordChar", Update=Type._updatePasswordChar)
-        Type.addActionActivate(Type, "BlackList")
-        Type.addActionActivate(Type, "Block", Update=Type.__updateBlock)
-        Type.addActionActivate(Type, "Present", Update=Type.__updatePresent)
+        Type.addActionActivate("Text_ID")
+        Type.addActionActivate("Text_Present_ID")
+        Type.addActionActivate("Value", Update=Type._updateValue)
+        Type.addActionActivate("Focus", Update=Type._updateFocus)
+        Type.addActionActivate("PasswordChar", Update=Type._updatePasswordChar)
+        Type.addActionActivate("BlackList")
+        Type.addActionActivate("Block", Update=Type.__updateBlock)
+        Type.addActionActivate("Present", Update=Type.__updatePresent)
         pass
 
     def __updateCarriage(self, value):

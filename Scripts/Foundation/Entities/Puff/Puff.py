@@ -5,8 +5,8 @@ class Puff(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "PuffElements")
-        Type.addAction(Type, "PuffElementsVisible",
+        Type.addAction("PuffElements")
+        Type.addAction("PuffElementsVisible",
                        Update=Puff._updatePuffElementsVisible,
                        Append=Puff._appendPuffElementsVisible,
                        Remove=Puff._removePuffElementsVisible)

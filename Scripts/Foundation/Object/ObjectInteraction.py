@@ -5,13 +5,13 @@ class ObjectInteraction(Object):
     def declareORM(Type):
         Object.declareORM(Type)
 
-        Type.addConst(Type, "Polygon")
-        Type.addConst(Type, "HintPoint")
-        Type.addParam(Type, "Block", bool)
-        Type.addParam(Type, "BlockKey")
-        Type.addParam(Type, "Cursor")
-        Type.addParam(Type, "Outward", bool)
-        Type.addParam(Type, "Global", bool)
+        Type.declareConst("Polygon")
+        Type.declareConst("HintPoint")
+        Type.declareParam("Block", bool)
+        Type.declareParam("BlockKey")
+        Type.declareParam("Cursor")
+        Type.declareParam("Outward", bool)
+        Type.declareParam("Global", bool)
         pass
 
     def __init__(self):

@@ -8,19 +8,19 @@ class MovieButton(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-        Type.addAction(Type, "ResourceMovieIdle")
-        Type.addAction(Type, "ResourceMovieEnter")
-        Type.addAction(Type, "ResourceMovieOver")
-        Type.addAction(Type, "ResourceMovieClick")
-        Type.addAction(Type, "ResourceMovieLeave")
+        Type.addAction("ResourceMovieIdle")
+        Type.addAction("ResourceMovieEnter")
+        Type.addAction("ResourceMovieOver")
+        Type.addAction("ResourceMovieClick")
+        Type.addAction("ResourceMovieLeave")
 
-        Type.addAction(Type, "ResourceMoviePush")
-        Type.addAction(Type, "ResourceMoviePressed")
-        Type.addAction(Type, "ResourceMovieRelease")
+        Type.addAction("ResourceMoviePush")
+        Type.addAction("ResourceMoviePressed")
+        Type.addAction("ResourceMovieRelease")
 
-        Type.addAction(Type, "ResourceMovieBlock")
+        Type.addAction("ResourceMovieBlock")
 
-        Type.addActionActivate(Type, "Block", Update=Type.__updateBlock)
+        Type.addActionActivate("Block", Update=Type.__updateBlock)
         pass
 
     def __init__(self):

@@ -5,9 +5,9 @@ class ObjectWindow(Object):
     def declareORM(Type):
         Object.declareORM(Type)
 
-        Type.addResource(Type, "WindowResourceName")
-        Type.addParam(Type, "Polygon")
-        Type.addParam(Type, "ClientSize")
+        Type.declareResource("WindowResourceName")
+        Type.declareParam("Polygon")
+        Type.declareParam("ClientSize")
 
     def _onParams(self, params):
         super(ObjectWindow, self)._onParams(params)

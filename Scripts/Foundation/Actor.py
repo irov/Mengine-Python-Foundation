@@ -1,162 +1,226 @@
 from Foundation.Params import DefaultParam
+from Foundation.Params import ParamsException
 
 class Actor(object):
     __metaclass__ = baseslots()
 
     class Action(object):
-        __slots__ = "events", "activate"
+        __slots__ = "Update", "Append", "Remove", "Change", "InsertDict", "PopDict", "Activate"
 
-        def __init__(self, events, activate):
-            self.events = events
-            self.activate = activate
+        def __init__(self, Params, Activate):
+            self.Update = Params.get("Update", None)
+            self.Append = Params.get("Append", None)
+            self.Remove = Params.get("Remove", None)
+            self.Change = Params.get("Change", None)
+            self.InsertDict = Params.get("InsertDict", None)
+            self.PopDict = Params.get("PopDict", None)
+
+            self.Activate = Activate
             pass
         pass
 
     @staticmethod
-    def declareORM(typeActor):
-        typeActor.actions = {}
-        typeActor.actionsCache = []
+    def declareORM(typeORM):
+        typeORM.ACTOR_ACTIONS = {}
+        typeORM.ACTOR_ACTIONS_CACHE = []
         pass
 
-    @staticmethod
-    def releaseORM(typeActor):
-        typeActor.actions = {}
-        typeActor.actionsCache = []
+    @classmethod
+    def addActionActivate(cls, key, **Params):
+        cls.addAction(key, Activate=True, **Params)
         pass
 
-    @staticmethod
-    def addActionActivate(typeActor, key, **params):
-        typeActor.addAction(typeActor, key, Activate=True, **params)
-        pass
+    @classmethod
+    def addAction(cls, key, Activate=False, **Params):
+        if _DEVELOPMENT is True:
+            def __get_key(self):
+                if self.object is None:
+                    Trace.log("Actor", 0, "Actor %s get property %s in destroy entity" % (cls.__name__, key))
 
-    @staticmethod
-    def addAction(typeActor, key, Activate=False, **params):
-        def __get_key(self):
-            if self.object is None:
-                Trace.log("Actor", 0, "Actor %s get property %s in destroy entity" % (type(self).__name__, key))
+                    return None
 
-                return None
+                return self.object.getParam(key)
+
+            def __set_key(self, value):
+                Trace.log("Actor", 0, "Actor %s set property read only %s (set value %s)" % (cls.__name__, key, value))
                 pass
 
-            return self.object.getParam(key)
+            property_key = property(__get_key, __set_key, None, None)
+        else:
+            def __get_key(self):
+                return self.object.getParam(key)
+
+            property_key = property(__get_key, None, None, None)
             pass
 
-        def __set_key(self, value):
-            Trace.log("Actor", 0, "Actor %s set property read only %s (set value %s)" % (type(self).__name__, key, value))
-            pass
+        setattr(cls, key, property_key)
 
-        property_key = property(__get_key, __set_key, None, None)
+        if _DEVELOPMENT is True:
+            if key in cls.ACTOR_ACTIONS:
+                raise ParamsException("Actor '%s' already have action '%s' [%s]" % (cls.__name__, key, cls.ACTOR_ACTIONS[key]))
 
-        setattr(typeActor, key, property_key)
+        action = Actor.Action(Params, Activate)
 
-        Update = params.get("Update", None)
-        Append = params.get("Append", None)
-        Remove = params.get("Remove", None)
-        Change = params.get("Change", None)
-
-        InsertDict = params.get("InsertDict", None)
-        PopDict = params.get("PopDict", None)
-
-        events = dict(Update=Update, Append=Append, Remove=Remove, Change=Change, InsertDict=InsertDict, PopDict=PopDict)
-
-        if key in typeActor.actions:
-            typeActor._actorFailed(typeActor, "Actor already have action '%s'" % (key))
-            return
-            pass
-
-        actions = Actor.Action(events, Activate)
-
-        typeActor.actions[key] = actions
-        typeActor.actionsCache.append((key, actions))
+        cls.ACTOR_ACTIONS[key] = action
+        cls.ACTOR_ACTIONS_CACHE.append((key, action))
         pass
 
     def validateAction(self, params):
-        keys = params.keys()
-        for key in keys[:]:
-            if key not in self.actions:
+        validate_actions = self.ACTOR_ACTIONS.keys()
+        for action in validate_actions[:]:
+            if action not in params:
                 typeActor = type(self)
-                self._actorFailed(typeActor, "Actor invalid action '%s'" % (key))
+                self._actorFailed(typeActor, "Actor invalid action '%s'"%(action))
 
                 return False
-                pass
 
-            keys.remove(key)
-            pass
-
-        if len(keys) != 0:
-            typeActor = type(self)
-            self._actorFailed(typeActor, "Actor invalid action '%s'" % (keys))
-
-            return False
+            validate_actions.remove(action)
             pass
 
         return True
-        pass
 
-    def __callAction(self, type, action, *value):
-        if self._isActorValid() is False:
-            Trace.log("Actor", 0, "invalid %s call action %s (Actor Invalid)" % (self, type))
-            return False
-            pass
+    def __callAction(self, activate, ActionActivate, ActionEvent, *args):
+        if ActionEvent is None:
+            return
 
-        event = action.events.get(type)
+        if activate is True and ActionActivate is False:
+            return
 
-        if event is None:
-            return False
-            pass
-
-        if action.activate is True:
+        if ActionActivate is True:
             if self._isActorActive() is False:
-                return True
-                pass
-            pass
+                return
 
-        event(self, *value)
+        ActionEvent(self, *args)
 
-        return True
-        pass
+    def callUpdateAction(self, key, activate, value):
+        if _DEVELOPMENT is True:
+            if self._isActorValid() is False:
+                Trace.log("Actor", 0, "invalid %s call action Update '%s' (Actor Invalid)" % (self, key))
+                return
 
-    def callAction(self, key, activate, type, *value):
-        if key not in self.actions:
-            typeActor = type(self)
-            self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
-            return False
-            pass
+            if key not in self.ACTOR_ACTIONS:
+                typeActor = type(self)
+                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
+                return
 
-        action = self.actions[key]
+        action = self.ACTOR_ACTIONS[key]
 
-        if activate is True and action.activate is False:
-            return True
-            pass
-
-        if self.__callAction(type, action, *value) is False:
-            return False
-            pass
+        self.__callAction(activate, action.Activate, action.Update, value)
 
         return True
-        pass
 
-    def callActions(self, params, activate, initialize, event):
-        for key, action in self.actionsCache:
+    def callAppendAction(self, key, activate, index, value):
+        if _DEVELOPMENT is True:
+            if self._isActorValid() is False:
+                Trace.log("Actor", 0, "invalid %s call action Append '%s' (Actor Invalid)" % (self, key))
+                return
+
+            if key not in self.ACTOR_ACTIONS:
+                typeActor = type(self)
+                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
+                return
+
+        action = self.ACTOR_ACTIONS[key]
+
+        self.__callAction(activate, action.Activate, action.Append, index, value)
+
+    def callRemoveAction(self, key, activate, index, value, old):
+        if _DEVELOPMENT is True:
+            if self._isActorValid() is False:
+                Trace.log("Actor", 0, "invalid %s call action Remove '%s' (Actor Invalid)" % (self, key))
+                return
+
+            if key not in self.ACTOR_ACTIONS:
+                typeActor = type(self)
+                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
+                return
+
+        action = self.ACTOR_ACTIONS[key]
+
+        self.__callAction(activate, action.Activate, action.Remove, index, value, old)
+
+        return True
+
+    def callChangeAction(self, key, activate, index, value):
+        if _DEVELOPMENT is True:
+            if self._isActorValid() is False:
+                Trace.log("Actor", 0, "invalid %s call action Change '%s' (Actor Invalid)" % (self, key))
+                return
+
+            if key not in self.ACTOR_ACTIONS:
+                typeActor = type(self)
+                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
+                return
+
+        action = self.ACTOR_ACTIONS[key]
+
+        self.__callAction(activate, action.Activate, action.Change, index, value)
+
+        return True
+
+    def callInsertDictAction(self, key, activate, dict_key, dict_value):
+        if _DEVELOPMENT is True:
+            if self._isActorValid() is False:
+                Trace.log("Actor", 0, "invalid %s call action InsertDict '%s' (Actor Invalid)" % (self, key))
+                return
+
+            if key not in self.ACTOR_ACTIONS:
+                typeActor = type(self)
+                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
+                return
+
+        action = self.ACTOR_ACTIONS[key]
+
+        self.__callAction(activate, action.Activate, action.InsertDict, dict_key, dict_value)
+
+        return True
+
+    def callPopDictAction(self, key, activate, dict_key, dict_value):
+        if _DEVELOPMENT is True:
+            if self._isActorValid() is False:
+                Trace.log("Actor", 0, "invalid %s call action PopDict '%s' (Actor Invalid)" % (self, key))
+                return
+
+            if key not in self.ACTOR_ACTIONS:
+                typeActor = type(self)
+                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
+                return
+
+        action = self.ACTOR_ACTIONS[key]
+
+        self.__callAction(activate, action.Activate, action.PopDict, dict_key, dict_value)
+
+        return True
+
+    def callUpdateActions(self, params, activate, initialize):
+        if _DEVELOPMENT is True:
+            if self._isActorValid() is False:
+                Trace.log("Actor", 0, "invalid %s call action Updates (Actor Invalid)" % (self))
+                return False
+
+        for key, action in self.ACTOR_ACTIONS_CACHE:
+            if action.Update is None:
+                continue
+
+            if activate is True and action.Activate is False:
+                continue
+
             if key not in params:
                 continue
-                pass
-
-            if activate is True and action.activate is False:
-                continue
-                pass
 
             value = params[key]
 
             if initialize is True and isinstance(value, DefaultParam) is True:
                 continue
-                pass
 
-            self.__callAction(event, action, value)
+            if action.Activate is True:
+                if self._isActorActive() is False:
+                    continue
+
+            action.Update(self, value)
             pass
         pass
 
-    @staticmethod
     def _actorFailed(self, typeActor, msg):
         pass
 
@@ -165,5 +229,3 @@ class Actor(object):
 
     def _isActorValid(self):
         return True
-        pass
-    pass

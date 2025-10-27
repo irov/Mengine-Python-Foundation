@@ -7,14 +7,14 @@ class Movie(BaseAnimatable):
     def declareORM(Type):
         BaseAnimatable.declareORM(Type)
 
-        Type.addAction(Type, "Wait")
-        Type.addAction(Type, "ExtraGroupName")
-        Type.addAction(Type, "ResourceMovie")
-        Type.addAction(Type, "DisableLayers",
+        Type.addAction("Wait")
+        Type.addAction("ExtraGroupName")
+        Type.addAction("ResourceMovie")
+        Type.addAction("DisableLayers",
                        Update=Movie.__updateDisableLayers,
                        Append=Movie.__appendDisableLayers,
                        Remove=Movie.__removeDisableLayers)
-        Type.addAction(Type, "LastFrameSubMovies",
+        Type.addAction("LastFrameSubMovies",
                        Update=Movie.__updateLastFrameSubMovies,
                        Append=Movie.__appendLastFrameSubMovies,
                        Remove=Movie.__removeLastFrameSubMovies)

@@ -5,9 +5,9 @@ class ObjectProgressBar(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addParam(Type, "Value")
-        Type.addConst(Type, "MaxValue")
-        Type.addConst(Type, "ResourceMovieProgress")
+        Type.declareParam("Value")
+        Type.declareConst("MaxValue")
+        Type.declareConst("ResourceMovieProgress")
         pass
 
     def _onParams(self, params):

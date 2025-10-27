@@ -12,8 +12,7 @@ class Fade(BaseEntity):
         BaseEntity.declareORM(Type)
 
         # If Size is None, or (x < 0) or (y < 0) current resolution is used for that dimension.
-        Type.addAction(Type, "Size")
-        Type.addAction(Type, "State")
+        Type.addAction("Size")
 
     def __init__(self):
         super(Fade, self).__init__()

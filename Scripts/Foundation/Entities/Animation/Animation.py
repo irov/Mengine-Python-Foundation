@@ -6,9 +6,9 @@ class Animation(BaseAnimatable):
     def declareORM(Type):
         BaseAnimatable.declareORM(Type)
 
-        Type.addAction(Type, "Sequence", Update=Animation.__updateSequence)
-        Type.addActionActivate(Type, "FrameIndex", Update=Animation.__updateFrameIndex)
-        Type.addAction(Type, "AnimationResourceName")
+        Type.addAction("Sequence", Update=Animation.__updateSequence)
+        Type.addActionActivate("FrameIndex", Update=Animation.__updateFrameIndex)
+        Type.addAction("AnimationResourceName")
         pass
 
     def __init__(self):

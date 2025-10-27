@@ -5,9 +5,9 @@ class Slider(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "Slide")
-        Type.addAction(Type, "Polygon", Update=Slider._restorePolygon)
-        Type.addAction(Type, "Current", Update=Slider._updateCurrent)
+        Type.addAction("Slide")
+        Type.addAction("Polygon", Update=Slider._restorePolygon)
+        Type.addAction("Current", Update=Slider._updateCurrent)
         pass
 
     def __init__(self):

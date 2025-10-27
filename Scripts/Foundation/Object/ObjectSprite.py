@@ -5,8 +5,8 @@ class ObjectSprite(Object):
     def declareORM(Type):
         Object.declareORM(Type)
 
-        Type.addResource(Type, "SpriteResourceName")
-        Type.addParam(Type, "ExtraResource")
+        Type.declareResource("SpriteResourceName")
+        Type.declareParam("ExtraResource")
 
     def _onParams(self, params):
         super(ObjectSprite, self)._onParams(params)

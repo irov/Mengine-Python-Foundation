@@ -5,8 +5,8 @@ class ObjectShift(Object):
     def declareORM(Type):
         Object.declareORM(Type)
 
-        Type.addParam(Type, "Shift")
-        Type.addConst(Type, "Shifts")
+        Type.declareParam("Shift")
+        Type.declareConst("Shifts")
         pass
 
     def _onParams(self, params):

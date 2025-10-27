@@ -8,16 +8,16 @@ class BaseEntity(Actor, Initializer):
     def declareORM(Type):
         Actor.declareORM(Type)
 
-        Type.addAction(Type, "Enable", Update=BaseEntity._updateEnable)
-        Type.addAction(Type, "Interactive", Update=BaseEntity._updateRefcountInteractive)
-        Type.addAction(Type, "BlockInteractive", Update=BaseEntity._updateBlockInteractive)
+        Type.addAction("Enable", Update=BaseEntity._updateEnable)
+        Type.addAction("Interactive", Update=BaseEntity._updateRefcountInteractive)
+        Type.addAction("BlockInteractive", Update=BaseEntity._updateBlockInteractive)
 
-        Type.addAction(Type, "Position", Initialize=False, Update=BaseEntity.__updatePosition)
-        Type.addAction(Type, "Scale", Initialize=False, Update=BaseEntity.__updateScale)
-        Type.addAction(Type, "Origin", Initialize=False, Update=BaseEntity.__updateOrigin)
-        Type.addAction(Type, "Orientation", Initialize=False, Update=BaseEntity.__updateOrientation)
-        Type.addAction(Type, "Alpha", Initialize=False, Update=BaseEntity.__updateAlpha)
-        Type.addAction(Type, "RGB", Initialize=False, Update=BaseEntity.__updateRGB)
+        Type.addAction("Position", Initialize=False, Update=BaseEntity.__updatePosition)
+        Type.addAction("Scale", Initialize=False, Update=BaseEntity.__updateScale)
+        Type.addAction("Origin", Initialize=False, Update=BaseEntity.__updateOrigin)
+        Type.addAction("Orientation", Initialize=False, Update=BaseEntity.__updateOrientation)
+        Type.addAction("Alpha", Initialize=False, Update=BaseEntity.__updateAlpha)
+        Type.addAction("RGB", Initialize=False, Update=BaseEntity.__updateRGB)
         pass
 
     def __init__(self):
@@ -33,7 +33,6 @@ class BaseEntity(Actor, Initializer):
 
     def getName(self):
         return self.node.getName()
-        pass
 
     def addChild(self, node):
         self.node.addChild(node)
@@ -45,7 +44,6 @@ class BaseEntity(Actor, Initializer):
 
     def createChild(self, type):
         return self.node.createChild(type)
-        pass
 
     def removeFromParent(self):
         self.node.removeFromParent()
@@ -87,9 +85,8 @@ class BaseEntity(Actor, Initializer):
         return Mengine.getCameraPosition(Camera, self.node)
         pass
 
-    @staticmethod
-    def _actorFailed(typeActor, msg):
-        Trace.log("BaseEntity", 0, "EntityType %s failed: %s" % (typeActor.__name__, msg))
+    def _actorFailed(self, typeActor, msg):
+        Trace.log("BaseEntity", 0, "Entity %s Type %s failed: %s" % (self.getName(), typeActor.__name__, msg))
         pass
 
     def onCreate(self, node):
@@ -116,19 +113,14 @@ class BaseEntity(Actor, Initializer):
     def _onInitialize(self, obj):
         super(BaseEntity, self)._onInitialize(obj)
 
-        self.object = obj
-
         if _DEVELOPMENT is True:
-            consts = obj.getConsts()
-            if self.validateAction(consts) is False:
-                self.initializeFailed("Entity '%s:%s' invalid initialized: incorrect actions for consts" % (self.object.getType(), self.object.getName()))
-                pass
-
             params = obj.getParams()
             if self.validateAction(params) is False:
-                self.initializeFailed("Entity '%s:%s' invalid initialized: incorrect actions for params" % (self.object.getType(), self.object.getName()))
+                self.initializeFailed("Entity '%s:%s' invalid initialized: incorrect actions for params" % (obj.getType(), obj.getName()))
                 pass
             pass
+
+        self.object = obj
         pass
 
     def _onFinalize(self):
@@ -138,17 +130,14 @@ class BaseEntity(Actor, Initializer):
             if Mengine.is_class(self.node) is False:
                 Trace.log("BaseEntity", 0, "Entity %s:%s _onFinalize self is not class" % (self.object.getType(), self.object.getName()))
                 return
-                pass
 
             if Mengine.is_wrap(self.node) is False:
                 Trace.log("BaseEntity", 0, "Entity %s:%s _onFinalize self is unwrap" % (self.object.getType(), self.object.getName()))
                 return
-                pass
 
             if self.object.isActive() is True:
                 Trace.log("BaseEntity", 0, "Entity '%s:%s' has been destroyed while the object was still alive. Probably you've forgot to unlink it from another Entity (%s)" % (self.object.getName(), self.object.getType(), self.object.getParent()))
                 return
-                pass
             pass
 
         self.node.disable()
@@ -174,11 +163,8 @@ class BaseEntity(Actor, Initializer):
     def onRestore(self):
         self._onRestore()
 
-        consts = self.object.getConsts()
-        self.callActions(consts, False, True, "Update")
-
         params = self.object.getParams()
-        self.callActions(params, False, True, "Update")
+        self.callUpdateActions(params, False, True)
 
         self._onRestored()
         pass
@@ -214,11 +200,8 @@ class BaseEntity(Actor, Initializer):
 
         self._onActivate()
 
-        consts = self.object.getConsts()
-        self.callActions(consts, True, False, "Update")
-
         params = self.object.getParams()
-        self.callActions(params, True, False, "Update")
+        self.callUpdateActions(params, True, False)
         pass
 
     def _onActivate(self):

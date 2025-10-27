@@ -6,10 +6,10 @@ class CheckBox(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-        Type.addAction(Type, "Polygon", Update=CheckBox._restorePolygon)
-        Type.addAction(Type, "State", Update=CheckBox._updateState)
-        Type.addAction(Type, "BlockState", Update=CheckBox._updateState)
-        Type.addAction(Type, "KeyTag")
+        Type.addAction("Polygon", Update=CheckBox._restorePolygon)
+        Type.addAction("State", Update=CheckBox._updateState)
+        Type.addAction("BlockState", Update=CheckBox._updateState)
+        Type.addAction("KeyTag")
         pass
 
     def __init__(self):

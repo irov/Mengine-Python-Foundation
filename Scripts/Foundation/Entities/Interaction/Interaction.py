@@ -6,13 +6,13 @@ class Interaction(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction(Type, "Block")
-        Type.addAction(Type, "Cursor")
-        Type.addAction(Type, "Global", Update=Interaction.__updateGlobal)
-        Type.addAction(Type, "Polygon", Update=Interaction.__updatePolygon)
-        Type.addAction(Type, "HintPoint")
-        Type.addAction(Type, "BlockKey")
-        Type.addAction(Type, "Outward", Update=Interaction.__updateOutward)
+        Type.addAction("Block")
+        Type.addAction("Cursor")
+        Type.addAction("Global", Update=Interaction.__updateGlobal)
+        Type.addAction("Polygon", Update=Interaction.__updatePolygon)
+        Type.addAction("HintPoint")
+        Type.addAction("BlockKey")
+        Type.addAction("Outward", Update=Interaction.__updateOutward)
 
     def __init__(self):
         super(Interaction, self).__init__()

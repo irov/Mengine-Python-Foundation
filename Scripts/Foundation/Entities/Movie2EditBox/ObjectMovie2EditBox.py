@@ -5,24 +5,24 @@ class ObjectMovie2EditBox(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addConst(Type, "ResourceMovie")
+        Type.declareConst("ResourceMovie")
 
-        Type.addConst(Type, "CompositionNameIdle")
-        Type.addConst(Type, "CompositionNameOver")
-        Type.addConst(Type, "CompositionNameFocus")
-        Type.addConst(Type, "CompositionNameCarriage")
-        Type.addConst(Type, "CompositionNameSlider")
-        Type.addConst(Type, "CompositionNameBlock")
+        Type.declareConst("CompositionNameIdle")
+        Type.declareConst("CompositionNameOver")
+        Type.declareConst("CompositionNameFocus")
+        Type.declareConst("CompositionNameCarriage")
+        Type.declareConst("CompositionNameSlider")
+        Type.declareConst("CompositionNameBlock")
 
-        Type.addParam(Type, "Block")
-        Type.addParam(Type, "Value")
-        Type.addParam(Type, "Focus")
-        Type.addParam(Type, "PasswordChar")
-        Type.addParam(Type, "BlackList")
-        Type.addParam(Type, 'Present')
-        Type.addParam(Type, 'Text_ID')
-        Type.addParam(Type, 'Text_Present_ID')
-        Type.addParam(Type, 'TextLengthLimit')
+        Type.declareParam("Block")
+        Type.declareParam("Value")
+        Type.declareParam("Focus")
+        Type.declareParam("PasswordChar")
+        Type.declareParam("BlackList")
+        Type.declareParam('Present')
+        Type.declareParam('Text_ID')
+        Type.declareParam('Text_Present_ID')
+        Type.declareParam('TextLengthLimit')
         pass
 
     def _onParams(self, params):
