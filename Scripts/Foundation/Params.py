@@ -15,6 +15,15 @@ class DefaultParam(object):
         pass
     pass
 
+class ParamsEnum(object):
+    ACTION_UPDATE = 0
+    ACTION_APPEND = 1
+    ACTION_REMOVE = 2
+    ACTION_CHANGE = 3
+    ACTION_INSERT_DICT = 4
+    ACTION_POP_DICT = 5
+    pass
+
 class Params(object):
     __metaclass__ = baseslots("params")
 
@@ -159,7 +168,7 @@ class Params(object):
     def setConst(self, key, value):
         self.params[key] = value
 
-        self.__callUpdateAction(key, value)
+        self.__callAction(ParamsEnum.ACTION_UPDATE, key, value)
         pass
 
     def onParams(self, params):
@@ -194,7 +203,7 @@ class Params(object):
         if self.superParam(key, value) is False:
             return False
 
-        self.__callUpdateAction(key, value)
+        self.__callAction(ParamsEnum.ACTION_UPDATE, key, value)
 
         return True
 
@@ -258,7 +267,7 @@ class Params(object):
         index = len(param)
         param.append(value)
 
-        self.__callAppendAction(key, index, value)
+        self.__callAction(ParamsEnum.ACTION_APPEND, key, index, value)
 
         return True
 
@@ -271,7 +280,7 @@ class Params(object):
 
         value = self.params[key]
 
-        self.__callUpdateAction(key, value)
+        self.__callAction(ParamsEnum.ACTION_UPDATE, key, value)
 
         return True
 
@@ -295,7 +304,7 @@ class Params(object):
 
         param[index] = value
 
-        self.__callChangeAction(key, index, value)
+        self.__callAction(ParamsEnum.ACTION_CHANGE, key, index, value)
 
         return True
 
@@ -319,7 +328,7 @@ class Params(object):
 
         param.insert(index, value)
 
-        self.__callAppendAction(key, index, value)
+        self.__callAction(ParamsEnum.ACTION_APPEND, key, index, value)
         pass
 
     def delParam(self, key, value):
@@ -346,7 +355,7 @@ class Params(object):
 
         param.remove(value)
 
-        self.__callRemoveAction(key, index, value, old)
+        self.__callAction(ParamsEnum.ACTION_REMOVE, key, index, value, old)
         pass
 
     def insertDictParam(self, key, dict_key, dict_value):
@@ -356,13 +365,11 @@ class Params(object):
 
             if self.__checkParamValue(dict_key) is False:
                 Trace.log("Object", 0, "Params.insertDictParam %s - %s:%s" % (self.getName(), key, dict_key))
-
-                return False
+                return
 
             if self.__checkParamValue(dict_value) is False:
                 Trace.log("Object", 0, "Params.insertDictParam %s - %s:%s" % (self.getName(), key, dict_value))
-
-                return False
+                return
 
         param = self.params[key]
 
@@ -372,7 +379,7 @@ class Params(object):
 
         param[dict_key] = dict_value
 
-        self.__callInsertDictAction(key, dict_key, dict_value)
+        self.__callAction(ParamsEnum.ACTION_INSERT_DICT, key, dict_key, dict_value)
 
     def popDictParam(self, key, dict_key):
         if _DEVELOPMENT is True:
@@ -381,8 +388,7 @@ class Params(object):
 
             if self.__checkParamValue(dict_key) is False:
                 Trace.log("Object", 0, "Params.popDictParam %s - %s:%s" % (self.getName(), key, dict_key))
-
-                return False
+                return
 
         param = self.params[key]
 
@@ -392,7 +398,7 @@ class Params(object):
 
         dict_value = param.pop(dict_key, None)
 
-        self.__callPopDictAction(key, dict_key, dict_value)
+        self.__callAction(ParamsEnum.ACTION_POP_DICT, key, dict_key, dict_value)
 
     def getParam(self, key):
         param = self.params.get(key, Params.NotFound)
@@ -480,63 +486,13 @@ class Params(object):
         self.params = {}
         pass
 
-    def __callUpdateAction(self, key, value):
+    def __callAction(self, mode, key, *args):
         actor = self._getActor()
 
         if actor is None:
             return False
 
-        actor.callUpdateAction(key, False, value)
-
-        return True
-
-    def __callAppendAction(self, key, index, value):
-        actor = self._getActor()
-
-        if actor is None:
-            return False
-
-        actor.callAppendAction(key, False, index, value)
-
-        return True
-
-    def __callRemoveAction(self, key, index, value, old):
-        actor = self._getActor()
-
-        if actor is None:
-            return False
-
-        actor.callRemoveAction(key, False, index, value, old)
-
-        return True
-
-    def __callChangeAction(self, key, index, value):
-        actor = self._getActor()
-
-        if actor is None:
-            return False
-
-        actor.callChangeAction(key, False, index, value)
-
-        return True
-
-    def __callInsertDictAction(self, key, dict_key, dict_value):
-        actor = self._getActor()
-
-        if actor is None:
-            return False
-
-        actor.callInsertDictAction(key, False, dict_key, dict_value)
-
-        return True
-
-    def __callPopDictAction(self, key, dict_key, dict_value):
-        actor = self._getActor()
-
-        if actor is None:
-            return False
-
-        actor.callPopDictAction(key, False, dict_key, dict_value)
+        actor.callAction(mode, key, False, *args)
 
         return True
 
@@ -546,7 +502,7 @@ class Params(object):
         if actor is None:
             return
 
-        actor.callUpdateActions(params, False, False)
+        actor.updateActions(params, False, False)
         pass
 
     def _getActor(self):

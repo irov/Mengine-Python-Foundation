@@ -1,21 +1,23 @@
 from Foundation.Params import DefaultParam
 from Foundation.Params import ParamsException
+from Foundation.Params import ParamsEnum
 
 class Actor(object):
     __metaclass__ = baseslots()
 
     class Action(object):
-        __slots__ = "Update", "Append", "Remove", "Change", "InsertDict", "PopDict", "Activate"
+        __slots__ = "actions", "activate"
 
-        def __init__(self, Params, Activate):
-            self.Update = Params.get("Update", None)
-            self.Append = Params.get("Append", None)
-            self.Remove = Params.get("Remove", None)
-            self.Change = Params.get("Change", None)
-            self.InsertDict = Params.get("InsertDict", None)
-            self.PopDict = Params.get("PopDict", None)
+        def __init__(self, Params, activate):
+            Update = Params.get("Update", None)
+            Append = Params.get("Append", None)
+            Remove = Params.get("Remove", None)
+            Change = Params.get("Change", None)
+            InsertDict = Params.get("InsertDict", None)
+            PopDict = Params.get("PopDict", None)
 
-            self.Activate = Activate
+            self.actions = [Update, Append, Remove, Change, InsertDict, PopDict]
+            self.activate = activate
             pass
         pass
 
@@ -79,20 +81,22 @@ class Actor(object):
 
         return True
 
-    def __callAction(self, activate, ActionActivate, ActionEvent, *args):
-        if ActionEvent is None:
+    def __callAction(self, mode, activate, action, *args):
+        event = action.actions[mode]
+
+        if event is None:
             return
 
-        if activate is True and ActionActivate is False:
+        if activate is True and action.activate is False:
             return
 
-        if ActionActivate is True:
+        if action.activate is True:
             if self._isActorActive() is False:
                 return
 
-        ActionEvent(self, *args)
+        event(self, *args)
 
-    def callUpdateAction(self, key, activate, value):
+    def callAction(self, mode, key, activate, *args):
         if _DEVELOPMENT is True:
             if self._isActorValid() is False:
                 Trace.log("Actor", 0, "invalid %s call action Update '%s' (Actor Invalid)" % (self, key))
@@ -105,104 +109,21 @@ class Actor(object):
 
         action = self.ACTOR_ACTIONS[key]
 
-        self.__callAction(activate, action.Activate, action.Update, value)
+        self.__callAction(mode, activate, action, *args)
 
-        return True
-
-    def callAppendAction(self, key, activate, index, value):
-        if _DEVELOPMENT is True:
-            if self._isActorValid() is False:
-                Trace.log("Actor", 0, "invalid %s call action Append '%s' (Actor Invalid)" % (self, key))
-                return
-
-            if key not in self.ACTOR_ACTIONS:
-                typeActor = type(self)
-                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
-                return
-
-        action = self.ACTOR_ACTIONS[key]
-
-        self.__callAction(activate, action.Activate, action.Append, index, value)
-
-    def callRemoveAction(self, key, activate, index, value, old):
-        if _DEVELOPMENT is True:
-            if self._isActorValid() is False:
-                Trace.log("Actor", 0, "invalid %s call action Remove '%s' (Actor Invalid)" % (self, key))
-                return
-
-            if key not in self.ACTOR_ACTIONS:
-                typeActor = type(self)
-                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
-                return
-
-        action = self.ACTOR_ACTIONS[key]
-
-        self.__callAction(activate, action.Activate, action.Remove, index, value, old)
-
-        return True
-
-    def callChangeAction(self, key, activate, index, value):
-        if _DEVELOPMENT is True:
-            if self._isActorValid() is False:
-                Trace.log("Actor", 0, "invalid %s call action Change '%s' (Actor Invalid)" % (self, key))
-                return
-
-            if key not in self.ACTOR_ACTIONS:
-                typeActor = type(self)
-                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
-                return
-
-        action = self.ACTOR_ACTIONS[key]
-
-        self.__callAction(activate, action.Activate, action.Change, index, value)
-
-        return True
-
-    def callInsertDictAction(self, key, activate, dict_key, dict_value):
-        if _DEVELOPMENT is True:
-            if self._isActorValid() is False:
-                Trace.log("Actor", 0, "invalid %s call action InsertDict '%s' (Actor Invalid)" % (self, key))
-                return
-
-            if key not in self.ACTOR_ACTIONS:
-                typeActor = type(self)
-                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
-                return
-
-        action = self.ACTOR_ACTIONS[key]
-
-        self.__callAction(activate, action.Activate, action.InsertDict, dict_key, dict_value)
-
-        return True
-
-    def callPopDictAction(self, key, activate, dict_key, dict_value):
-        if _DEVELOPMENT is True:
-            if self._isActorValid() is False:
-                Trace.log("Actor", 0, "invalid %s call action PopDict '%s' (Actor Invalid)" % (self, key))
-                return
-
-            if key not in self.ACTOR_ACTIONS:
-                typeActor = type(self)
-                self._actorFailed(typeActor, "Actor not have action '%s'" % (key))
-                return
-
-        action = self.ACTOR_ACTIONS[key]
-
-        self.__callAction(activate, action.Activate, action.PopDict, dict_key, dict_value)
-
-        return True
-
-    def callUpdateActions(self, params, activate, initialize):
+    def updateActions(self, params, activate, initialize):
         if _DEVELOPMENT is True:
             if self._isActorValid() is False:
                 Trace.log("Actor", 0, "invalid %s call action Updates (Actor Invalid)" % (self))
                 return False
 
         for key, action in self.ACTOR_ACTIONS_CACHE:
-            if action.Update is None:
+            event = action.actions[ParamsEnum.ACTION_UPDATE]
+
+            if event is None:
                 continue
 
-            if activate is True and action.Activate is False:
+            if activate is True and action.activate is False:
                 continue
 
             if key not in params:
@@ -213,11 +134,11 @@ class Actor(object):
             if initialize is True and isinstance(value, DefaultParam) is True:
                 continue
 
-            if action.Activate is True:
+            if action.activate is True:
                 if self._isActorActive() is False:
                     continue
 
-            action.Update(self, value)
+            event(self, value)
             pass
         pass
 

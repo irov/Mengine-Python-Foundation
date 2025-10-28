@@ -164,7 +164,7 @@ class BaseEntity(Actor, Initializer):
         self._onRestore()
 
         params = self.object.getParams()
-        self.callUpdateActions(params, False, True)
+        self.updateActions(params, False, True)
 
         self._onRestored()
         pass
@@ -201,7 +201,7 @@ class BaseEntity(Actor, Initializer):
         self._onActivate()
 
         params = self.object.getParams()
-        self.callUpdateActions(params, True, False)
+        self.updateActions(params, True, False)
         pass
 
     def _onActivate(self):
