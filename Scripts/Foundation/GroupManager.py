@@ -172,7 +172,7 @@ class GroupManager(Manager):
             obj.setPosition(new_pos)
             pass
 
-        group.visitChild(__offsetY)
+        group.visitChildren(__offsetY)
 
         GroupManager.s_groups[groupName] = group
 

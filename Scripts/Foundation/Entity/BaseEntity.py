@@ -191,7 +191,6 @@ class BaseEntity(Actor, Initializer):
 
     def _isActorActive(self):
         return self.node.isActivate()
-        pass
 
     def onActivate(self):
         if self.object is None:

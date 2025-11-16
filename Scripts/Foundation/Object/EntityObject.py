@@ -1,7 +1,7 @@
 from Foundation.Object.BaseObject import BaseObject
 
 from Foundation.Params import DefaultParam
-
+from Foundation.Params import WidgetParamCheckBox, WidgetParamPosition, WidgetParamScale, WidgetParamOrientation, WidgetParamAlpha, WidgetParamRGB
 
 class EntityObject(BaseObject):
     PARAMS_Enable = True
@@ -29,14 +29,15 @@ class EntityObject(BaseObject):
     def declareORM(Type):
         BaseObject.declareORM(Type)
 
-        Type.declareParam("Enable")
-        Type.declareParam("BlockInteractive")
-        Type.declareParam("Position")
-        Type.declareParam("Scale")
-        Type.declareParam("Origin")
-        Type.declareParam("Orientation")
-        Type.declareParam("Alpha")
-        Type.declareParam("RGB")
+        Type.declareParam("Enable", Widget=WidgetParamCheckBox(Description="Enable/Disable object"))
+        Type.declareParam("BlockInteractive", Widget=WidgetParamCheckBox())
+        Type.declareParam("Position", Widget=WidgetParamPosition(Step=1.0))
+        Type.declareParam("Scale", Widget=WidgetParamScale(Step=0.01))
+        Type.declareParam("Origin", Widget=WidgetParamPosition(Step=1.0))
+        Type.declareParam("Orientation", Widget=WidgetParamOrientation(Step=0.0174533))
+        Type.declareParam("Alpha", Widget=WidgetParamAlpha(Step=0.01))
+        Type.declareParam("RGB", Widget=WidgetParamRGB(Step=0.01))
+        pass
 
     def _onParams(self, params):
         super(EntityObject, self)._onParams(params)
@@ -50,16 +51,20 @@ class EntityObject(BaseObject):
         self.initParam("Orientation", params, self.PARAMS_Orientation)
         self.initParam("Alpha", params, self.PARAMS_Alpha)
         self.initParam("RGB", params, self.PARAMS_RGB)
+        pass
 
     def _onLoadParams(self):
         if self.isActive() is True:
             self.onEntityRestore()
+            pass
+        pass
 
     def _getActor(self):
         if self.isActive() is False:
             return None
 
         entity = self.getEntity()
+
         return entity
 
     def setParamInteractive(self, value):
@@ -73,6 +78,7 @@ class EntityObject(BaseObject):
             Interactive += 1
         else:
             Interactive -= 1
+            pass
 
         self.setParam("Interactive", Interactive)
 
@@ -83,6 +89,9 @@ class EntityObject(BaseObject):
             if refcount == -1:
                 Trace.log("Entity", 0, "Entity.setParamInteractive %s:%s negative interactive refcount!" % (self.getGroupName(), self.getName()))
                 # return
+                pass
+            pass
+        pass
 
     def setInteractive(self, value):
         if isinstance(value, bool) is False:
@@ -93,6 +102,7 @@ class EntityObject(BaseObject):
             self.__dynamicInteractive += 1
         else:
             self.__dynamicInteractive -= 1
+            pass
 
         Interactive = self.getParam("Interactive")
         self.setParam("Interactive", Interactive)
@@ -103,6 +113,9 @@ class EntityObject(BaseObject):
             if refcount == -1:
                 Trace.log("Entity", 0, "Entity.setDynamicInteractive %s:%s negative interactive refcount!" % (self.getGroupName(), self.getName()))
                 # return
+                pass
+            pass
+        pass
 
     def getInteractive(self):
         Interactive = self.getParam("Interactive")
@@ -142,9 +155,11 @@ class EntityObject(BaseObject):
 
     def _onInitialize(self):
         super(EntityObject, self)._onInitialize()
+        pass
 
     def _onFinalize(self):
         super(EntityObject, self)._onFinalize()
+        pass
 
     def initializeEntity(self):
         entity = self.onGenerate()
@@ -165,6 +180,7 @@ class EntityObject(BaseObject):
 
     def restoreTransformation(self):    # fixme: unused?
         self.updateParam()
+        pass
 
     def _onActivate(self):
         entity = self.initializeEntity()
@@ -190,6 +206,7 @@ class EntityObject(BaseObject):
         entity.onFinalize()
         entity.onRemoveObject()
         entity.onRemoveNode()
+        pass
 
     def __onDeactivateTestObject(self):
         if Mengine.is_class(self.entity.node) is False:

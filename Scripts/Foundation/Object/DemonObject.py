@@ -3,9 +3,9 @@ from Foundation.Object.EntityObject import EntityObject
 
 
 class DemonObject(ChildObject, EntityObject):
-
     def __init__(self):
         super(DemonObject, self).__init__()
+        pass
 
     def isSavable(self):
         return False

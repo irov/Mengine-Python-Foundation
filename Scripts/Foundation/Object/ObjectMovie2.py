@@ -49,7 +49,6 @@ class ObjectMovie2(ObjectAnimatable):
         if self.isActive() is False:
             Trace.log('Object', 0, 'Movie2 %s is not active' % self.getName())
             return None
-            pass
 
         Entity = self.getEntity()
 

@@ -13,14 +13,17 @@ class ChildObject(BaseObject):
         self.prototypes = {}
 
         self.currentLayerName = None
+        pass
 
     def setCurrentLayerName(self, name):
         self.currentLayerName = name
+        pass
 
     def addPrototype(self, Type, Name, Preparation=None, **Params):
         Prototype = (Type, Preparation, Params, self.currentLayerName)
 
         self.prototypes[Name] = Prototype
+        pass
 
     def getPrototype(self, prototypeName):
         if prototypeName not in self.prototypes:
@@ -54,10 +57,10 @@ class ChildObject(BaseObject):
             params.update(prototypeParams)
         elif prototypeParams is not None:
             Trace.log("Object", 0, "ChildObject.generateObject: %s must be instance of dictionary" % (prototypeParams,))
+            pass
 
         obj = ObjectManager.createObject(PrototypeType, objectName, self, params)
 
-        obj.setPrototypeName(prototypeName)
         obj.setLayerName(PrototypeLayerName)
 
         if PrototypePreparation is not None:
@@ -100,7 +103,6 @@ class ChildObject(BaseObject):
 
         obj = ObjectManager.createObject(PrototypeType, objectName, self, params)
 
-        obj.setPrototypeName(prototypeName)
         obj.setLayerName(PrototypeLayerName)
 
         if PrototypePreparation is not None:
@@ -244,31 +246,35 @@ class ChildObject(BaseObject):
     def visitObjects(self, cb):
         cb(self)
 
-        self.visitChild(cb)
+        self.visitChildren(cb)
+        pass
 
-    def visitObjects2(self, cb):
-        if cb(self) is False:
-            return False
-
-        for child in self.child + self.child_unique:
-            if child.visitObjects(cb) is False:
-                return False
-
-        return True
-
-    def visitObjectsBrakeOnFalse(self, cb):
-        if cb(self) is False:
-            return False
-
-        for child in self.child + self.child_unique:
-            if child.visitObjects2(cb) is False:
-                return False
-
-        return True
-
-    def visitChild(self, cb):
-        for child in self.child + self.child_unique:
+    def visitChildren(self, cb):
+        for child in self.child:
             child.visitObjects(cb)
+            pass
+
+        for child in self.child_unique:
+            child.visitObjects(cb)
+            pass
+        pass
+
+    def visitObjectsBreakOnFalse(self, cb):
+        if cb(self) is False:
+            return False
+
+        return self.visitChildrenBreakOnFalse(cb)
+
+    def visitChildrenBreakOnFalse(self, cb):
+        for child in self.child:
+            if child.visitObjectsBreakOnFalse(cb) is False:
+                return False
+
+        for child in self.child_unique:
+            if child.visitObjectsBreakOnFalse(cb) is False:
+                return False
+
+        return True
 
     def _onInitialize(self):
         super(ChildObject, self)._onInitialize()

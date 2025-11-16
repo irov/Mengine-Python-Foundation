@@ -830,7 +830,6 @@ class SceneManager(Manager):
     def isCurrentSceneEntering():
         return SceneManager.s_currentSceneEntering
 
-
     @staticmethod
     def getCurrentDescription():
         return SceneManager.s_currentDescription

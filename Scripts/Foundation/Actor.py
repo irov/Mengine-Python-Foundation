@@ -146,7 +146,7 @@ class Actor(object):
         pass
 
     def _isActorActive(self):
-        pass
+        return False
 
     def _isActorValid(self):
         return True

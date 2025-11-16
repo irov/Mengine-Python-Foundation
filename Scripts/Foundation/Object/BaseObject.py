@@ -19,16 +19,17 @@ class BaseObject(Params, Initializer):
         self.loaded = False
 
         self.layerName = None
-        self.prototypeName = None
 
     def setName(self, name):
         self.name = name
+        pass
 
     def getName(self):
         return self.name
 
     def setGroup(self, group):
         self.Group = group
+        pass
 
     def getGroup(self):
         return self.Group
@@ -39,26 +40,23 @@ class BaseObject(Params, Initializer):
     def getLayerName(self):
         return self.layerName
 
-    def setPrototypeName(self, prototypeName):
-        self.prototypeName = prototypeName
-
-    def getPrototypeName(self):
-        return self.prototypeName
-
     def _onParams(self, params):
         super(BaseObject, self)._onParams(params)
+        pass
 
     def getType(self):
         return type(self).__name__
 
     def setSaving(self, saving):
         self.saving = saving
+        pass
 
     def isSaving(self):
         return self.saving
 
     def setEntity(self, entity):
         self.entity = entity
+        pass
 
     def getEntity(self):
         if self.isActive() is False:
@@ -84,7 +82,11 @@ class BaseObject(Params, Initializer):
     def isEntityActivate(self):
         if self.hasEntity() is False:
             return False
-        return self.entity.isActivate() is True
+
+        if self.entity.isActivate() is False:
+            return False
+
+        return True
 
     def hasEntity(self):
         return self.entity is not None
@@ -173,18 +175,23 @@ class BaseObject(Params, Initializer):
 
     def _onInitializeFailed(self, msg):
         Trace.log("Object", 0, "BaseObject initialize '%s:%s' (type '%s') is failed - %s" % (self.getGroupName(), self.name, self.getType(), msg))
+        pass
 
     def _onFinalizeFailed(self, msg):
         Trace.log("Object", 0, "BaseObject finalize '%s:%s' (type '%s') is failed - %s" % (self.getGroupName(), self.name, self.getType(), msg))
+        pass
 
     def _onInitialize(self):
         super(BaseObject, self)._onInitialize()
+        pass
 
     def _onFinalize(self):
         super(BaseObject, self)._onFinalize()
 
         if self.isActive() is True:
             self.onDeactivate()
+            pass
+        pass
 
     def onActivate(self):
         if self.isInitialized() is False:
@@ -236,6 +243,7 @@ class BaseObject(Params, Initializer):
 
     def _checkParamExtraValue(self, value):
         type_value = type(value)
+
         if issubclass(type_value, BaseObject) is True:
             return True
 
@@ -243,19 +251,28 @@ class BaseObject(Params, Initializer):
 
     def visitObjects(self, cb):
         cb(self)
+        pass
 
-    def visitObjects2(self, cb):
+    def visitChildren(self, cb):
+        pass
+
+    def visitObjectsBreakOnFalse(self, cb):
         if cb(self) is False:
             return False
 
         return True
 
+    def visitChildrenBreakOnFalse(self, cb):
+        pass
+
     def visitParentBrakeOnFalse(self, cb):
         parent = self.getParent()
+
         if parent is None:
             return False
 
         parent.visitParentBrakeOnFalse(cb)
+
         if cb(parent) is False:
             return False
 
