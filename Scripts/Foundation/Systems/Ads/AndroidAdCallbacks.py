@@ -1,8 +1,8 @@
-class AndroidAppLovinCallbacks(object):
+class AndroidAdCallbacks(object):
     ANDROID_PLUGIN_NAME = "MengineAdService"
 
     def __init__(self):
-        super(AndroidAppLovinCallbacks, self).__init__()
+        super(AndroidAdCallbacks, self).__init__()
         self._cbs = {}
 
     def _addAndroidCallback(self, name, cb):

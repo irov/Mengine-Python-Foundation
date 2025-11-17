@@ -125,7 +125,7 @@ class BaseAdUnit(object):
             @param init_if_no: if True - tries to init """
         if self.inited is True:
             return True
-        err_msg = "Applovin ad [{}] not inited".format(self.ad_type)
+        err_msg = "ad [{}] not inited".format(self.ad_type)
 
         if init_if_no is True:
             err_msg += ". Try init..."

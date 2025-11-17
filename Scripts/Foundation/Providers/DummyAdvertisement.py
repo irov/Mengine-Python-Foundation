@@ -41,12 +41,12 @@ class DummyAdvertisement(object):
 
     @staticmethod
     def getPhoneAdaptiveBannerHeight(width):
-        """ Applovin Banners are automatically sized to 320x50 on phones """
+        """ Banners are automatically sized to 320x50 on phones """
         return 50.0 * width / 320.0
 
     @staticmethod
     def getTabletAdaptiveBannerHeight(width):
-        """ Applovin Banners are automatically sized to 728x90 on tablets """
+        """ Banners are automatically sized to 728x90 on tablets """
         return 90.0 * width / 728.0
 
 # ----------------------------------------------------------------------------------------------------------------------

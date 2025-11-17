@@ -1,37 +1,37 @@
 from Foundation.System import System
 from Foundation.Utils import SimpleLogger
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
-from Foundation.Systems.AppLovin.AppLovinAdFactory import AppLovinAdFactory
+from Foundation.Systems.Ads.AdFactory import AdFactory
 
-_Log = SimpleLogger("SystemApplovin")
+_Log = SimpleLogger("SystemAppLovin")
 
 ANDROID_PLUGIN_NAME = "MengineAppLovin"
 APPLE_PLUGIN_NAME = "AppleAppLovin"
 
-DEVDEBUGGER_TAB_NAME = "Applovin"
+DEVDEBUGGER_TAB_NAME = "AppLovin"
 
-class SystemApplovin(System):
-    """ Advertisement module 'Applovin' """
+class SystemAppLovin(System):
+    """ Advertisement module 'AppLovin' """
 
     is_plugin_active = False
     is_sdk_init = False
 
     def __init__(self):
-        super(SystemApplovin, self).__init__()
-        self.banner = AppLovinAdFactory.createAd("Banner")
-        self.interstitial = AppLovinAdFactory.createAd("Interstitial")
-        self.rewarded = AppLovinAdFactory.createAd("Rewarded")
+        super(SystemAppLovin, self).__init__()
+        self.banner = AdFactory.createAd("Banner")
+        self.interstitial = AdFactory.createAd("Interstitial")
+        self.rewarded = AdFactory.createAd("Rewarded")
         self.semaphoreAdServiceReady = Semaphore(False, "AdServiceReady")
 
     @staticmethod
     def _onAvailable(params):
         if _ANDROID:
-            SystemApplovin.is_plugin_active = Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME)
+            SystemAppLovin.is_plugin_active = Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME)
         elif _IOS:
-            SystemApplovin.is_plugin_active = Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME)
+            SystemAppLovin.is_plugin_active = Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME)
             pass
 
-        return SystemApplovin.is_plugin_active
+        return SystemAppLovin.is_plugin_active
         pass
 
     def _onInitialize(self):
@@ -101,7 +101,7 @@ class SystemApplovin(System):
 
     @staticmethod
     def isSdkInitialized():
-        return SystemApplovin.is_sdk_init is True
+        return SystemAppLovin.is_sdk_init is True
 
     @staticmethod
     def showMediationDebugger():
@@ -150,7 +150,7 @@ class SystemApplovin(System):
 
     def __cbSdkInitialized(self):
         _Log("[SDK cb] onAppLovinPluginOnSdkInitialized")
-        SystemApplovin.is_sdk_init = True
+        SystemAppLovin.is_sdk_init = True
         self.initAds()
 
         self.__disableDevToDebugInitButton()

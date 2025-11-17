@@ -1,6 +1,6 @@
-from Foundation.Systems.AppLovin.AndroidAppLovinAdUnit import AndroidAppLovinAdUnit
+from Foundation.Systems.Ads.AndroidAdUnit import AndroidAdUnit
 
-class AndroidAppLovinInterstitialAd(AndroidAppLovinAdUnit):
+class AndroidInterstitialAd(AndroidAdUnit):
     ad_type = "Interstitial"
 
     def _setCallbacks(self):

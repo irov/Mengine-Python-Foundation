@@ -1,6 +1,6 @@
-from Foundation.Systems.AppLovin.AndroidAppLovinAdUnit import AndroidAppLovinAdUnit
+from Foundation.Systems.Ads.AndroidAdUnit import AndroidAdUnit
 
-class AndroidAppLovinRewardedAd(AndroidAppLovinAdUnit):
+class AndroidRewardedAd(AndroidAdUnit):
     ad_type = "Rewarded"
 
     def _setCallbacks(self):

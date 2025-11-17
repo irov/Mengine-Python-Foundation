@@ -1,4 +1,4 @@
-from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit
+from Foundation.Systems.Ads.BaseAdUnit import BaseAdUnit
 
 class IOSRewardedAd(BaseAdUnit):
     ad_type = "Rewarded"

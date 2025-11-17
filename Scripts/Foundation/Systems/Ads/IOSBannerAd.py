@@ -1,6 +1,6 @@
-from Foundation.Systems.AppLovin.BaseAdUnit import BaseAdUnit
+from Foundation.Systems.Ads.BaseAdUnit import BaseAdUnit
 
-class IOSBanner(BaseAdUnit):
+class IOSBannerAd(BaseAdUnit):
     ad_type = "Banner"
 
     def _initialize(self):
