@@ -1,5 +1,6 @@
 from Foundation.Manager import Manager
 from Foundation.Object.BaseObject import BaseObject
+from Foundation.Params import ParamsException
 
 class ObjectManager(Manager):
     s_typesDemain = {}
