@@ -6,6 +6,11 @@ class BaseScopeEntity(BaseEntity):
 
     ENTITY_SCOPE_REPEAT = False
 
+    @staticmethod
+    def declareORM(Type):
+        BaseEntity.declareORM(Type)
+        pass
+
     def __init__(self):
         super(BaseScopeEntity, self).__init__()
 

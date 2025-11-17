@@ -8,15 +8,15 @@ class MovieVirtualArea(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
-        Type.addAction(Type, 'ResourceMovieFrame')
-        Type.addAction(Type, 'ResourceMovieContent')
+        Type.addAction('ResourceMovieFrame')
+        Type.addAction('ResourceMovieContent')
 
-        Type.addAction(Type, 'Rigidity')
-        Type.addAction(Type, 'Friction')
+        Type.addAction('Rigidity')
+        Type.addAction('Friction')
 
-        Type.addAction(Type, 'DraggingMode')
-        Type.addAction(Type, 'EnableScale')
-        Type.addAction(Type, 'MaxScaleFactor')
+        Type.addAction('DraggingMode')
+        Type.addAction('EnableScale')
+        Type.addAction('MaxScaleFactor')
 
     def __init__(self):
         super(MovieVirtualArea, self).__init__()

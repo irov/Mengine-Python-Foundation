@@ -9,8 +9,8 @@ class MovieScrollbar(BaseEntity):
         Type.addAction("ResourceMovieSlider")
         Type.addAction("ResourceMovieBar")
         Type.addAction("IsHorizontal")
-        Type.addAction(Type, 'setToZero')
-        Type.addAction(Type, 'Value', Activate=True, Update=MovieScrollbar.__updateValue)
+        Type.addAction("SetToZero")
+        Type.addAction("Value", Activate=True, Update=MovieScrollbar.__updateValue)
 
     def __updateValue(self, value):
         self.set_percentage(value)
@@ -172,7 +172,7 @@ class MovieScrollbar(BaseEntity):
                 slider.addFunction(Mengine.enableGlobalHandler, self._mouse_handler, False)
                 slider.addFunction(self._on_mouse_up)
 
-        if self.object.getParam('setToZero') is True:
+        if self.object.SetToZero is True:
             self.set_percentage(0)
 
     def _onDeactivate(self):

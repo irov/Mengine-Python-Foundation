@@ -8,8 +8,6 @@ _Log = SimpleLogger("SystemAdMob")
 ANDROID_PLUGIN_NAME = "MengineAdMob"
 APPLE_PLUGIN_NAME = "AppleAdMob"
 
-DEVDEBUGGER_TAB_NAME = "AdMob"
-
 class SystemAdMob(System):
     """ Advertisement module 'AdMob' """
 
@@ -36,9 +34,7 @@ class SystemAdMob(System):
 
     def _onInitialize(self):
         Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)
-
-        # ads do init in `__cbSdkInitialized`
-        self.__addDevToDebug()
+        pass
 
     def _onFinalize(self):
         if self.banner is not None:
@@ -124,7 +120,6 @@ class SystemAdMob(System):
         SystemAdMob.is_sdk_init = True
         self.initAds()
 
-        self.__disableDevToDebugInitButton()
         self.semaphoreAdServiceReady.setValue(True)
 
     # provider handling
@@ -162,51 +157,8 @@ class SystemAdMob(System):
     def isShowingRewarded(self):
         return self.rewarded.isShowing()
 
-    # debug
+    def showConsentFlow(self):
+        return False
 
-    def __disableDevToDebugInitButton(self):
-        if Mengine.isAvailablePlugin("DevToDebug") is False:
-            return
-        if Mengine.hasDevToDebugTab(DEVDEBUGGER_TAB_NAME) is False:
-            return
-
-        tab = Mengine.getDevToDebugTab(DEVDEBUGGER_TAB_NAME)
-        widget = tab.findWidget("run_init")
-        if widget:
-            widget.setHide(True)
-
-    def __addDevToDebug(self):
-        if Mengine.isAvailablePlugin("DevToDebug") is False:
-            return
-        if self.is_plugin_active is False:
-            return
-        if Mengine.hasDevToDebugTab(DEVDEBUGGER_TAB_NAME) is True:
-            return
-
-        tab = Mengine.addDevToDebugTab(DEVDEBUGGER_TAB_NAME)
-        widgets = []
-
-        w_debug = Mengine.createDevToDebugWidgetButton("show_mediation_debugger")
-        w_debug.setTitle("Show Mediation Debugger")
-        w_debug.setClickEvent(self.showMediationDebugger)
-        widgets.append(w_debug)
-
-        w_consent = Mengine.createDevToDebugWidgetButton("show_consent_flow")
-        w_consent.setTitle("Show Consent Flow (isConsentFlow={})".format(self.isConsentFlow()))
-        w_consent.setClickEvent(self.showConsentFlow)
-        widgets.append(w_consent)
-
-        widgets.extend(self.banner._getDevToDebugWidgets())
-        widgets.extend(self.interstitial._getDevToDebugWidgets())
-        widgets.extend(self.rewarded._getDevToDebugWidgets())
-
-        for widget in widgets:
-            tab.addWidget(widget)
-
-    def __remDevToDebug(self):
-        if Mengine.isAvailablePlugin("DevToDebug") is False:
-            return
-        if Mengine.hasDevToDebugTab(DEVDEBUGGER_TAB_NAME) is False:
-            return
-
-        Mengine.removeDevToDebugTab(DEVDEBUGGER_TAB_NAME)
+    def isConsentFlow(self):
+        return False

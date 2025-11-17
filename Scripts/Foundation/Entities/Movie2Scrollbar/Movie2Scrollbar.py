@@ -12,7 +12,7 @@ class Movie2Scrollbar(BaseEntity):
         Type.addAction("CompositionNameBar")
 
         Type.addAction("IsHorizontal")
-        Type.addAction(Type, 'Value', Activate=True, Update=Movie2Scrollbar.__updateValue)
+        Type.addAction("Value", Activate=True, Update=Movie2Scrollbar.__updateValue)
 
     def __init__(self):
         super(Movie2Scrollbar, self).__init__()

@@ -5,10 +5,10 @@ class ObjectMovieScrollbar(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addConst(Type, 'ResourceMovieSlider')
-        Type.addConst(Type, 'ResourceMovieBar')
-        Type.addConst(Type, 'IsHorizontal')
-        Type.declareParam('setToZero')
+        Type.declareConst('ResourceMovieSlider')
+        Type.declareConst('ResourceMovieBar')
+        Type.declareConst('IsHorizontal')
+        Type.declareParam('SetToZero')
         Type.declareParam('Value')
 
     def __init__(self):
@@ -23,5 +23,5 @@ class ObjectMovieScrollbar(DemonObject):
         self.initConst('ResourceMovieSlider', params, None)
         self.initConst('ResourceMovieBar', params, None)
         self.initConst('IsHorizontal', params, False)
-        self.initParam('setToZero', params, True)
+        self.initParam('SetToZero', params, True)
         self.initParam('Value', params, 0.0)

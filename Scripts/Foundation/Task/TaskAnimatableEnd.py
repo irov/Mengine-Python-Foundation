@@ -28,10 +28,8 @@ class TaskAnimatableEnd(MixinEvent, Task):
                 pass
 
             return True
-            pass
 
         self.addEvent(Animatable.onAnimatableEnd, __onAnimatableEndFilter)
 
         return False
-        pass
     pass

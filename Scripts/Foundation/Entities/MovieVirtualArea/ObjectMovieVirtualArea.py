@@ -5,15 +5,15 @@ class ObjectMovieVirtualArea(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-        Type.addConst(Type, 'ResourceMovieFrame')
-        Type.addConst(Type, 'ResourceMovieContent')
+        Type.declareConst('ResourceMovieFrame')
+        Type.declareConst('ResourceMovieContent')
 
-        Type.addConst(Type, 'Rigidity')  # Elasticity friction
-        Type.addConst(Type, 'Friction')  # Inertia friction
+        Type.declareConst('Rigidity')  # Elasticity friction
+        Type.declareConst('Friction')  # Inertia friction
 
-        Type.addConst(Type, 'DraggingMode')
-        Type.addConst(Type, 'EnableScale')
-        Type.addConst(Type, 'MaxScaleFactor')
+        Type.declareConst('DraggingMode')
+        Type.declareConst('EnableScale')
+        Type.declareConst('MaxScaleFactor')
 
     def _onParams(self, params):
         super(ObjectMovieVirtualArea, self)._onParams(params)

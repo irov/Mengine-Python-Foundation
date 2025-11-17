@@ -5,13 +5,10 @@ class ObjectMovie2Scrollbar(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
-
-        Type.addConst(Type, 'ResourceMovie')
-
-        Type.addConst(Type, 'CompositionNameSlider')
-        Type.addConst(Type, 'CompositionNameBar')
-
-        Type.addConst(Type, 'IsHorizontal')
+        Type.declareConst('ResourceMovie')
+        Type.declareConst('CompositionNameSlider')
+        Type.declareConst('CompositionNameBar')
+        Type.declareConst('IsHorizontal')
         Type.declareParam('Value')
 
     def __init__(self):

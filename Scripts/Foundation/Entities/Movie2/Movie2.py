@@ -354,7 +354,6 @@ class Movie2(BaseAnimatable):
     def __onAnimatableEnd(self, id):
         if self.validPlayId(id) is False:
             return
-            pass
 
         self.end()
         pass
@@ -362,9 +361,8 @@ class Movie2(BaseAnimatable):
     def __onAnimatableStop(self, id):
         if self.validPlayId(id) is False:
             return
-            pass
 
-        self.end()
+        self.stop()
         pass
 
     def __updateDisableLayers(self, layers):

@@ -8,13 +8,13 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
     def _onParams(self, params):
         super(TaskNodeAlphaTo, self)._onParams(params)
 
-        self.alphaFrom = params.get("From", None)  # if not None, set current alpha this value, then run alpha to
+        self.alphaFrom = params.get("From", None)
         self.alphaTo = params.get("To")
-        self.interrupt = params.get("Interrupt", False)  # if true set alphaTo on task interrupt
+        self.interrupt = params.get("Interrupt", False)
         self.easing = params.get("Easing", "easyLinear")
 
-        self.isTemp = params.get("IsTemp", False)  # restore node original render local alpha when task complete/skipped
-        self.alphaOrig = 1.0  # original node alpha value
+        self.isTemp = params.get("IsTemp", False)
+        self.alphaOrig = 1.0
 
         self.affector = None
 
@@ -22,7 +22,7 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
         render = self.node.getRender()
 
         if render is not None:
-            if self.isTemp:  # if isTemp get original alpha
+            if self.isTemp:
                 self.alphaOrig = render.getLocalAlpha()
 
             if self.alphaFrom is not None:
@@ -30,8 +30,6 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
 
         if self.node.isActivate() is False:
             self.log("[%s] not active - alphaTo not started" % (self.node.getName()))
-            # TIP:  If your node is Arrow's child and Arrow is disable - you can get this error.
-            #       Try to do this task after onArrowActivate listened. You can get Arrow by Mengine.getArrow()
             return True
 
         def __onAlphaTo(node, isEnd):
@@ -51,7 +49,7 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
     def _onFastSkip(self):
         render = self.node.getRender()
         if render is not None:
-            if self.isTemp:  # if isTemp restore original alpha
+            if self.isTemp:
                 render.setLocalAlpha(self.alphaOrig)
             else:
                 render.setLocalAlpha(self.alphaTo)
@@ -63,7 +61,7 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
 
         self.node.colorStop()
 
-        if self.isTemp:  # if isTemp restore original alpha
+        if self.isTemp:
             render = self.node.getRender()
 
             if render is not None:
@@ -79,7 +77,7 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
         pass
 
     def _onComplete(self):
-        if self.isTemp:  # if isTemp restore original alpha
+        if self.isTemp:
             render = self.node.getRender()
 
             if render is not None:

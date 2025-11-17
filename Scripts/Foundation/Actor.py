@@ -35,6 +35,9 @@ class Actor(object):
     @classmethod
     def addAction(cls, key, Activate=False, **Params):
         if _DEVELOPMENT is True:
+            if isinstance(key, str) is False:
+                raise ParamsException("Actor '%s' add action key '%s' not str" % (cls.__name__, key))
+
             def __get_key(self):
                 if self.object is None:
                     Trace.log("Actor", 0, "Actor %s get property %s in destroy entity" % (cls.__name__, key))
