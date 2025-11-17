@@ -3,7 +3,7 @@ from Foundation.Systems.Ads.AndroidRewardedAd import AndroidRewardedAd
 from Foundation.Systems.Ads.AndroidBannerAd import AndroidBannerAd
 from Foundation.Systems.Ads.IOSInterstitialAd import IOSInterstitialAd
 from Foundation.Systems.Ads.IOSRewardedAd import IOSRewardedAd
-from Foundation.Systems.Ads.IOSBanner import IOSBannerAd
+from Foundation.Systems.Ads.IOSBannerAd import IOSBannerAd
 
 class AdFactory(object):
     @staticmethod
@@ -39,7 +39,7 @@ class AdFactory(object):
         types = {
             "Interstitial": IOSInterstitialAd,
             "Rewarded": IOSRewardedAd,
-            "Banner": IOSBanner,
+            "Banner": IOSBannerAd,
         }
 
         Type = types[ad_type]
