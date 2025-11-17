@@ -1,7 +1,7 @@
 from Foundation.Object.BaseObject import BaseObject
 
 from Foundation.Params import DefaultParam
-from Foundation.Params import WidgetParamCheckBox, WidgetParamPosition, WidgetParamScale, WidgetParamOrientation, WidgetParamAlpha, WidgetParamRGB
+from Foundation.WidgetParam import WidgetParamCheckBox, WidgetParamPosition, WidgetParamScale, WidgetParamOrientation, WidgetParamAlpha, WidgetParamRGB
 
 class EntityObject(BaseObject):
     PARAMS_Enable = True
@@ -29,14 +29,28 @@ class EntityObject(BaseObject):
     def declareORM(Type):
         BaseObject.declareORM(Type)
 
-        Type.declareParam("Enable", Widget=WidgetParamCheckBox(Description="Enable/Disable object"))
-        Type.declareParam("BlockInteractive", Widget=WidgetParamCheckBox())
-        Type.declareParam("Position", Widget=WidgetParamPosition(Step=1.0))
-        Type.declareParam("Scale", Widget=WidgetParamScale(Step=0.01))
-        Type.declareParam("Origin", Widget=WidgetParamPosition(Step=1.0))
-        Type.declareParam("Orientation", Widget=WidgetParamOrientation(Step=0.0174533))
-        Type.declareParam("Alpha", Widget=WidgetParamAlpha(Step=0.01))
-        Type.declareParam("RGB", Widget=WidgetParamRGB(Step=0.01))
+        Type.declareParam("Enable")
+        Type.declareParam("BlockInteractive")
+        Type.declareParam("Position")
+        Type.declareParam("Scale")
+        Type.declareParam("Origin")
+        Type.declareParam("Orientation")
+        Type.declareParam("Alpha")
+        Type.declareParam("RGB")
+        pass
+
+    @staticmethod
+    def editorORM(Type):
+        BaseObject.editorORM(Type)
+
+        Type.editorParam("Enable", Widget=WidgetParamCheckBox(Description="Enable/Disable object"))
+        Type.editorParam("BlockInteractive", Widget=WidgetParamCheckBox())
+        Type.editorParam("Position", Widget=WidgetParamPosition(Step=1.0))
+        Type.editorParam("Scale", Widget=WidgetParamScale(Step=0.01))
+        Type.editorParam("Origin", Widget=WidgetParamPosition(Step=1.0))
+        Type.editorParam("Orientation", Widget=WidgetParamOrientation(Step=0.0174533))
+        Type.editorParam("Alpha", Widget=WidgetParamAlpha(Step=0.01))
+        Type.editorParam("RGB", Widget=WidgetParamRGB(Step=0.01))
         pass
 
     def _onParams(self, params):

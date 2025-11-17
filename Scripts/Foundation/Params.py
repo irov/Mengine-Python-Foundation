@@ -15,63 +15,6 @@ class DefaultParam(object):
         pass
     pass
 
-class WidgetParam(object):
-    def __init__(self, Type, ReadOnly, Description, Step):
-        self.Type = Type
-        self.ReadOnly = ReadOnly
-        self.Description = Description
-        self.Step = 0.0 if Step is None else Step
-        pass
-
-    def getType(self):
-        return self.Type
-
-    def isReadOnly(self):
-        return self.ReadOnly
-
-    def getDescription(self):
-        return self.Description
-
-    def getStep(self):
-        return self.Step
-    pass
-
-class WidgetParamCheckBox(WidgetParam):
-    def __init__(self, ReadOnly=False, Description=None, Step=None):
-        super(WidgetParamCheckBox, self).__init__(Mengine.LEWT_CHECKBOX, ReadOnly, Description, Step)
-        pass
-    pass
-
-class WidgetParamPosition(WidgetParam):
-    def __init__(self,  ReadOnly=False, Description=None, Step=0.001):
-        super(WidgetParamPosition, self).__init__(Mengine.LEWT_POSITION, ReadOnly, Description, Step)
-        pass
-    pass
-
-class WidgetParamScale(WidgetParam):
-    def __init__(self, ReadOnly=False, Description=None, Step=0.001):
-        super(WidgetParamScale, self).__init__(Mengine.LEWT_SCALE, ReadOnly, Description, Step)
-        pass
-    pass
-
-class WidgetParamOrientation(WidgetParam):
-    def __init__(self, ReadOnly=False, Description=None, Step=0.0174533):
-        super(WidgetParamOrientation, self).__init__(Mengine.LEWT_ORIENTATION, ReadOnly, Description, Step)
-        pass
-    pass
-
-class WidgetParamAlpha(WidgetParam):
-    def __init__(self, ReadOnly=False, Description=None, Step=0.01):
-        super(WidgetParamAlpha, self).__init__(Mengine.LEWT_ALPHA, ReadOnly, Description, Step)
-        pass
-    pass
-
-class WidgetParamRGB(WidgetParam):
-    def __init__(self, ReadOnly=False, Description=None, Step=0.01):
-        super(WidgetParamRGB, self).__init__(Mengine.LEWT_RGB, ReadOnly, Description, Step)
-        pass
-    pass
-
 class ParamsEnum(object):
     ACTION_UPDATE = 0
     ACTION_APPEND = 1
@@ -99,7 +42,7 @@ class Params(object):
 
     if _DEVELOPMENT is False:
         @classmethod
-        def declareParam(cls, key, ParamType=None, Widget=None):
+        def declareParam(cls, key, ParamType=None):
             def __get(self):
                 param = self.params[key]
 
@@ -118,7 +61,7 @@ class Params(object):
         pass
     else:
         @classmethod
-        def declareParam(cls, key, ParamType=None, Widget=None):
+        def declareParam(cls, key, ParamType=None):
             def __get(self):
                 param = self.params[key]
 
@@ -137,12 +80,6 @@ class Params(object):
 
             setattr(cls, "get%s" % (key), __get)
             setattr(cls, "set%s" % (key), __set)
-
-            if Widget is not None:
-                PARAMS_WIDGETS = getattr(cls, "PARAMS_WIDGETS", {})
-                PARAMS_WIDGETS[key] = Widget
-                setattr(cls, "PARAMS_WIDGETS", PARAMS_WIDGETS)
-                pass
             pass
         pass
 
