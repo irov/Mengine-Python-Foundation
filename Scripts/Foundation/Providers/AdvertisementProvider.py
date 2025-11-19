@@ -85,10 +85,6 @@ class AdvertisementProvider(BaseProvider):
     def isConsentFlow():
         return AdvertisementProvider._call("IsConsentFlow")
 
-    @staticmethod
-    def _isConsentFlowNotFoundCb():
-        return False
-
     # OTHER
 
     @staticmethod

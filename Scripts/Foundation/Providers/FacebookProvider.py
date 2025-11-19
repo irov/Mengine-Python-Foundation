@@ -1,6 +1,5 @@
 from Foundation.Providers.BaseProvider import BaseProvider
 
-
 class FacebookProvider(BaseProvider):
     s_allowed_methods = [
         "getAccessToken"

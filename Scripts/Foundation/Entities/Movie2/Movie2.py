@@ -28,6 +28,7 @@ class Movie2(BaseAnimatable):
 
     def _onUpdateEnable(self, value):
         self.object.onMovieUpdateEnable(self.object)
+        pass
 
     def __init__(self):
         super(Movie2, self).__init__()
@@ -44,20 +45,17 @@ class Movie2(BaseAnimatable):
 
     def getDuration(self):
         animation = self.movie.getAnimation()
+
         return animation.getDuration()
-        pass
 
     def getAnimatable(self):
         return self.movie
-        pass
 
     def getMovie(self):
         return self.movie
-        pass
 
     def getResourceMovie(self):
         return self.ResourceMovie
-        pass
 
     def _onInitialize(self, obj):
         super(Movie2, self)._onInitialize(obj)
@@ -130,7 +128,6 @@ class Movie2(BaseAnimatable):
         handler = socketParam.get("enter", True)
 
         return handler
-        pass
 
     def __onHandleMouseLeave(self, context, event, name, hotspot):
         if self.object is not None:
@@ -166,8 +163,7 @@ class Movie2(BaseAnimatable):
 
     def __checkSubMovie(self, submovie_name):
         if self.hasSubMovie(submovie_name) is False:
-            Trace.log("Movie2", 0, "Movie2.__updateDisableSubMovies: Movie2 '{}' has no submovie '{}'".format(
-                self.getName(), submovie_name))
+            Trace.log("Movie2", 0, "Movie2.__updateDisableSubMovies: Movie2 '{}' has no submovie '{}'".format(self.getName(), submovie_name))
             return False
 
         return True
@@ -268,13 +264,11 @@ class Movie2(BaseAnimatable):
         text = self.movie.findText(name)
 
         return text
-        pass
 
     def hasMovieText(self, name):
         result = self.movie.hasText(name)
 
         return result
-        pass
 
     def getSocket(self, name):
         socket = self.movie.findSocket(name)
@@ -285,7 +279,7 @@ class Movie2(BaseAnimatable):
         if _DEVELOPMENT is True:
             if self.movie.hasSlot(name) is False:
                 Trace.log("Movie2", 0, "Movie2 '{}' hasn't slot '{}'".format(self.getName(), name))
-                return
+                return None
 
         slot = self.movie.findSlot(name)
         return slot
@@ -294,7 +288,6 @@ class Movie2(BaseAnimatable):
         result = self.movie.hasSlot(name)
 
         return result
-        pass
 
     def getSlots(self):
         slots = self.movie.getSlots()
@@ -307,19 +300,16 @@ class Movie2(BaseAnimatable):
 
     def hasSocket(self, name):
         return self.movie.hasSocket(name)
-        pass
 
     def getSubMovie(self, name):
         submovie = self.movie.getSubComposition(name)
 
         return submovie
-        pass
 
     def hasSubMovie(self, name):
         result = self.movie.hasSubComposition(name)
 
         return result
-        pass
 
     def isSocketMouseEnter(self, name):
         # fix for HotSpot isMousePickerOver Error
@@ -330,12 +320,10 @@ class Movie2(BaseAnimatable):
 
         if socket is None:
             return False
-            pass
 
         over = socket.isMousePickerOver()
 
         return over
-        pass
 
     def isAnySocketMouseEnter(self):
         sockets = self.movie.getSockets()
@@ -345,11 +333,8 @@ class Movie2(BaseAnimatable):
 
             if over is True:
                 return True
-                pass
-            pass
 
         return False
-        pass
 
     def __onAnimatableEnd(self, id):
         if self.validPlayId(id) is False:

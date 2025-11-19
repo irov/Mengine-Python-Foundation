@@ -48,9 +48,6 @@ class BaseAdUnit(object):
         return
 
     def has(self):
-        if self.__checkInit() is False:
-            return False
-
         return self._has()
 
     def _has(self):
@@ -58,6 +55,9 @@ class BaseAdUnit(object):
 
     def canOffer(self, placement):
         """ Call this method only once when you create rewarded button """
+
+        if self.__checkInit() is False:
+            return False
 
         status = self._canOffer(placement)
         self._log("[{}] available to offer {} is {}".format(self.ad_type, placement, status))
@@ -69,6 +69,9 @@ class BaseAdUnit(object):
 
     def canYouShow(self, placement):
         """ Call this method if you 100% will show ad, but want to do something before show """
+
+        if self.__checkInit() is False:
+            return False
 
         status = self._canYouShow(placement)
         self._log("[{}] available to show {} is {}".format(self.ad_type, placement, status))
@@ -125,6 +128,7 @@ class BaseAdUnit(object):
             @param init_if_no: if True - tries to init """
         if self.inited is True:
             return True
+
         err_msg = "ad [{}] not inited".format(self.ad_type)
 
         if init_if_no is True:
@@ -133,6 +137,7 @@ class BaseAdUnit(object):
             err_msg += " Status {}".format(status)
 
         self._log(err_msg, err=True, force=True)
+
         return False
 
     def _log(self, *args, **kwargs):

@@ -10,7 +10,6 @@ from Foundation.TaskManager import TaskManager
 _Log = SimpleLogger("SystemAppleServices", option="apple")
 PLUGIN_GAME_CENTER = "AppleGameCenter"
 PLUGIN_STORE_REVIEW = "AppleStoreReview"
-PLUGIN_APP_TRACKING = "AppleAppTracking"
 PLUGIN_IN_APP_PURCHASE = "AppleStoreInAppPurchase"
 
 
@@ -25,7 +24,6 @@ class SystemAppleServices(System):
     b_plugins = {
         "GameCenter": Mengine.isAvailablePlugin(PLUGIN_GAME_CENTER),
         "Review": Mengine.isAvailablePlugin(PLUGIN_STORE_REVIEW),
-        "Tracking": Mengine.isAvailablePlugin(PLUGIN_APP_TRACKING),
         "InAppPurchase": Mengine.isAvailablePlugin(PLUGIN_IN_APP_PURCHASE),
     }
 
@@ -33,7 +31,6 @@ class SystemAppleServices(System):
     _GameCenter_synchronized = False
     _GameCenter_provider_status = False
     _InAppPurchase_provider_status = False
-    _Tracking_status = False
     _can_use_payment = False
 
     _products = {}
@@ -56,9 +53,6 @@ class SystemAppleServices(System):
                 unlockAchievement=self.unlockAchievement,
                 setAchievementProgress=self.setAchievementProgress,
             ))
-
-        if self.b_plugins["Tracking"] is True and Mengine.getGameParamBool("AppleAppTrackingTransparency", False) is True:
-            SystemAppleServices.appTrackingAuthorization()
 
         # todo: promocodes handling in onRequestPromoCodeResult
 
@@ -192,20 +186,6 @@ class SystemAppleServices(System):
         b_check = Mengine.appleGameCenterCheckAchievement(achievement_name)
         _Log("[GameCenter] CHECK ACHIEVEMENT {!r} RESULT: {}".format(achievement_name, b_check), force=True)
         return b_check
-
-    # --- AppleAppTracking ---------------------------------------------------------------------------------------------
-
-    @staticmethod
-    def __cbAppTrackingAuth(_status, _idfa, *args):
-        log_message = "[AppTracking] (callback) auth: status={} idfa={}".format(_status, _idfa)
-        log_message += " | args: {}".format(args) if len(args) > 0 else ""
-        _Log(log_message)
-        SystemAppleServices._Tracking_status = _status
-
-    @staticmethod
-    def appTrackingAuthorization():
-        _Log("[AppTracking] start authorization...")
-        Mengine.appleAppTrackingAuthorization(SystemAppleServices.__cbAppTrackingAuth)
 
     # --- Rate us ------------------------------------------------------------------------------------------------------
 

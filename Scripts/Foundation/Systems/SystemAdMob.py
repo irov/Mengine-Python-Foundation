@@ -30,9 +30,10 @@ class SystemAdMob(System):
             pass
 
         return SystemAdMob.is_plugin_active
-        pass
 
     def _onInitialize(self):
+        self.initAds()
+
         Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)
         pass
 
@@ -118,7 +119,6 @@ class SystemAdMob(System):
     def __cbSdkInitialized(self):
         _Log("[SDK cb] onAdMobPluginOnSdkInitialized")
         SystemAdMob.is_sdk_init = True
-        self.initAds()
 
         self.semaphoreAdServiceReady.setValue(True)
 
