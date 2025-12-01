@@ -30,7 +30,7 @@ class EntityObject(BaseObject):
         BaseObject.declareORM(Type)
 
         Type.declareParam("Enable")
-        Type.declareParam("Interactive")
+        Type.declareParam("Interactive", ParamGetter=EntityObject.getInteractive, ParamSetter=EntityObject.setInteractive)
         Type.declareParam("BlockInteractive")
 
         Type.declareParam("Position")
@@ -106,7 +106,7 @@ class EntityObject(BaseObject):
             refcount = Interactive + self.__dynamicInteractive
 
             if refcount == -1:
-                Trace.log("Entity", 0, "Entity.setParamInteractive %s:%s negative interactive refcount!" % (self.getGroupName(), self.getName()))
+                Trace.log("Entity", 0, "Entity.setParamInteractive %s:%s negative interactive refcount! [param %d dynamic %d]" % (self.getGroupName(), self.getName(), Interactive, self.__dynamicInteractive))
                 # return
                 pass
             pass
@@ -130,7 +130,7 @@ class EntityObject(BaseObject):
             refcount = Interactive + self.__dynamicInteractive
 
             if refcount == -1:
-                Trace.log("Entity", 0, "Entity.setDynamicInteractive %s:%s negative interactive refcount!" % (self.getGroupName(), self.getName()))
+                Trace.log("Entity", 0, "Entity.setDynamicInteractive %s:%s negative interactive refcount! [param %d dynamic %d]" % (self.getGroupName(), self.getName(), Interactive, self.__dynamicInteractive))
                 # return
                 pass
             pass

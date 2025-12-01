@@ -45,7 +45,7 @@ class Params(object):
 
     if _DEVELOPMENT is False:
         @classmethod
-        def declareParam(cls, key, ParamType=None):
+        def declareParam(cls, key, ParamType=None, ParamGetter=None, ParamSetter=None):
             def __get(self):
                 param = self.params[key]
 
@@ -58,15 +58,15 @@ class Params(object):
                 self.setParam(key, value)
                 pass
 
-            setattr(cls, "get%s" % (key), __get)
-            setattr(cls, "set%s" % (key), __set)
+            setattr(cls, "get%s" % (key), ParamGetter or __get)
+            setattr(cls, "set%s" % (key), ParamSetter or __set)
 
             cls.PARAMS.append(key)
             pass
         pass
     else:
         @classmethod
-        def declareParam(cls, key, ParamType=None):
+        def declareParam(cls, key, ParamType=None, ParamGetter=None, ParamSetter=None):
             def __get(self):
                 param = self.params[key]
 
@@ -83,8 +83,8 @@ class Params(object):
                 self.setParam(key, value)
                 pass
 
-            setattr(cls, "get%s" % (key), __get)
-            setattr(cls, "set%s" % (key), __set)
+            setattr(cls, "get%s" % (key), ParamGetter or __get)
+            setattr(cls, "set%s" % (key), ParamSetter or __set)
 
             cls.PARAMS.append(key)
             pass
