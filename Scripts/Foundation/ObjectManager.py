@@ -57,7 +57,7 @@ class ObjectManager(Manager):
     def getObjectType(typeName):
         if _DEVELOPMENT is True:
             if typeName not in ObjectManager.s_typesDemain:
-                Trace.log("ObjectManager", 0, "ObjectManager.createObject: not register type %s maybe you forgot add in Pak.xml(Entity) or init in ObjectManager" % (typeName))
+                Trace.log("Manager", 0, "ObjectManager.createObject: not register type %s maybe you forgot add in Pak.xml(Entity) or init in ObjectManager" % (typeName))
 
                 return None
 
@@ -97,7 +97,7 @@ class ObjectManager(Manager):
         obj.setGroup(group)
 
         if obj.onParams(params) is False:
-            Trace.log("ObjectManager", 0, "ObjectManager.createObject: Object %s type %s invalid params" % (name, typeName))
+            Trace.log("Manager", 0, "ObjectManager.createObject: Object %s type %s invalid params" % (name, typeName))
             return None
 
         return obj
@@ -107,7 +107,7 @@ class ObjectManager(Manager):
         if _DEVELOPMENT is True:
             if group is not None:
                 if issubclass(type(group), BaseObject) is False:
-                    Trace.log("ObjectManager", 0, "ObjectManager.createObjectUnique: invalid group %s is not subclass BaseObject" % (group))
+                    Trace.log("Manager", 0, "ObjectManager.createObjectUnique: invalid group %s is not subclass BaseObject" % (group))
 
                     return None
                 pass
@@ -116,7 +116,7 @@ class ObjectManager(Manager):
         obj = ObjectManager.createObject(typeName, name, group, params)
 
         if obj is None:
-            Trace.log("ObjectManager", 0, "ObjectManager.createObjectUnique: invalid create")
+            Trace.log("Manager", 0, "ObjectManager.createObjectUnique: invalid create")
 
             return None
 

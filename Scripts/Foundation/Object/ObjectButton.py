@@ -28,6 +28,7 @@ class ObjectButton(ObjectInteraction):
 
         Type.declareParam("BlockKeys")
         Type.declareParam("BlockState")
+        pass
 
     def _onParams(self, params):
         super(ObjectButton, self)._onParams(params)
@@ -43,6 +44,7 @@ class ObjectButton(ObjectInteraction):
         self.initParam("TextPositionOver", params, None)
         self.initParam("TextAlign", params, "Center")
         self.initParam("TextVerticalAlign", params, "Center")
+        self.initParam("TextLineOffset", params, 0.0)
 
         self.initConst("onUp", params)
         self.initConst("onOver", params)

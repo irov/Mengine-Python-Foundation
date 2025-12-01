@@ -6,25 +6,41 @@ from Foundation.Object.ChildObject import ChildObject
 from Foundation.Params import DefaultParam
 
 class SaveDict(object):
+    __slots__ = ("value",)
+
     def __init__(self, value):
+        super(SaveDict, self).__init__()
+
         self.value = value
         pass
     pass
 
 class SaveConstString(object):
+    __slots__ = ("value",)
+
     def __init__(self, value):
+        super(SaveConstString, self).__init__()
+
         self.value = str(value)
         pass
     pass
 
 class SaveObjectRef(object):
+    __slots__ = ("value",)
+
     def __init__(self, value):
+        super(SaveObjectRef, self).__init__()
+
         self.value = value
         pass
     pass
 
 class SaveGroupRef(object):
+    __slots__ = ("value",)
+
     def __init__(self, value):
+        super(SaveGroupRef, self).__init__()
+
         self.value = value
         pass
     pass
@@ -33,7 +49,6 @@ class SaveManager(Manager):
     @staticmethod
     def getPickleTypes():
         return [SaveDict, SaveConstString, SaveObjectRef, SaveGroupRef]
-        pass
 
     @staticmethod
     def saveObject(obj):
@@ -41,15 +56,21 @@ class SaveManager(Manager):
 
         if obj.isSavable() is True:
             save_obj = obj._onSave()
-            save_value = SaveManager._saveValue(save_obj)
+            try:
+                save_value = SaveManager._saveValue(save_obj)
+            except Exception as ex:
+                raise Exception("SaveManager.saveObject '%s' name '%s' _saveValue error: %s" % (obj.getType(), name, ex))
 
             save_data = (name, save_value)
 
             return save_data
-            pass
 
         params = obj.getParams()
-        save_params = SaveManager._saveParams(params)
+
+        try:
+            save_params = SaveManager._saveParams(params)
+        except Exception as ex:
+            raise Exception("SaveManager.saveObject '%s' name '%s' _saveParams error: %s" % (obj.getType(), name, ex))
 
         save_child_objs = []
         if isinstance(obj, ChildObject) is True:
@@ -58,7 +79,6 @@ class SaveManager(Manager):
             for child_obj in child_objs:
                 if child_obj.isSaving() is False:
                     continue
-                    pass
 
                 save_child_obj = SaveManager.saveObject(child_obj)
 
@@ -72,8 +92,6 @@ class SaveManager(Manager):
 
         return save_data
 
-        pass
-
     @staticmethod
     def loadObject(group, load_data):
         name, load_obj = load_data
@@ -84,7 +102,6 @@ class SaveManager(Manager):
             Trace.log("Manager", 0, "load object {} not found".format(name))
 
             return True
-            pass
 
         if obj.isSavable() is True:
             load_value = SaveManager.getValue(load_obj)
@@ -103,7 +120,6 @@ class SaveManager(Manager):
             pass
 
         return True
-        pass
 
     @staticmethod
     def saveGroup(group):
@@ -134,30 +150,28 @@ class SaveManager(Manager):
 
         if group is None:
             return False
-            pass
 
         for load_data in load_objs:
             if SaveManager.loadObject(group, load_data) is False:
                 return False
-                pass
             pass
 
         return True
-        pass
 
     @staticmethod
     def _saveParams(params):
         save_params = []
         for key, value in params.iteritems():
-            save_value = SaveManager._saveValue(value)
+            try:
+                save_value = SaveManager._saveValue(value)
+            except Exception as ex:
+                raise Exception("_saveParams key '%s' value '%s' error: %s" % (key, value, ex))
 
             save_param = (key, save_value)
-
             save_params.append(save_param)
             pass
 
         return save_params
-        pass
 
     @staticmethod
     def _loadParams(save_params):
@@ -170,7 +184,6 @@ class SaveManager(Manager):
             pass
 
         return params
-        pass
 
     @staticmethod
     def _saveValue(value):
@@ -254,7 +267,6 @@ class SaveManager(Manager):
                 pass
             else:
                 raise Exception("isinstance('%s', Mengine.pybind_base_type) is True" % (value))
-            pass
         else:
             raise Exception("_saveValue '%s' invalid pickle type '%s'" % (value, type(value)))
 
@@ -336,7 +348,11 @@ class SaveManager(Manager):
             if group.getSave() is False:
                 continue
 
-            save_group = SaveManager.saveGroup(group)
+            try:
+                save_group = SaveManager.saveGroup(group)
+            except Exception as ex:
+                raise Exception("SaveManager.saveGroups group '%s' error: %s" % (group.getName(), ex))
+
             save_groups.append(save_group)
             pass
 

@@ -212,17 +212,21 @@ class GroupManager(Manager):
         try:
             Module = __import__(ModuleName, fromlist=[FromName])
         except ImportError as ex:
-            Trace.log("GroupManager", 0, "GroupManager.importGroup '%s' not found Group '%s' maybe not export from PSD?" % (name, ModuleName))
+            Trace.log("Manager", 0, "GroupManager.importGroup '%s' not found Group '%s' maybe not export from PSD?" % (name, ModuleName))
 
             return None
-            pass
 
         GroupType = getattr(Module, Name)
+
+        try:
+            GroupType.declareORM(GroupType)
+        except ParamsException as pex:
+            Trace.log("Manager", 0, "GroupManager.importGroup %s:%s params error %s" % (Module, GroupType, pex))
+            return None
 
         GroupManager.addGroupType(name, GroupType)
 
         return GroupType
-        pass
 
     @staticmethod
     def addGroupType(name, GroupType):
@@ -238,22 +242,19 @@ class GroupManager(Manager):
             groupStageName = group.getStageName()
             if stageName != groupStageName:
                 continue
-                pass
 
             if group.onInitialize() is False:
                 Trace.log("Manager", 0, "GroupManage.initializeGroupTag group %s invalid initialize" % name)
 
                 return False
-                pass
             pass
 
         return True
-        pass
 
     @staticmethod
     def __createGroup(name):
         if name not in GroupManager.s_groupsType:
-            Trace.log("GroupManager", 0, "GroupManager.createGroup: group type %s not found" % name)
+            Trace.log("Manager", 0, "GroupManager.createGroup: group type %s not found" % name)
             return None
 
         GroupType = GroupManager.s_groupsType[name]
@@ -271,7 +272,7 @@ class GroupManager(Manager):
     @staticmethod
     def getGroup(name):
         if GroupManager.hasGroup(name) is False:
-            Trace.log("GroupManager", 0, "GroupManager.getGroup: not found group [%s], maybe forgot add [%s] in Groups.xls)" % (name, name))
+            Trace.log("Manager", 0, "GroupManager.getGroup: not found group [%s], maybe forgot add [%s] in Groups.xls)" % (name, name))
 
             return None
             pass
@@ -313,7 +314,7 @@ class GroupManager(Manager):
         group = GroupManager.getGroup(groupName)
 
         if GroupManager.hasObject(groupName, objectName) is False:
-            Trace.log("GroupManager", 0, "GroupManager.getObject: group '%s' not found object '%s')" % (groupName, objectName))
+            Trace.log("Manager", 0, "GroupManager.getObject: group '%s' not found object '%s')" % (groupName, objectName))
             return None
             pass
 
@@ -325,14 +326,14 @@ class GroupManager(Manager):
     @staticmethod
     def generateObjectUnique(objectName, groupName, prototypeName, EntityHierarchy=True, **prototypeParams):
         if GroupManager.hasGroup(groupName) is False:
-            Trace.log("GroupManager", 0, "GroupManager.generateObjectUnique: not found group '%s')" % (groupName))
+            Trace.log("Manager", 0, "GroupManager.generateObjectUnique: not found group '%s')" % (groupName))
             return None
             pass
 
         group = GroupManager.getGroup(groupName)
 
         if group.hasPrototype(prototypeName) is False:
-            Trace.log("GroupManager", 0, "GroupManager.generateObjectUnique: group '%s' not found prototype '%s' params '%s')" % (groupName, prototypeName, prototypeParams))
+            Trace.log("Manager", 0, "GroupManager.generateObjectUnique: group '%s' not found prototype '%s' params '%s')" % (groupName, prototypeName, prototypeParams))
             return None
             pass
 

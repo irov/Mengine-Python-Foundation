@@ -7,8 +7,12 @@ class Button(Interaction):
     def declareORM(Type):
         Interaction.declareORM(Type)
 
+        Type.addAction("Font", Update=Button._updateFont)
+        Type.addAction("FontRGBA", Update=Button.__updateFontRGBA)
+
         Type.addAction("TextID", Update=Button._updateTextID)
         Type.addAction("TextArgs", Update=Button._updateTextArgs)
+
         Type.addAction("TextPosition", Update=Button.__updateTextPosition)
         Type.addAction("TextPositionDown")
         Type.addAction("TextPositionOver")
@@ -16,17 +20,16 @@ class Button(Interaction):
         Type.addAction("TextVerticalAlign", Update=Button.__updateVerticalAlign)
         Type.addAction("TextLineOffset", Update=Button.__updateLineOffset)
 
-        Type.addAction("Font", Update=Button._updateFont)
-        Type.addAction("FontRGBA", Update=Button.__updateFontRGBA)
-
-        Type.addAction("BlockState")
-        Type.addAction("BlockKeys")
         Type.addAction("onUp")
-        Type.addAction("onDown")
         Type.addAction("onOver")
+        Type.addAction("onDown")
+
         Type.addAction("KeyTag")
         Type.addAction("SoundTag")
         Type.addAction("SoundTagEnter")
+
+        Type.addAction("BlockKeys")
+        Type.addAction("BlockState")
         pass
 
     def __init__(self):
@@ -349,9 +352,7 @@ class Button(Interaction):
     def __updateLineOffset(self, offset):
         if offset is None:
             return
-            pass
 
         self.text.setLineOffset(offset)
         pass
-
     pass

@@ -30,7 +30,9 @@ class EntityObject(BaseObject):
         BaseObject.declareORM(Type)
 
         Type.declareParam("Enable")
+        Type.declareParam("Interactive")
         Type.declareParam("BlockInteractive")
+
         Type.declareParam("Position")
         Type.declareParam("Scale")
         Type.declareParam("Origin")
@@ -44,7 +46,9 @@ class EntityObject(BaseObject):
         BaseObject.editorORM(Type)
 
         Type.editorParam("Enable", Widget=WidgetParamCheckBox(Description="Enable/Disable object"))
+        Type.editorParam("Interactive", Widget=WidgetParamCheckBox())
         Type.editorParam("BlockInteractive", Widget=WidgetParamCheckBox())
+
         Type.editorParam("Position", Widget=WidgetParamPosition(Step=1.0))
         Type.editorParam("Scale", Widget=WidgetParamScale(Step=0.01))
         Type.editorParam("Origin", Widget=WidgetParamPosition(Step=1.0))
@@ -59,6 +63,7 @@ class EntityObject(BaseObject):
         self.initParam("Enable", params, self.PARAMS_Enable)
         self.initParam("Interactive", params, self.PARAMS_Interactive)
         self.initParam("BlockInteractive", params, False)
+
         self.initParam("Position", params, self.PARAMS_Position)
         self.initParam("Scale", params, self.PARAMS_Scale)
         self.initParam("Origin", params, self.PARAMS_Origin)

@@ -16,6 +16,7 @@ class Movie2Button(BaseEntity):
     @staticmethod
     def declareORM(Type):
         BaseEntity.declareORM(Type)
+
         Type.addAction("ResourceMovie")
         Type.addAction("CompositionNameIdle")
         Type.addAction("CompositionNameAppear")

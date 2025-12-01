@@ -22,9 +22,9 @@ class Actor(object):
         pass
 
     @staticmethod
-    def declareORM(typeORM):
-        typeORM.ACTOR_ACTIONS = {}
-        typeORM.ACTOR_ACTIONS_CACHE = []
+    def declareORM(Type):
+        Type.ACTOR_ACTIONS = {}
+        Type.ACTOR_ACTIONS_CACHE = []
         pass
 
     @classmethod
@@ -32,9 +32,9 @@ class Actor(object):
         cls.addAction(key, Activate=True, **Params)
         pass
 
-    @classmethod
-    def addAction(cls, key, Activate=False, **Params):
-        if _DEVELOPMENT is True:
+    if _DEVELOPMENT is True:
+        @classmethod
+        def addAction(cls, key, Activate=False, **Params):
             if isinstance(key, str) is False:
                 raise ParamsException("Actor '%s' add action key '%s' not str" % (cls.__name__, key))
 
@@ -51,35 +51,41 @@ class Actor(object):
                 pass
 
             property_key = property(__get_key, __set_key, None, None)
-        else:
+
+            setattr(cls, key, property_key)
+
+            if key in cls.ACTOR_ACTIONS:
+                raise ParamsException("Actor '%s' already have action '%s' [%s]" % (cls.__name__, key, cls.ACTOR_ACTIONS[key]))
+
+            action = Actor.Action(Params, Activate)
+
+            cls.ACTOR_ACTIONS[key] = action
+            cls.ACTOR_ACTIONS_CACHE.append((key, action))
+            pass
+    else:
+        @classmethod
+        def addAction(cls, key, Activate=False, **Params):
             def __get_key(self):
                 return self.object.getParam(key)
 
             property_key = property(__get_key, None, None, None)
+
+            setattr(cls, key, property_key)
+
+            action = Actor.Action(Params, Activate)
+
+            cls.ACTOR_ACTIONS[key] = action
+            cls.ACTOR_ACTIONS_CACHE.append((key, action))
             pass
-
-        setattr(cls, key, property_key)
-
-        if _DEVELOPMENT is True:
-            if key in cls.ACTOR_ACTIONS:
-                raise ParamsException("Actor '%s' already have action '%s' [%s]" % (cls.__name__, key, cls.ACTOR_ACTIONS[key]))
-
-        action = Actor.Action(Params, Activate)
-
-        cls.ACTOR_ACTIONS[key] = action
-        cls.ACTOR_ACTIONS_CACHE.append((key, action))
         pass
 
-    def validateAction(self, params):
-        validate_actions = self.ACTOR_ACTIONS.keys()
-        for action in validate_actions[:]:
-            if action not in params:
+    def validateAction(self, params, consts):
+        for action in self.ACTOR_ACTIONS.keys():
+            if action not in params and action not in consts:
                 typeActor = type(self)
-                self._actorFailed(typeActor, "Actor invalid action '%s'"%(action))
+                self._actorFailed(typeActor, "Actor actions '%s' params '%s' invalid action '%s'"%(self.ACTOR_ACTIONS.keys(), params.keys(), action))
 
                 return False
-
-            validate_actions.remove(action)
             pass
 
         return True

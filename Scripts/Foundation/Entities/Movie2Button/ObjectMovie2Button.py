@@ -5,6 +5,7 @@ class ObjectMovie2Button(DemonObject):
     @staticmethod
     def declareORM(Type):
         DemonObject.declareORM(Type)
+
         Type.declareConst("ResourceMovie")
         Type.declareConst("CompositionNameIdle")
         Type.declareConst("CompositionNameAppear")

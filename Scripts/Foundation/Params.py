@@ -25,7 +25,7 @@ class ParamsEnum(object):
     pass
 
 class Params(object):
-    __metaclass__ = baseslots("params")
+    __metaclass__ = baseslots("params", "consts")
 
     NoDefault = object()
     NotFound = object()
@@ -34,10 +34,13 @@ class Params(object):
         super(Params, self).__init__()
 
         self.params = {}
+        self.consts = {}
         pass
 
     @staticmethod
-    def declareORM(typeORM):
+    def declareORM(Type):
+        Type.PARAMS = []
+        Type.CONSTS = []
         pass
 
     if _DEVELOPMENT is False:
@@ -57,6 +60,8 @@ class Params(object):
 
             setattr(cls, "get%s" % (key), __get)
             setattr(cls, "set%s" % (key), __set)
+
+            cls.PARAMS.append(key)
             pass
         pass
     else:
@@ -80,13 +85,20 @@ class Params(object):
 
             setattr(cls, "get%s" % (key), __get)
             setattr(cls, "set%s" % (key), __set)
+
+            cls.PARAMS.append(key)
             pass
         pass
 
     @classmethod
     def declareConst(cls, key):
         def __get(self):
-            return self.params[key]
+            param = self.consts[key]
+
+            if isinstance(param, DefaultParam) is True:
+                return param.value
+
+            return param
 
         def __set(self, value):
             self.paramsFailed("Param %s is const" % (key))
@@ -94,12 +106,19 @@ class Params(object):
 
         setattr(cls, "get%s" % (key), __get)
         setattr(cls, "set%s" % (key), __set)
+
+        cls.CONSTS.append(key)
         pass
 
     @classmethod
     def declareResource(cls, key):
         def __get(self):
-            return self.params[key]
+            param = self.consts[key]
+
+            if isinstance(param, DefaultParam) is True:
+                return param.value
+
+            return param
 
         def __set(self, value):
             self.paramsFailed("Resource %s is const" % (key))
@@ -107,6 +126,8 @@ class Params(object):
 
         setattr(cls, "get%s" % (key), __get)
         setattr(cls, "set%s" % (key), __set)
+
+        cls.CONSTS.append(key)
         pass
 
     def __extractResource(self, key, value, default):
@@ -152,7 +173,7 @@ class Params(object):
 
         resource = self.__extractResource(key, value, default)
 
-        self.params[key] = resource
+        self.consts[key] = resource
         pass
 
     def initConst(self, key, params, default=NoDefault):
@@ -166,7 +187,7 @@ class Params(object):
         pass
 
     def setConst(self, key, value):
-        self.params[key] = value
+        self.consts[key] = value
 
         self.__callAction(ParamsEnum.ACTION_UPDATE, key, value)
         pass
@@ -179,7 +200,7 @@ class Params(object):
                 self._onCheckParams()
                 pass
         except ParamsException as pe:
-            Trace.log("Manager", 0, "Params.onParams error %s" % (pe))
+            Trace.log("Params", 0, "Params.onParams error %s" % (pe))
 
             return False
 
@@ -197,7 +218,13 @@ class Params(object):
         pass
 
     def hasParam(self, key):
-        return key in self.params
+        if key in self.params:
+            return True
+
+        if key in self.consts:
+            return True
+
+        return False
 
     def setParam(self, key, value):
         if self.superParam(key, value) is False:
@@ -210,15 +237,14 @@ class Params(object):
     def superParam(self, key, value):
         if _DEVELOPMENT is True:
             if self.__existParam(key) is False:
-                Trace.log("Object", 0, "Params.superParam %s invalid exist param %s value %s type %s" % (self.getName(), key, value, type(value)))
+                Trace.log("Params", 0, "Params.superParam %s invalid exist param %s value %s type %s" % (self.getName(), key, value, type(value)))
 
                 return False
 
             if self.__checkParamValue(value) is False:
-                Trace.log("Object", 0, "Params.superParam %s invalid key %s value %s type %s" % (self.getName(), key, value, type(value)))
+                Trace.log("Params", 0, "Params.superParam %s invalid key %s value %s type %s" % (self.getName(), key, value, type(value)))
 
                 return False
-            pass
 
         self.params[key] = value
 
@@ -247,15 +273,14 @@ class Params(object):
     def appendParam(self, key, value):
         if _DEVELOPMENT is True:
             if self.__existListParam(key) is False:
-                Trace.log("Object", 0, "Params.appendParam exist list param %s - %s:%s" % (self.getName(), key, value))
+                Trace.log("Params", 0, "Params.appendParam exist list param %s - %s:%s" % (self.getName(), key, value))
 
                 return False
 
             if self.__checkParamValue(value) is False:
-                Trace.log("Object", 0, "Params.appendParam check param value %s - %s:%s" % (self.getName(), key, value))
+                Trace.log("Params", 0, "Params.appendParam check param value %s - %s:%s" % (self.getName(), key, value))
 
                 return False
-            pass
 
         param = self.params[key]
 
@@ -275,8 +300,6 @@ class Params(object):
         if _DEVELOPMENT is True:
             if self.__existParam(key) is False:
                 return False
-                pass
-            pass
 
         value = self.params[key]
 
@@ -290,10 +313,9 @@ class Params(object):
                 return False
 
             if self.__checkParamValue(value) is False:
-                Trace.log("Object", 0, "Params.superParam %s - %s:%s" % (self.getName(), key, value))
+                Trace.log("Params", 0, "Params.superParam %s - %s:%s" % (self.getName(), key, value))
 
                 return False
-            pass
 
         param = self.params[key]
 
@@ -314,10 +336,9 @@ class Params(object):
                 return
 
             if self.__checkParamValue(value) is False:
-                Trace.log("Object", 0, "Params.insertParam %s - %s:%s" % (self.getName(), key, value))
+                Trace.log("Params", 0, "Params.insertParam %s - %s:%s" % (self.getName(), key, value))
 
-                return False
-            pass
+                return
 
         param = self.params[key]
 
@@ -337,10 +358,9 @@ class Params(object):
                 return
 
             if self.__checkParamValue(value) is False:
-                Trace.log("Object", 0, "Params.delParam %s - %s:%s" % (self.getName(), key, value))
+                Trace.log("Params", 0, "Params.delParam %s - %s:%s" % (self.getName(), key, value))
 
-                return False
-            pass
+                return
 
         param = self.params[key]
 
@@ -364,11 +384,13 @@ class Params(object):
                 return
 
             if self.__checkParamValue(dict_key) is False:
-                Trace.log("Object", 0, "Params.insertDictParam %s - %s:%s" % (self.getName(), key, dict_key))
+                Trace.log("Params", 0, "Params.insertDictParam %s - %s:%s" % (self.getName(), key, dict_key))
+
                 return
 
             if self.__checkParamValue(dict_value) is False:
-                Trace.log("Object", 0, "Params.insertDictParam %s - %s:%s" % (self.getName(), key, dict_value))
+                Trace.log("Params", 0, "Params.insertDictParam %s - %s:%s" % (self.getName(), key, dict_value))
+
                 return
 
         param = self.params[key]
@@ -387,7 +409,8 @@ class Params(object):
                 return
 
             if self.__checkParamValue(dict_key) is False:
-                Trace.log("Object", 0, "Params.popDictParam %s - %s:%s" % (self.getName(), key, dict_key))
+                Trace.log("Params", 0, "Params.popDictParam %s - %s:%s" % (self.getName(), key, dict_key))
+
                 return
 
         param = self.params[key]
@@ -401,6 +424,14 @@ class Params(object):
         self.__callAction(ParamsEnum.ACTION_POP_DICT, key, dict_key, dict_value)
 
     def getParam(self, key):
+        const = self.consts.get(key, Params.NotFound)
+
+        if const is not Params.NotFound:
+            if isinstance(const, DefaultParam) is True:
+                return const.value
+
+            return const
+
         param = self.params.get(key, Params.NotFound)
 
         if param is Params.NotFound:
@@ -432,7 +463,6 @@ class Params(object):
             return False
 
         return True
-        pass
 
     def __existDictParam(self, key):
         param = self.getParam(key)
@@ -481,8 +511,12 @@ class Params(object):
     def getParams(self):
         return self.params
 
+    def getConsts(self):
+        return self.consts
+
     def removeParams(self):
         self.params = {}
+        self.consts = {}
         pass
 
     def __callAction(self, mode, key, *args):
@@ -567,5 +601,15 @@ class Params(object):
         return False
 
     def _checkParamExtraValue(self, value):
+        return True
+
+    def validateParams(self):
+        l = list(set(self.params.keys() + self.consts.keys()) - set(self.PARAMS + self.CONSTS))
+
+        if len(l) > 0:
+            Trace.log("Params", 0, "Params %s params %s declare %s invalid params %s" % (self.__class__.__name__, self.params.keys() + self.consts.keys(), self.PARAMS + self.CONSTS, l))
+
+            return False
+
         return True
     pass

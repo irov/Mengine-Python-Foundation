@@ -183,6 +183,12 @@ class BaseObject(Params, Initializer):
 
     def _onInitialize(self):
         super(BaseObject, self)._onInitialize()
+
+        if _DEVELOPMENT is True:
+            if self.validateParams() is False:
+                self.initializeFailed("EntityObject invalid params")
+                pass
+            pass
         pass
 
     def _onFinalize(self):

@@ -34,6 +34,18 @@ class BaseEntity(Actor, Initializer):
     def getName(self):
         return self.node.getName()
 
+    def getObjectType(self):
+        if self.object is None:
+            return None
+
+        return self.object.getType()
+
+    def getObjectName(self):
+        if self.object is None:
+            return None
+
+        return self.object.getName()
+
     def addChild(self, node):
         self.node.addChild(node)
         pass
@@ -67,23 +79,18 @@ class BaseEntity(Actor, Initializer):
 
     def isActivate(self):
         return self.node.isActivate()
-        pass
 
     def getLocalPosition(self):
         return self.node.getLocalPosition()
-        pass
 
     def getWorldPosition(self):
         return self.node.getWorldPosition()
-        pass
 
     def getScreenPosition(self):
         return self.node.getScreenPosition()
-        pass
 
     def getCameraPosition(self, Camera):
         return Mengine.getCameraPosition(Camera, self.node)
-        pass
 
     def _actorFailed(self, typeActor, msg):
         Trace.log("BaseEntity", 0, "Entity %s Type %s failed: %s" % (self.getName(), typeActor.__name__, msg))
@@ -97,7 +104,7 @@ class BaseEntity(Actor, Initializer):
         if _DEVELOPMENT is True:
             if self.object is not None:
                 if self.object.hasEntity() is True:
-                    Trace.log("Entity", 0, "BaseEntity.onDestroy %s:%s have object!" % (self.object.getType(), self.object.getName()))
+                    Trace.log("Entity", 0, "BaseEntity.onDestroy %s:%s have object!" % (self.getObjectType(), self.getObjectName()))
                     pass
                 pass
             pass
@@ -115,7 +122,9 @@ class BaseEntity(Actor, Initializer):
 
         if _DEVELOPMENT is True:
             params = obj.getParams()
-            if self.validateAction(params) is False:
+            consts = obj.getConsts()
+
+            if self.validateAction(params, consts) is False:
                 self.initializeFailed("Entity '%s:%s' invalid initialized: incorrect actions for params" % (obj.getType(), obj.getName()))
                 pass
             pass
@@ -128,15 +137,15 @@ class BaseEntity(Actor, Initializer):
 
         if _DEVELOPMENT is True:
             if Mengine.is_class(self.node) is False:
-                Trace.log("BaseEntity", 0, "Entity %s:%s _onFinalize self is not class" % (self.object.getType(), self.object.getName()))
+                Trace.log("BaseEntity", 0, "Entity %s:%s _onFinalize self is not class" % (self.getObjectType(), self.getObjectName()))
                 return
 
             if Mengine.is_wrap(self.node) is False:
-                Trace.log("BaseEntity", 0, "Entity %s:%s _onFinalize self is unwrap" % (self.object.getType(), self.object.getName()))
+                Trace.log("BaseEntity", 0, "Entity %s:%s _onFinalize self is unwrap" % (self.getObjectType(), self.getObjectName()))
                 return
 
             if self.object.isActive() is True:
-                Trace.log("BaseEntity", 0, "Entity '%s:%s' has been destroyed while the object was still alive. Probably you've forgot to unlink it from another Entity (%s)" % (self.object.getName(), self.object.getType(), self.object.getParent()))
+                Trace.log("BaseEntity", 0, "Entity '%s:%s' has been destroyed while the object was still alive. Probably you've forgot to unlink it from another Entity (%s)" % (self.getObjectType(), self.getObjectName(), self.object.getParent()))
                 return
             pass
 
@@ -153,15 +162,18 @@ class BaseEntity(Actor, Initializer):
         pass
 
     def _onInitializeFailed(self, msg):
-        Trace.log("BaseEntity", 0, "Entity '%s:%s' initialize failed '%s'" % (self.object.getType(), self.getName(), msg))
+        Trace.log("BaseEntity", 0, "Entity '%s:%s' initialize failed '%s'" % (self.getObjectType(), self.getName(), msg))
         pass
 
     def _onFinalizeFailed(self, msg):
-        Trace.log("BaseEntity", 0, "Entity '%s:%s' finalize failed '%s'" % (self.object.getType(), self.getName(), msg))
+        Trace.log("BaseEntity", 0, "Entity '%s:%s' finalize failed '%s'" % (self.getObjectType(), self.getName(), msg))
         pass
 
     def onRestore(self):
         self._onRestore()
+
+        consts = self.object.getConsts()
+        self.updateActions(consts, False, True)
 
         params = self.object.getParams()
         self.updateActions(params, False, True)
@@ -199,6 +211,9 @@ class BaseEntity(Actor, Initializer):
 
         self._onActivate()
 
+        consts = self.object.getConsts()
+        self.updateActions(consts, True, False)
+
         params = self.object.getParams()
         self.updateActions(params, True, False)
         pass
@@ -232,30 +247,25 @@ class BaseEntity(Actor, Initializer):
         if self._onRun() is False:
             Trace.log("BaseObject", 0, "Entity.onRun '%s' failed" % (self.getName()))
             return False
-            pass
 
         return True
-        pass
 
     def _onRun(self):
         return True
-        pass
 
     def getObject(self):
         return self.object
-        pass
 
     def getSubEntity(self, name):
         obj = self.object.getObject(name)
 
         if obj is None:
-            Trace.log("BaseEntity", 0, "Entity '%s:%s' getSubEntity: not exist %s" % (self.object.getType(), self.getName(), name))
+            Trace.log("BaseEntity", 0, "Entity '%s:%s' getSubEntity: not exist %s" % (self.getObjectType(), self.getName(), name))
             pass
 
         entity = obj.getEntity()
 
         return entity
-        pass
 
     def _updateEnable(self, value):
         if value is True:

@@ -11,6 +11,7 @@ class ObjectMovie2(ObjectAnimatable):
         Type.declareParam("DisableSubMovies")
         Type.declareParam("SpeedFactor")
         Type.declareParam("TextAliasEnvironment")
+        Type.declareParam("LastFrameSubMovies")
         Type.declareParam("ExtraOpacityLayers")
         pass
 
