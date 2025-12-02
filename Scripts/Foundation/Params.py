@@ -39,32 +39,11 @@ class Params(object):
 
     @staticmethod
     def declareORM(Type):
-        Type.PARAMS = []
-        Type.CONSTS = []
+        Type.DECLARE_PARAMS = []
+        Type.DECLARE_CONSTS = []
         pass
 
-    if _DEVELOPMENT is False:
-        @classmethod
-        def declareParam(cls, key, ParamType=None, ParamGetter=None, ParamSetter=None):
-            def __get(self):
-                param = self.params[key]
-
-                if isinstance(param, DefaultParam) is True:
-                    return param.value
-
-                return param
-
-            def __set(self, value):
-                self.setParam(key, value)
-                pass
-
-            setattr(cls, "get%s" % (key), ParamGetter or __get)
-            setattr(cls, "set%s" % (key), ParamSetter or __set)
-
-            cls.PARAMS.append(key)
-            pass
-        pass
-    else:
+    if _DEVELOPMENT is True:
         @classmethod
         def declareParam(cls, key, ParamType=None, ParamGetter=None, ParamSetter=None):
             def __get(self):
@@ -83,10 +62,38 @@ class Params(object):
                 self.setParam(key, value)
                 pass
 
+            if ParamGetter is None and hasattr(cls, "get%s" % (key)) is True:
+                self.paramsFailed("Param %s already have getter" % (key))
+                pass
+
+            if ParamSetter is None and hasattr(cls, "set%s" % (key)) is True:
+                self.paramsFailed("Param %s already have setter" % (key))
+                pass
+
             setattr(cls, "get%s" % (key), ParamGetter or __get)
             setattr(cls, "set%s" % (key), ParamSetter or __set)
 
-            cls.PARAMS.append(key)
+            cls.DECLARE_PARAMS.append(key)
+            pass
+    else:
+        @classmethod
+        def declareParam(cls, key, ParamType=None, ParamGetter=None, ParamSetter=None):
+            def __get(self):
+                param = self.params[key]
+
+                if isinstance(param, DefaultParam) is True:
+                    return param.value
+
+                return param
+
+            def __set(self, value):
+                self.setParam(key, value)
+                pass
+
+            setattr(cls, "get%s" % (key), ParamGetter or __get)
+            setattr(cls, "set%s" % (key), ParamSetter or __set)
+
+            cls.DECLARE_PARAMS.append(key)
             pass
         pass
 
@@ -107,7 +114,7 @@ class Params(object):
         setattr(cls, "get%s" % (key), __get)
         setattr(cls, "set%s" % (key), __set)
 
-        cls.CONSTS.append(key)
+        cls.DECLARE_CONSTS.append(key)
         pass
 
     @classmethod
@@ -127,7 +134,7 @@ class Params(object):
         setattr(cls, "get%s" % (key), __get)
         setattr(cls, "set%s" % (key), __set)
 
-        cls.CONSTS.append(key)
+        cls.DECLARE_CONSTS.append(key)
         pass
 
     def __extractResource(self, key, value, default):
@@ -226,16 +233,15 @@ class Params(object):
 
         return False
 
-    def setParam(self, key, value):
-        if self.superParam(key, value) is False:
-            return False
+    if _DEVELOPMENT is True:
+        def setParam(self, key, value):
+            if self.superParam(key, value) is False:
+                return
 
-        self.__callAction(ParamsEnum.ACTION_UPDATE, key, value)
+            self.__callAction(ParamsEnum.ACTION_UPDATE, key, value)
+            pass
 
-        return True
-
-    def superParam(self, key, value):
-        if _DEVELOPMENT is True:
+        def superParam(self, key, value):
             if self.__existParam(key) is False:
                 Trace.log("Params", 0, "Params.superParam %s invalid exist param %s value %s type %s" % (self.getName(), key, value, type(value)))
 
@@ -246,9 +252,19 @@ class Params(object):
 
                 return False
 
-        self.params[key] = value
+            self.params[key] = value
 
-        return True
+            return True
+    else:
+        def setParam(self, key, value):
+            self.superParam(key, value)
+
+            self.__callAction(ParamsEnum.ACTION_UPDATE, key, value)
+            pass
+
+        def superParam(self, key, value):
+            self.params[key] = value
+            pass
 
     def setParams(self, **params):
         for key, value in params.iteritems():
@@ -604,10 +620,10 @@ class Params(object):
         return True
 
     def validateParams(self):
-        l = list(set(self.params.keys() + self.consts.keys()) - set(self.PARAMS + self.CONSTS))
+        l = list(set(self.params.keys() + self.consts.keys()) - set(self.DECLARE_PARAMS + self.DECLARE_CONSTS))
 
         if len(l) > 0:
-            Trace.log("Params", 0, "Params %s params %s declare %s invalid params %s" % (self.__class__.__name__, self.params.keys() + self.consts.keys(), self.PARAMS + self.CONSTS, l))
+            Trace.log("Params", 0, "Params %s params %s declare %s invalid params %s" % (self.__class__.__name__, self.params.keys() + self.consts.keys(), self.DECLARE_PARAMS + self.DECLARE_CONSTS, l))
 
             return False
 
