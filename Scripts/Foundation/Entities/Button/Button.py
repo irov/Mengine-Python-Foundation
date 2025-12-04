@@ -87,7 +87,7 @@ class Button(Interaction):
         # self.setEventListener(onGlobalHandleMouseButtonEvent = None)
         pass
 
-    def _keyEvent(self, event):
+    def _keyEvent(self, context, event):
         if self.KeyTag is None:
             return self.BlockKey
 
