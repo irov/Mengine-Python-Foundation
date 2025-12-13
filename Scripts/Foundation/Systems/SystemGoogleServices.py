@@ -5,6 +5,7 @@ from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.Providers.ProductsProvider import ProductsProvider
 from Foundation.Providers.AuthProvider import AuthProvider
+from Foundation.Providers.ConsentProvider import ConsentProvider
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
@@ -14,6 +15,7 @@ _Log = SimpleLogger("SystemGoogleServices")
 GOOGLE_GAME_SOCIAL_PLUGIN = "MengineGGameSocial"
 GOOGLE_PLAY_BILLING_PLUGIN = "MengineGPlayBilling"
 GOOGLE_IN_APP_REVIEWS_PLUGIN = "MengineGInAppReviews"
+GOOGLE_CONSENT_PLUGIN = "MengineGConsent"
 FIREBASE_CRASHLYTICS_PLUGIN = "MengineFBCrashlytics"
 
 class SystemGoogleServices(System):
@@ -29,6 +31,7 @@ class SystemGoogleServices(System):
         GOOGLE_GAME_SOCIAL_PLUGIN: Mengine.isAvailablePlugin(GOOGLE_GAME_SOCIAL_PLUGIN),
         GOOGLE_PLAY_BILLING_PLUGIN: Mengine.isAvailablePlugin(GOOGLE_PLAY_BILLING_PLUGIN),
         GOOGLE_IN_APP_REVIEWS_PLUGIN: Mengine.isAvailablePlugin(GOOGLE_IN_APP_REVIEWS_PLUGIN),
+        GOOGLE_CONSENT_PLUGIN: Mengine.isAvailablePlugin(GOOGLE_CONSENT_PLUGIN),
         FIREBASE_CRASHLYTICS_PLUGIN: Mengine.isAvailablePlugin(FIREBASE_CRASHLYTICS_PLUGIN),
     }
 
@@ -146,6 +149,18 @@ class SystemGoogleServices(System):
             _setCallback("onGoogleInAppReviewsLaunchingTheReviewError", SystemGoogleServices.__cbReviewsLaunchingError)
 
             RatingAppProvider.setProvider("Google", dict(rateApp=SystemGoogleServices.rateApp))
+
+        if self.b_plugins[GOOGLE_CONSENT_PLUGIN] is True:
+            def _setCallback(method_name, *callback):
+                Mengine.addAndroidCallback(GOOGLE_CONSENT_PLUGIN, method_name, *callback)
+
+            _setCallback("onAndroidGoogleConsentFlowCompleted", SystemGoogleServices.__cbConsentFlowCompleted)
+            _setCallback("onAndroidGoogleConsentFlowError", SystemGoogleServices.__cbConsentFlowError)
+
+            ConsentProvider.setProvider("GoogleConsent", dict(
+                ShowConsentFlow=SystemGoogleServices.showConsentFlow,
+                IsConsentFlow=SystemGoogleServices.isConsentFlow,
+            ))
 
         if self.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is True:
             # google do auto login on create app, so we don't need to do it manually here
@@ -670,6 +685,46 @@ class SystemGoogleServices(System):
     def __cbReviewsLaunchingError(exception):
         # reviews was not launched
         _Log("[Reviews cb] LaunchingError {}".format(exception), force=True)
+        pass
+
+    # --- GoogleConsent -------------------------------------------------------------------------------------------------
+
+    @staticmethod
+    def showConsentFlow():
+        if SystemGoogleServices.b_plugins[GOOGLE_CONSENT_PLUGIN] is False:
+            _Log("[Consent] plugin {!r} is not active for showConsentFlow".format(GOOGLE_CONSENT_PLUGIN))
+            return False
+
+        if _ANDROID:
+            Mengine.androidMethod(GOOGLE_CONSENT_PLUGIN, "showConsentFlow")
+            return True
+        elif _IOS:
+            # iOS implementation can be added here if needed
+            return False
+        return False
+
+    @staticmethod
+    def isConsentFlow():
+        if SystemGoogleServices.b_plugins[GOOGLE_CONSENT_PLUGIN] is False:
+            return False
+
+        if _ANDROID:
+            return Mengine.androidBooleanMethod(GOOGLE_CONSENT_PLUGIN, "isConsentFlowUserGeographyGDPR")
+        elif _IOS:
+            # iOS implementation can be added here if needed
+            return False
+        return False
+
+    # callbacks
+
+    @staticmethod
+    def __cbConsentFlowCompleted():
+        _Log("[Consent cb] Consent Flow Completed")
+        pass
+
+    @staticmethod
+    def __cbConsentFlowError(exception):
+        _Log("[Consent cb] Consent Flow Error: {}".format(exception), err=True, force=True)
         pass
 
     # --- FirebaseCrashlytics ------------------------------------------------------------------------------------------

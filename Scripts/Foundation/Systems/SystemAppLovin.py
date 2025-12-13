@@ -1,6 +1,7 @@
 from Foundation.System import System
 from Foundation.Utils import SimpleLogger
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
+from Foundation.Providers.ConsentProvider import ConsentProvider
 from Foundation.Systems.Ads.AdFactory import AdFactory
 
 _Log = SimpleLogger("SystemAppLovin")
@@ -92,12 +93,17 @@ class SystemAppLovin(System):
             CanYouShowRewardedAdvert=self.canYouShowRewarded,
             ShowRewardedAdvert=self.showRewarded,
             IsShowingRewardedAdvert=self.isShowingRewarded,
-            # consent flow:
+        )
+
+        AdvertisementProvider.setProvider("AppLovin", methods)
+
+        # Register consent flow methods
+        consent_methods = dict(
             ShowConsentFlow=self.showConsentFlow,
             IsConsentFlow=self.isConsentFlow,
         )
 
-        AdvertisementProvider.setProvider("AppLovin", methods)
+        ConsentProvider.setProvider("AppLovin", consent_methods)
 
     @staticmethod
     def isSdkInitialized():

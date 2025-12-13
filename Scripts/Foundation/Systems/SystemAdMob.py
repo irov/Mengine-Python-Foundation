@@ -89,9 +89,6 @@ class SystemAdMob(System):
             CanYouShowRewardedAdvert=self.canYouShowRewarded,
             ShowRewardedAdvert=self.showRewarded,
             IsShowingRewardedAdvert=self.isShowingRewarded,
-            # consent flow:
-            ShowConsentFlow=self.showConsentFlow,
-            IsConsentFlow=self.isConsentFlow,
         )
 
         AdvertisementProvider.setProvider("AdMob", methods)
@@ -156,9 +153,3 @@ class SystemAdMob(System):
 
     def isShowingRewarded(self):
         return self.rewarded.isShowing()
-
-    def showConsentFlow(self):
-        return False
-
-    def isConsentFlow(self):
-        return False

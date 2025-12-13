@@ -20,8 +20,6 @@ class AdvertisementProvider(BaseProvider):
         "CanYouShowRewardedAdvert",
         "ShowRewardedAdvert",
         "IsShowingRewardedAdvert",
-        "ShowConsentFlow",
-        "IsConsentFlow",
         "GetBannerHeight",
         "GetBannerWidth",
     ]
@@ -74,18 +72,6 @@ class AdvertisementProvider(BaseProvider):
     @staticmethod
     def isShowingRewardedAdvert():
         return AdvertisementProvider._call("IsShowingRewardedAdvert")
-
-    # GDPR
-
-    @staticmethod
-    def showConsentFlow():
-        return AdvertisementProvider._call("ShowConsentFlow")
-
-    @staticmethod
-    def isConsentFlow():
-        return AdvertisementProvider._call("IsConsentFlow")
-
-    # OTHER
 
     @staticmethod
     def getBannerHeight():

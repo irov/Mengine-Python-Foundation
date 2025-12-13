@@ -124,15 +124,6 @@ class DummyAdvertisement(object):
                 source.addNotify(Notificator.onAdRevenuePaid, "Rewarded", {"placement": placement, "revenue": revenue})
 
     @staticmethod
-    def showConsentFlow():
-        Trace.msg("<DummyAdvertisement> DUMMY show consent flow...")
-        return
-
-    @staticmethod
-    def isConsentFlow():
-        return Mengine.getConfigBool("Advertising", "DummyConsentFlow", False) is True
-
-    @staticmethod
     def setProvider():
         def _HasRewardedAdvert():
             return DummyAdvertisement.hasRewardedAdvert()
@@ -160,10 +151,6 @@ class DummyAdvertisement(object):
             return DummyAdvertisement.getBannerHeight()
         def _GetBannerWidth():
             return DummyAdvertisement.getBannerWidth()
-        def _ShowConsentFlow():
-            return DummyAdvertisement.showConsentFlow()
-        def _IsConsentFlow():
-            return DummyAdvertisement.isConsentFlow()
 
         methods = dict(
             # banner:
@@ -182,9 +169,6 @@ class DummyAdvertisement(object):
             CanYouShowRewardedAdvert=_CanYouShowRewardedAdvert,
             ShowRewardedAdvert=_ShowRewardedAdvert,
             IsShowingRewardedAdvert=_IsShowingRewardedAdvert,
-            # consent flow:
-            ShowConsentFlow=_ShowConsentFlow,
-            IsConsentFlow=_IsConsentFlow,
         )
 
         AdvertisementProvider.setProvider("Dummy", methods)
