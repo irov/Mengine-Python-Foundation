@@ -341,8 +341,9 @@ class VirtualArea(Initializer):
                 return
             self._is_scaling = True
 
-            touch0 = self._touch_ids[0]
-            touch1 = self._touch_ids[1]
+            touch_events = list(self._touch_ids.values())
+            touch0 = touch_events[0]
+            touch1 = touch_events[1]
 
             touch0_cur_pos = Mengine.vec2f(touch0.position.world.x, touch0.position.world.y)
             touch1_cur_pos = Mengine.vec2f(touch1.position.world.x, touch1.position.world.y)
