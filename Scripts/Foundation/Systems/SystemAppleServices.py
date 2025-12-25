@@ -231,8 +231,8 @@ class SystemAppleServices(System):
         ))
 
         _Log("[InAppPurchase] AppleStoreInAppPurchase is ready", optional=True)
-        productIds = ProductsProvider.getQueryProductIds()
-        SystemAppleServices.requestProducts(productIds)
+        consumableIds, nonconsumableIds = ProductsProvider.getQueryProductIds()
+        SystemAppleServices.requestProducts(consumableIds, nonconsumableIds)
 
         SystemAppleServices._InAppPurchase_provider_status = True
 
@@ -249,9 +249,9 @@ class SystemAppleServices(System):
         SystemAppleServices._InAppPurchase_provider_status = False
 
     @staticmethod
-    def requestProducts(products_ids):
-        _Log("[InAppPurchase] request product details for {}".format(products_ids), optional=True)
-        Mengine.appleStoreInAppPurchaseRequestProducts(products_ids, {
+    def requestProducts(consumableIds, nonconsumableIds):
+        _Log("[InAppPurchase] request product details for consumable: {} nonconsumable: {}".format(consumableIds, nonconsumableIds), optional=True)
+        Mengine.appleStoreInAppPurchaseRequestProducts(consumableIds, nonconsumableIds, {
             "onProductResponse": SystemAppleServices._cbProductResponse,
             "onProductFinish": SystemAppleServices._cbProductFinish,
             "onProductFail": SystemAppleServices._cbProductFail,
@@ -288,7 +288,7 @@ class SystemAppleServices(System):
         if product is None:
             Notification.notify(Notificator.onPayFailed, product_id)
             Notification.notify(Notificator.onPayComplete, product_id)
-            Trace.log("System", 0, "Product with id {} not found in responded products!!!".format(product_id))
+            Trace.log("System", 0, "Product with id {} not found in responded products {}!!!".format(product_id, list(SystemAppleServices._products.keys())))
             return
 
         Mengine.appleStoreInAppPurchasePurchaseProduct(product)

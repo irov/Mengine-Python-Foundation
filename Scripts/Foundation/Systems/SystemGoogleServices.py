@@ -310,12 +310,9 @@ class SystemGoogleServices(System):
     @staticmethod
     def __cbGooglePlayBillingInitialized():
         _Log("Start connect to the billing client...")
-        productIds = ProductsProvider.getQueryProductIds()
-        _Log("[Billing] query products: {!r}".format(productIds))
-        if productIds is None:
-            _Log("[Billing] no products to query", err=True, force=True)
-            return
-        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts", productIds)
+        consumableIds, nonconsumableIds = ProductsProvider.getQueryProductIds()
+        _Log("[Billing] query products consumable: {!r} nonconsumable: {!r}".format(consumableIds, nonconsumableIds))
+        Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "queryProducts", consumableIds, nonconsumableIds)
 
     @staticmethod
     def buy(product_id):

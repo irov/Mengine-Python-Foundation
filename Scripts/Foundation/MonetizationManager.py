@@ -384,8 +384,9 @@ class MonetizationManager(CurrencyManager):
     def _onInitialize(*args):
         def _getQueryProductIds():
             currency_products = MonetizationManager.selectProducts(lambda product: product.getCurrency() == "Real")
-            query_ids = [product.id for product in currency_products]
-            return query_ids
+            query_consumable_ids = [product.id for product in currency_products if product.isConsumable() is True]
+            query_nonconsumable_ids = [product.id for product in currency_products if product.isConsumable() is False]
+            return query_consumable_ids, query_nonconsumable_ids
 
         ProductsProvider.setProvider(MonetizationManager.__name__, dict(
             getProductsInfo=MonetizationManager.getProductsInfo,
