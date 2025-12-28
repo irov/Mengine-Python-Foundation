@@ -58,27 +58,29 @@ class Notification(object):
             if Notification.validateIdentity(identity) is False:
                 Trace.log("Notification", 0, "Notification.notify not have identity %s" % (identity))
                 return False
-                pass
-            pass
 
         if identity not in Notification.notifies:
             return False
-            pass
 
-        observers = Notification.notifies[identity]
+        observers = Notification.notifies.get(identity)
+
+        if observers is None:
+            return False
 
         for observer in observers[:]:
             if observer.fn is None:
                 continue
-                pass
 
             if observer.filter is not None:
                 if observer.filter(*args, **kwargs) is False:
                     continue
-                    pass
                 pass
 
-            value = observer.fn(*args, **kwargs)
+            try:
+                value = observer.fn(*args, **kwargs)
+            except Exception as ex:
+                Trace.log("Notification", 0, "Notification %s call function %s error: %s" % (identity.value, observer.fn, ex))
+                continue
 
             if isinstance(value, bool) is False:
                 Trace.log("Notification", 0, "Notification %s called function must return boolean value, but return %s in %s" % (identity.value, value, observer.fn))
@@ -89,13 +91,16 @@ class Notification(object):
                 Notification.removeObserver(observer)
 
                 if cb is not None:
-                    cb()
+                    try:
+                        cb()
+                    except Exception as ex:
+                        Trace.log("Notification", 0, "Notification %s call cb function %s error: %s" % (identity.value, cb, ex))
+                        continue
                     pass
                 pass
             pass
 
         return True
-        pass
 
     @staticmethod
     def addObserver(identity, fn, *args, **kwargs):
@@ -103,7 +108,6 @@ class Notification(object):
             if Notification.validateIdentity(identity) is False:
                 Trace.log("Notification", 0, "Notification.addObserver not have identity %s" % (identity))
                 return
-                pass
             pass
         #
         if identity not in Notification.notifies:
@@ -116,17 +120,14 @@ class Notification(object):
             if args is not None and isinstance(args, tuple) is False:
                 Trace.log("Notification", 0, "Notification.addObserver %s args is not tuple" % (identity))
                 return
-                pass
 
             if kwargs is not None and isinstance(kwargs, dict) is False:
                 Trace.log("Notification", 0, "Notification.addObserver %s kwargs is not dict" % (identity))
                 return
-                pass
 
             if callable(fn) is False:
                 Trace.log("Notification", 0, "Notification.addObserver %s fn is not callable" % (identity))
                 return
-                pass
 
             for observer in observers:
                 if observer.fn is fn:
@@ -140,7 +141,6 @@ class Notification(object):
         observers.append(observer)
 
         return observer
-        pass
 
     @staticmethod
     def addObserverExt(identity, fn, args=(), kwargs={}, Filter=None, Cb=None):
@@ -148,9 +148,8 @@ class Notification(object):
             if Notification.validateIdentity(identity) is False:
                 Trace.log("Notification", 0, "Notification.addObserver not have identity %s" % (identity))
                 return
-                pass
             pass
-        #
+
         if identity not in Notification.notifies:
             Notification.notifies[identity] = []
             pass
@@ -161,17 +160,14 @@ class Notification(object):
             if args is not None and isinstance(args, tuple) is False:
                 Trace.log("Notification", 0, "Notification.addObserver %s args is not tuple" % (identity))
                 return
-                pass
 
             if kwargs is not None and isinstance(kwargs, dict) is False:
                 Trace.log("Notification", 0, "Notification.addObserver %s kwargs is not dict" % (identity))
                 return
-                pass
 
             if callable(fn) is False:
                 Trace.log("Notification", 0, "Notification.addObserver %s fn is not callable" % (identity))
                 return
-                pass
 
             for observer in observers:
                 if observer.fn is fn:
@@ -185,17 +181,14 @@ class Notification(object):
         observers.append(observer)
 
         return observer
-        pass
 
     @staticmethod
     def removeObserver(observer):
         if observer is None:
             return
-            pass
 
         if observer.isValid() is False:
             return
-            pass
 
         identity = observer.identity
 
@@ -203,12 +196,10 @@ class Notification(object):
             if Notification.validateIdentity(identity) is False:
                 Trace.log("Notification", 0, "Notification.removeObserver not have identity %s" % (identity))
                 return
-                pass
 
             if identity not in Notification.notifies:
                 Trace.log("Notification", 0, "Notification.removeObserver %s not found" % (identity.value))
                 return
-                pass
             pass
 
         observers = Notification.notifies[identity]
@@ -232,15 +223,11 @@ class Notification(object):
             if Notification.validateIdentity(identity) is False:
                 Trace.log("Notification", 0, "Notification.hasObserver not have identity %s" % (identity))
                 return False
-                pass
             pass
 
         if identity not in Notification.notifies:
             return False
-            pass
 
         observers = Notification.notifies[identity]
 
         return observer in observers
-        pass
-    pass

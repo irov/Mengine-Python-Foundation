@@ -30,8 +30,7 @@ class TaskArrowAttach2(MixinObject, Task):
             pass
 
         ArrowManager.attachArrow(self.Object)
-        arrow = Mengine.getArrow()
-        node = arrow.getNode()
+        node = Mengine.getArrowNode()
 
         if self.Origin is True:
             Image = ItemEntity.getSprite()

@@ -64,14 +64,14 @@ class AliasShowRewardedAdvert(TaskAlias):
 
         source.addPrint("AliasShowRewardedAdvert [{}] display start [{}]".format(self.AdPlacement, AdvertisementProvider.getName()))
 
-        source.addFunction(self.setInProcessing, True)
+        source.addFunction(AliasShowRewardedAdvert.setInProcessing, True)
 
         with source.addParallelTask(2) as (tc_extra, tc_main):
             tc_extra.addScope(self._scopeWhileShow)
             tc_main.addScope(self._scopeShowAdvert)
 
-        source.addFunction(self._runCallback)
+        source.addFunction(AliasShowRewardedAdvert.setInProcessing, False)
 
         source.addPrint("AliasShowRewardedAdvert [{}] display complete [{}]".format(self.AdPlacement, AdvertisementProvider.getName()))
 
-        source.addFunction(self.setInProcessing, False)
+        source.addFunction(self._runCallback)

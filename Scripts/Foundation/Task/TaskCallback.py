@@ -25,7 +25,6 @@ class TaskCallback(Task):
         self.Cb(isSkip, self.__onCallbackFilter)
 
         return False
-        pass
 
     def __onCallbackFilter(self, isSkip):
         if isSkip is False:
