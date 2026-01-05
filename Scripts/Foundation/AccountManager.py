@@ -48,13 +48,13 @@ class AccountManager(Manager):
         Mengine.changeCurrentAccountSettingBool("Default", True)
         Mengine.changeCurrentAccountSetting("Name", u"Default")
 
-        DefaultMusicVolume = DefaultManager.getDefaultFloat("DefaultMusicVolume", "0.5")
+        DefaultMusicVolume = DefaultManager.getDefaultFloat("DefaultMusicVolume", 0.5)
         Mengine.changeCurrentAccountSettingFloat("MusicVolume", DefaultMusicVolume)
 
-        DefaultSoundVolume = DefaultManager.getDefaultFloat("DefaultSoundVolume", "0.5")
+        DefaultSoundVolume = DefaultManager.getDefaultFloat("DefaultSoundVolume", 0.5)
         Mengine.changeCurrentAccountSettingFloat("SoundVolume", DefaultSoundVolume)
 
-        DefaultVoiceVolume = DefaultManager.getDefaultFloat("DefaultVoiceVolume", "0.5")
+        DefaultVoiceVolume = DefaultManager.getDefaultFloat("DefaultVoiceVolume", 0.5)
         Mengine.changeCurrentAccountSettingFloat("VoiceVolume", DefaultVoiceVolume)
 
         DefaultAccountFullscreen = DefaultManager.getDefaultBool("DefaultAccountFullscreen", False)
