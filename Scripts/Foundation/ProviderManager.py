@@ -15,6 +15,7 @@ class ProviderManager(Manager):
             return False
 
         ProviderManager.addProvider(name, Type)
+
         return True
 
     @staticmethod
