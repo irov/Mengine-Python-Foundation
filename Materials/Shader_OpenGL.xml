@@ -84,6 +84,18 @@
         <File Path = "Materials/GL_Fragment_Color_Premultiply.txt"/>
     </FragmentShader>
     
+    <FragmentShader Name = "Fragment_Color_Saturate" RenderPlatform = "OpenGL">
+        <File Path = "Materials/GL_Fragment_Color_Saturate.txt"/>
+    </FragmentShader>
+    
+    <FragmentShader Name = "Fragment_Texture_Saturate" RenderPlatform = "OpenGL">
+        <File Path = "Materials/GL_Fragment_Texture_Saturate.txt"/>
+    </FragmentShader>
+    
+    <FragmentShader Name = "Fragment_Texture_Saturate_ExternalAlpha" RenderPlatform = "OpenGL">
+        <File Path = "Materials/GL_Fragment_Texture_Saturate_ExternalAlpha.txt"/>
+    </FragmentShader>
+    
     <FragmentShader Name = "Fragment_Desaturate" RenderPlatform = "OpenGL">
         <File Path = "Materials/GL_Fragment_Desaturate.txt"/>
     </FragmentShader>

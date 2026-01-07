@@ -1,0 +1,29 @@
+#version 330 core
+
+uniform sampler2D inSampler0;
+uniform sampler2D inSampler1; // external alpha
+uniform float u_factor;
+
+in vec4 v_Col;
+in vec2 v_UV0;
+in vec2 v_UV1;
+
+out vec4 fragColor;
+
+void main(void)
+{
+    const vec3 REC709 = vec3(0.2126, 0.7152, 0.0722);
+
+    vec4 texColor = texture(inSampler0, v_UV0);
+
+    // External alpha is typically taken from the red channel
+    float extA = texture(inSampler1, v_UV1).r;
+    texColor.a *= extA;
+
+    float l = dot(texColor.rgb, REC709);
+    vec3 grayscale = vec3(l);
+
+    vec3 saturated = mix(grayscale, texColor.rgb, u_factor);
+
+    fragColor = v_Col * vec4(saturated, texColor.a);
+}

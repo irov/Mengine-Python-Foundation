@@ -957,7 +957,7 @@ def onInitialize():
         , "AnalyticsProvider"
         , "ConsentProvider"
     ]
-    
+
     from Foundation.ProviderManager import ProviderManager
     ProviderManager.importProviders("Foundation.Providers", providers)
 
