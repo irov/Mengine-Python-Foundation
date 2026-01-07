@@ -63,6 +63,7 @@ class SystemGoogleServices(System):
             _setCallback("onGoogleGameSocialRevealAchievementError", SystemGoogleServices.__cbAchievementRevealError)
             # showAchievements:
             _setCallback("onGoogleGameSocialShowAchievementSuccess", SystemGoogleServices.__cbAchievementShowSuccess)
+            _setCallback("onGoogleGameSocialShowAchievementCanceled", SystemGoogleServices.__cbAchievementShowCanceled)
             _setCallback("onGoogleGameSocialShowAchievementError", SystemGoogleServices.__cbAchievementShowError)
 
             _setCallback("onGoogleGameSocialIncrementEventSuccess", SystemGoogleServices.__cbEventIncrementSuccess)
@@ -613,6 +614,12 @@ class SystemGoogleServices(System):
     def __cbAchievementShowSuccess():
         # cb on showAchievements
         _Log("[Achievements cb] show achievement: Success")
+        pass
+
+    @staticmethod
+    def __cbAchievementShowCanceled():
+        # cb on showAchievements
+        _Log("[Achievements cb] show achievement: Canceled")
         pass
 
     @staticmethod
