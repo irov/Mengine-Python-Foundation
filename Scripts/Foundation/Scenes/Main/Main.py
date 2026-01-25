@@ -194,10 +194,6 @@ class Main(object):
                 Trace.log("Entity", "0", "Main.onEnableGroups: %s not found group %s (activate)" % (self.sceneDescriptions.scene, group.getName()))
                 return
 
-            if group.getEnable() is True:
-                Trace.log("Entity", "0", "Main.onEnableGroups: %s group %s already enable" % (self.sceneDescriptions.scene, group.getName()))
-                return
-
             group.onEnable()
             pass
 
@@ -213,7 +209,7 @@ class Main(object):
             group.onRun()
             pass
 
-        self.foreachGroups(__lambdaGroups)
+        self.foreachGroups(__lambdaGroups, isEnable=True)
         pass
 
     def onDeactivateGroups(self):
@@ -245,6 +241,6 @@ class Main(object):
             group.onDisable()
             pass
 
-        self.foreachGroups(__lambdaGroups, isReverse=True)
+        self.foreachGroups(__lambdaGroups, isEnable=True, isReverse=True)
         pass
     pass

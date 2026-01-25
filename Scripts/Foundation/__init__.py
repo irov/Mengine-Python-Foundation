@@ -126,6 +126,7 @@ def onInitialize():
         , "TaskSceneActivate"
         , "TaskGameScenesBlock"
         , "TaskGameSceneEnter"
+        , "TaskGroupEnable"
 
         , "TaskFadeIn"
         , "TaskFadeOut"

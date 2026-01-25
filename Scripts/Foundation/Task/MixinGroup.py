@@ -55,7 +55,6 @@ class MixinGroup(Params, Initializer):
 
     def getGroup(self):
         return self.Group
-        pass
 
     def setGroupName(self, GroupName):
         self.GroupName = GroupName
@@ -63,7 +62,6 @@ class MixinGroup(Params, Initializer):
 
     def getGroupName(self):
         return self.GroupName
-        pass
 
     def setDemonName(self, DemonName):
         self.DemonName = DemonName
@@ -71,5 +69,4 @@ class MixinGroup(Params, Initializer):
 
     def getDemonName(self):
         return self.DemonName
-        pass
     pass

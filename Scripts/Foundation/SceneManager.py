@@ -551,19 +551,22 @@ class SceneManager(Manager):
     @staticmethod
     def getSceneGroups(name):
         return SceneManager.__getSceneGroups(name)
-        pass
 
     @staticmethod
     def __getSceneGroups(name):
         if SceneManager.hasScene(name) is False:
             return None
-            pass
 
         groups = []
 
         sceneDescriptions = SceneManager.getSceneDescription(name)
 
         for slot, description in sceneDescriptions.slots.iteritems():
+            enable = description.get("Enable", True)
+
+            if enable is False:
+                continue
+
             layerType = description["Type"]
 
             if layerType == "Scene":
@@ -578,7 +581,6 @@ class SceneManager(Manager):
             pass
 
         return groups
-        pass
 
     @staticmethod
     def __getDiffSceneGroups(oldSceneName, newSceneName):
@@ -587,11 +589,9 @@ class SceneManager(Manager):
 
         if old_groups is None:
             return []
-            pass
 
         if new_groups is None:
             return []
-            pass
 
         diff_groups = []
 
@@ -602,7 +602,6 @@ class SceneManager(Manager):
             pass
 
         return diff_groups
-        pass
 
     @staticmethod
     def __cacheResourcesGroups(oldSceneName, newSceneName):
@@ -621,7 +620,6 @@ class SceneManager(Manager):
             pass
 
         return cache_groups_resource
-        pass
 
     @staticmethod
     def __cacheActiveGroups(oldSceneName, newSceneName):
@@ -919,12 +917,8 @@ class SceneManager(Manager):
             Trace.log("Manager", 0, "Enable Scene %s Layer %s Group is None" % (SceneName, LayerName))
             return
 
-        enable = layer_group.getEnable()
-
-        if enable is True:
-            return
-
         layer_group.onEnable()
+
         Notification.notify(Notificator.onEnableSceneLayerGroup, SceneName, LayerName)
         pass
 
@@ -936,12 +930,8 @@ class SceneManager(Manager):
             Trace.log("Manager", 0, "Disable Scene %s Layer %s Group is None" % (SceneName, LayerName))
             return
 
-        enable = layer_group.getEnable()
-
-        if enable is False:
-            return
-
         layer_group.onDisable()
+
         Notification.notify(Notificator.onDisableSceneLayerGroup, SceneName, LayerName)
 
         pass

@@ -148,19 +148,36 @@ class TaskSourceTgw(object):
             pass
         pass
 
-class TaskDescBase(object):
-    __slots__ = "caller_info"
+if _DEVELOPMENT is True:
+    class TaskDescBase(object):
+        __slots__ = "caller_info"
 
-    DEFAULT_CALLER = (None, None, None)
+        DEFAULT_CALLER = (None, None, None)
 
-    def __init__(self):
-        self.caller_info = TaskDescBase.DEFAULT_CALLER
+        def __init__(self):
+            self.caller_info = TaskDescBase.DEFAULT_CALLER
+            pass
+
+        def setupCaller(self, deep, doc):
+            self.caller_info = Trace.caller(deep) + (doc,)
+            pass
+
+        def getCaller(self):
+            return self.caller_info
         pass
+else:
+    class TaskDescBase(object):
+        DEFAULT_CALLER = (None, None, None)
 
-    def setupCaller(self, deep, doc):
-        self.caller_info = Trace.caller(deep) + (doc,)
+        def __init__(self):
+            pass
+
+        def setupCaller(self, deep, doc):
+            pass
+
+        def getCaller(self):
+            return TaskDescBase.DEFAULT_CALLER
         pass
-    pass
 
 class TaskDesc(TaskDescBase):
     __slots__ = "type", "params"
@@ -364,9 +381,7 @@ class TaskSource(object):
 
         desc = TaskDesc(taskType, params)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(3, self.doc)
-            pass
+        desc.setupCaller(3, self.doc)
 
         self.source.append(desc)
         pass
@@ -479,9 +494,7 @@ class TaskSource(object):
 
         desc = TaskForkDesc([])
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tg = TaskSource(desc.source, self.skiped)
 
@@ -530,9 +543,7 @@ class TaskSource(object):
 
         desc = TaskGuardDesc([], [], enable, guard, args)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(1, self.doc)
-            pass
+        desc.setupCaller(1, self.doc)
 
         tg_guard_source = TaskSource(desc.guard_source, self.skiped)
 
@@ -553,9 +564,7 @@ class TaskSource(object):
 
         desc = TaskSwitchDesc([], cb, args, kwargs)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tgs = []
 
@@ -580,9 +589,7 @@ class TaskSource(object):
 
         desc = TaskDictDesc({}, cb, args, kwargs)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tgw = {}
 
@@ -609,9 +616,7 @@ class TaskSource(object):
 
         desc = TaskTryDesc([], [], taskType, params)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tgs = []
 
@@ -630,9 +635,7 @@ class TaskSource(object):
 
         desc = TaskIfDesc([], [], fn, args)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tgs = []
 
@@ -651,9 +654,7 @@ class TaskSource(object):
 
         desc = TaskIfDesc([], [], lambda: semaphore.equalValue(value), ())
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tgs = []
 
@@ -674,9 +675,7 @@ class TaskSource(object):
 
         desc = TaskForDesc([], it, count)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tg = TaskSource(desc.source, self.skiped)
 
@@ -689,9 +688,7 @@ class TaskSource(object):
 
         desc = TaskRepeatDesc([], [], True)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(1, self.doc)
-            pass
+        desc.setupCaller(1, self.doc)
 
         tgs = []
 
@@ -710,9 +707,7 @@ class TaskSource(object):
 
         desc = TaskRepeatDesc([], [], True)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(1, self.doc)
-            pass
+        desc.setupCaller(1, self.doc)
 
         repeat_tg = TaskSource(desc.repeat, self.skiped)
 
@@ -729,9 +724,7 @@ class TaskSource(object):
 
         desc = TaskRepeatDesc([], [], False)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tg = TaskSource(desc.repeat, self.skiped)
 
@@ -744,9 +737,7 @@ class TaskSource(object):
 
         desc = TaskParallelDesc([])
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tgs = []
 
@@ -767,9 +758,7 @@ class TaskSource(object):
 
         desc = TaskParallelDesc([])
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tgs = []
 
@@ -793,9 +782,7 @@ class TaskSource(object):
 
         desc = TaskRaceDesc([], NoSkip, RaceSkip)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tgs = []
 
@@ -816,9 +803,7 @@ class TaskSource(object):
 
         desc = TaskRaceDesc([], NoSkip, RaceSkip)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         tgs = []
 
@@ -868,9 +853,7 @@ class TaskSource(object):
 
         desc = TaskShiftCollectDesc(index, shiftCollect)
 
-        if _DEVELOPMENT is True:
-            desc.setupCaller(0, self.doc)
-            pass
+        desc.setupCaller(0, self.doc)
 
         self.source.append(desc)
         pass
@@ -914,7 +897,7 @@ class TaskGenerator(object):
 
         for element in self.source:
             if isinstance(element, TaskDesc) is True:
-                task = self.chain.createTaskBaseTypeParams(element.type, self.group, element.caller_info, element.params)
+                task = self.chain.createTaskBaseTypeParams(element.type, self.group, element.getCaller(), element.params)
 
                 if task is None:
                     Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDesc %s" % (element.type))
@@ -955,7 +938,7 @@ class TaskGenerator(object):
                 tasks = []
                 lasts = []
                 for i, switch_source in enumerate(element.switch):
-                    tci = self.chain.createTaskBaseParams("TaskDummy", self.group, element.caller_info, {})
+                    tci = self.chain.createTaskBaseParams("TaskDummy", self.group, element.getCaller(), {})
 
                     if tci is None:
                         Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDummy")
@@ -983,7 +966,7 @@ class TaskGenerator(object):
                 tasks = {}
                 lasts = {}
                 for i, (switch_key, switch_source) in enumerate(element.switch.iteritems()):
-                    tci = self.chain.createTaskBaseParams("TaskDummy", self.group, element.caller_info, {})
+                    tci = self.chain.createTaskBaseParams("TaskDummy", self.group, element.getCaller(), {})
 
                     if tci is None:
                         Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDummy")
@@ -1008,7 +991,7 @@ class TaskGenerator(object):
                 self._addSwitch(element, tasks, lasts)
                 pass
             elif isinstance(element, TaskIfDesc) is True:
-                task = self.chain.createTaskBase("TaskIf", self.group, Caller=element.caller_info, Fn=element.fn, Args=element.args, Source_True=element.source_true, Source_False=element.source_false)
+                task = self.chain.createTaskBase("TaskIf", self.group, Caller=element.getCaller(), Fn=element.fn, Args=element.args, Source_True=element.source_true, Source_False=element.source_false)
 
                 if task is None:
                     Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDesc %s" % ("TaskIf"))
@@ -1019,7 +1002,7 @@ class TaskGenerator(object):
                 self._addTask(task)
                 pass
             elif isinstance(element, TaskTryDesc) is True:
-                task_type = self.chain.createTaskBaseTypeParams(element.type, self.group, element.caller_info, element.params)
+                task_type = self.chain.createTaskBaseTypeParams(element.type, self.group, element.getCaller(), element.params)
 
                 if task_type is None:
                     Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDesc %s" % ("TaskTryDesc"))
@@ -1037,7 +1020,7 @@ class TaskGenerator(object):
                     return True
                     pass
 
-                task_if = self.chain.createTaskBase("TaskIf", self.group, Caller=element.caller_info, Fn=__check_task_error, Args=(task_type,), Source_True=element.source_true, Source_False=element.source_false)
+                task_if = self.chain.createTaskBase("TaskIf", self.group, Caller=element.getCaller(), Fn=__check_task_error, Args=(task_type,), Source_True=element.source_true, Source_False=element.source_false)
 
                 if task_if is None:
                     Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskIf %s" % ("TaskTryDesc"))
@@ -1119,7 +1102,7 @@ class TaskGenerator(object):
         pass
 
     def _addFor(self, element):
-        task = self.chain.createTaskBase("TaskFor", self.group, Caller=element.caller_info, Source=element.source, Iterator=element.iterator, Count=element.count)
+        task = self.chain.createTaskBase("TaskFor", self.group, Caller=element.getCaller(), Source=element.source, Iterator=element.iterator, Count=element.count)
 
         if task is None:
             Trace.log("Task", 0, "TaskGenerator._addFor invalid create task TaskFor")
@@ -1131,7 +1114,7 @@ class TaskGenerator(object):
         pass
 
     def _addRepeat(self, element):
-        task = self.chain.createTaskBase("TaskRepeat", self.group, Caller=element.caller_info, RepeatSource=element.repeat, UntilSource=element.until, HasUntil=element.hasUntil)
+        task = self.chain.createTaskBase("TaskRepeat", self.group, Caller=element.getCaller(), RepeatSource=element.repeat, UntilSource=element.until, HasUntil=element.hasUntil)
 
         if task is None:
             Trace.log("Task", 0, "TaskGenerator._addRepeat invalid create task TaskRepeat")
@@ -1143,7 +1126,7 @@ class TaskGenerator(object):
         pass
 
     def _addFork(self, element):
-        task = self.chain.createTaskBase("TaskFork", self.group, Caller=element.caller_info, Source=element.source)
+        task = self.chain.createTaskBase("TaskFork", self.group, Caller=element.getCaller(), Source=element.source)
 
         if task is None:
             Trace.log("Task", 0, "TaskGenerator._addFork invalid create task TaskFork")
@@ -1159,7 +1142,7 @@ class TaskGenerator(object):
             return
             pass
 
-        task = self.chain.createTaskBaseRace(self.group, False, True, element.caller_info)
+        task = self.chain.createTaskBaseRace(self.group, False, True, element.getCaller())
 
         if task is None:
             Trace.log("Task", 0, "TaskGenerator._addGuard invalid create task TaskRaceNeck")
@@ -1179,7 +1162,7 @@ class TaskGenerator(object):
             return
             pass
 
-        task = self.chain.createTaskBase("TaskSwitch", self.group, Caller=element.caller_info, Cb=element.cb, CbArgs=element.args, CbKwargs=element.kwargs, Tasks=tasks, Lasts=lasts)
+        task = self.chain.createTaskBase("TaskSwitch", self.group, Caller=element.getCaller(), Cb=element.cb, CbArgs=element.args, CbKwargs=element.kwargs, Tasks=tasks, Lasts=lasts)
 
         if task is None:
             Trace.log("Task", 0, "TaskGenerator._addSwitch invalid create task TaskSwitch")
@@ -1192,7 +1175,7 @@ class TaskGenerator(object):
 
     def _addShiftCollect(self, element):
         PolicyShiftCollect = PolicyManager.getPolicy("ShiftCollect", "PolicySocketShiftCollect")
-        task = self.chain.createTaskBase(PolicyShiftCollect, self.group, Caller=element.caller_info, Index=element.index, Collects=element.shiftCollect)
+        task = self.chain.createTaskBase(PolicyShiftCollect, self.group, Caller=element.getCaller(), Index=element.index, Collects=element.shiftCollect)
 
         self._addTask(task)
         pass
@@ -1202,7 +1185,7 @@ class TaskGenerator(object):
             return
             pass
 
-        task = self.chain.createTaskBase("TaskParallelNeck", self.group, Caller=element.caller_info)
+        task = self.chain.createTaskBase("TaskParallelNeck", self.group, Caller=element.getCaller())
 
         if task is None:
             Trace.log("Task", 0, "TaskGenerator._addParallel invalid create task TaskParallelNeck")
@@ -1222,7 +1205,7 @@ class TaskGenerator(object):
             return
             pass
 
-        task = self.chain.createTaskBaseRace(self.group, element.NoSkip, element.RaceSkip, element.caller_info)
+        task = self.chain.createTaskBaseRace(self.group, element.NoSkip, element.RaceSkip, element.getCaller())
 
         if task is None:
             Trace.log("Task", 0, "TaskGenerator._addRace invalid create task TaskRaceNeck")

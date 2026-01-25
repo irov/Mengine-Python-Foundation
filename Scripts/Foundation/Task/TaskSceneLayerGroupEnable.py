@@ -25,15 +25,14 @@ class TaskSceneLayerGroupEnable(MixinObserver, Task):
             self.log("Scene %s Layer %s Group is None" % (self.SceneName, self.LayerName))
             return
 
-        enable = layer_group.getEnable()
-
-        if self.Value is enable:
-            return
-
         if self.Value is True:
-            layer_group.onEnable()
+            if layer_group.onEnable() is False:
+                self.log("Layer scene '%s' layer '%s' group '%s' already enabled" % (self.SceneName, self.LayerName, layer_group.name))
+                pass
         else:
-            layer_group.onDisable()
+            if layer_group.onDisable() is False:
+                self.log("Layer scene '%s' layer '%s' group '%s' already disabled" % (self.SceneName, self.LayerName, layer_group.name))
+                pass
 
     def __cbOnSceneInit(self, scene_name):
         if scene_name != self.SceneName:

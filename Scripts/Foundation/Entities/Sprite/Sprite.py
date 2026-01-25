@@ -5,19 +5,26 @@ class Sprite(BaseEntity):
     def declareORM(Type):
         BaseEntity.declareORM(Type)
 
-        Type.addAction("SpriteResourceName",
-                       Update=Sprite.__updateSpriteResourceName)
-        Type.addAction("ExtraResource",
-                       Update=Sprite.__updateExtraResource)
+        Type.addAction("SpriteResourceName", Update=Sprite.__updateSpriteResourceName)
+        Type.addAction("ExtraResource", Update=Sprite.__updateExtraResource)
         pass
 
     def __updateSpriteResourceName(self, value):
         if value is None:
             return
-            pass
 
         surface = self.shape.getSurface()
         surface.setResourceImage(value)
+        pass
+
+    def __updateExtraResource(self, value):
+        if value is None:
+            return
+
+        resource = Mengine.getResourceReference(value)
+
+        surface = self.shape.getSurface()
+        surface.setResourceImage(resource)
         pass
 
     def __init__(self):
@@ -52,20 +59,7 @@ class Sprite(BaseEntity):
 
     def getSize(self):
         return self.shape.getSurfaceSize()
-        pass
 
     def getSprite(self):
         return self.shape
-        pass
-
-    def __updateExtraResource(self, value):
-        if value is None:
-            return
-            pass
-
-        resource = Mengine.getResourceReference(value)
-
-        surface = self.shape.getSurface()
-        surface.setResourceImage(resource)
-        pass
     pass

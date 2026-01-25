@@ -11,7 +11,7 @@ class Group(ChildObject):
         self.stageName = None
 
         self.scene = None
-        self.enable = False
+        self.__enableRefcount = 0
         self.states = {}
         self.ParentGroupName = None
 
@@ -231,32 +231,36 @@ class Group(ChildObject):
         pass
 
     def onEnable(self):
-        if self.enable is True:
-            Trace.log("Group", 0, "Group '%s' already enable" % (self.name))
-            return
-
         if self.isInitialized() is False:
             Trace.log("Group", 0, "Group '%s' invalid enable, not initialized" % (self.name))
-            return
+            return False
 
         if self.isActive() is False:
             Trace.log("Group", 0, "Group '%s' invalid enable, not activate" % (self.name))
-            return
+            return False
 
-        self.enable = True
+        self.__enableRefcount += 1
+
+        if self.__enableRefcount > 1:
+            return True
 
         Notification.notify(Notificator.onLayerGroupEnableBegin, self.name)
 
         self.scene.enable()
 
         Notification.notify(Notificator.onLayerGroupEnable, self.name)
-        pass
+
+        return True
 
     def onDisable(self):
-        if self.enable is False:
-            return
+        if self.__enableRefcount == 0:
+            Trace.log("Group", 0, "Group '%s' invalid disable, not enable" % (self.name))
+            return False
 
-        self.enable = False
+        self.__enableRefcount -= 1
+
+        if self.__enableRefcount > 0:
+            return True
 
         Notification.notify(Notificator.onLayerGroupRelease, self.name)
 
@@ -264,8 +268,8 @@ class Group(ChildObject):
         self.scene.release()
 
         Notification.notify(Notificator.onLayerGroupDisable, self.name)
-        pass
+
+        return True
 
     def getEnable(self):
-        return self.enable
-    pass
+        return self.__enableRefcount > 0

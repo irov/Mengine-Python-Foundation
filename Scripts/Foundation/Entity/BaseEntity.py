@@ -55,7 +55,10 @@ class BaseEntity(Actor, Initializer):
         pass
 
     def createChild(self, type):
-        return self.node.createChild(type)
+        node = self.node.createChild(type)
+        groupName = self.object.getGroupName()
+        node.setGroupName(groupName)
+        return node
 
     def removeFromParent(self):
         self.node.removeFromParent()

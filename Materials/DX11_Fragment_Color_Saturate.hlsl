@@ -1,0 +1,27 @@
+float u_factor;
+
+struct v2p
+{
+    float4 position : SV_POSITION;
+    float4 color : COLOR0;
+};
+
+struct p2f
+{
+    float4 color : COLOR0;
+};
+
+void main( in v2p IN, out p2f OUT )
+{
+    const float3 REC709 = float3(0.2126, 0.7152, 0.0722);
+
+    float4 color = IN.color;
+    
+    float l = dot(color.rgb, REC709);
+    
+    float3 grayscale = float3(l, l, l);
+
+    float3 saturated = lerp(grayscale, color.rgb, u_factor);
+
+    OUT.color = float4(saturated, color.a);
+}

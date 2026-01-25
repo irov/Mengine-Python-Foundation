@@ -605,7 +605,6 @@ def makeMovieNode(GroupName, MovieName, Position=None, Enable=True, AutoPlay=Tru
             pass
 
         return None
-        pass
 
     Movie = Mengine.createNode("Movie")
 
@@ -637,7 +636,6 @@ def makeMovieNode(GroupName, MovieName, Position=None, Enable=True, AutoPlay=Tru
         pass
 
     return Movie
-    pass
 
 def makeMovie2Node(GroupName, MovieName, Position=None, Enable=True, AutoPlay=True, Loop=False, Name=None, Important=False, Interactive=True):
     ResourceMovie = Utils.makeResourceMovie2(GroupName, Important)

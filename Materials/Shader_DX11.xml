@@ -83,6 +83,18 @@
     <FragmentShader Name = "Fragment_Color_Premultiply" RenderPlatform = "DX11">
         <File Path = "Materials/DX11_Fragment_Color_Premultiply.hlsl" Converter="text2pso11" Compile="1"/>
     </FragmentShader>
+    
+    <FragmentShader Name = "Fragment_Color_Saturate" RenderPlatform = "DX11">
+        <File Path = "Materials/DX11_Fragment_Color_Saturate.hlsl" Converter="text2pso11" Compile="1"/>
+    </FragmentShader>
+    
+    <FragmentShader Name = "Fragment_Texture_Saturate" RenderPlatform = "DX11">
+        <File Path = "Materials/DX11_Fragment_Texture_Saturate.hlsl" Converter="text2pso11" Compile="1"/>
+    </FragmentShader>
+    
+    <FragmentShader Name = "Fragment_Texture_Saturate_ExternalAlpha" RenderPlatform = "DX11">
+        <File Path = "Materials/DX11_Fragment_Texture_Saturate_ExternalAlpha.hlsl" Converter="text2pso11" Compile="1"/>
+    </FragmentShader>
 
     <FragmentShader Name = "Fragment_Desaturate" RenderPlatform = "DX11">
         <File Path = "Materials/DX11_Fragment_Desaturate.hlsl" Converter="text2pso11" Compile="1"/>
