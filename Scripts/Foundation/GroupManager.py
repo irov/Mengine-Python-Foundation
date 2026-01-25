@@ -60,12 +60,10 @@ class GroupManager(Manager):
             GroupName = record.get("GroupName")
             if GroupName is None:
                 continue
-                pass
 
             if GroupName in GroupManager.s_groups:
                 Trace.log("Manager", 0, "GroupManage.loadGroups group %s already exist" % GroupName)
                 continue
-                pass
 
             ModuleName = record.get("ModuleName")
 
@@ -77,7 +75,6 @@ class GroupManager(Manager):
 
             if result is None:
                 return False
-                pass
             pass
 
         for record in records:
@@ -85,37 +82,35 @@ class GroupManager(Manager):
 
             if groupName is None:
                 continue
-                pass
 
             Dynamic = bool(int(record.get("Dynamic", 0)))
             if Dynamic is True:
                 GroupManager.s_groupsDynamicInfos[groupName] = record
                 continue
-                pass
 
             ParentGroupName = record.get("ParentGroupName", None)
             Tag = record.get("Tag", None)
             Save = bool(int(record.get("Save", 0)))
+            OffsetX = float(record.get("OffsetX", 0.0))
             OffsetY = float(record.get("OffsetY", 0.0))
             Survey = int(record.get("Survey", 0))
             CE = int(record.get("CE", 0))
             BuildModeTags = record.get("BuildModeTags", [])
             Platform = record.get("Platform", None)
 
-            if GroupManager.addGroup(groupName, ParentGroupName, Tag, Save, OffsetY, Survey, CE, BuildModeTags, Platform) is False:
+            if GroupManager.addGroup(groupName, ParentGroupName, Tag, Save, OffsetX, OffsetY, Survey, CE, BuildModeTags, Platform) is False:
                 Trace.log("Manager", 0, "GroupManager.loadParams: load params %s invalid add group %s" % (param, groupName))
                 return False
-                pass
             pass
 
         return True
-        pass
 
     @staticmethod
     def addGroupDynamic(groupName):
-        if not groupName in GroupManager.s_groupsDynamicInfos:
-            Trace.log("Manager", 0, "GroupManage.addGroupDynamic group info in missing for %s" % groupName)
-            return
+        if _DEVELOPMENT is True:
+            if not groupName in GroupManager.s_groupsDynamicInfos:
+                Trace.log("Manager", 0, "GroupManage.addGroupDynamic group info in missing for %s" % groupName)
+                return
             pass
 
         record = GroupManager.s_groupsDynamicInfos[groupName]
@@ -123,21 +118,24 @@ class GroupManager(Manager):
         ParentGroupName = record.get("ParentGroupName", None)
         Tag = record.get("Tag", None)
         Save = bool(int(record.get("Save", 0)))
+        OffsetX = float(record.get("OffsetX", 0.0))
         OffsetY = float(record.get("OffsetY", 0.0))
         Survey = int(record.get("Survey", 0))
         CE = int(record.get("CE", 0))
         BuildModeTags = int(record.get("BuildMode", 0))
         Platform = record.get("Platform", None)
 
-        GroupManager.addGroup(groupName, ParentGroupName, Tag, Save, OffsetY, Survey, CE, BuildModeTags, Platform)
+        GroupManager.addGroup(groupName, ParentGroupName, Tag, Save, OffsetX, OffsetY, Survey, CE, BuildModeTags, Platform)
         pass
 
     @staticmethod
-    def addGroup(groupName, ParentGroupName, Tag, Save, OffsetY, Survey, CE, BuildModeTags, Platform):
-        if groupName in GroupManager.s_groups:
-            Trace.log("Manager", 0, "GroupManage.addGroup group %s already exist" % groupName)
-            return False
+    def addGroup(groupName, ParentGroupName, StageName, Save, OffsetX, OffsetY, Survey, CE, BuildModeTags, Platform):
+        if _DEVELOPMENT is True:
+            if groupName in GroupManager.s_groups:
+                Trace.log("Manager", 0, "GroupManage.addGroup group %s already exist" % groupName)
+                return False
             pass
+
 
         if checkBuildMode(groupName, Survey, CE, BuildModeTags) is True:
             GroupManager.s_groups[groupName] = GroupManager.EmptyGroup()
@@ -152,32 +150,29 @@ class GroupManager(Manager):
 
         if group is None:
             return False
-            pass
 
-        if Tag is None:
+        if StageName is None:
             if group.onInitialize() is False:
                 Trace.log("Manager", 0, "GroupManage.addGroup group %s invalid initialize" % groupName)
                 return False
-                pass
             pass
 
         group.setSave(Save)
-        group.setStageName(Tag)
+        group.setStageName(StageName)
 
         group.setParentGroupName(ParentGroupName)
 
-        def __offsetY(obj):
+        def __offsetXY(obj):
             pos = obj.getPosition()
-            new_pos = (pos[0], pos[1] + OffsetY)
+            new_pos = (pos[0] + OffsetX, pos[1] + OffsetY)
             obj.setPosition(new_pos)
             pass
 
-        group.visitChildren(__offsetY)
+        group.visitChildren(__offsetXY)
 
         GroupManager.s_groups[groupName] = group
 
         return True
-        pass
 
     @staticmethod
     def __removeGroup(groupName):
@@ -190,17 +185,19 @@ class GroupManager(Manager):
 
         group = GroupManager.s_groups.pop(groupName)
 
-        if group.isDestroy():
+        if group.isDestroy() is True:
             return
-            pass
 
         ParentGroupName = group.getParentGroupName()
         if ParentGroupName is not None:
             GroupManager.__removeGroup(ParentGroupName)
             pass
 
-        group.onFinalize()
-        group.onDestroy()
+        StageName = group.getStageName()
+
+        if StageName is None:
+            group.onFinalize()
+            pass
         pass
 
     @staticmethod
@@ -234,17 +231,18 @@ class GroupManager(Manager):
         pass
 
     @staticmethod
-    def initializeGroupTag(stageName):
+    def initializeGroupStageName(stageName):
         for name, group in GroupManager.s_groups.iteritems():
             if isinstance(group, GroupManager.EmptyGroup):
                 continue
 
             groupStageName = group.getStageName()
+
             if stageName != groupStageName:
                 continue
 
             if group.onInitialize() is False:
-                Trace.log("Manager", 0, "GroupManage.initializeGroupTag group %s invalid initialize" % name)
+                Trace.log("Manager", 0, "GroupManage.initializeGroupStageName stage %s group %s invalid initialize" % (stageName, name))
 
                 return False
             pass
@@ -253,9 +251,11 @@ class GroupManager(Manager):
 
     @staticmethod
     def __createGroup(name):
-        if name not in GroupManager.s_groupsType:
-            Trace.log("Manager", 0, "GroupManager.createGroup: group type %s not found" % name)
-            return None
+        if _DEVELOPMENT is True:
+            if name not in GroupManager.s_groupsType:
+                Trace.log("Manager", 0, "GroupManager.createGroup: group type %s not found" % name)
+                return None
+            pass
 
         GroupType = GroupManager.s_groupsType[name]
         group = GroupType()
@@ -267,7 +267,6 @@ class GroupManager(Manager):
     @staticmethod
     def hasGroup(name):
         return name in GroupManager.s_groups
-        pass
 
     @staticmethod
     def getGroup(name):
@@ -275,27 +274,22 @@ class GroupManager(Manager):
             Trace.log("Manager", 0, "GroupManager.getGroup: not found group [%s], maybe forgot add [%s] in Groups.xls)" % (name, name))
 
             return None
-            pass
 
         Group = GroupManager.s_groups[name]
 
         return Group
-        pass
 
     @staticmethod
     def hasObject(groupName, objectName):
         if GroupManager.hasGroup(groupName) is False:
             return False
-            pass
 
         group = GroupManager.getGroup(groupName)
 
         if group.hasObject(objectName) is False:
             return False
-            pass
 
         return True
-        pass
 
     @staticmethod
     def hasPrototype(groupName, prototypeName):
@@ -316,43 +310,36 @@ class GroupManager(Manager):
         if GroupManager.hasObject(groupName, objectName) is False:
             Trace.log("Manager", 0, "GroupManager.getObject: group '%s' not found object '%s')" % (groupName, objectName))
             return None
-            pass
 
         obj = group.getObject(objectName)
 
         return obj
-        pass
 
     @staticmethod
     def generateObjectUnique(objectName, groupName, prototypeName, EntityHierarchy=True, **prototypeParams):
         if GroupManager.hasGroup(groupName) is False:
             Trace.log("Manager", 0, "GroupManager.generateObjectUnique: not found group '%s')" % (groupName))
             return None
-            pass
 
         group = GroupManager.getGroup(groupName)
 
         if group.hasPrototype(prototypeName) is False:
             Trace.log("Manager", 0, "GroupManager.generateObjectUnique: group '%s' not found prototype '%s' params '%s')" % (groupName, prototypeName, prototypeParams))
             return None
-            pass
 
         obj = group.generateObjectUnique(objectName, prototypeName, EntityHierarchy=EntityHierarchy, **prototypeParams)
 
         return obj
-        pass
 
     @staticmethod
     def reloadGroup(groupName):
         if GroupManager.hasGroup(groupName) is True:
             return
-            pass
 
         group = GroupManager.getGroup(groupName)
         group.onLoader()
 
         return group
-        pass
 
     @staticmethod
     def reloadGroups():
@@ -362,7 +349,6 @@ class GroupManager(Manager):
 
             if group.getSave() is False:
                 continue
-                pass
 
             group.onLoader()
 
@@ -370,7 +356,6 @@ class GroupManager(Manager):
     def isEnableGroup(groupName):
         if GroupManager.hasGroup(groupName) is False:
             return False
-            pass
 
         group = GroupManager.getGroup(groupName)
         is_enable = group.getEnable()

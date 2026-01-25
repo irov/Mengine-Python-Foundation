@@ -8,5 +8,4 @@ class TaskObjectDestroy(MixinObject, Task):
         self.Object.onDestroy()
 
         return True
-        pass
     pass

@@ -127,8 +127,6 @@ class Group(ChildObject):
 
         self.setEntity(None)
 
-        self.onDisable()
-
         self.scene.removeChildren()
 
         Mengine.destroyNode(self.scene)
