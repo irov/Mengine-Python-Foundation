@@ -10,7 +10,6 @@ class TaskRemoveArrowAttach(Task):
 
     def _onRun(self):
         if ArrowManager.emptyArrowAttach() is True:
-            ArrowManager.removeChildren()
             return True
             pass
 
