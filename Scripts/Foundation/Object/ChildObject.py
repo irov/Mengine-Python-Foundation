@@ -49,7 +49,7 @@ class ChildObject(BaseObject):
             Trace.log("Object", 0, "ChildObject.generateObject: %s unknown prototype [%s]" % (self.getName(), prototypeName))
             return None
 
-        PrototypeType, PrototypePreparation, PrototypeParams, PrototypeLayerName = Prototype
+        PrototypeTypeName, PrototypePreparation, PrototypeParams, PrototypeLayerName = Prototype
 
         params = PrototypeParams.copy()
 
@@ -59,7 +59,7 @@ class ChildObject(BaseObject):
             Trace.log("Object", 0, "ChildObject.generateObject: %s must be instance of dictionary" % (prototypeParams,))
             pass
 
-        obj = ObjectManager.createObject(PrototypeType, objectName, self, params)
+        obj = ObjectManager.createObject(PrototypeTypeName, objectName, self, params)
 
         obj.setLayerName(PrototypeLayerName)
 
@@ -95,13 +95,13 @@ class ChildObject(BaseObject):
             Trace.log("Object", 0, "ChildObject.generateObject: %s unknown prototype [%s]" % (self.getName(), prototypeName))
             return None
 
-        PrototypeType, PrototypePreparation, PrototypeParams, PrototypeLayerName = Prototype
+        PrototypeTypeName, PrototypePreparation, PrototypeParams, PrototypeLayerName = Prototype
 
         params = PrototypeParams.copy()
         params.update(prototypeParams)
         params.setdefault("Enable", False)
 
-        obj = ObjectManager.createObject(PrototypeType, objectName, self, params)
+        obj = ObjectManager.createObject(PrototypeTypeName, objectName, self, params)
 
         obj.setLayerName(PrototypeLayerName)
 
@@ -123,6 +123,25 @@ class ChildObject(BaseObject):
             pass
 
         return obj
+
+    def generateNodeUnique(self, prototypeName):
+        Prototype = self.getPrototype(prototypeName)
+
+        if Prototype is None:
+            Trace.log("Object", 0, "ChildObject.generateNodeUnique: %s unknown prototype [%s]" % (self.getName(), prototypeName))
+            return None
+
+        PrototypeTypeName, PrototypePreparation, PrototypeParams, PrototypeLayerName = Prototype
+
+        PrototypeType = ObjectManager.getObjectType(PrototypeTypeName)
+
+        if PrototypeType is None:
+            Trace.log("Object", 0, "ChildObject.generateNodeUnique: %s unknown object type [%s]" % (self.getName(), PrototypeTypeName))
+            return None
+
+        node = PrototypeType.generatePrototypeNode(**PrototypeParams)
+
+        return node
 
     def tryGenerateObjectUnique(self, objectName, prototypeName, EntityHierarchy=True, **prototypeParams):
         if self.hasPrototype(prototypeName) is False:
