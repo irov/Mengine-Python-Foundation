@@ -329,3 +329,15 @@ class ChildObject(BaseObject):
             obj.onDestroy()
 
         self.child = None
+
+        if _DEVELOPMENT is True:
+            for obj in self.child_unique:
+                if obj.isDestroy() is True:
+                    continue
+                Trace.log("Object", 0, "ChildObject._onDestroy: Unique child '%s' not destroyed '%s'" % (self.name, obj.getName()))
+                pass
+            pass
+
+        self.child_unique = None
+
+        self.prototypes = {}

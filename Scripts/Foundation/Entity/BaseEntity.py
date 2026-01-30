@@ -231,7 +231,6 @@ class BaseEntity(Actor, Initializer):
     def onDeactivate(self):
         if self.isInitialized() is False:
             return
-            pass
 
         self._onDeactivate()
         pass
