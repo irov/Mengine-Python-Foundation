@@ -12,41 +12,32 @@ class ObjectCollection(object):
         pass
 
     def get(self, key):
-        object_ = self.__dict.get(key)
+        obj = self.__dict.get(key)
 
-        return object_
-        pass
+        return obj
 
     def remove(self, key):
-        value = self.__dict[key]
+        value = self.__dict.pop(key)
         self.__list.remove(value)
-
-        del self.__dict[key]
         pass
 
     def getList(self):
         return self.__list
-        pass
 
     def getDict(self):
         return self.__dict
-        pass
 
     def length(self):
         return len(self.__list)
-        pass
 
     def __contains__(self, key):
         return key in self.__dict
-        pass
 
     def __iter__(self):
         return self.__list.__iter__()
-        pass
 
     def __repr__(self):
         return self.__list.__repr__()
-        pass
 
     def __add__(self, object_collection_addition):
         object_collection = ObjectCollection()

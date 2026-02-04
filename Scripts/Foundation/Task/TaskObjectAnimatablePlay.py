@@ -30,7 +30,7 @@ class TaskObjectAnimatablePlay(MixinEvent, Task):
         if Enable is False and self.AutoEnable is False:
             self.validateFailed("Animatable '%s' is Disable" % (Animatable.getName()))
 
-        if self.ValidationParentEnable is True:
+        if self.ValidationParentEnable is True and Animatable.isUnique() is False:
             AnimatableParent = Animatable.getParent()
 
             if AnimatableParent is not None and AnimatableParent.getEnable() is False:

@@ -18,6 +18,8 @@ class BaseObject(Params, Initializer):
         self.saving = True
         self.loaded = False
 
+        self.unique = False
+
         self.layerName = None
 
     def setName(self, name):
@@ -53,6 +55,13 @@ class BaseObject(Params, Initializer):
 
     def isSaving(self):
         return self.saving
+
+    def setUnique(self, unique):
+        self.unique = unique
+        pass
+
+    def isUnique(self):
+        return self.unique
 
     def setEntity(self, entity):
         self.entity = entity
@@ -109,10 +118,6 @@ class BaseObject(Params, Initializer):
         return GroupName
 
     def removeFromParent(self):
-        # if self.isActive() is True:
-        #     entity = self.getEntity()
-        #     entity.removeFromParent()
-
         if self.isActive() is True:
             entity = self.getEntity()
             if entity is not None:
@@ -123,8 +128,7 @@ class BaseObject(Params, Initializer):
         if self.parent is None:
             return
 
-        name = self.getName()
-        self.parent.removeObject(name)
+        self.parent.removeObject(self)
         self.parent = None
 
     def returnToParent(self):
@@ -160,6 +164,10 @@ class BaseObject(Params, Initializer):
 
         self.removeFromParent()
 
+        self._onDestroySelf()
+        pass
+
+    def _onDestroySelf(self):
         if self.isInitialized() is True:
             self.onFinalize()
 
@@ -169,6 +177,7 @@ class BaseObject(Params, Initializer):
         self.removeParams()
 
         self.__destroy = True
+        pass
 
     def _onDestroy(self):
         pass

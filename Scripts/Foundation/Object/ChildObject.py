@@ -8,7 +8,7 @@ class ChildObject(BaseObject):
         super(ChildObject, self).__init__()
 
         self.child = ObjectCollection()
-        self.child_unique = ObjectCollection()
+        self.child_unique = []
 
         self.prototypes = {}
 
@@ -35,7 +35,7 @@ class ChildObject(BaseObject):
         return prototypeName in self.prototypes
 
     def generateObject(self, objectName, prototypeName, prototypeParams=None, EntityHierarchy=True):
-        if self.hasObject(objectName) is True:
+        if _DEVELOPMENT is True and self.hasObject(objectName) is True:
             Trace.log("Object", 0, "ChildObject.generateObject: %s prototype [%s] already has [%s]" % (self.getName(), prototypeName, objectName))
             return None
 
@@ -74,6 +74,7 @@ class ChildObject(BaseObject):
         obj.onEntityRestore()
 
         obj.setSaving(False)
+        obj.setUnique(False)
 
         if EntityHierarchy is True:
             obj_entityNode = obj.getEntityNode()
@@ -108,7 +109,7 @@ class ChildObject(BaseObject):
         if PrototypePreparation is not None:
             PrototypePreparation(obj)
 
-        if self._addObjectUnique(objectName, obj) is False:
+        if self._addObjectUnique(obj) is False:
             return None
 
         obj.onInitialize()
@@ -116,6 +117,7 @@ class ChildObject(BaseObject):
         obj.onEntityRestore()
 
         obj.setSaving(False)
+        obj.setUnique(True)
 
         if EntityHierarchy is True:
             obj_entityNode = obj.getEntityNode()
@@ -202,50 +204,54 @@ class ChildObject(BaseObject):
         self.entity.addChild(obj_entityNode)
 
     def _addObject(self, name, obj):
-        if self.hasObject(name) is True:
-            Trace.log("Object", 0, "ChildObject._addObject '%s' already exist child '%s'" % (self.name, name))
+        if _DEVELOPMENT is True:
+            if obj.isUnique() is False and self.hasObject(name) is True:
+                Trace.log("Object", 0, "ChildObject._addObject '%s' already exist child '%s' [%d]" % (self.name, name, id(obj)))
 
-            return False
+                return False
 
-        parent = obj.getParent()
-        if parent is not None:
-            obj.removeFromParent()
+        obj.removeFromParent()
 
         obj.setParent(self)
         obj.setGroup(self)
+
+        obj.setUnique(False)
 
         self.child.append(name, obj)
 
         return True
 
-    def _addObjectUnique(self, name, obj):
-        parent = obj.getParent()
-        if parent is not None:
-            obj.removeFromParent()
-
+    def _addObjectUnique(self, obj):
+        obj.setParent(self)
         obj.setGroup(self)
 
-        self.child_unique.append(name, obj)
+        self.child_unique.append(obj)
 
-        return True
+    def removeObject(self, obj):
+        name = obj.getName()
 
-    def removeObject(self, name):
-        if self.hasObject(name) is False:
-            Trace.log("Object", 0, "ChildObject.removeObject '%s' invalid remove child '%s' don't found" % (self.name, name))
-            return
+        if _DEVELOPMENT is True:
+            if isinstance(obj, str) is True:
+                Trace.log("Object", 0, "ChildObject.removeObject '%s' invalid remove by name '%s'" % (self.name, obj))
+                return
 
-        obj = self.getObject(name)
+            if obj.isUnique() is False and self.hasObject(name) is False:
+                Trace.log("Object", 0, "ChildObject.removeObject '%s' invalid remove child '%s' [%d] don't found" % (self.name, name, id(obj)))
+                return
+
         obj.setParent(None)
-        #        obj.setGroup(None)
 
-        self.child.remove(name)
+        if obj.isUnique() is False:
+            self.child.remove(name)
+        else:
+            self.child_unique.remove(obj)
+            pass
 
     def getObject(self, name):
         obj = self.child.get(name)
 
         if obj is None:
-            GroupName = self.getGroupName()
-            Trace.log("Object", 0, "ChildObject '%s:%s' not found child '%s'" % (GroupName, self.name, name))
+            Trace.log("Object", 0, "ChildObject '%s:%s' not found child '%s'" % (self.getGroupName(), self.name, name))
 
             return None
 
@@ -325,8 +331,9 @@ class ChildObject(BaseObject):
 
         objects = self.getObjects()
 
-        for obj in objects[:]:
-            obj.onDestroy()
+        for obj in objects:
+            obj.setParent(None)
+            obj._onDestroySelf()
 
         self.child = None
 
@@ -340,4 +347,4 @@ class ChildObject(BaseObject):
 
         self.child_unique = None
 
-        self.prototypes = {}
+        self.prototypes = None
