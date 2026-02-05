@@ -469,6 +469,15 @@ class TaskSource(object):
         self.__addDesc("TaskEnable", dict(Object=Object, Value=False))
         pass
 
+    def addDestroy(self, Object, check=True):
+        if check is False:
+            if Object is None:
+                return
+            pass
+
+        self.__addDesc("TaskDestroy", dict(Object=Object))
+        pass
+
     def addReturn(self, Object):
         self.__addDesc("TaskObjectReturn", dict(Object=Object))
         pass

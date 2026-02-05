@@ -151,6 +151,7 @@ def onInitialize():
         , "TaskArrowHide"
         , "TaskArrowModeChange"
 
+        , "TaskDestroy"
         , "TaskEnable"
         , "TaskInteractive"
         , "TaskBlockInteractive"
