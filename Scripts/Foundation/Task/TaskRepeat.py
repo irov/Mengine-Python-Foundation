@@ -59,17 +59,14 @@ class TaskRepeat(Task):
                 self.invalidTask("TaskRepeat until source is empty")
 
                 return False
-                pass
             pass
 
         if len(self.RepeatSource) == 0:
             self.invalidTask("TaskRepeat repeat source is empty")
 
             return False
-            pass
 
         return True
-        pass
 
     def _onRun(self):
         if self.HasUntil is True:
@@ -79,18 +76,15 @@ class TaskRepeat(Task):
                 self.invalidTask("TaskRepeat._onRun invalid initialize UntilSource")
 
                 return True
-                pass
 
             if self.untilTaskChain.run() is False:
                 self.repeatTaskChain.cancel()
 
                 return True
-                pass
             pass
 
         if self.isRepeat is False:
             return True
-            pass
 
         self.repeatTaskChain = self.__initializeSourceTask(self.RepeatSource, self.__repeatComplete)
 
@@ -98,14 +92,11 @@ class TaskRepeat(Task):
             self.invalidTask("TaskRepeat._onRun invalid initialize RepeatSource")
 
             return True
-            pass
 
         if self.repeatTaskChain.run() is False:
             return True
-            pass
 
         return False
-        pass
 
     def __initializeSourceTask(self, source, cb):
         chain = self.base.getChain()
@@ -115,28 +106,27 @@ class TaskRepeat(Task):
 
         if task is None:
             return None
-            pass
 
         return task
-        pass
 
     def __repeatComplete(self, isSkip):
         if self.isRepeat is False:
             return
-            pass
+
+        if isSkip is True:
+            self.complete()
+            return
 
         self.repeatTaskChain = self.__initializeSourceTask(self.RepeatSource, self.__repeatComplete)
 
         if self.repeatTaskChain is None:
             return
-            pass
 
         if self.AntiStackCycle != 0:
             self.base._traceError("TaskRepeat Anti Stack Cycle")
 
             self.complete()
             return
-            pass
 
         self.AntiStackCycle += 1
 

@@ -41,7 +41,8 @@ class TaskNodeAlphaTo(MixinNode, MixinTime, Task):
         self.affector = self.node.alphaTo(self.time, self.alphaTo, self.easing, __onAlphaTo)
 
         if self.affector is None:
-            self.log("[%s] not active - affectorId==0" % (self.node.getName()))
+            self.log("[%s] not active" % (self.node.getName()))
+
             return True
 
         return False
