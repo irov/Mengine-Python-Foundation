@@ -77,7 +77,6 @@ class ObjectMovie2(ObjectAnimatable):
         if self.isActive() is False:
             Trace.log('Object', 0, 'Movie2 %s is not active' % self.getName())
             return None
-            pass
 
         Entity = self.getEntity()
 
@@ -95,7 +94,6 @@ class ObjectMovie2(ObjectAnimatable):
     def getSlots(self):
         if self.isActive() is False:
             return False
-            pass
 
         MovieEntity = self.getEntity()
         slots = MovieEntity.getSlots()
@@ -107,32 +105,18 @@ class ObjectMovie2(ObjectAnimatable):
     def hasSlot(self, SlotName):
         if self.isActive() is False:
             return False
-            pass
 
         MovieEntity = self.getEntity()
 
         return MovieEntity.hasMovieSlot(SlotName)
-        pass
 
     def hasSocket(self, SlotName):
         if self.isActive() is False:
             return False
-            pass
 
         MovieEntity = self.getEntity()
 
         return MovieEntity.hasSocket(SlotName)
-        pass
-
-    def getResourceMovie(self):
-        if self.isActive() is False:
-            return False
-            pass
-
-        MovieEntity = self.getEntity()
-        result = MovieEntity.getResourceMovie()
-
-        return result
 
     def getDuration(self):
         ResourceMovie = self.getResourceMovie()
@@ -140,7 +124,6 @@ class ObjectMovie2(ObjectAnimatable):
         duration = ResourceMovie.getCompositionDuration(self.getCompositionName())
 
         return duration
-        pass
 
     def getFrameDuration(self):
         ResourceMovie = self.getResourceMovie()
@@ -148,7 +131,6 @@ class ObjectMovie2(ObjectAnimatable):
         frameDuration = ResourceMovie.getCompositionFrameDuration(self.getCompositionName())
 
         return frameDuration
-        pass
 
     def getLastFrameTiming(self):
         ResourceMovie = self.getResourceMovie()
@@ -159,12 +141,10 @@ class ObjectMovie2(ObjectAnimatable):
         lastFrameTiming = duration - frameDuration
 
         return lastFrameTiming
-        pass
 
     def setTimingProportion(self, proportion):
         if self.isActive() is False:
             return
-            pass
 
         MovieEntity = self.getEntity()
 
@@ -178,7 +158,6 @@ class ObjectMovie2(ObjectAnimatable):
     def getTimingProportion(self):
         if self.isActive() is False:
             return 0.0
-            pass
 
         MovieEntity = self.getEntity()
 
@@ -195,19 +174,16 @@ class ObjectMovie2(ObjectAnimatable):
     def getTimeFromProportion(self, proportion):
         if self.isActive() is False:
             return 0.0
-            pass
 
         Duration = self.getDuration()
 
         Time = Duration * proportion
 
         return Time
-        pass
 
     def setupMovieTextArguments(self, TextName, *Args):
         if self.isActive() is False:
             return False
-            pass
 
         Entity = self.getEntity()
 

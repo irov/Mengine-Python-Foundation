@@ -27,7 +27,8 @@ class ObjectManager(Manager):
         return True
 
     @staticmethod
-    def __importDemainObject(module, type):
+    def __importObjectDemain(module, type):
+        print "ObjectManager.__importObjectDemain %s:%s" % (module, type)
         if module == "":
             ModuleName = type
         else:
@@ -40,18 +41,24 @@ class ObjectManager(Manager):
                 Module = __import__(ModuleName, fromlist=[module])
                 pass
         except ImportError as ex:
-            Trace.log("Manager", 0, "ObjectManager.__importDemainObject %s:%s error import '%s'\n%s" % (module, type, ex, traceback.format_exc()))
+            Trace.log("Manager", 0, "ObjectManager.__importObjectDemain %s:%s error import '%s'\n%s" % (module, type, ex, traceback.format_exc()))
 
             return None
 
         try:
-            Type = getattr(Module, type)
+            ObjectType = getattr(Module, type)
         except AttributeError as ex:
-            Trace.log("Manager", 0, "ObjectManager.__importDemainObject %s:%s module not found type '%s'\n%s" % (module, type, ex, traceback.format_exc()))
+            Trace.log("Manager", 0, "ObjectManager.__importObjectDemain %s:%s module not found type '%s'\n%s" % (module, type, ex, traceback.format_exc()))
 
             return None
 
-        return Type
+        try:
+            ObjectType.declareORM(ObjectType)
+        except ParamsException as pex:
+            Trace.log("Manager", 0, "ObjectManager.getObjectType %s:%s type %s params error %s\n%s" % (module, type, ObjectType, pex, traceback.format_exc()))
+            return None
+
+        return ObjectType
 
     @staticmethod
     def getObjectType(typeName):
@@ -68,15 +75,9 @@ class ObjectManager(Manager):
 
         module, type = ObjectManager.s_typesDemain[typeName]
 
-        NewObjectType = ObjectManager.__importDemainObject(module, type)
+        NewObjectType = ObjectManager.__importObjectDemain(module, type)
 
         if NewObjectType is None:
-            return None
-
-        try:
-            NewObjectType.declareORM(NewObjectType)
-        except ParamsException as pex:
-            Trace.log("Manager", 0, "ObjectManager.getObjectType %s:%s params error %s\n%s" % (module, type, pex, traceback.format_exc()))
             return None
 
         ObjectManager.s_types[typeName] = NewObjectType

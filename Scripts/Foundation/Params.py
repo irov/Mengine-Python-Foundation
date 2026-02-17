@@ -37,13 +37,16 @@ class Params(object):
         self.consts = {}
         pass
 
-    @staticmethod
-    def declareORM(Type):
-        Type.DECLARE_PARAMS = []
-        Type.DECLARE_CONSTS = []
-        pass
-
     if _DEVELOPMENT is True:
+        @staticmethod
+        def declareORM(Type):
+            if hasattr(Type, "DECLARE_PARAMS") is True or hasattr(Type, "DECLARE_CONSTS") is True:
+                raise ParamsException("Params declareORM Type {} already have DECLARE_PARAMS or DECLARE_CONSTS".format(Type))
+
+            Type.DECLARE_PARAMS = []
+            Type.DECLARE_CONSTS = []
+            pass
+
         @classmethod
         def declareParam(cls, key, ParamType=None, ParamGetter=None, ParamSetter=None):
             def __get(self):
@@ -62,20 +65,91 @@ class Params(object):
                 self.setParam(key, value)
                 pass
 
-            if ParamGetter is None and hasattr(cls, "get%s" % (key)) is True:
-                self.paramsFailed("Param %s already have getter" % (key))
-                pass
+            GetterName = "get" + key
+            SetterName = "set" + key
 
-            if ParamSetter is None and hasattr(cls, "set%s" % (key)) is True:
-                self.paramsFailed("Param %s already have setter" % (key))
-                pass
+            if ParamGetter is None and hasattr(cls, GetterName) is True:
+                func = getattr(cls, GetterName)
+                raise ParamsException("Class {} param {} already have getter: {} {}".format(cls, key, func.func_code.co_filename, func.func_code.co_firstlineno))
 
-            setattr(cls, "get%s" % (key), ParamGetter or __get)
-            setattr(cls, "set%s" % (key), ParamSetter or __set)
+            if ParamSetter is None and hasattr(cls, SetterName) is True:
+                func = getattr(cls, SetterName)
+                raise ParamsException("Class {} Param {} already have setter".format(cls, key, func.func_code.co_filename, func.func_code.co_firstlineno))
+
+            setattr(cls, GetterName, ParamGetter or __get)
+            setattr(cls, SetterName, ParamSetter or __set)
 
             cls.DECLARE_PARAMS.append(key)
             pass
+
+        @classmethod
+        def declareConst(cls, key, ParamGetter=None):
+            def __get(self):
+                param = self.consts[key]
+
+                if isinstance(param, DefaultParam) is True:
+                    return param.value
+
+                return param
+
+            def __set(self, value):
+                self.paramsFailed("Param %s is const" % (key))
+                pass
+
+            GetterName = "get" + key
+            SetterName = "set" + key
+
+            if ParamGetter is None and hasattr(cls, GetterName) is True:
+                func = getattr(cls, GetterName)
+                raise ParamsException("Class {} param {} already have getter: {} {}".format(cls, key, func.func_code.co_filename, func.func_code.co_firstlineno))
+
+            if hasattr(cls, SetterName) is True:
+                func = getattr(cls, SetterName)
+                raise ParamsException("Class {} Param {} already have setter".format(cls, key, func.func_code.co_filename, func.func_code.co_firstlineno))
+
+            setattr(cls, GetterName, ParamGetter or __get)
+            setattr(cls, SetterName, __set)
+
+            cls.DECLARE_CONSTS.append(key)
+            pass
+
+        @classmethod
+        def declareResource(cls, key, ParamGetter=None):
+            def __get(self):
+                param = self.consts[key]
+
+                if isinstance(param, DefaultParam) is True:
+                    return param.value
+
+                return param
+
+            def __set(self, value):
+                self.paramsFailed("Resource %s is const" % (key))
+                pass
+
+            GetterName = "get" + key
+            SetterName = "set" + key
+
+            if ParamGetter is None and hasattr(cls, GetterName) is True:
+                func = getattr(cls, GetterName)
+                raise ParamsException("Class {} param {} already have getter: {} {}".format(cls, key, func.func_code.co_filename, func.func_code.co_firstlineno))
+
+            if  hasattr(cls, SetterName) is True:
+                func = getattr(cls, SetterName)
+                raise ParamsException("Class {} Param {} already have setter".format(cls, key, func.func_code.co_filename, func.func_code.co_firstlineno))
+
+            setattr(cls, "get" + key, ParamGetter or __get)
+            setattr(cls, "set" + key, __set)
+
+            cls.DECLARE_CONSTS.append(key)
+            pass
     else:
+        @staticmethod
+        def declareORM(Type):
+            Type.DECLARE_PARAMS = []
+            Type.DECLARE_CONSTS = []
+            pass
+
         @classmethod
         def declareParam(cls, key, ParamType=None, ParamGetter=None, ParamSetter=None):
             def __get(self):
@@ -90,52 +164,42 @@ class Params(object):
                 self.setParam(key, value)
                 pass
 
-            setattr(cls, "get%s" % (key), ParamGetter or __get)
-            setattr(cls, "set%s" % (key), ParamSetter or __set)
+            setattr(cls, "get" + key, ParamGetter or __get)
+            setattr(cls, "set" + key, ParamSetter or __set)
 
             cls.DECLARE_PARAMS.append(key)
             pass
         pass
 
-    @classmethod
-    def declareConst(cls, key):
-        def __get(self):
-            param = self.consts[key]
+        @classmethod
+        def declareConst(cls, key, ParamGetter=None):
+            def __get(self):
+                param = self.consts[key]
 
-            if isinstance(param, DefaultParam) is True:
-                return param.value
+                if isinstance(param, DefaultParam) is True:
+                    return param.value
 
-            return param
+                return param
 
-        def __set(self, value):
-            self.paramsFailed("Param %s is const" % (key))
+            setattr(cls, "get" + key, ParamGetter or __get)
+
+            cls.DECLARE_CONSTS.append(key)
             pass
 
-        setattr(cls, "get%s" % (key), __get)
-        setattr(cls, "set%s" % (key), __set)
+        @classmethod
+        def declareResource(cls, key, ParamGetter=None):
+            def __get(self):
+                param = self.consts[key]
 
-        cls.DECLARE_CONSTS.append(key)
-        pass
+                if isinstance(param, DefaultParam) is True:
+                    return param.value
 
-    @classmethod
-    def declareResource(cls, key):
-        def __get(self):
-            param = self.consts[key]
+                return param
 
-            if isinstance(param, DefaultParam) is True:
-                return param.value
+            setattr(cls, "get" + key, ParamGetter or __get)
 
-            return param
-
-        def __set(self, value):
-            self.paramsFailed("Resource %s is const" % (key))
+            cls.DECLARE_CONSTS.append(key)
             pass
-
-        setattr(cls, "get%s" % (key), __get)
-        setattr(cls, "set%s" % (key), __set)
-
-        cls.DECLARE_CONSTS.append(key)
-        pass
 
     def __extractResource(self, key, value, default):
         if value is None:
@@ -206,8 +270,8 @@ class Params(object):
             if _DEVELOPMENT is True:
                 self._onCheckParams()
                 pass
-        except ParamsException as pe:
-            Trace.log("Params", 0, "Params.onParams error %s" % (pe))
+        except ParamsException as pex:
+            Trace.log("Params", 0, "Params.onParams error %s" % (pex))
 
             return False
 

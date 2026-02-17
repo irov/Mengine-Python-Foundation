@@ -201,29 +201,46 @@ class GroupManager(Manager):
         pass
 
     @staticmethod
-    def importGroup(module, name):
-        Name = "Group%s" % (name)
-        FromName = module
-        ModuleName = "%s.%s" % (FromName, Name)
+    def __importGroupDemain(module, name):
+        ModuleName = "%s.%s" % (module, name)
 
         try:
-            Module = __import__(ModuleName, fromlist=[FromName])
+            Module = __import__(ModuleName, fromlist=[module])
         except ImportError as ex:
-            Trace.log("Manager", 0, "GroupManager.importGroup '%s' not found Group '%s' maybe not export from PSD?" % (name, ModuleName))
-
+            Trace.log("Manager", 0, "GroupManager.__importGroupDemain module '%s' not found group '%s' maybe not export from PSD?" % (module, name))
             return None
 
-        GroupType = getattr(Module, Name)
+        try:
+            GroupType = getattr(Module, name)
+        except AttributeError as ex:
+            Trace.log("Manager", 0, "GroupManager.__importGroupDemain module '%s' not found type '%s'" % (ModuleName, name))
+            return None
 
         try:
             GroupType.declareORM(GroupType)
         except ParamsException as pex:
-            Trace.log("Manager", 0, "GroupManager.importGroup %s:%s params error %s" % (Module, GroupType, pex))
+            Trace.log("Manager", 0, "GroupManager.__importGroupDemain module %s group %s declare ORM error: %s\n%s" % (ModuleName, GroupType, pex, traceback.format_exc()))
             return None
 
-        GroupManager.addGroupType(name, GroupType)
-
         return GroupType
+
+    @staticmethod
+    def importGroup(module, name):
+        GroupType = GroupManager.s_groupsType.get(name)
+
+        if GroupType is not None:
+            return GroupType
+
+        GroupName = "Group%s" % (name)
+
+        NewGroupType = GroupManager.__importGroupDemain(module, GroupName)
+
+        if NewGroupType is None:
+            return None
+
+        GroupManager.addGroupType(name, NewGroupType)
+
+        return NewGroupType
 
     @staticmethod
     def addGroupType(name, GroupType):

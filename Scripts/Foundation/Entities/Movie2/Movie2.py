@@ -4,6 +4,7 @@ class Movie2(BaseAnimatable):
     @staticmethod
     def declareORM(Type):
         BaseAnimatable.declareORM(Type)
+
         Type.addAction("ResourceMovie")
         Type.addAction("CompositionName")
         Type.addActionActivate("DisableLayers",
