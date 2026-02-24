@@ -28,7 +28,6 @@ class ObjectManager(Manager):
 
     @staticmethod
     def __importObjectDemain(module, type):
-        print "ObjectManager.__importObjectDemain %s:%s" % (module, type)
         if module == "":
             ModuleName = type
         else:
