@@ -4,6 +4,7 @@ from Foundation.Providers.RatingAppProvider import RatingAppProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.Providers.ProductsProvider import ProductsProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider
+from Foundation.Providers.ConsentProvider import ConsentProvider
 from Foundation.TaskManager import TaskManager
 
 
@@ -11,6 +12,7 @@ _Log = SimpleLogger("SystemAppleServices", option="apple")
 PLUGIN_GAME_CENTER = "AppleGameCenter"
 PLUGIN_STORE_REVIEW = "AppleStoreReview"
 PLUGIN_IN_APP_PURCHASE = "AppleStoreInAppPurchase"
+PLUGIN_USER_MESSAGING_PLATFORM = "AppleUserMessagingPlatformPlugin"
 
 
 class SystemAppleServices(System):
@@ -44,6 +46,12 @@ class SystemAppleServices(System):
 
         if self.b_plugins["Review"] is True:
             RatingAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
+
+        if Mengine.isAvailablePlugin(PLUGIN_USER_MESSAGING_PLATFORM) is True:
+            ConsentProvider.setProvider("Apple", dict(
+                ShowConsentFlow=self.showConsentFlow,
+                IsConsentFlow=self.isConsentFlow,
+            ))
 
         if self.b_plugins["GameCenter"] is True:
             SystemAppleServices.setGameCenterConnectProvider()
@@ -197,6 +205,18 @@ class SystemAppleServices(System):
         _Log("[Reviews] rateApp...", force=True)
         Mengine.appleStoreReviewLaunchTheInAppReview()
         Notification.notify(Notificator.onAppRated)
+
+    # --- Consent ------------------------------------------------------------------------------------------------------
+
+    @staticmethod
+    def showConsentFlow():
+        Mengine.appleUserMessagingPlatformShowConsentFlow()
+
+        return True
+
+    @staticmethod
+    def isConsentFlow():
+        return Mengine.appleUserMessagingPlatformIsConsentFlowUserGeographyGDPR()
 
     # --- In-App Purchases ---------------------------------------------------------------------------------------------
 

@@ -6,8 +6,8 @@ from Foundation.Systems.Ads.AdFactory import AdFactory
 
 _Log = SimpleLogger("SystemAppLovin")
 
-ANDROID_PLUGIN_NAME = "MengineAppLovin"
-APPLE_PLUGIN_NAME = "AppleAppLovin"
+ANDROID_PLUGIN_NAME = "AndroidAppLovinPlugin"
+APPLE_PLUGIN_NAME = "AppleAppLovinPlugin"
 
 DEVDEBUGGER_TAB_NAME = "AppLovin"
 

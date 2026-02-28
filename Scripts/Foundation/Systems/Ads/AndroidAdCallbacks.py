@@ -1,15 +1,15 @@
-class AndroidAdCallbacks(object):
-    ANDROID_PLUGIN_NAME = "MengineAdService"
+ANDROID_PLUGIN_NAME = "AndroidAdServicePlugin"
 
+class AndroidAdCallbacks(object):
     def __init__(self):
         super(AndroidAdCallbacks, self).__init__()
         self._cbs = {}
 
     def _addAndroidCallback(self, name, cb):
-        if name in self._cbs:
+        if _DEVELOPMENT is True and name in self._cbs:
             Trace.log("System", 0, "{}: callback {!r} is already exists !!!".format(self.__class__.__name__, name))
-            Mengine.removeAndroidCallback(self.ANDROID_PLUGIN_NAME, name, self._cbs[name])
-        identity = Mengine.addAndroidCallback(self.ANDROID_PLUGIN_NAME, name, cb)
+
+        identity = Mengine.addAndroidCallback(ANDROID_PLUGIN_NAME, name, cb)
         self._cbs[name] = identity
         return identity
 
@@ -18,5 +18,5 @@ class AndroidAdCallbacks(object):
 
     def _removeAndroidCallbacks(self):
         for name, cb_id in self._cbs.items():
-            Mengine.removeAndroidCallback(self.ANDROID_PLUGIN_NAME, name, cb_id)
+            Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, name, cb_id)
         self._cbs = {}

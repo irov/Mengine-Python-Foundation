@@ -12,11 +12,11 @@ from Foundation.Utils import SimpleLogger
 
 _Log = SimpleLogger("SystemGoogleServices")
 
-GOOGLE_GAME_SOCIAL_PLUGIN = "MengineGGameSocial"
-GOOGLE_PLAY_BILLING_PLUGIN = "MengineGPlayBilling"
-GOOGLE_IN_APP_REVIEWS_PLUGIN = "MengineGInAppReviews"
-GOOGLE_CONSENT_PLUGIN = "MengineGConsent"
-FIREBASE_CRASHLYTICS_PLUGIN = "MengineFBCrashlytics"
+GOOGLE_GAME_SOCIAL_PLUGIN = "AndroidGGameSocialPlugin"
+GOOGLE_PLAY_BILLING_PLUGIN = "AndroidGPlayBillingPlugin"
+GOOGLE_IN_APP_REVIEWS_PLUGIN = "AndroidGInAppReviewsPlugin"
+GOOGLE_CONSENT_PLUGIN = "AndroidGConsentPlugin"
+FIREBASE_CRASHLYTICS_PLUGIN = "AndroidFBCrashlyticsPlugin"
 
 class SystemGoogleServices(System):
     # Google service that provides
@@ -158,7 +158,7 @@ class SystemGoogleServices(System):
             _setCallback("onAndroidGoogleConsentFlowCompleted", SystemGoogleServices.__cbConsentFlowCompleted)
             _setCallback("onAndroidGoogleConsentFlowError", SystemGoogleServices.__cbConsentFlowError)
 
-            ConsentProvider.setProvider("GoogleConsent", dict(
+            ConsentProvider.setProvider("Google", dict(
                 ShowConsentFlow=SystemGoogleServices.showConsentFlow,
                 IsConsentFlow=SystemGoogleServices.isConsentFlow,
             ))

@@ -5,8 +5,8 @@ from Foundation.Systems.Ads.AdFactory import AdFactory
 
 _Log = SimpleLogger("SystemAdMob")
 
-ANDROID_PLUGIN_NAME = "MengineAdMob"
-APPLE_PLUGIN_NAME = "AppleAdMob"
+ANDROID_PLUGIN_NAME = "AndroidAdMobPlugin"
+APPLE_PLUGIN_NAME = "AppleAdMobPlugin"
 
 class SystemAdMob(System):
     """ Advertisement module 'AdMob' """

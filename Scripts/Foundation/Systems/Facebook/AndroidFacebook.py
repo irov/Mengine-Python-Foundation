@@ -1,14 +1,15 @@
 from Foundation.Systems.Facebook.BaseFacebook import BaseFacebook
 
+ANDROID_PLUGIN_NAME = "AndroidFacebookPlugin"
+
 class AndroidFacebook(BaseFacebook):
     name = "Android"
-    plugin_name = "MengineFacebook"
 
     def _onInitialize(self, system):
         super(AndroidFacebook, self)._onInitialize(system)
 
         def _setCallback(name, cb):
-            Mengine.addAndroidCallback(self.plugin_name, name, cb)
+            Mengine.addAndroidCallback(ANDROID_PLUGIN_NAME, name, cb)
 
         _setCallback("onFacebookLoginSuccess", self._cbLoginSuccess)
         _setCallback("onFacebookLoginCancel", self._cbLoginCancel)

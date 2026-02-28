@@ -1,18 +1,18 @@
 from Foundation.System import System
 from Foundation.Providers.RemoteConfigProvider import RemoteConfigProvider
 
+ANDROID_PLUGIN_NAME = "AndroidFBRemoteConfigPlugin"
+APPLE_PLUGIN_NAME = "AppleFirebaseRemoteConfig"
 
 class SystemRemoteConfig(System):
-    ANDROID_PLUGIN_NAME = "MengineFBRemoteConfig"
-    APPLE_PLUGIN_NAME = "AppleFirebaseRemoteConfig"
     s_configs = {}
 
     @staticmethod
     def isPluginEnable():
         if _ANDROID:
-            return Mengine.isAvailablePlugin(SystemRemoteConfig.ANDROID_PLUGIN_NAME) is True
+            return Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME) is True
         elif _IOS:
-            return Mengine.isAvailablePlugin(SystemRemoteConfig.APPLE_PLUGIN_NAME) is True
+            return Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME) is True
         return False
 
     def _onInitialize(self):
@@ -54,7 +54,7 @@ class SystemRemoteConfig(System):
         """ returns dict value """
         value = None
         if _ANDROID:
-            value = Mengine.androidObjectMethod(SystemRemoteConfig.ANDROID_PLUGIN_NAME, "getRemoteConfigValue", key)
+            value = Mengine.androidObjectMethod(ANDROID_PLUGIN_NAME, "getRemoteConfigValue", key)
         elif _IOS:
             value = Mengine.appleFirebaseRemoteConfigGetValue(key)
         else:
