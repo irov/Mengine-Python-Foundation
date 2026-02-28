@@ -699,25 +699,16 @@ class SystemGoogleServices(System):
             _Log("[Consent] plugin {!r} is not active for showConsentFlow".format(GOOGLE_CONSENT_PLUGIN))
             return False
 
-        if _ANDROID:
-            Mengine.androidMethod(GOOGLE_CONSENT_PLUGIN, "showConsentFlow")
-            return True
-        elif _IOS:
-            # iOS implementation can be added here if needed
-            return False
-        return False
+        Mengine.androidMethod(GOOGLE_CONSENT_PLUGIN, "showConsentFlow")
+
+        return True
 
     @staticmethod
     def isConsentFlow():
         if SystemGoogleServices.b_plugins[GOOGLE_CONSENT_PLUGIN] is False:
             return False
 
-        if _ANDROID:
-            return Mengine.androidBooleanMethod(GOOGLE_CONSENT_PLUGIN, "isConsentFlowUserGeographyGDPR")
-        elif _IOS:
-            # iOS implementation can be added here if needed
-            return False
-        return False
+        return Mengine.androidBooleanMethod(GOOGLE_CONSENT_PLUGIN, "isConsentFlowUserGeographyGDPR")
 
     # callbacks
 

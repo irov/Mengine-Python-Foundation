@@ -3,22 +3,20 @@ from Foundation.Providers.FacebookProvider import FacebookProvider
 from Foundation.Systems.Facebook.AppleFacebook import AppleFacebook
 from Foundation.Systems.Facebook.AndroidFacebook import AndroidFacebook
 
-
 class SystemFacebook(System):
-
-    onLoginSuccess = Event("onLoginSuccess")  # <- token
+    onLoginSuccess = Event("onLoginSuccess")
     onLoginCancel = Event("onLoginCancel")
-    onLoginError = Event("onLoginError")  # <- message
+    onLoginError = Event("onLoginError")
 
     onLogoutSuccess = Event("onLogoutSuccess")
     onLogoutError = Event("onLogoutError")
 
-    onShareSuccess = Event("onShareSuccess")  # <- post_id
+    onShareSuccess = Event("onShareSuccess")
     onShareCancel = Event("onShareCancel")
-    onShareError = Event("onShareError")  # <- message
+    onShareError = Event("onShareError")
 
-    onUserFetchSuccess = Event("onUserFetchSuccess")  # <- object_string, response_string
-    onUserFetchError = Event("onUserFetchError")  # <- message
+    onUserFetchSuccess = Event("onUserFetchSuccess")
+    onUserFetchError = Event("onUserFetchError")
 
     onProfilePictureLinkGetSuccess = Event("onProfilePictureLinkGetSuccess")  # <- user_id, is_logged, picture_url
     onProfilePictureLinkGetError = Event("onProfilePictureLinkGetError")
@@ -30,9 +28,9 @@ class SystemFacebook(System):
         self.provider = None
 
     def _onInitialize(self):
-        if Mengine.isAvailablePlugin(AppleFacebook.plugin_name):
+        if _APPLE is True:
             self.provider = AppleFacebook()
-        elif Mengine.isAvailablePlugin(AndroidFacebook.plugin_name):
+        elif _ANDROID is True:
             self.provider = AndroidFacebook()
         else:
             return

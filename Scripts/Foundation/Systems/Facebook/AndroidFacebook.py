@@ -3,8 +3,6 @@ from Foundation.Systems.Facebook.BaseFacebook import BaseFacebook
 ANDROID_PLUGIN_NAME = "AndroidFacebookPlugin"
 
 class AndroidFacebook(BaseFacebook):
-    name = "Android"
-
     def _onInitialize(self, system):
         super(AndroidFacebook, self)._onInitialize(system)
 
@@ -25,9 +23,11 @@ class AndroidFacebook(BaseFacebook):
         _setCallback("onFacebookProfilePictureLinkGetError", self._cbProfilePictureLinkGetError)
         _setCallback("onFacebookCurrentAccessTokenChanged", self._cbAccessTokenChanged)
         _setCallback("onFacebookCurrentProfileChanged", self._cbProfileChanged)
+        pass
 
     def _onFinalize(self):
         super(AndroidFacebook, self)._onFinalize()
+        pass
 
     # provider
 
@@ -44,30 +44,30 @@ class AndroidFacebook(BaseFacebook):
         )
 
     def _getAccessToken(self):
-        token = Mengine.androidStringMethod(self.plugin_name, "getAccessToken")
+        token = Mengine.androidStringMethod(ANDROID_PLUGIN_NAME, "getAccessToken")
         return token
 
     def _isLoggedIn(self):
-        is_logged = Mengine.androidBooleanMethod(self.plugin_name, "isLoggedIn")
+        is_logged = Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "isLoggedIn")
         return is_logged
 
     def _login(self, permissions):
-        Mengine.androidMethod(self.plugin_name, "performLogin", list(permissions))
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "performLogin", list(permissions))
 
     def _shareLink(self, link, msg):
-        Mengine.androidMethod(self.plugin_name, "shareLink", link, '', msg)
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "shareLink", link, '', msg)
 
     def _logout(self):
-        Mengine.androidMethod(self.plugin_name, "logout")
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "logout")
 
     def _getUser(self):
-        Mengine.androidMethod(self.plugin_name, "getUser")
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getUser")
 
     def _getProfilePictureLink(self, type_parameter):
-        Mengine.androidMethod(self.plugin_name, "getProfilePictureLink", type_parameter)
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getProfilePictureLink", type_parameter)
 
     def _getProfileUserPictureLink(self, user_id, type_parameter):
-        Mengine.androidMethod(self.plugin_name, "getProfileUserPictureLink", user_id, type_parameter)
+        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getProfileUserPictureLink", user_id, type_parameter)
 
     # callbacks
 

@@ -1,9 +1,6 @@
 from Foundation.Systems.Facebook.BaseFacebook import BaseFacebook
 
 class AppleFacebook(BaseFacebook):
-    name = "Apple"
-    plugin_name = "AppleFacebook"
-
     def _onInitialize(self, system):
         super(AppleFacebook, self)._onInitialize(system)
 

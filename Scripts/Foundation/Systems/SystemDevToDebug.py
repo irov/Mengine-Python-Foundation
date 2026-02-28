@@ -1,6 +1,5 @@
 from Foundation.System import System
 
-
 class SystemDevToDebug(System):
 
     """ https://wonderland-games.atlassian.net/wiki/spaces/FRW2/pages/1853849603/DevToDebug """

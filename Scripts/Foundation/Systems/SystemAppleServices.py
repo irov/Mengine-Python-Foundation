@@ -7,16 +7,13 @@ from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Foundation.Providers.ConsentProvider import ConsentProvider
 from Foundation.TaskManager import TaskManager
 
-
 _Log = SimpleLogger("SystemAppleServices", option="apple")
 PLUGIN_GAME_CENTER = "AppleGameCenter"
 PLUGIN_STORE_REVIEW = "AppleStoreReview"
 PLUGIN_IN_APP_PURCHASE = "AppleStoreInAppPurchase"
 PLUGIN_USER_MESSAGING_PLATFORM = "AppleUserMessagingPlatformPlugin"
 
-
 class SystemAppleServices(System):
-
     """
         How to connect to the GameCenter:
             1. setGameCenterConnectProvider()
