@@ -1,6 +1,5 @@
 from Foundation.Utils import SimpleLogger
 
-
 _Log = SimpleLogger("SystemAdService")
 
 def ad_callback(bound_method):

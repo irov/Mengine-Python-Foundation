@@ -17,6 +17,6 @@ class AndroidAdCallbacks(object):
         raise NotImplementedError
 
     def _removeAndroidCallbacks(self):
-        for name, cb_id in self._cbs.items():
-            Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, name, cb_id)
+        for name, identity in self._cbs.items():
+            Mengine.removeAndroidCallback(ANDROID_PLUGIN_NAME, name, identity)
         self._cbs = {}

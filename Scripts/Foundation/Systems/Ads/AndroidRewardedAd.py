@@ -1,5 +1,7 @@
 from Foundation.Systems.Ads.AndroidAdUnit import AndroidAdUnit
 
+ANDROID_PLUGIN_NAME = "AndroidAdServicePlugin"
+
 class AndroidRewardedAd(AndroidAdUnit):
     ad_type = "Rewarded"
 
@@ -17,16 +19,16 @@ class AndroidRewardedAd(AndroidAdUnit):
         return True
 
     def _has(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "hasRewarded")
+        return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "hasRewarded")
 
     def _canOffer(self, placement):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "canOfferRewarded", placement)
+        return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "canOfferRewarded", placement)
 
     def _canYouShow(self, placement):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "canYouShowRewarded", placement)
+        return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "canYouShowRewarded", placement)
 
     def _show(self, placement):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showRewarded", placement)
+        return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "showRewarded", placement)
 
     def _isShowing(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "isShowingRewarded")
+        return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "isShowingRewarded")

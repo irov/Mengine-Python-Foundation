@@ -1,5 +1,7 @@
 from Foundation.Systems.Ads.AndroidAdUnit import AndroidAdUnit
 
+ANDROID_PLUGIN_NAME = "AndroidAdServicePlugin"
+
 class AndroidInterstitialAd(AndroidAdUnit):
     ad_type = "Interstitial"
 
@@ -16,13 +18,13 @@ class AndroidInterstitialAd(AndroidAdUnit):
         return True
 
     def _has(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "hasInterstitial")
+        return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "hasInterstitial")
 
     def _canYouShow(self, placement):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "canYouShowInterstitial", placement)
+        return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "canYouShowInterstitial", placement)
 
     def _show(self, placement):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "showInterstitial", placement)
+        return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "showInterstitial", placement)
 
     def _isShowing(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "isShowingInterstitial")
+        return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "isShowingInterstitial")

@@ -1,5 +1,7 @@
 from Foundation.Systems.Ads.AndroidAdUnit import AndroidAdUnit
 
+ANDROID_PLUGIN_NAME = "AndroidAdServicePlugin"
+
 class AndroidBannerAd(AndroidAdUnit):
     ad_type = "Banner"
 
@@ -14,7 +16,7 @@ class AndroidBannerAd(AndroidAdUnit):
         return True
 
     def _has(self):
-        return Mengine.androidBooleanMethod(self.ANDROID_PLUGIN_NAME, "hasBanner")
+        return Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "hasBanner")
 
     def _canOffer(self, placement):
         return True
@@ -23,7 +25,7 @@ class AndroidBannerAd(AndroidAdUnit):
         return True
 
     def _show(self, placement):
-        return Mengine.androidMethod(self.ANDROID_PLUGIN_NAME, "showBanner")
+        return Mengine.androidMethod(ANDROID_PLUGIN_NAME, "showBanner")
 
     def _hide(self, placement):
-        return Mengine.androidMethod(self.ANDROID_PLUGIN_NAME, "hideBanner")
+        return Mengine.androidMethod(ANDROID_PLUGIN_NAME, "hideBanner")
