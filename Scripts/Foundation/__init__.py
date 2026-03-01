@@ -954,6 +954,7 @@ def onInitialize():
         , "ProductsProvider"
         , "FacebookProvider"
         , "AchievementsProvider"
+        , "LeaderboardProvider"
         , "AuthProvider"   # main account
         , "RemoteConfigProvider"
         , "AnalyticsProvider"

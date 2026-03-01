@@ -6,6 +6,7 @@ from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.Providers.ProductsProvider import ProductsProvider
 from Foundation.Providers.AuthProvider import AuthProvider
 from Foundation.Providers.ConsentProvider import ConsentProvider
+from Foundation.Providers.LeaderboardProvider import LeaderboardProvider
 from Foundation.System import System
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
@@ -72,11 +73,19 @@ class SystemGoogleServices(System):
 
             _setCallback("onGoogleGameSocialLeaderboardScoreSuccess", SystemGoogleServices.__cbLeaderboardScoreSuccess)
             _setCallback("onGoogleGameSocialLeaderboardScoreError", SystemGoogleServices.__cbLeaderboardScoreError)
+            _setCallback("onGoogleGameSocialShowLeaderboardSuccess", SystemGoogleServices.__cbShowLeaderboardSuccess)
+            _setCallback("onGoogleGameSocialShowLeaderboardCanceled", SystemGoogleServices.__cbShowLeaderboardCanceled)
+            _setCallback("onGoogleGameSocialShowLeaderboardError", SystemGoogleServices.__cbShowLeaderboardError)
 
             AchievementsProvider.setProvider("Google", dict(
                 unlockAchievement=SystemGoogleServices.unlockAchievement,
                 incrementAchievement=SystemGoogleServices.incrementAchievement,
                 showAchievements=SystemGoogleServices.showAchievements,
+            ))
+
+            LeaderboardProvider.setProvider("Google", dict(
+                submitLeaderboardScore=SystemGoogleServices.submitLeaderboardScore,
+                showLeaderboard=SystemGoogleServices.showLeaderboard,
             ))
 
             AuthProvider.setProvider("Google", dict(
@@ -650,6 +659,35 @@ class SystemGoogleServices(System):
     def __cbLeaderboardScoreError(leaderboard_id, score, exception):
         # cb on setLeaderboardScore
         _Log("[Achievements cb] LeaderboardScore Error: {!r} score: {} error: {}".format(leaderboard_id, score, exception), force=True, err=True)
+        pass
+
+    @staticmethod
+    def submitLeaderboardScore(leaderboard_id, score):
+        _Log("[Leaderboard] submitLeaderboardScore {!r} {}".format(leaderboard_id, score), force=True)
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "submitLeaderboardScore", leaderboard_id, score)
+
+        return True
+
+    @staticmethod
+    def showLeaderboard(leaderboard_id):
+        _Log("[Leaderboard] showLeaderboard {!r}".format(leaderboard_id), force=True)
+        Mengine.androidMethod(GOOGLE_GAME_SOCIAL_PLUGIN, "showLeaderboard", leaderboard_id)
+
+        return True
+
+    @staticmethod
+    def __cbShowLeaderboardSuccess():
+        _Log("[Leaderboard cb] showLeaderboard success")
+        pass
+
+    @staticmethod
+    def __cbShowLeaderboardCanceled(leaderboard_id=None):
+        _Log("[Leaderboard cb] showLeaderboard canceled: {!r}".format(leaderboard_id))
+        pass
+
+    @staticmethod
+    def __cbShowLeaderboardError(leaderboard_id, exception):
+        _Log("[Leaderboard cb] showLeaderboard error: {!r} error: {}".format(leaderboard_id, exception), force=True, err=True)
         pass
 
     # --- InAppReviews -------------------------------------------------------------------------------------------------
