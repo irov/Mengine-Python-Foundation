@@ -226,10 +226,6 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def signIn(only_intent=False, force=False):
-        if SystemGoogleServices.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is False:
-            _Log("[Auth] plugin {!r} is not active for signIn".format(GOOGLE_GAME_SOCIAL_PLUGIN))
-            return
-
         if force is False and SystemGoogleServices.isLoggedIn() is True:
             _Log("[Auth] signIn canceled - user already logged in")
             return
@@ -252,9 +248,6 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def signOut():
-        if SystemGoogleServices.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is False:
-            _Log("[Auth] plugin {!r} is not active for signOut".format(GOOGLE_GAME_SOCIAL_PLUGIN))
-            return
         _Log("[Auth] signOut...", force=True)
         #ToDo signOut is not implemented in GoogleGameSocial plugin
 
@@ -696,9 +689,6 @@ class SystemGoogleServices(System):
     def rateApp():
         # starts rate app process
         _Log("[Reviews] rateApp...")
-        if SystemGoogleServices.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is False:
-            Trace.log("System", 0, "SystemGoogleServices try to rateApp, but plugin '{}' is not active".format(GOOGLE_IN_APP_REVIEWS_PLUGIN))
-            return
         Mengine.androidMethod(GOOGLE_IN_APP_REVIEWS_PLUGIN, "launchTheInAppReview")
         pass
 
@@ -733,19 +723,12 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def showConsentFlow():
-        if SystemGoogleServices.b_plugins[GOOGLE_CONSENT_PLUGIN] is False:
-            _Log("[Consent] plugin {!r} is not active for showConsentFlow".format(GOOGLE_CONSENT_PLUGIN))
-            return False
-
         Mengine.androidMethod(GOOGLE_CONSENT_PLUGIN, "showConsentFlow")
 
         return True
 
     @staticmethod
     def isConsentFlow():
-        if SystemGoogleServices.b_plugins[GOOGLE_CONSENT_PLUGIN] is False:
-            return False
-
         return Mengine.androidBooleanMethod(GOOGLE_CONSENT_PLUGIN, "isConsentFlowUserGeographyGDPR")
 
     # callbacks
@@ -764,9 +747,6 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def testCrash():
-        if SystemGoogleServices.b_plugins[FIREBASE_CRASHLYTICS_PLUGIN] is False:
-            Trace.log("System", 0, "try to testCrash, but plugin '{}' is not active".format(FIREBASE_CRASHLYTICS_PLUGIN))
-            return
         _Log("[FirebaseCrashlytics] testCrash...")
         Mengine.androidMethod(FIREBASE_CRASHLYTICS_PLUGIN, "testCrash")
         pass

@@ -1171,12 +1171,16 @@ class SimpleLogger(object):
     def __call__(self, msg, warn=False, err=False, force=False, optional=False):
         if self._enable is False:
             return
+
         if force is False:
             if self._debug is True:
                 if _DEVELOPMENT is False:
                     return
                 if optional is True and self._optional is False:
                     return
+
+        if callable(msg) is True:
+            msg = msg()
 
         f_message = " <%s> %s" % (self.title, msg)
         if err is True:

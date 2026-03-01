@@ -75,56 +75,37 @@ class SystemAppleServices(System):
 
     @staticmethod
     def setGameCenterConnectProvider():
-        if SystemAppleServices.b_plugins["GameCenter"] is False:
-            _Log("[GameCenter] set provider - plugin '{}' not active".format(PLUGIN_GAME_CENTER), err=True, force=True)
-            return False
-
         _Log("[GameCenter] set provider...", optional=True)
         SystemAppleServices._GameCenter_provider_status = True
 
     @staticmethod
     def removeGameCenterConnectProvider():
-        if SystemAppleServices._GameCenter_provider_status is False:
-            _Log("[GameCenter] can't remove provider - not active", err=True)
-            return
-
         _Log("[GameCenter] remove provider...", optional=True)
         SystemAppleServices._GameCenter_provider_status = False
 
     @staticmethod
     def connectToGameCenter():
-        if SystemAppleServices.b_plugins["GameCenter"] is True:
-            status = Mengine.appleGameCenterConnect({
+        status = Mengine.appleGameCenterConnect({
             "onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate,
-            "onAppleGameCenterSynchronizate": SystemAppleServices.__cbGameCenterSynchronize
+            "onAppleGameCenterSynchronize": SystemAppleServices.__cbGameCenterSynchronize
         })  # check is request to GameCenter was sent
-            # if True, cb provider will return bool that means player connected or not
-        else:
-            status = False
+        # if True, cb provider will return bool that means player connected or not
 
-        describe = lambda result: "wait response" if result else "request sent failed!!"
-        _Log("[GameCenter] CONNECT STATUS: {}".format(describe(status)))
+        _Log("[GameCenter] CONNECT STATUS: {}".format("wait response" if status else "request sent failed!!"))
+
         return status
 
     @staticmethod
     def __cbGameCenterAuthenticate(status, *args):
         """ callback for onAppleGameCenterAuthenticate """
-        describe = lambda b: "successful" if b else "failed"
-
-        log_message = "[GameCenter] (callback) AUTHENTICATE: {} [{}]".format(describe(status), status)
-        log_message += " | args: {}".format(args) if args else ""
-        _Log(log_message, force=True)
+        _Log("[GameCenter] (callback) AUTHENTICATE: {} [{}] args: {}".format("successful" if status else "failed", status, args), force=True)
 
         SystemAppleServices._GameCenter_authenticated = status
 
     @staticmethod
     def __cbGameCenterSynchronize(status, *args):
-        """ callback for onAppleGameCenterSynchronizate """
-        describe = lambda b: "successful" if b else "failed"
-
-        log_message = "[GameCenter] (callback) SYNCHRONIZE: {} [{}]".format(describe(status), status)
-        log_message += " | args: {}".format(args) if args else ""
-        _Log(log_message, force=True)
+        """ callback for onAppleGameCenterSynchronize """
+        _Log("[GameCenter] (callback) SYNCHRONIZE: {} [{}] args: {}".format("successful" if status else "failed", status, args), force=True)
 
         SystemAppleServices._GameCenter_synchronized = status
 
@@ -141,11 +122,7 @@ class SystemAppleServices(System):
 
     @staticmethod
     def __cbGameCenterAchievementReporter(status, achievement_name, percent_complete, *args):
-        descr = lambda b: "success {!r} (complete {}%%)".format(
-            achievement_name, percent_complete) if b else "game center not received last achievement"
-        log_message = "[GameCenter] (callback) ACHIEVEMENTS: {} [{}]".format(descr(status), status)
-        log_message += " | args: {}".format(args) if args else ""
-        _Log(log_message)
+        _Log("[GameCenter] (callback) ACHIEVEMENTS status: {} [{}] achievement: {!r} percent: {} args: {}".format("success" if status else "failed", status, achievement_name, percent_complete, args))
         return status
 
     @staticmethod
@@ -182,9 +159,6 @@ class SystemAppleServices(System):
 
     @staticmethod
     def checkGameCenterAchievement(achievement_name):
-        if SystemAppleServices.b_plugins["GameCenter"] is False:
-            Trace.log("System", 0, "SystemAppleServices is not active to check achievement {!r}".format(achievement_name))
-            return False
         if SystemAppleServices.isGameCenterConnected(report=True) is False:
             return False
 
@@ -196,9 +170,6 @@ class SystemAppleServices(System):
 
     @staticmethod
     def rateApp():
-        if SystemAppleServices.b_plugins["Review"] is False:
-            Trace.log("System", 0, "SystemAppleServices try to rateApp, but plugin '{}' is not active".format(PLUGIN_STORE_REVIEW))
-            return
         _Log("[Reviews] rateApp...", force=True)
         Mengine.appleStoreReviewLaunchTheInAppReview()
         Notification.notify(Notificator.onAppRated)
@@ -228,10 +199,6 @@ class SystemAppleServices(System):
     @staticmethod
     def setInAppPurchaseProvider():
         """ setup payment callbacks """
-        if SystemAppleServices.b_plugins["InAppPurchase"] is False:
-            _Log("[InAppPurchase] set provider - plugin '{}' not active".format(PLUGIN_IN_APP_PURCHASE), err=True, force=True)
-            return False
-
         _Log("[InAppPurchase] set provider...", optional=True)
         Mengine.appleStoreInAppPurchaseSetPaymentTransactionProvider({
             "onPaymentQueueUpdatedTransactionPurchasing": SystemAppleServices._cbPaymentPurchasing,
@@ -256,11 +223,6 @@ class SystemAppleServices(System):
     @staticmethod
     def removeInAppPurchaseProvider():
         """ finish InAppPurchase callbacks provider """
-
-        if SystemAppleServices._InAppPurchase_provider_status is False:
-            _Log("[InAppPurchase] can't remove provider - not active", err=True)
-            return False
-
         _Log("[InAppPurchase] remove provider...", optional=True)
         Mengine.appleStoreInAppPurchaseRemovePaymentTransactionProvider()
         SystemAppleServices._InAppPurchase_provider_status = False
