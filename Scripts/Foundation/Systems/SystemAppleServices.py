@@ -5,6 +5,7 @@ from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.Providers.ProductsProvider import ProductsProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Foundation.Providers.ConsentProvider import ConsentProvider
+from Foundation.Providers.LeaderboardProvider import LeaderboardProvider
 from Foundation.TaskManager import TaskManager
 
 _Log = SimpleLogger("SystemAppleServices", option="apple")
@@ -57,6 +58,11 @@ class SystemAppleServices(System):
             AchievementsProvider.setProvider("Apple", dict(
                 unlockAchievement=self.unlockAchievement,
                 setAchievementProgress=self.setAchievementProgress,
+            ))
+
+            LeaderboardProvider.setProvider("Apple", dict(
+                submitLeaderboardScore=self.submitLeaderboardScore,
+                showLeaderboard=self.showLeaderboard,
             ))
 
         # todo: promocodes handling in onRequestPromoCodeResult
@@ -165,6 +171,42 @@ class SystemAppleServices(System):
         b_check = Mengine.appleGameCenterCheckAchievement(achievement_name)
         _Log("[GameCenter] CHECK ACHIEVEMENT {!r} RESULT: {}".format(achievement_name, b_check), force=True)
         return b_check
+
+    # --- Leaderboard -------------------------------------------------------------------------------------------------
+
+    @staticmethod
+    def __cbGameCenterLeaderboardReporter(status, leaderboard_id, score, *args):
+        _Log("[GameCenter] (callback) LEADERBOARD status: {} [{}] leaderboard_id: {!r} score: {} args: {}"
+             .format("success" if status else "failed", status, leaderboard_id, score, args), force=True)
+        return status
+
+    @staticmethod
+    def submitLeaderboardScore(leaderboard_id, score):
+        _Log("[Leaderboard] submitLeaderboardScore {!r} {}...".format(leaderboard_id, score), force=True)
+
+        if SystemAppleServices.isGameCenterConnected(report=True) is False:
+            Trace.log("System", 0, "Plugin '{}' fail to submit leaderboard score - Game Center is not connected!"
+                      .format(PLUGIN_GAME_CENTER))
+            return False
+
+        status = Mengine.appleGameCenterReportScore(
+            leaderboard_id,
+            score,
+            SystemAppleServices.__cbGameCenterLeaderboardReporter,
+            leaderboard_id,
+            score
+        )
+
+        if status is False:
+            Trace.log("System", 0, "Plugin '{}' fail to submit leaderboard score '{}' ({})"
+                      .format(PLUGIN_GAME_CENTER, leaderboard_id, score))
+
+        return status
+
+    @staticmethod
+    def showLeaderboard(leaderboard_id):
+        _Log("[Leaderboard] showLeaderboard {!r} is not supported by AppleGameCenter plugin".format(leaderboard_id), force=True, err=True)
+        return False
 
     # --- Rate us ------------------------------------------------------------------------------------------------------
 
