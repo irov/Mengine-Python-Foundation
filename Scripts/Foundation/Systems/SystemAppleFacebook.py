@@ -1,6 +1,3 @@
-import builtins
-
-from Event import Event
 from Foundation.System import System
 from Foundation.Providers.FacebookProvider import FacebookProvider
 
