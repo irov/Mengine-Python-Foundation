@@ -33,7 +33,6 @@ class SystemAppLovin(System):
             pass
 
         return SystemAppLovin.is_plugin_active
-        pass
 
     def _onInitialize(self):
         Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)

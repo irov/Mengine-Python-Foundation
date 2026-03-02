@@ -4,6 +4,7 @@ from Event import Event
 from Foundation.System import System
 from Foundation.Providers.FacebookProvider import FacebookProvider
 
+APPLE_PLUGIN_NAME = "AppleFacebookPlugin"
 
 class SystemAppleFacebook(System):
     onLoginSuccess = Event("onLoginSuccess")
@@ -27,6 +28,10 @@ class SystemAppleFacebook(System):
 
     def __init__(self):
         super(SystemAppleFacebook, self).__init__()
+
+    @staticmethod
+    def _onAvailable(params):
+        return builtins.Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME)
 
     def _onInitialize(self):
         callbacks = {

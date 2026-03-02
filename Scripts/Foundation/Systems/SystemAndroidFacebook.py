@@ -6,7 +6,6 @@ from Foundation.Providers.FacebookProvider import FacebookProvider
 
 ANDROID_PLUGIN_NAME = "AndroidFacebookPlugin"
 
-
 class SystemAndroidFacebook(System):
     onLoginSuccess = Event("onLoginSuccess")
     onLoginCancel = Event("onLoginCancel")
@@ -29,6 +28,10 @@ class SystemAndroidFacebook(System):
 
     def __init__(self):
         super(SystemAndroidFacebook, self).__init__()
+
+    @staticmethod
+    def _onAvailable(params):
+        return builtins.Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME)
 
     def _onInitialize(self):
         def _setCallback(name, cb):
