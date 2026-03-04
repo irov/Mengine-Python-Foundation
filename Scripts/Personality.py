@@ -174,7 +174,6 @@ def onAccountFinalize():
 def onFinalize():
     Trace.msg_dev("Personality.onFinalize")
 
-    Bootstrapper.unloadManagers("Database", "Managers")
     Notification.notify(Notificator.onFinalize)
     pass
 

@@ -950,6 +950,7 @@ def onInitialize():
     Managers.importManager("Foundation", "GroupManager")
     Managers.importManager("Foundation", "DemonManager")
     Managers.importManager("Foundation", "ArrowManager")
+    Managers.importManager("Foundation", "SystemManager")
     Managers.importManager("Foundation", "SceneManager")
     Managers.importManager("Foundation", "EntityManager")
     Managers.importManager("Foundation", "StateManager")

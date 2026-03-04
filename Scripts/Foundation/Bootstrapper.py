@@ -110,32 +110,6 @@ class Bootstrapper(object):
         return True
 
     @staticmethod
-    def unloadManagers(module, param):
-        records = DatabaseManager.getDatabaseRecords(module, param)
-
-        for record in records:
-            Name = record.get("Name")
-            Platform = record.get("Platform")
-            Development = record.get("Development")
-            Enable = bool(record.get("Enable", True))
-
-            if Enable is False:
-                continue
-
-            if Development is not None:
-                Development = bool(Development)
-
-            if checkPlatform(Platform) is False:
-                continue
-
-            if Development is _DEVELOPMENT or Development is None:
-                Trace.msg_dev("Bootstrapper.loadManagers manager %s remove" % (Name))
-
-                Managers.removeManager(Name)
-                pass
-            pass
-
-    @staticmethod
     def loadSystems(module, param):
         records = DatabaseManager.getDatabaseRecords(module, param)
 

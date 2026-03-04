@@ -1,6 +1,5 @@
 from Foundation.Manager import Manager
 
-
 class SystemManager(Manager):
     systemTypes = {}
     systems = {}

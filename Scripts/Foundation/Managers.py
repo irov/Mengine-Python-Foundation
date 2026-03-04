@@ -59,8 +59,6 @@ class Managers(object):
 
     @staticmethod
     def removeManager(module, name):
-        print "Managers.removeManager: module %s name %s" % name
-
         manager = Managers.s_managers.get((module, name))
 
         if manager is None:
@@ -69,6 +67,6 @@ class Managers(object):
 
         manager.onFinalize()
 
-        del Managers.s_managers[name]
+        del Managers.s_managers[(module, name)]
 
         return True
