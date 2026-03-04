@@ -162,7 +162,7 @@ class TaskBase(Initializer):
         try:
             isCheck = self.task._onCheck()
         except Exception as ex:
-            self._onTaskCheckFailed("%s\n%s" % (ex, traceback.format_exc()))
+            self._onTaskCheckFailed(ex)
 
             return False
 
@@ -183,7 +183,7 @@ class TaskBase(Initializer):
         try:
             self.task._onCheckSkip()
         except Exception as ex:
-            self._onTaskCheckSkipFailed("%s\n%s" % (ex, traceback.format_exc()))
+            self._onTaskCheckSkipFailed(ex)
 
             return
 
@@ -191,7 +191,7 @@ class TaskBase(Initializer):
         try:
             isComplete = task._onRun()
         except TaskException as ex:
-            self._onTaskRunFailed("%s\n%s" % (ex, traceback.format_exc()))
+            self._onTaskRunFailed(ex)
 
             return False, False
 
@@ -208,7 +208,7 @@ class TaskBase(Initializer):
         try:
             task._onSkip()
         except Exception as ex:
-            self._onTaskSkipFailed("%s\n%s" % (ex, traceback.format_exc()))
+            self._onTaskSkipFailed(ex)
 
             return False
 
@@ -299,20 +299,20 @@ class TaskBase(Initializer):
         Trace.log("Task", 0, msg)
         pass
 
-    def _onTaskRunFailed(self, msg):
-        self._traceError("TaskBase run '%s' is except '%s'" % (self, msg))
+    def _onTaskRunFailed(self, ex):
+        self._traceException("TaskBase run '%s' is except '%s'" % (self, ex))
         pass
 
-    def _onTaskCheckFailed(self, msg):
-        self._traceError("TaskBase check '%s' is except '%s'" % (self, msg))
+    def _onTaskCheckFailed(self, ex):
+        self._traceException("TaskBase check '%s' is except '%s'" % (self, ex))
         pass
 
-    def _onTaskCheckSkipFailed(self, msg):
-        self._traceError("TaskBase check skip '%s' is except '%s'" % (self, msg))
+    def _onTaskCheckSkipFailed(self, ex):
+        self._traceException("TaskBase check skip '%s' is except '%s'" % (self, ex))
         pass
 
-    def _onTaskSkipFailed(self, msg):
-        self._traceError("TaskBase skip '%s' is except '%s'" % (self, msg))
+    def _onTaskSkipFailed(self, ex):
+        self._traceException("TaskBase skip '%s' is except '%s'" % (self, ex))
         pass
 
     def _onInitialize(self):
@@ -321,16 +321,16 @@ class TaskBase(Initializer):
         self.state = TaskBase.IDLE
         pass
 
-    def _onInitializeFailed(self, msg):
+    def _onInitializeFailed(self, ex):
         self.state = TaskBase.INVALID
 
-        self._traceError("TaskBase '%s' is not initialized '%s'" % (self, msg))
+        self._traceException("TaskBase '%s' is not initialized '%s'" % (self, ex))
         pass
 
-    def _onFinalizeFailed(self, msg):
+    def _onFinalizeFailed(self, ex):
         self.state = TaskBase.INVALID
 
-        self._traceError("TaskBase '%s' is not finalized '%s'" % (self, msg))
+        self._traceException("TaskBase '%s' is not finalized '%s'" % (self, ex))
         pass
 
     def _onFinalize(self):

@@ -182,12 +182,12 @@ class BaseObject(Params, Initializer):
     def _onDestroy(self):
         pass
 
-    def _onInitializeFailed(self, msg):
-        Trace.log("Object", 0, "BaseObject initialize '%s:%s' (type '%s') is failed - %s" % (self.getGroupName(), self.name, self.getType(), msg))
+    def _onInitializeFailed(self, ex):
+        Trace.log_exception("Object", 0, "BaseObject initialize '%s:%s' (type '%s') is failed - %s" % (self.getGroupName(), self.name, self.getType(), ex))
         pass
 
-    def _onFinalizeFailed(self, msg):
-        Trace.log("Object", 0, "BaseObject finalize '%s:%s' (type '%s') is failed - %s" % (self.getGroupName(), self.name, self.getType(), msg))
+    def _onFinalizeFailed(self, ex):
+        Trace.log_exception("Object", 0, "BaseObject finalize '%s:%s' (type '%s') is failed - %s" % (self.getGroupName(), self.name, self.getType(), ex))
         pass
 
     def _onInitialize(self):

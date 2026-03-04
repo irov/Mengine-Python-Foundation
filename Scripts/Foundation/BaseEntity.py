@@ -161,12 +161,12 @@ class BaseEntity(Actor, Initializer):
         self.node = None
         pass
 
-    def _onInitializeFailed(self, msg):
-        Trace.log("BaseEntity", 0, "Entity '%s:%s' initialize failed '%s'" % (self.getObjectType(), self.getName(), msg))
+    def _onInitializeFailed(self, ex):
+        Trace.log_exception("BaseEntity", 0, "Entity '%s:%s' initialize failed '%s'" % (self.getObjectType(), self.getName(), ex))
         pass
 
-    def _onFinalizeFailed(self, msg):
-        Trace.log("BaseEntity", 0, "Entity '%s:%s' finalize failed '%s'" % (self.getObjectType(), self.getName(), msg))
+    def _onFinalizeFailed(self, ex):
+        Trace.log_exception("BaseEntity", 0, "Entity '%s:%s' finalize failed '%s'" % (self.getObjectType(), self.getName(), ex))
         pass
 
     def onRestore(self):

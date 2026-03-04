@@ -21,7 +21,7 @@ class TaskPrintFormat(Task):
         try:
             str(self.Value).format(*self.Args)
         except Exception as ex:
-            self.validateFailed("Invalid TaskPrintFormat format '%s' args '%s'" % (self.Value, self.Args))
+            self.validateFailed("Invalid TaskPrintFormat format '%s' args '%s' exception '%s'" % (self.Value, self.Args, ex))
             pass
         pass
 

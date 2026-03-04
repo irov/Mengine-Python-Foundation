@@ -166,11 +166,11 @@ class System(Params, Initializer):
     def _onLoad(self, save_dict):
         pass
 
-    def _onInitializeFailed(self, msg):
-        Trace.log("System", 0, "System '%s' invalid initialization '%s'" % (self.name, msg))
+    def _onInitializeFailed(self, ex):
+        Trace.log_exception("System", 0, "System '%s' invalid initialization '%s'" % (self.name, ex))
 
-    def _onFinalizeFailed(self, msg):
-        Trace.log("System", 0, "System '%s' invalid finalization '%s'" % (self.name, msg))
+    def _onFinalizeFailed(self, ex):
+        Trace.log_exception("System", 0, "System '%s' invalid finalization '%s'" % (self.name, ex))
 
     def stop(self):
         if self.active is False:

@@ -23,7 +23,7 @@ class Initializer(object):
         try:
             self._onInitialize(*args, **kwargs)
         except Exception as ex:
-            self.onInitializeFailed("onInitialize exception %s\n%s" % (ex, traceback.format_exc()))
+            self.onInitializeFailed(ex)
 
             return False
 
@@ -38,16 +38,16 @@ class Initializer(object):
     def _onInitialize(self, *args, **kwargs):
         pass
 
-    def onInitializeFailed(self, msg):
+    def onInitializeFailed(self, ex):
         try:
-            self._onInitializeFailed(msg)
-        except Exception as ex:
-            Trace.log("Object", 0, "Initialize.onInitializeFailed %s exception %s\n%s" % (msg, ex, traceback.format_exc()))
+            self._onInitializeFailed(ex)
+        except Exception as nex:
+            Trace.log_exception("Object", 0, "Initialize.onInitializeFailed %s exception %s" % (ex, nex))
             pass
         pass
 
-    def _onInitializeFailed(self, msg):
-        Trace.log("Object", 0, "Initialize._onInitializeFailed %s" % (msg))
+    def _onInitializeFailed(self, ex):
+        Trace.log_exception("Object", 0, "Initialize._onInitializeFailed %s" % (ex))
         pass
 
     def initializeFailed(self, msg, *args):
@@ -69,25 +69,24 @@ class Initializer(object):
         try:
             self._onFinalize()
         except Exception as ex:
-            self.onFinalizeFailed("onFinalize exception %s\n%s" % (ex, traceback.format_exc()))
+            self.onFinalizeFailed(ex)
             return
         pass
 
     def _onFinalize(self):
         pass
 
-    def onFinalizeFailed(self, msg):
+    def onFinalizeFailed(self, ex):
         try:
-            self._onFinalizeFailed(msg)
-        except Exception as ex:
-            Trace.log("Object", 0, "Initialize.onFinalizeFailed %s exception %s\n%s" % (msg, ex, traceback.format_exc()))
+            self._onFinalizeFailed(ex)
+        except Exception as nex:
+            Trace.log_exception("Object", 0, "Initialize.onFinalizeFailed %s exception %s" % (ex, nex))
             pass
         pass
 
-    def _onFinalizeFailed(self, msg):
-        Trace.log("Object", 0, "Initialize.onFinalizeFailed %s" % (msg))
+    def _onFinalizeFailed(self, ex):
+        Trace.log_exception("Object", 0, "Initialize.onFinalizeFailed %s" % (ex))
         pass
-
 
     def getInitializeStack(self):
         if _VALIDATION is True:

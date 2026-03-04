@@ -139,12 +139,12 @@ class TaskChain(MixinGroup, Params, Initializer):
         TaskManager.addTaskChain(self, self.named)
         pass
 
-    def _onInitializeFailed(self, msg):
-        Trace.log("TaskChain", 0, "TaskChain '%s' is not initialize - '%s'" % (self, msg))
+    def _onInitializeFailed(self, ex):
+        Trace.log_exception("TaskChain", 0, "TaskChain '%s' is not initialize - '%s'" % (self, ex))
         pass
 
-    def _onFinalizeFailed(self, msg):
-        Trace.log("TaskChain", 0, "TaskChain '%s' is not finalized - '%s'" % (self, msg))
+    def _onFinalizeFailed(self, ex):
+        Trace.log_exception("TaskChain", 0, "TaskChain '%s' is not finalized - '%s'" % (self, ex))
         pass
 
     def _onFinalize(self):

@@ -25,7 +25,7 @@ class TaskNotify(Task):
         try:
             Notification.notify(self.ID, *self.Args, **self.Kwargs)
         except Exception as ex:
-            self.log("Error notify '%s' args: %s exception: %s" % (self.ID, ex, self.Args))
+            self.log_exception("Error notify '%s' args: %s exception: %s", self.ID, self.Args, ex)
             pass
 
         return True

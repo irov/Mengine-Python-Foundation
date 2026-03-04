@@ -110,19 +110,19 @@ class Task(Params, Initializer):
     def _onValidate(self):
         pass
 
-    def validateFailed(self, value):
-        raise ValidateException(value)
+    def validateFailed(self, msg):
+        raise ValidateException(msg)
 
     def _onValidateFailed(self, ex):
         self.base._traceException("Task %s is not validate %s" % (self.base, ex))
         pass
 
-    def _onInitializeFailed(self, msg):
-        self.base._traceError("Task %s is not initialized %s" % (self.base, msg))
+    def _onInitializeFailed(self, ex):
+        self.base._traceException("Task %s is not initialized %s" % (self.base, ex))
         pass
 
-    def _onFinalizeFailed(self, msg):
-        self.base._traceError("Task %s is not finalized %s" % (self.base, msg))
+    def _onFinalizeFailed(self, ex):
+        self.base._traceException("Task %s is not finalized %s" % (self.base, ex))
         pass
 
     def invalidTask(self, msg):
@@ -130,5 +130,9 @@ class Task(Params, Initializer):
 
     def log(self, msg, *args):
         Trace.log("Task", 0, "TaskChain [%s] Caller %s:%s doc %s | [%s] %s" % (self.base.chain, self.base.caller[0], self.base.caller[1], self.base.caller[2], self.__class__.__name__, msg % args))
+        pass
+
+    def log_exception(self, msg, *args):
+        Trace.log_exception("Task", 0, "TaskChain [%s] Caller %s:%s doc %s | [%s] %s" % (self.base.chain, self.base.caller[0], self.base.caller[1], self.base.caller[2], self.__class__.__name__, msg % args))
         pass
     pass
