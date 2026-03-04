@@ -1,19 +1,21 @@
 class Initializer(object):
     __metaclass__ = baseslots("_initialized")
 
-    InitializerReferences = {}
+    if _DEVELOPMENT is True:
+        InitializerReferences = {}
+        pass
 
     def __init__(self):
         super(Initializer, self).__init__()
 
-        self._initialized = None
+        self._initialized = False
         pass
 
     def isInitialized(self):
-        return self._initialized is not None
+        return self._initialized is True
 
     def onInitialize(self, *args, **kwargs):
-        if self._initialized is not None:
+        if self._initialized is True:
             self.onInitializeFailed("already initialized")
 
             return False
@@ -25,12 +27,10 @@ class Initializer(object):
 
             return False
 
-        if _VALIDATION is True:
-            Initializer.InitializerReferences.setdefault(self.__class__, []).append(self)
+        self._initialized = True
 
-            self._initialized = traceback.extract_stack()
-        else:
-            self._initialized = True
+        if _DEVELOPMENT is True:
+            Initializer.InitializerReferences.setdefault(self.__class__, {})[self] = traceback.extract_stack()
             pass
 
         return True
@@ -56,16 +56,15 @@ class Initializer(object):
         raise Exception(msg % args)
 
     def onFinalize(self):
-        if self._initialized is None:
+        if self._initialized is False:
             self.onFinalizeFailed("not initialized")
-
             return
 
-        if _VALIDATION is True:
-            Initializer.InitializerReferences.setdefault(self.__class__, []).remove(self)
+        if _DEVELOPMENT is True:
+            Initializer.InitializerReferences.setdefault(self.__class__, []).pop(self, None)
             pass
 
-        self._initialized = None
+        self._initialized = False
 
         try:
             self._onFinalize()
@@ -89,15 +88,26 @@ class Initializer(object):
         Trace.log("Object", 0, "Initialize.onFinalizeFailed %s" % (msg))
         pass
 
+
+    def getInitializeStack(self):
+        if _DEVELOPMENT is True:
+            return Initializer.InitializerReferences.get(self.__class__, {}).get(self, None)
+
+        return None
+
     @classmethod
     def validate(cls):
         if _VALIDATION is True:
             print "Validating Initializers..."
             for initializer, objs in Initializer.InitializerReferences.items():
-                for obj in objs:
-                    print "Initializer '%s' is not finalized, trace:\n%s" % (initializer.__name__, "".join(traceback.format_list(obj._initialized)))
+                for obj, stack in objs.items():
+                    trace_lines = ["Initializeback (most recent call last):\n"]
+
+                    for filename, lineno, funcname, _ in stack:
+                        trace_lines.append("  File \"%s\", line %s in %s\n" % (filename, lineno, funcname))
+                        pass
+
+                    print "Initializer '%s' is not finalized, trace:\n%s" % (initializer.__name__, "".join(trace_lines))
                     pass
                 pass
             pass
-        pass
-    pass

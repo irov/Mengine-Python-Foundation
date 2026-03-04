@@ -1,6 +1,3 @@
-import math
-
-
 class RPGFormules(object):
 
     def __init__(self):
@@ -33,11 +30,11 @@ class RPGFormules(object):
         def __sum(value):
             return sum(value)
         def __ceil(value):
-            return math.ceil(value)
+            return Mengine.ceilf(value)
         def __floor(value):
-            return math.floor(value)
+            return Mengine.floorf(value)
         def __exp(value):
-            return math.exp(value)
+            return Mengine.exp(value)
 
         sandbox = dict(Value=Value, rand=__rand, fibo=__fibo, log10=__log10, Resist=__resist, Evade=__evade, sum=__sum,
                        ceil=__ceil, floor=__floor, exp=__exp)

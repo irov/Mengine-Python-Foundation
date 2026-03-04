@@ -6,25 +6,7 @@ class EntityManager(Manager):
     s_typeDemain = {}
 
     @staticmethod
-    def importEntities(module, prototypes):
-        for prototype in prototypes:
-            if EntityManager.importEntity(module, prototype) is False:
-                return False
-        return True
-
-    @staticmethod
-    def importEntity(module, prototype):
-        if isinstance(prototype, dict):
-            name = prototype.get("name")
-            type = prototype.get("name")
-            override = prototype.get("override", False)
-        else:
-            name = prototype
-            type = prototype
-            override = False
-
-        module = "%s.%s" % (module, name)
-
+    def importEntity(module, name, override=False):
         if override is True:
             if Mengine.hasEntityPrototypeFinder(name) is True:
                 Mengine.removeEntityPrototypeFinder(name)
@@ -39,7 +21,7 @@ class EntityManager(Manager):
 
             return False
 
-        EntityManager.s_type[name] = (module, type)
+        EntityManager.s_type[name] = (module, name)
 
         return True
 
@@ -56,16 +38,8 @@ class EntityManager(Manager):
 
     @staticmethod
     def __importEntityDemain(module, type):
-        if module == "":
-            ModuleName = type
-        else:
-            ModuleName = "%s.%s" % (module, type)
-
         try:
-            if module == "":
-                Module = __import__(ModuleName)
-            else:
-                Module = __import__(ModuleName, fromlist=[module])
+            Module = __import__("%s.%s" % (module, type), fromlist=[module])
 
         except ImportError as se:
             Trace.log("Manager", 0, "EntityManager.__importEntityDemain %s:%s import error %s\n%s" % (module, type, se, traceback.format_exc()))

@@ -1,5 +1,3 @@
-import math
-
 from Foundation.ObjectManager import ObjectManager
 
 def createImageHotspot(image, name):
@@ -41,7 +39,7 @@ def HsvToRgb360(hsv):
     g = 0
     b = 0
 
-    i = math.floor(h * 6)
+    i = Mengine.floorf(h * 6)
     f = h * 6 - i
     p = v * (1 - s)
     q = v * (1 - f * s)

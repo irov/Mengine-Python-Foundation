@@ -1,5 +1,5 @@
 from Foundation.Initializer import Initializer
-from Foundation.Object.BaseObject import BaseObject
+from Foundation.BaseObject import BaseObject
 from Foundation.Task.MixinGroup import MixinGroup
 
 class MixinObject(MixinGroup, Initializer):

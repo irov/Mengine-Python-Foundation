@@ -79,7 +79,7 @@ class Notification(object):
             try:
                 value = observer.fn(*args, **kwargs)
             except Exception as ex:
-                Trace.log("Notification", 0, "Notification %s call function %s error: %s" % (identity.value, observer.fn, ex))
+                Trace.log("Notification", 0, "Notification %s call function %s error: %s\n%s" % (identity.value, observer.fn, ex, traceback.format_exc()))
                 continue
 
             if isinstance(value, bool) is False:
@@ -94,7 +94,7 @@ class Notification(object):
                     try:
                         cb()
                     except Exception as ex:
-                        Trace.log("Notification", 0, "Notification %s call cb function %s error: %s" % (identity.value, cb, ex))
+                        Trace.log("Notification", 0, "Notification %s call cb function %s error: %s\n%s" % (identity.value, cb, ex, traceback.format_exc()))
                         continue
                     pass
                 pass

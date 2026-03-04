@@ -1,4 +1,4 @@
-from Foundation.Entity.BaseAnimatable import BaseAnimatable
+from Foundation.BaseAnimatable import BaseAnimatable
 
 class Movie2(BaseAnimatable):
     @staticmethod

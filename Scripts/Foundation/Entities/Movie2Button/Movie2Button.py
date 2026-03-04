@@ -1,5 +1,4 @@
-from Event import Event
-from Foundation.Entity.BaseEntity import BaseEntity
+﻿from Foundation.BaseEntity import BaseEntity
 from Foundation.Notificator import Notificator
 from Foundation.ObjectManager import ObjectManager
 from Foundation.Task.Semaphore import Semaphore

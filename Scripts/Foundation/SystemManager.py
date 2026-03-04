@@ -56,9 +56,6 @@ class SystemManager(Manager):
         if type not in SystemManager.systemTypes:
             Trace.log("System", 0, "SystemManager.createSystem: not found system %s type %s" % (name, type))
             return None
-            pass
-
-        Trace.msg_dev("SystemManager.createSystem [%s]" % (type))
 
         systemType = SystemManager.systemTypes[type]
 
@@ -83,8 +80,6 @@ class SystemManager(Manager):
             return False
 
         SystemManager.systems[name] = sys
-
-        Trace.msg_dev("SystemManager.runSystem [%s]" % (type))
 
         if sys.run() is False:
             return False
@@ -113,8 +108,6 @@ class SystemManager(Manager):
 
         sys = SystemManager.systems.get(name)
         sys.stop()
-
-        Trace.msg_dev("SystemManager.stopSystem [%s]" % (sys.getType()))
 
         return True
 

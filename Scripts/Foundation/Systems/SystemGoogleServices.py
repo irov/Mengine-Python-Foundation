@@ -1,4 +1,3 @@
-from Event import Event
 from Foundation.PolicyManager import PolicyManager
 from Foundation.Providers.RatingAppProvider import RatingAppProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider

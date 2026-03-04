@@ -50,11 +50,9 @@ def onInitialize():
     from Foundation.Task.Refcount import Refcount
     Mengine.addGlobalModule("Refcount", Refcount)
 
-    Trace.msg("Foundation.onInitialize")
+    Trace.msg_dev("Foundation.onInitialize")
 
     from Foundation.ArrowManager import ArrowManager
-
-    Arrows = ["Default"]
 
     from Foundation.SceneManager import SceneManager
 
@@ -867,7 +865,7 @@ def onInitialize():
     from ObjectManager import ObjectManager
     from EntityManager import EntityManager
 
-    Types = [
+    EntityTypes = [
         "Animation"
         , "Interaction"
         , "Button"
@@ -889,63 +887,41 @@ def onInitialize():
         , "Video"
         , "Window"
         , "Viewport"
+        , "Landscape2D"
+        , "MovieButton"
+        , "Movie2Button"
+        , "ProgressBar"
+        , "MovieCheckBox"
+        , "Movie2CheckBox"
+        , "Charger"
+        , "MovieVirtualArea"
+        , "MovieScrollbar"
+        , "Movie2Scrollbar"
+        , "MovieProgressBar"
+        , "Movie2ProgressBar"
+        , "MovieEditBox"
+        , "Movie2EditBox"
+        , "MovieTabsGroup"
         ]
 
     if Mengine.getGameParamBool("NotUseDefaultEntitiesList", False) is True:
-        Types = []
+        EntityTypes = []
         from Foundation.DatabaseManager import DatabaseManager
         records = DatabaseManager.getDatabaseRecordsFilterBy("Database", "Entities", Module="Foundation")
 
         for record in records:
-            Types.append(record.get("Type"))
+            EntityTypes.append(record.get("Type"))
 
-    ObjectManager.importObjects("Foundation.Object", Types)
-    EntityManager.importEntities("Foundation.Entities", Types)
+    for EntityType in EntityTypes:
+        ModuleName = "Foundation.Entities.{}".format(EntityType)
 
-    EntityManager.importEntity("Foundation.Entities", "Landscape2D")
-    ObjectManager.importObject("Foundation.Entities.Landscape2D", "Landscape2D")
+        Module = __import__(ModuleName, fromlist=[ModuleName])
 
-    EntityManager.importEntity("Foundation.Entities", "MovieButton")
-    ObjectManager.importObject("Foundation.Entities.MovieButton", "MovieButton")
-
-    EntityManager.importEntity("Foundation.Entities", "Movie2Button")
-    ObjectManager.importObject("Foundation.Entities.Movie2Button", "Movie2Button")
-
-    EntityManager.importEntity("Foundation.Entities", "ProgressBar")
-    ObjectManager.importObject("Foundation.Entities.ProgressBar", "ProgressBar")
-
-    EntityManager.importEntity("Foundation.Entities", "MovieCheckBox")
-    ObjectManager.importObject("Foundation.Entities.MovieCheckBox", "MovieCheckBox")
-
-    EntityManager.importEntity("Foundation.Entities", "Movie2CheckBox")
-    ObjectManager.importObject("Foundation.Entities.Movie2CheckBox", "Movie2CheckBox")
-
-    ObjectManager.importObject("Foundation.Entities.Charger", "Charger")
-    EntityManager.importEntity("Foundation.Entities", "Charger")
-
-    EntityManager.importEntity("Foundation.Entities", "MovieVirtualArea")
-    ObjectManager.importObject("Foundation.Entities.MovieVirtualArea", "MovieVirtualArea")
-
-    EntityManager.importEntity("Foundation.Entities", "MovieScrollbar")
-    ObjectManager.importObject("Foundation.Entities.MovieScrollbar", "MovieScrollbar")
-
-    EntityManager.importEntity("Foundation.Entities", "Movie2Scrollbar")
-    ObjectManager.importObject("Foundation.Entities.Movie2Scrollbar", "Movie2Scrollbar")
-
-    EntityManager.importEntity("Foundation.Entities", "MovieProgressBar")
-    ObjectManager.importObject("Foundation.Entities.MovieProgressBar", "MovieProgressBar")
-
-    EntityManager.importEntity("Foundation.Entities", "Movie2ProgressBar")
-    ObjectManager.importObject("Foundation.Entities.Movie2ProgressBar", "Movie2ProgressBar")
-
-    EntityManager.importEntity("Foundation.Entities", "MovieEditBox")
-    ObjectManager.importObject("Foundation.Entities.MovieEditBox", "MovieEditBox")
-
-    EntityManager.importEntity("Foundation.Entities", "Movie2EditBox")
-    ObjectManager.importObject("Foundation.Entities.Movie2EditBox", "Movie2EditBox")
-
-    EntityManager.importEntity("Foundation.Entities", "MovieTabsGroup")
-    ObjectManager.importObject("Foundation.Entities.MovieTabsGroup", "MovieTabsGroup")
+        if hasattr(Module, "onInitialize") is True:
+            getattr(Module, "onInitialize")()
+        else:
+            EntityManager.importEntity(ModuleName, EntityType)
+            ObjectManager.importObject(ModuleName, EntityType)
 
     providers = [
         "AdvertisementProvider"
@@ -967,56 +943,64 @@ def onInitialize():
     from Foundation.Managers import Managers
     Managers.onInitialize()
 
+    Managers.importManager("Foundation", "BuildModeManager")
     Managers.importManager("Foundation", "DefaultManager")
+    Managers.importManager("Foundation", "PolicyManager")
     Managers.importManager("Foundation", "TaskManager")
     Managers.importManager("Foundation", "GroupManager")
+    Managers.importManager("Foundation", "DemonManager")
     Managers.importManager("Foundation", "ArrowManager")
     Managers.importManager("Foundation", "SceneManager")
     Managers.importManager("Foundation", "EntityManager")
     Managers.importManager("Foundation", "StateManager")
     Managers.importManager("Foundation", "DatabaseManager")
     Managers.importManager("Foundation", "ProviderManager")
-
-    Managers.importManager("Foundation.Business", "ContractManager")
-    Managers.importManager("Foundation.Business", "BankManager")
     Managers.importManager("Foundation", "PrefetchResourceManager")
     Managers.importManager("Foundation", "PrefetchGroupManager")
     Managers.importManager("Foundation", "PrefetchGroupNotifyManager")
     Managers.importManager("Foundation", "SessionManager")
     Managers.importManager("Foundation", "AccountManager")
+    Managers.importManager("Foundation", "DebugNotificationsManager")
+    Managers.importManager("Foundation.Business", "ContractManager")
+    Managers.importManager("Foundation.Business", "BankManager")
 
     return True
 
 
 def onFinalize():
-    Trace.msg("Foundation.onFinalize")
+    Trace.msg_dev("Foundation.onFinalize")
 
     from Foundation.Managers import Managers
 
-    Managers.removeManager("AccountManager")
-    Managers.removeManager("SessionManager")
-    Managers.removeManager("ContractManager")
-    Managers.removeManager("BankManager")
-    Managers.removeManager("TaskManager")
-    Managers.removeManager("ArrowManager")
-    Managers.removeManager("SystemManager")
-    Managers.removeManager("EntityManager")
-    Managers.removeManager("SceneManager")
-    Managers.removeManager("GroupManager")
-    Managers.removeManager("DemonManager")
-    Managers.removeManager("StateManager")
-    Managers.removeManager("DefaultManager")
-    Managers.removeManager("PrefetchGroupManager")
-    Managers.removeManager("PrefetchResourceManager")
-    Managers.removeManager("PrefetchGroupNotifyManager")
-    Managers.removeManager("DatabaseManager")
-    Managers.removeManager("ProviderManager")
+    Managers.removeManager("Foundation", "DebugNotificationsManager")
+    Managers.removeManager("Foundation", "AccountManager")
+    Managers.removeManager("Foundation", "SessionManager")
+    Managers.removeManager("Foundation.Business", "ContractManager")
+    Managers.removeManager("Foundation.Business", "BankManager")
+    Managers.removeManager("Foundation", "TaskManager")
+    Managers.removeManager("Foundation", "ArrowManager")
+    Managers.removeManager("Foundation", "SystemManager")
+    Managers.removeManager("Foundation", "EntityManager")
+    Managers.removeManager("Foundation", "SceneManager")
+    Managers.removeManager("Foundation", "GroupManager")
+    Managers.removeManager("Foundation", "DemonManager")
+    Managers.removeManager("Foundation", "StateManager")
+    Managers.removeManager("Foundation", "DefaultManager")
+    Managers.removeManager("Foundation", "PrefetchGroupManager")
+    Managers.removeManager("Foundation", "PrefetchResourceManager")
+    Managers.removeManager("Foundation", "PrefetchGroupNotifyManager")
+    Managers.removeManager("Foundation", "DatabaseManager")
+    Managers.removeManager("Foundation", "ProviderManager")
+    Managers.removeManager("Foundation", "PolicyManager")
+    Managers.removeManager("Foundation", "BuildModeManager")
 
     Managers.onFinalize()
 
     from Notification import Notification
     Notification.onFinalize()
 
-    from Initializer import Initializer
-    Initializer.validate()
+    if _VALIDATION is True:
+        from Initializer import Initializer
+        Initializer.validate()
+        pass
     pass

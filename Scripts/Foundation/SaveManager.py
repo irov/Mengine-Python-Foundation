@@ -1,8 +1,8 @@
 from Foundation.Manager import Manager
 from Foundation.Group import Group
 from Foundation.GroupManager import GroupManager
-from Foundation.Object.BaseObject import BaseObject
-from Foundation.Object.ChildObject import ChildObject
+from Foundation.BaseObject import BaseObject
+from Foundation.ChildObject import ChildObject
 from Foundation.Params import DefaultParam
 
 class SaveDict(object):

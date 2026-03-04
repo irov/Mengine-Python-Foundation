@@ -1,7 +1,6 @@
-from Foundation.Entity.BaseAnimatable import BaseAnimatable
+from Foundation.BaseAnimatable import BaseAnimatable
 
 class Animation(BaseAnimatable):
-
     @staticmethod
     def declareORM(Type):
         BaseAnimatable.declareORM(Type)
@@ -19,11 +18,9 @@ class Animation(BaseAnimatable):
 
     def getAnimatable(self):
         return self.animation
-        pass
 
     def getSprite(self):
         return self.animation
-        pass
 
     def __updateFrameIndex(self, index):
         self.animation.setCurrentFrame(index)
@@ -32,7 +29,6 @@ class Animation(BaseAnimatable):
     def __updateSequence(self, sequence):
         if sequence is None:
             return
-            pass
         # sequenceID = "%s_%s"%(self.object.name, str(sequence))
         # Mengine.createAnimationSequence(sequenceID, sequence)
         # self.animation.setResourceAnimation(sequenceID)
@@ -40,7 +36,6 @@ class Animation(BaseAnimatable):
 
     def getLastFrameIndexFromSequence(self, sequence):
         return sequence[len(sequence) - 1][1]
-        pass
 
     def _onInitialize(self, obj):
         super(Animation, self)._onInitialize(obj)
@@ -53,7 +48,6 @@ class Animation(BaseAnimatable):
 
     def _onFinalize(self):
         super(Animation, self)._onFinalize()
-
         Mengine.destroyNode(self.animation)
         self.animation = None
         pass
@@ -67,4 +61,3 @@ class Animation(BaseAnimatable):
 
     def _onStop(self):
         pass
-    pass

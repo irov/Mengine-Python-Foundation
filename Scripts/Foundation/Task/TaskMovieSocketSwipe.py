@@ -1,5 +1,3 @@
-from math import fabs
-
 from Foundation.Task.MixinObjectTemplate import MixinMovie
 from Foundation.Task.Semaphore import Semaphore
 from Foundation.Task.TaskAlias import TaskAlias
@@ -62,7 +60,7 @@ class TaskMovieSocketSwipe(TaskAlias, MixinMovie):
 
                 self.current_distance = pow(pow(x - self.startXY[0], 2) + pow(y - self.startXY[1], 2), 0.5)
                 self.dxy = (x - self.startXY[0], y - self.startXY[1])
-                if fabs(self.dxy[1]) - fabs(self.dxy[0]) > 0:  # up or down
+                if Mengine.fabsf(self.dxy[1]) - Mengine.fabsf(self.dxy[0]) > 0:  # up or down
                     if -0.27 <= float(self.dxy[0] / self.dxy[1]) <= 0.27:
                         if self.dxy[1] > 0:
                             self.dir = "Down"
@@ -71,7 +69,7 @@ class TaskMovieSocketSwipe(TaskAlias, MixinMovie):
                         pass
                     pass
 
-                if fabs(self.dxy[1]) - fabs(self.dxy[0]) < 0:  # left or right
+                if Mengine.fabsf(self.dxy[1]) - Mengine.fabsf(self.dxy[0]) < 0:  # left or right
                     if -0.27 <= float(self.dxy[1] / self.dxy[0]) <= 0.27:
                         if self.dxy[0] > 0:
                             self.dir = "Right"

@@ -58,7 +58,6 @@ def checkPlatform(platform):
 
     return False
 
-
 class Bootstrapper(object):
     s_sessionSystems = []
 
@@ -88,23 +87,21 @@ class Bootstrapper(object):
                 continue
 
             if Development is _DEVELOPMENT or Development is None:
-                Manager = Managers.importManager(Module, Name)
+                Manager = Managers.getManager(Module, Name)
 
                 if Manager is None:
-                    Trace.log("Manager", 0, "Bootstrapper.loadManagers manager %s invalid import %s.%s" % (Name, Module, Name))
+                    Trace.log("Manager", 0, "Bootstrapper.loadManagers not found manager %s.%s" % (Module, Name))
                     return False
-
-                Trace.msg_dev("Manager.loadParams %s %s" % (Name, Param))
 
                 if Param is not None:
                     result = Manager.loadParams(Database, Param)
 
                     if isinstance(result, bool) is False:
-                        Trace.log("Manager", 0, "Bootstrapper.loadManagers manager %s load params mast be return Bool [True|False] but return %s" % (Name, result))
+                        Trace.log("Manager", 0, "Bootstrapper.loadManagers manager %s.%s load params mast be return Bool [True|False] but return %s" % (Module, Name, result))
                         return False
 
                     if result is False:
-                        Trace.log("Manager", 0, "Bootstrapper.loadManagers manager %s invalid load param %s" % (Name, Param))
+                        Trace.log("Manager", 0, "Bootstrapper.loadManagers manager %s.%s invalid load param %s" % (Module, Name, Param))
                         return False
                     pass
                 pass
@@ -113,12 +110,34 @@ class Bootstrapper(object):
         return True
 
     @staticmethod
-    def loadSystems(module, param):
+    def unloadManagers(module, param):
         records = DatabaseManager.getDatabaseRecords(module, param)
 
-        if Managers.importManager("Foundation", "SystemManager") is None:
-            Trace.log("Manager", 0, "Bootstrapper.loadSystems invalid initialize system manager")
-            return False
+        for record in records:
+            Name = record.get("Name")
+            Platform = record.get("Platform")
+            Development = record.get("Development")
+            Enable = bool(record.get("Enable", True))
+
+            if Enable is False:
+                continue
+
+            if Development is not None:
+                Development = bool(Development)
+
+            if checkPlatform(Platform) is False:
+                continue
+
+            if Development is _DEVELOPMENT or Development is None:
+                Trace.msg_dev("Bootstrapper.loadManagers manager %s remove" % (Name))
+
+                Managers.removeManager(Name)
+                pass
+            pass
+
+    @staticmethod
+    def loadSystems(module, param):
+        records = DatabaseManager.getDatabaseRecords(module, param)
 
         for record in records:
             Module = record.get("Module")
@@ -139,8 +158,6 @@ class Bootstrapper(object):
 
             if checkPlatform(Platform) is False:
                 continue
-
-            Trace.msg_dev("load system %s global (%s) development (%s) platform (%s)" % (Name, Global, Development, Platform))
 
             if SystemManager.importSystem(Module, Name) is None:
                 Trace.log("Manager", 0, "Bootstrapper.loadSystems system %s invalid import %s:%s" % (Name, Module, Name))

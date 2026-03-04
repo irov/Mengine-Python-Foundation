@@ -3,7 +3,6 @@ from Foundation.Entities.MovieVirtualArea.FrictionEffect import FrictionEffect
 from Foundation.Entities.MovieVirtualArea.SnappingEffect import SnappingEffect
 
 class DragObject(object):
-
     def _none_mode(self, x, y):
         return 0.0, 0.0
 

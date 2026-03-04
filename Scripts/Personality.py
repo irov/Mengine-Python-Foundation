@@ -73,6 +73,8 @@ def onAppMouseLeave(event):
     Notification.notify(Notificator.onAppMouseLeave, event)
 
 def onInitialize():
+    Trace.msg_dev("Personality.onInitialize")
+
     StateManager.addState("AliasMessageShow", False)
     StateManager.addState("StateHintReady", True)
     StateManager.addState("StateHintCharge", False)
@@ -82,7 +84,6 @@ def onInitialize():
     if Bootstrapper.loadManagers("Database", "Managers") is False:
         Trace.log("Manager", 0, "Personality.onInitialize: bootstrapper invalid load managers")
         return False
-        pass
 
     from TraceManager import TraceManager
 
@@ -117,7 +118,6 @@ def onInitialize():
 
     if Bootstrapper.loadSystems("Database", "Systems") is False:
         return False
-        pass
 
     if Mengine.hasTouchpad() is True:
         DefaultArrowRadius = DefaultManager.getDefaultFloat("DefaultMobileArrowRadius", 15.0)
@@ -151,22 +151,37 @@ def onInitialize():
     return True
 
 def onRun():
+    Trace.msg_dev("Personality.onRun")
+
     Notification.notify(Notificator.onRun)
 
 def onInterruption():
+    Trace.msg_dev("Personality.onInterruption")
+
     Notification.notify(Notificator.onInterruption)
 
 def onStop():
+    Trace.msg_dev("Personality.onStop")
+
     Notification.notify(Notificator.onStop)
 
 def onAccountFinalize():
+    Trace.msg_dev("Personality.onAccountFinalize")
+
     Notification.notify(Notificator.onAccountFinalize)
+    pass
 
 def onFinalize():
+    Trace.msg_dev("Personality.onFinalize")
+
+    Bootstrapper.unloadManagers("Database", "Managers")
     Notification.notify(Notificator.onFinalize)
-    Bootstrapper.shutdown()
+    pass
 
 def onDestroy():
+    Trace.msg_dev("Personality.onDestroy")
+
+    Bootstrapper.shutdown()
     pass
 
 def onHandleKeyEvent(event):

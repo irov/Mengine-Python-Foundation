@@ -1,4 +1,4 @@
-from Foundation.Entity.BaseEntity import BaseEntity
+from Foundation.BaseEntity import BaseEntity
 
 class Interaction(BaseEntity):
     __metaclass__ = baseslots("__hotspot", "__enableKeyEvent")

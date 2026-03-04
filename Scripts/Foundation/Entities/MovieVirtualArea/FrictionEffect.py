@@ -1,5 +1,3 @@
-import math
-
 class FrictionEffect(object):
     Friction_Minimum = 0.001
     Friction_Maximum = 0.01
@@ -22,4 +20,4 @@ class FrictionEffect(object):
         # if speed < self._epsilon:
         #     return 0
 
-        return math.sqrt(speed) * self._target._scale_factor  # return speed
+        return Mengine.sqrtf(speed) * self._target._scale_factor  # return speed

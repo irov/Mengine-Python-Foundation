@@ -1,4 +1,4 @@
-from Foundation.Object.Object import Object
+from Foundation.Object import Object
 
 class ObjectLandscape2D(Object):
     @staticmethod

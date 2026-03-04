@@ -31,7 +31,6 @@ class PrefetchGroupManager(Manager):
             pass
 
         return True
-        pass
 
     @staticmethod
     def __onInitializeRenderResources():

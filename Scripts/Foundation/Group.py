@@ -1,5 +1,5 @@
 from Foundation.LayerManager import LayerManager
-from Foundation.Object.ChildObject import ChildObject
+from Foundation.ChildObject import ChildObject
 
 class Group(ChildObject):
     Category = "Resources"  # FIXME

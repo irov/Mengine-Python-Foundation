@@ -11,7 +11,7 @@ class SnapManager(Manager):
             self.Object = Object
             self.SnapDir = SnapDir
 
-            Position = Object.getPosition()
+            Position = self.Object.getPosition()
             self.Position = [Position[0], Position[1]]
             pass
 

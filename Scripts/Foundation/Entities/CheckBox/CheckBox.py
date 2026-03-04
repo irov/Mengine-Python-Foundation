@@ -1,4 +1,4 @@
-from Foundation.Entity.BaseEntity import BaseEntity
+from Foundation.BaseEntity import BaseEntity
 
 class CheckBox(BaseEntity):
     s_keys = dict(Esc=Mengine.KC_ESCAPE, Enter=Mengine.KC_RETURN)
