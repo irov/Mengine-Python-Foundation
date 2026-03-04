@@ -1,7 +1,7 @@
 class Initializer(object):
     __metaclass__ = baseslots("_initialized")
 
-    if _DEVELOPMENT is True:
+    if _VALIDATION is True:
         InitializerReferences = {}
         pass
 
@@ -29,7 +29,7 @@ class Initializer(object):
 
         self._initialized = True
 
-        if _DEVELOPMENT is True:
+        if _VALIDATION is True:
             Initializer.InitializerReferences.setdefault(self.__class__, {})[self] = traceback.extract_stack()
             pass
 
@@ -60,7 +60,7 @@ class Initializer(object):
             self.onFinalizeFailed("not initialized")
             return
 
-        if _DEVELOPMENT is True:
+        if _VALIDATION is True:
             Initializer.InitializerReferences.setdefault(self.__class__, []).pop(self, None)
             pass
 
@@ -90,7 +90,7 @@ class Initializer(object):
 
 
     def getInitializeStack(self):
-        if _DEVELOPMENT is True:
+        if _VALIDATION is True:
             return Initializer.InitializerReferences.get(self.__class__, {}).get(self, None)
 
         return None
