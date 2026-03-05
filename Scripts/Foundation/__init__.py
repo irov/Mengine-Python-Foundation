@@ -389,32 +389,16 @@ def onInitialize():
     TaskManager.importTasks("Foundation.Policy", policies)
 
     traces = [
-        "TaskInventoryAddCountItem"
-        , "TaskInventoryRemoveItem"
-        , "TaskNodeTranslateTo"
-        , "AliasObjectAlphaTo"
-        , "AliasMovie2AlphaTo"
-        , "TaskChainCancel"
+        "Bootstrapper"
         , "TaskManager"
         , "TaskChain"
-        , "TaskListener"
-        , "AliasNodeTranslateTo"
-        , "TaskInventoryFindItem"
-        , "TaskInventoryFindCountItem"
-        , "InventoryCountItem"
-        , "ObjectInventory"
-        , "InventoryItem"
-        , "Inventory"
         , "Params"
         , "Actor"
         , "BaseEntity"
         , "BaseObject"
         , "Object"
         , "Manager"
-        , "Movie"
-        , "Movie2"
         , "HOG"
-        , "MixinObjectTemplate"
         , "Utils"
         , "Task"
         , "Policy"
@@ -423,17 +407,9 @@ def onInitialize():
         , "Notification"
         , "Main"
         , "Item"
-        , "HOGInventory"
-        , "ArrowManager"
-        , "TaskSceneLayerGroupEnable"
-        , "Button"
-        , "HintAction"
-        , "AliasTransition"
         , "System"
         , "Entity"
         , "Command"
-        , "MovieButton"
-        , "Movie2Button"
         , "Provider"
         ]
 
@@ -862,9 +838,6 @@ def onInitialize():
 
     AccountManager.addCreateAccountExtra(accountSetuper)
 
-    from ObjectManager import ObjectManager
-    from EntityManager import EntityManager
-
     EntityTypes = [
         "Animation"
         , "Interaction"
@@ -904,24 +877,9 @@ def onInitialize():
         , "MovieTabsGroup"
         ]
 
-    if Mengine.getGameParamBool("NotUseDefaultEntitiesList", False) is True:
-        EntityTypes = []
-        from Foundation.DatabaseManager import DatabaseManager
-        records = DatabaseManager.getDatabaseRecordsFilterBy("Database", "Entities", Module="Foundation")
-
-        for record in records:
-            EntityTypes.append(record.get("Type"))
-
-    for EntityType in EntityTypes:
-        ModuleName = "Foundation.Entities.{}".format(EntityType)
-
-        Module = __import__(ModuleName, fromlist=[ModuleName])
-
-        if hasattr(Module, "onInitialize") is True:
-            getattr(Module, "onInitialize")()
-        else:
-            EntityManager.importEntity(ModuleName, EntityType)
-            ObjectManager.importObject(ModuleName, EntityType)
+    from Foundation.Bootstrapper import Bootstrapper
+    if Bootstrapper.loadEntities("Foundation", EntityTypes) is False:
+        return False
 
     providers = [
         "AdvertisementProvider"

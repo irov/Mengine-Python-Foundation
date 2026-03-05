@@ -2,32 +2,34 @@ from Foundation.Manager import Manager
 from Foundation.Params import ParamsException
 
 class EntityManager(Manager):
-    s_type = {}
-    s_typeDemain = {}
+    s_types = {}
+    s_typesDemain = {}
 
     @staticmethod
-    def importEntity(module, name, override=False):
-        if override is True:
+    def importEntity(module, name, Override=False):
+        if Override is True:
             if Mengine.hasEntityPrototypeFinder(name) is True:
                 Mengine.removeEntityPrototypeFinder(name)
 
-        if Mengine.addEntityPrototypeFinder(name, EntityManager.__importEntityType) is False:
-            if name in EntityManager.s_type:
-                module2, type2 = EntityManager.s_type[name]
+        if _DEVELOPMENT is True and Override is False:
+            if name in EntityManager.s_types:
+                module2, typeName2 = EntityManager.s_types[name]
 
-                Trace.log("Manager", 0, "EntityManager.importEntity entity %s module %s type %s already exist (module '%s' type '%s')" % (name, module, type, module2, type2))
-            else:
-                Trace.log("Manager", 0, "EntityManager.importEntity invalid add entity %s module %s type %s" % (name, module, type))
+                Trace.log("Manager", 0, "EntityManager.importEntity module %s name %s already exist (old_module '%s' old_name '%s')" % (module, name, module2, typeName2))
+                return False
+
+        if Mengine.addEntityPrototypeFinder(name, EntityManager.__importEntityType) is False:
+            Trace.log("Manager", 0, "EntityManager.importEntity invalid add module %s name %s" % (module, name))
 
             return False
 
-        EntityManager.s_type[name] = (module, name)
+        EntityManager.s_types[name] = (module, name)
 
         return True
 
     @staticmethod
     def __importEntityType(name):
-        module, type = EntityManager.s_type[name]
+        module, type = EntityManager.s_types[name]
 
         EntityType = EntityManager.__importEntityDemain(module, type)
 
@@ -65,5 +67,5 @@ class EntityManager(Manager):
 
     @staticmethod
     def _onFinalize():
-        EntityManager.s_type = {}
+        EntityManager.s_types = {}
         pass

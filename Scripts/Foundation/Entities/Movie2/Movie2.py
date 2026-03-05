@@ -164,7 +164,7 @@ class Movie2(BaseAnimatable):
 
     def __checkSubMovie(self, submovie_name):
         if self.hasSubMovie(submovie_name) is False:
-            Trace.log("Movie2", 0, "Movie2.__updateDisableSubMovies: Movie2 '{}' has no submovie '{}'".format(self.getName(), submovie_name))
+            Trace.log("Entity", 0, "Movie2.__updateDisableSubMovies: Movie2 '{}' has no submovie '{}'".format(self.getName(), submovie_name))
             return False
 
         return True
@@ -279,7 +279,7 @@ class Movie2(BaseAnimatable):
     def getMovieSlot(self, name):
         if _DEVELOPMENT is True:
             if self.movie.hasSlot(name) is False:
-                Trace.log("Movie2", 0, "Movie2 '{}' hasn't slot '{}'".format(self.getName(), name))
+                Trace.log("Entity", 0, "Movie2 '{}' hasn't slot '{}'".format(self.getName(), name))
                 return None
 
         slot = self.movie.findSlot(name)

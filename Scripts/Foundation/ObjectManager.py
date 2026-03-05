@@ -7,9 +7,15 @@ class ObjectManager(Manager):
     s_types = {}
 
     @staticmethod
-    def importObject(module, name):
+    def importObject(module, name, Override=False):
+        if Override is True:
+            ObjectManager.s_types.pop(name, None)
+            ObjectManager.s_typesDemain.pop(name, None)
+            pass
+
         type = "Object%s" % name
         ObjectManager.s_typesDemain[name] = (module, type)
+
         return True
 
     @staticmethod

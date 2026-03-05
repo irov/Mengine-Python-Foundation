@@ -34,7 +34,7 @@ class TaskFilter(MixinObject, MixinObserver, Task):
         result = self.filter(obj, *args)
 
         if isinstance(result, bool) is False:
-            Trace.log("TaskListener", 0, "TaskListener %s invalid filter %s" % (self.name, self.filter))
+            Trace.log("Task", 0, "TaskListener %s invalid filter %s" % (self.name, self.filter))
             return False
             pass
 

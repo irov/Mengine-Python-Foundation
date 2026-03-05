@@ -75,8 +75,7 @@ class SystemAppleFacebook(System):
 
         SystemAppleFacebook.addCallbacks(callbacks)
 
-        is_limited = Mengine.getConfigBool("Facebook", "LimitedLogin", True)
-        Mengine.appleFacebookLogin(is_limited, permissions)
+        Mengine.appleFacebookLogin(permissions)
 
     def shareLink(self, link=None, msg='', _cb_success=None, _cb_cancel=None, _cb_error=None):
         callbacks = {

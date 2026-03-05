@@ -1,9 +1,7 @@
 from Foundation.BuildModeManager import BuildModeManager
-from Foundation.DatabaseManager import DatabaseManager
 from Foundation.Manager import Manager
 from Foundation.Managers import Managers
 from Foundation.SystemManager import SystemManager
-
 
 def checkBuildMode(Name, Survey, CE, BuildModeTags):
     """ :returns: True if build mode not match """
@@ -11,8 +9,8 @@ def checkBuildMode(Name, Survey, CE, BuildModeTags):
     BuildMode = Mengine.getGameParamUnicode("BuildMode")
 
     def _reportFail(build_mode, object_name):
-        Trace.msg_dev("[Bootstrapper] (BuildModeCheckVersion {}, BuildMode {!r}) FAIL {!r}"
-                      .format(BuildModeVersion, build_mode, object_name))
+        Trace.msg_dev("[Bootstrapper] (BuildModeCheckVersion {}, BuildMode {!r}) FAIL {!r}".format(BuildModeVersion, build_mode, object_name))
+        pass
 
     # New version of builds resources separations for any type of BuildMode
     # Check BuildModeCheckVersion in Configs.json
@@ -62,7 +60,50 @@ class Bootstrapper(object):
     s_sessionSystems = []
 
     @staticmethod
+    def loadEntities(Module, Types):
+        if Mengine.getGameParamBool("NotUseDefaultEntitiesList.{}".format(Module), False) is True:
+            Types = []
+
+            from Foundation.DatabaseManager import DatabaseManager
+            records = DatabaseManager.getDatabaseRecordsFilterBy("Database", "Entities", Module=Module)
+
+            for record in records:
+                Types.append({"Type": record.get("Type"), "Override": record.get("Override", False)})
+
+        for Type in Types:
+            if isinstance(Type, dict):
+                Type = Type.get("Type")
+                Override = bool(Type.get("Override", False))
+            else:
+                Override = False
+
+            if Type is None:
+                Trace.log("Bootstrapper", 0, "Bootstrapper.loadEntities invalid type %s for module %s" % (Type, Module))
+                return False
+
+            ModuleName = "{}.Entities.{}".format(Module, Type)
+
+            try:
+                Module = __import__(ModuleName, fromlist=[ModuleName])
+            except ImportError:
+                Trace.log_exception("Bootstrapper", 0, "Bootstrapper.loadEntities invalid import %s for type %s" % (ModuleName, Type))
+                return False
+
+            if hasattr(Module, "onInitialize") is True:
+                getattr(Module, "onInitialize")()
+            else:
+                from Foundation.EntityManager import EntityManager
+                from Foundation.ObjectManager import ObjectManager
+
+                EntityManager.importEntity(ModuleName, Type, Override=Override)
+                ObjectManager.importObject(ModuleName, Type, Override=Override)
+
+        return True
+
+    @staticmethod
     def loadManagers(module, param):
+        from Foundation.DatabaseManager import DatabaseManager
+
         records = DatabaseManager.getDatabaseRecords(module, param)
 
         for record in records:
@@ -90,18 +131,18 @@ class Bootstrapper(object):
                 Manager = Managers.getManager(Module, Name)
 
                 if Manager is None:
-                    Trace.log("Manager", 0, "Bootstrapper.loadManagers not found manager %s.%s" % (Module, Name))
+                    Trace.log("Bootstrapper", 0, "Bootstrapper.loadManagers not found manager %s.%s" % (Module, Name))
                     return False
 
                 if Param is not None:
                     result = Manager.loadParams(Database, Param)
 
                     if isinstance(result, bool) is False:
-                        Trace.log("Manager", 0, "Bootstrapper.loadManagers manager %s.%s load params mast be return Bool [True|False] but return %s" % (Module, Name, result))
+                        Trace.log("Bootstrapper", 0, "Bootstrapper.loadManagers manager %s.%s load params mast be return Bool [True|False] but return %s" % (Module, Name, result))
                         return False
 
                     if result is False:
-                        Trace.log("Manager", 0, "Bootstrapper.loadManagers manager %s.%s invalid load param %s" % (Module, Name, Param))
+                        Trace.log("Bootstrapper", 0, "Bootstrapper.loadManagers manager %s.%s invalid load param %s" % (Module, Name, Param))
                         return False
                     pass
                 pass
@@ -111,6 +152,8 @@ class Bootstrapper(object):
 
     @staticmethod
     def loadSystems(module, param):
+        from Foundation.DatabaseManager import DatabaseManager
+
         records = DatabaseManager.getDatabaseRecords(module, param)
 
         for record in records:
@@ -134,7 +177,7 @@ class Bootstrapper(object):
                 continue
 
             if SystemManager.importSystem(Module, Name) is None:
-                Trace.log("Manager", 0, "Bootstrapper.loadSystems system %s invalid import %s:%s" % (Name, Module, Name))
+                Trace.log("Bootstrapper", 0, "Bootstrapper.loadSystems system %s invalid import %s:%s" % (Name, Module, Name))
                 return False
 
             if Development is not None:
@@ -150,7 +193,7 @@ class Bootstrapper(object):
                     continue
 
                 if SystemManager.runSystem(Name, Name) is False:
-                    Trace.log("Manager", 0, "Bootstrapper.loadSystems system %s invalid run" % Name)
+                    Trace.log("Bootstrapper", 0, "Bootstrapper.loadSystems system %s invalid run" % Name)
                     return False
 
         return True

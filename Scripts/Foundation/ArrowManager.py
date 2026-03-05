@@ -40,7 +40,7 @@ class ArrowManager(Manager):
     @staticmethod
     def removeArrowAttach():
         if ArrowManager.s_attach is None:
-            Trace.log("ArrowManager", 0, "ArrowManager removeArrowAttach: You can't remove 'attach' - it's empty.")
+            Trace.log("Manager", 0, "ArrowManager removeArrowAttach: You can't remove 'attach' - it's empty.")
             return None
 
         attach = ArrowManager.s_attach
