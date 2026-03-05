@@ -8,6 +8,11 @@ class LeaderboardProvider(BaseProvider):
     ]
 
     @staticmethod
+    def _setDevProvider():
+        from Foundation.Providers.DummyLeaderboard import DummyLeaderboard
+        DummyLeaderboard.setProvider()
+
+    @staticmethod
     def submitLeaderboardScore(leaderboard_id, score):
         return LeaderboardProvider._call("submitLeaderboardScore", leaderboard_id, score)
 
