@@ -34,7 +34,7 @@ class RPGFormules(object):
         def __floor(value):
             return Mengine.floorf(value)
         def __exp(value):
-            return Mengine.exp(value)
+            return Mengine.expf(value)
 
         sandbox = dict(Value=Value, rand=__rand, fibo=__fibo, log10=__log10, Resist=__resist, Evade=__evade, sum=__sum,
                        ceil=__ceil, floor=__floor, exp=__exp)

@@ -51,7 +51,6 @@ class DefaultManager(Manager):
         DefaultManager.s_loaded = True
 
         return True
-        pass
 
     @staticmethod
     def addDefault(name, value):

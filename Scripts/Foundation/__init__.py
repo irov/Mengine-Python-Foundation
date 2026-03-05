@@ -904,6 +904,7 @@ def onInitialize():
     Managers.importManager("Foundation", "BuildModeManager")
     Managers.importManager("Foundation", "DefaultManager")
     Managers.importManager("Foundation", "PolicyManager")
+    Managers.importManager("Foundation", "SettingsManager")
     Managers.importManager("Foundation", "TaskManager")
     Managers.importManager("Foundation", "GroupManager")
     Managers.importManager("Foundation", "DemonManager")
@@ -920,6 +921,7 @@ def onInitialize():
     Managers.importManager("Foundation", "SessionManager")
     Managers.importManager("Foundation", "AccountManager")
     Managers.importManager("Foundation", "DebugNotificationsManager")
+    Managers.importManager("Foundation", "SnapManager")
     Managers.importManager("Foundation.Business", "ContractManager")
     Managers.importManager("Foundation.Business", "BankManager")
 
@@ -936,6 +938,7 @@ def onFinalize():
     Managers.removeManager("Foundation", "SessionManager")
     Managers.removeManager("Foundation.Business", "ContractManager")
     Managers.removeManager("Foundation.Business", "BankManager")
+    Managers.removeManager("Foundation", "SnapManager")
     Managers.removeManager("Foundation", "TaskManager")
     Managers.removeManager("Foundation", "ArrowManager")
     Managers.removeManager("Foundation", "SystemManager")
@@ -950,6 +953,7 @@ def onFinalize():
     Managers.removeManager("Foundation", "PrefetchGroupNotifyManager")
     Managers.removeManager("Foundation", "DatabaseManager")
     Managers.removeManager("Foundation", "ProviderManager")
+    Managers.removeManager("Foundation", "SettingsManager")
     Managers.removeManager("Foundation", "PolicyManager")
     Managers.removeManager("Foundation", "BuildModeManager")
 
