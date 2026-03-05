@@ -278,10 +278,7 @@ class TaskBase(Initializer):
                 pass
             pass
 
-        msg += '\n'
-        msg += traceback.format_exc()
-
-        Trace.log("Task", 0, msg)
+        Trace.log_exception("Task", 0, msg)
 
     def _traceError(self, err):
         msg = err
