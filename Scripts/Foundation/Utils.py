@@ -939,15 +939,11 @@ def id_maker(count):
     pass
 
 def importType(module, type):
-    ModuleName = None
-
     if module == "":
         ModuleName = type
     else:
         ModuleName = "%s.%s" % (module, type)
         pass
-
-    Module = None
 
     try:
         if module == "":
@@ -955,26 +951,24 @@ def importType(module, type):
         else:
             Module = __import__(ModuleName, fromlist=[module])
             pass
-    except ImportError as se:
-        Trace.log("Manager", 0, "Utils.importType %s:%s import error: '%s'\n%s" % (module, type, se, traceback.format_exc()))
+    except ImportError as ex:
+        Trace.log_exception("Manager", 0, "Utils.importType %s:%s import error: '%s'" % (module, type, ex))
 
         return None
-    except Exception as se:
-        Trace.log("Manager", 0, "Utils.importType %s:%s some error: '%s'\n%s" % (module, type, se, traceback.format_exc()))
+    except Exception as ex:
+        Trace.log_exception("Manager", 0, "Utils.importType %s:%s some error: '%s'" % (module, type, ex))
 
         return None
-        pass
 
     Type = None
 
     try:
         Type = getattr(Module, type)
     except AttributeError as ex:
-        Trace.log("Manager", 0, "Utils.importType %s:%s module not found type: '%s'" % (module, type, ex))
+        Trace.log_exception("Manager", 0, "Utils.importType %s:%s module not found type: '%s'" % (module, type, ex))
         pass
 
     return Type
-    pass
 
 def debug_print(msg, object):
     print('-' * 30 + '] %s' % msg)

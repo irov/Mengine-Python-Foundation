@@ -22,21 +22,21 @@ class ObjectManager(Manager):
         try:
             Module = __import__("%s.%s" % (module, type), fromlist=[module])
         except ImportError as ex:
-            Trace.log("Manager", 0, "ObjectManager.__importObjectDemain %s:%s error import '%s'\n%s" % (module, type, ex, traceback.format_exc()))
+            Trace.log_exception("Manager", 0, "ObjectManager.__importObjectDemain %s:%s error import %s" % (module, type, ex))
 
             return None
 
         try:
             ObjectType = getattr(Module, type)
         except AttributeError as ex:
-            Trace.log("Manager", 0, "ObjectManager.__importObjectDemain %s:%s module not found type '%s'\n%s" % (module, type, ex, traceback.format_exc()))
+            Trace.log_exception("Manager", 0, "ObjectManager.__importObjectDemain %s:%s module not found error %s" % (module, type, ex))
 
             return None
 
         try:
             ObjectType.declareORM(ObjectType)
-        except ParamsException as pex:
-            Trace.log("Manager", 0, "ObjectManager.getObjectType %s:%s type %s params error %s\n%s" % (module, type, ObjectType, pex, traceback.format_exc()))
+        except ParamsException as ex:
+            Trace.log_exception("Manager", 0, "ObjectManager.getObjectType %s:%s type %s params error %s" % (module, type, ObjectType, ex))
             return None
 
         return ObjectType

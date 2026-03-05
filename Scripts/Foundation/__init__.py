@@ -899,6 +899,7 @@ def onInitialize():
     ProviderManager.importProviders("Foundation.Providers", providers)
 
     from Foundation.Managers import Managers
+
     Managers.onInitialize()
 
     Managers.importManager("Foundation", "BuildModeManager")
@@ -923,6 +924,7 @@ def onInitialize():
     Managers.importManager("Foundation", "DebugNotificationsManager")
     Managers.importManager("Foundation", "SnapManager")
     Managers.importManager("Foundation", "LanguagesManager")
+    Managers.importManager("Foundation", "MonetizationManager")
     Managers.importManager("Foundation.Business", "ContractManager")
     Managers.importManager("Foundation.Business", "BankManager")
 
@@ -936,6 +938,7 @@ def onFinalize():
 
     Managers.removeManager("Foundation.Business", "ContractManager")
     Managers.removeManager("Foundation.Business", "BankManager")
+    Managers.removeManager("Foundation", "MonetizationManager")
     Managers.removeManager("Foundation", "LanguagesManager")
     Managers.removeManager("Foundation", "SnapManager")
     Managers.removeManager("Foundation", "TaskManager")
