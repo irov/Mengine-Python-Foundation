@@ -922,6 +922,7 @@ def onInitialize():
     Managers.importManager("Foundation", "AccountManager")
     Managers.importManager("Foundation", "DebugNotificationsManager")
     Managers.importManager("Foundation", "SnapManager")
+    Managers.importManager("Foundation", "LanguagesManager")
     Managers.importManager("Foundation.Business", "ContractManager")
     Managers.importManager("Foundation.Business", "BankManager")
 
@@ -933,13 +934,14 @@ def onFinalize():
 
     from Foundation.Managers import Managers
 
+    Managers.removeManager("Foundation.Business", "ContractManager")
+    Managers.removeManager("Foundation.Business", "BankManager")
+    Managers.removeManager("Foundation", "LanguagesManager")
+    Managers.removeManager("Foundation", "SnapManager")
+    Managers.removeManager("Foundation", "TaskManager")
     Managers.removeManager("Foundation", "DebugNotificationsManager")
     Managers.removeManager("Foundation", "AccountManager")
     Managers.removeManager("Foundation", "SessionManager")
-    Managers.removeManager("Foundation.Business", "ContractManager")
-    Managers.removeManager("Foundation.Business", "BankManager")
-    Managers.removeManager("Foundation", "SnapManager")
-    Managers.removeManager("Foundation", "TaskManager")
     Managers.removeManager("Foundation", "ArrowManager")
     Managers.removeManager("Foundation", "SystemManager")
     Managers.removeManager("Foundation", "EntityManager")
