@@ -1,5 +1,4 @@
 from Foundation.Manager import Manager
-from Foundation.BaseObject import BaseObject
 from Foundation.Params import ParamsException
 
 class ObjectManager(Manager):
@@ -89,6 +88,7 @@ class ObjectManager(Manager):
     def createObjectUnique(typeName, name, group, **params):
         if _DEVELOPMENT is True:
             if group is not None:
+                from Foundation.BaseObject import BaseObject
                 if issubclass(type(group), BaseObject) is False:
                     Trace.log("Manager", 0, "ObjectManager.createObjectUnique type %s name %s params %s invalid group %s is not subclass BaseObject" % (typeName, name, params, group))
 

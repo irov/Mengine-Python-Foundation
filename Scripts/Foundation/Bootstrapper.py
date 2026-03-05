@@ -60,43 +60,44 @@ class Bootstrapper(object):
     s_sessionSystems = []
 
     @staticmethod
-    def loadEntities(Module, Types):
-        if Mengine.getGameParamBool("NotUseDefaultEntitiesList.{}".format(Module), False) is True:
+    def loadEntities(ModuleName, Types):
+        if Mengine.getGameParamBool("NotUseDefaultEntitiesList.{}".format(ModuleName), False) is True:
             Types = []
 
             from Foundation.DatabaseManager import DatabaseManager
-            records = DatabaseManager.getDatabaseRecordsFilterBy("Database", "Entities", Module=Module)
+            records = DatabaseManager.getDatabaseRecordsFilterBy("Database", "Entities", Module=ModuleName)
 
             for record in records:
                 Types.append({"Type": record.get("Type"), "Override": record.get("Override", False)})
 
-        for Type in Types:
-            if isinstance(Type, dict):
-                Type = Type.get("Type")
-                Override = bool(Type.get("Override", False))
+        for Desc in Types:
+            if isinstance(Desc, dict):
+                EntityType = Desc.get("Type")
+                Override = bool(Desc.get("Override", False))
             else:
+                EntityType = Desc
                 Override = False
 
-            if Type is None:
-                Trace.log("Bootstrapper", 0, "Bootstrapper.loadEntities invalid type %s for module %s" % (Type, Module))
+            if EntityType is None:
+                Trace.log("Bootstrapper", 0, "Bootstrapper.loadEntities invalid type %s for module %s" % (EntityType, ModuleName))
                 return False
 
-            ModuleName = "{}.Entities.{}".format(Module, Type)
+            ImportName = "{}.Entities.{}".format(ModuleName, EntityType)
 
             try:
-                Module = __import__(ModuleName, fromlist=[ModuleName])
+                EntityModule = __import__(ImportName, fromlist=[ImportName])
             except ImportError:
-                Trace.log_exception("Bootstrapper", 0, "Bootstrapper.loadEntities invalid import %s for type %s" % (ModuleName, Type))
+                Trace.log_exception("Bootstrapper", 0, "Bootstrapper.loadEntities invalid import %s for type %s" % (ImportName, EntityType))
                 return False
 
-            if hasattr(Module, "onInitialize") is True:
-                getattr(Module, "onInitialize")()
+            if hasattr(EntityModule, "onInitialize") is True:
+                getattr(EntityModule, "onInitialize")()
             else:
                 from Foundation.EntityManager import EntityManager
                 from Foundation.ObjectManager import ObjectManager
 
-                EntityManager.importEntity(ModuleName, Type, Override=Override)
-                ObjectManager.importObject(ModuleName, Type, Override=Override)
+                EntityManager.importEntity(ImportName, EntityType, Override=Override)
+                ObjectManager.importObject(ImportName, EntityType, Override=Override)
 
         return True
 
