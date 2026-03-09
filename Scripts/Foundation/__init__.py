@@ -52,8 +52,6 @@ def onInitialize():
 
     Trace.msg_dev("Foundation.onInitialize")
 
-    from Foundation.ArrowManager import ArrowManager
-
     from Foundation.SceneManager import SceneManager
 
     Scenes = ["Main"]
