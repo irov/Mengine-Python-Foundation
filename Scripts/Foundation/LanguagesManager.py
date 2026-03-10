@@ -1,7 +1,6 @@
 from Foundation.DatabaseManager import DatabaseManager
 from Foundation.Manager import Manager
 
-
 class LanguagesManager(Manager):
     s_languagesORM = []
 

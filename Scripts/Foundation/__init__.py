@@ -52,8 +52,6 @@ def onInitialize():
 
     Trace.msg_dev("Foundation.onInitialize")
 
-    from Foundation.ArrowManager import ArrowManager
-
     from Foundation.SceneManager import SceneManager
 
     Scenes = ["Main"]
@@ -899,6 +897,7 @@ def onInitialize():
     ProviderManager.importProviders("Foundation.Providers", providers)
 
     from Foundation.Managers import Managers
+
     Managers.onInitialize()
 
     Managers.importManager("Foundation", "BuildModeManager")
@@ -922,6 +921,8 @@ def onInitialize():
     Managers.importManager("Foundation", "AccountManager")
     Managers.importManager("Foundation", "DebugNotificationsManager")
     Managers.importManager("Foundation", "SnapManager")
+    Managers.importManager("Foundation", "LanguagesManager")
+    Managers.importManager("Foundation", "MonetizationManager")
     Managers.importManager("Foundation.Business", "ContractManager")
     Managers.importManager("Foundation.Business", "BankManager")
 
@@ -933,13 +934,15 @@ def onFinalize():
 
     from Foundation.Managers import Managers
 
+    Managers.removeManager("Foundation.Business", "ContractManager")
+    Managers.removeManager("Foundation.Business", "BankManager")
+    Managers.removeManager("Foundation", "MonetizationManager")
+    Managers.removeManager("Foundation", "LanguagesManager")
+    Managers.removeManager("Foundation", "SnapManager")
+    Managers.removeManager("Foundation", "TaskManager")
     Managers.removeManager("Foundation", "DebugNotificationsManager")
     Managers.removeManager("Foundation", "AccountManager")
     Managers.removeManager("Foundation", "SessionManager")
-    Managers.removeManager("Foundation.Business", "ContractManager")
-    Managers.removeManager("Foundation.Business", "BankManager")
-    Managers.removeManager("Foundation", "SnapManager")
-    Managers.removeManager("Foundation", "TaskManager")
     Managers.removeManager("Foundation", "ArrowManager")
     Managers.removeManager("Foundation", "SystemManager")
     Managers.removeManager("Foundation", "EntityManager")

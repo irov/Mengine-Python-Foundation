@@ -1,7 +1,7 @@
 from Manager import Manager
 
 class Facebook(Manager):
-    token = 'EAAO2ZCgDXgLUBAA2gPRnW7JvOUdnTR19MwZBWfogElf77hqXMKLraVxRq1wmEGUqUQkYL7E9Slhjp022XLz3byTxV858WsJ7fqsxvCeN6h8kmIzP0LcgglnjFBbZBWxd8g8C6n8SE0pRbPaWjCX9ObG6RQSpeWSTvtHcyaWoYT1WteADQSYHhCfGZAzUDawZD'
+    token = ''
     clientId = ''
     redirectUri = ''
     client_ip = None

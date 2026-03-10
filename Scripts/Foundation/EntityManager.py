@@ -43,20 +43,20 @@ class EntityManager(Manager):
     def __importEntityDemain(module, type):
         try:
             Module = __import__("%s.%s" % (module, type), fromlist=[module])
-        except ImportError as se:
-            Trace.log("Manager", 0, "EntityManager.__importEntityDemain %s:%s import error %s\n%s" % (module, type, se, traceback.format_exc()))
+        except ImportError as ex:
+            Trace.log_exception("Manager", 0, "EntityManager.__importEntityDemain %s:%s import error %s" % (module, type, ex))
             return None
 
         try:
             EntityType = getattr(Module, type)
         except AttributeError as ex:
-            Trace.log("Manager", 0, "EntityManager.__importEntityDemain %s:%s module not found type '%s'\n%s" % (module, type, ex, traceback.format_exc()))
+            Trace.log_exception("Manager", 0, "EntityManager.__importEntityDemain %s:%s module not found error %s" % (module, type, ex))
             return None
 
         try:
             EntityType.declareORM(EntityType)
-        except ParamsException as pex:
-            Trace.log("Manager", 0, "EntityManager.__importEntityDemain %s:%s params error %s\n%s" % (module, type, pex, traceback.format_exc()))
+        except ParamsException as ex:
+            Trace.log_exception("Manager", 0, "EntityManager.__importEntityDemain %s:%s params error %s" % (module, type, ex))
             return None
 
         return EntityType

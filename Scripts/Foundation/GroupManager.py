@@ -207,19 +207,19 @@ class GroupManager(Manager):
         try:
             Module = __import__(ModuleName, fromlist=[module])
         except ImportError as ex:
-            Trace.log("Manager", 0, "GroupManager.__importGroupDemain module '%s' not found group '%s' maybe not export from PSD?" % (module, name))
+            Trace.log_exception("Manager", 0, "GroupManager.__importGroupDemain module '%s' not found group '%s' maybe not export from PSD? import error %s" % (module, name, ex))
             return None
 
         try:
             GroupType = getattr(Module, name)
         except AttributeError as ex:
-            Trace.log("Manager", 0, "GroupManager.__importGroupDemain module '%s' not found type '%s'" % (ModuleName, name))
+            Trace.log_exception("Manager", 0, "GroupManager.__importGroupDemain module '%s' not found error %s" % (ModuleName, name, ex))
             return None
 
         try:
             GroupType.declareORM(GroupType)
-        except ParamsException as pex:
-            Trace.log("Manager", 0, "GroupManager.__importGroupDemain module %s group %s declare ORM error: %s\n%s" % (ModuleName, GroupType, pex, traceback.format_exc()))
+        except ParamsException as ex:
+            Trace.log_exception("Manager", 0, "GroupManager.__importGroupDemain module %s group %s declare ORM error: %s" % (ModuleName, GroupType, ex))
             return None
 
         return GroupType
