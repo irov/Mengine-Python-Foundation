@@ -34,6 +34,7 @@ class EntityManager(Manager):
         EntityType = EntityManager.__importEntityDemain(module, type)
 
         if EntityType is None:
+            Trace.log("Manager", 0, "EntityManager.__importEntityType invalid import module %s name %s" % (module, type))
             return None
 
         return EntityType
@@ -42,7 +43,6 @@ class EntityManager(Manager):
     def __importEntityDemain(module, type):
         try:
             Module = __import__("%s.%s" % (module, type), fromlist=[module])
-
         except ImportError as se:
             Trace.log("Manager", 0, "EntityManager.__importEntityDemain %s:%s import error %s\n%s" % (module, type, se, traceback.format_exc()))
             return None

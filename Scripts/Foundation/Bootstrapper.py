@@ -91,13 +91,26 @@ class Bootstrapper(object):
                 return False
 
             if hasattr(EntityModule, "onInitialize") is True:
-                getattr(EntityModule, "onInitialize")()
+                result = getattr(EntityModule, "onInitialize")()
+
+                if isinstance(result, bool) is False:
+                    Trace.log("Bootstrapper", 0, "Bootstrapper.loadEntities invalid initialize for import %s for type %s mast be return Bool [True|False] but return %s" % (ImportName, EntityType, result))
+                    return False
+
+                if result is False:
+                    Trace.log("Bootstrapper", 0, "Bootstrapper.loadEntities invalid initialize for import %s for type %s" % (ImportName, EntityType))
+                    return False
             else:
                 from Foundation.EntityManager import EntityManager
                 from Foundation.ObjectManager import ObjectManager
 
-                EntityManager.importEntity(ImportName, EntityType, Override=Override)
-                ObjectManager.importObject(ImportName, EntityType, Override=Override)
+                if EntityManager.importEntity(ImportName, EntityType, Override=Override) is False:
+                    Trace.log("Bootstrapper", 0, "Bootstrapper.loadEntities invalid import %s for type %s" % (ImportName, EntityType))
+                    return False
+
+                if ObjectManager.importObject(ImportName, EntityType, Override=Override) is False:
+                    Trace.log("Bootstrapper", 0, "Bootstrapper.loadEntities invalid import %s for type %s" % (ImportName, EntityType))
+                    return False
 
         return True
 
