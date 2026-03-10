@@ -371,7 +371,6 @@ class TaskSource(object):
 
         if taskType is None:
             raise TaskGeneratorException("invalid generate source [__addDesc] not found task '%s' with params: %s", typeName, params)
-            pass
 
         self.__addDescType(taskType, params)
         pass
@@ -390,26 +389,26 @@ class TaskSource(object):
         self.__addDesc(type, params)
         pass
 
-    def addCapture(self, Capture, ID, *Args, **Kwargs):
-        self.__addDesc("TaskSetCapture", dict(Capture=Capture, Type=ID, Args=Args, Kwargs=Kwargs))
+    def addCapture(self, Capture, Type, *Args, **Kwargs):
+        self.__addDesc("TaskSetCapture", dict(Capture=Capture, Type=Type, Args=Args, Kwargs=Kwargs))
         pass
 
     def addNotify(self, ID, *Args, **Kwargs):
         self.__addDesc("TaskNotify", dict(ID=ID, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addListener(self, ID, Filter=None, Capture=None, *Args, **Kwargs):
-        self.__addDesc("TaskListener", dict(ID=ID, Filter=Filter, Capture=Capture, Args=Args, Kwargs=Kwargs))
+    def addListener(self, ID, *Args, **Kwargs):
+        self.__addDesc("TaskListener", dict(ID=ID, Args=Args, **Kwargs))
         pass
 
-    def addScopeListener(self, ID, Scope, Capture=None, *Args, **Kwargs):
-        self.__addDesc("TaskScopeListener", dict(ID=ID, Scope=Scope, Capture=Capture, Args=Args, Kwargs=Kwargs))
+    def addScopeListener(self, ID, Scope, *Args, **Kwargs):
+        self.__addDesc("TaskScopeListener", dict(ID=ID, Scope=Scope, Args=Args, **Kwargs))
         pass
 
-    def addWaitListener(self, Time, ID, Filter=None, Capture=None, Scheduler=None, *Args, **Kwargs):
+    def addWaitListener(self, Time, ID, *Args, **Kwargs):
         def __scope(source_wait, source_listener):
-            source_wait.addDelay(Time, Scheduler=Scheduler)
-            source_listener.addListener(ID, Filter=Filter, Capture=Capture, *Args, **Kwargs)
+            source_wait.addDelay(Time, Scheduler=Kwargs.get("Scheduler"))
+            source_listener.addListener(ID, *Args, **Kwargs)
 
         return self.addRaceScope(2, __scope)
 
@@ -953,7 +952,6 @@ class TaskGenerator(object):
                         Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDummy")
 
                         return None
-                        pass
 
                     tasks.append(tci)
 
@@ -964,7 +962,6 @@ class TaskGenerator(object):
                         Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskSwitchDesc (%d)" % (i))
 
                         return None
-                        pass
 
                     lasts.append(lastTask)
                     pass

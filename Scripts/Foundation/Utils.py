@@ -834,29 +834,23 @@ def make_functor(params, name, args="Args", kwargs="Kwargs"):
 
     if Fn is None:
         return None
-        pass
 
     Args = params.get(args, ())
     Kwargs = params.get(kwargs, {})
 
     return FunctorStore(Fn, Args, Kwargs)
-    pass
 
 def is_valid_functor_args(Fn, Count):
     if Fn is None:
         return False
-        pass
 
     if isinstance(Fn, FunctorStore) is False:
         return False
-        pass
 
     if callable(Fn.fn) is False:
         return False
-        pass
 
     return Utils.is_valid_function_args(Fn.fn, len(Fn.args) + len(Fn.kwargs) + Count)
-    pass
 
 def is_valid_function_args(Fn, Count):
     import types

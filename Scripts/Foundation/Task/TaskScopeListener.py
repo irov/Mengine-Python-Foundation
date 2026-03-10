@@ -14,6 +14,9 @@ class TaskScopeListener(MixinGroup, MixinObserver, Task):
 
         self.Scope = Utils.make_functor(params, "Scope")
 
+        self.Check = Utils.make_functor(params, "Check")
+        self.Filter = Utils.make_functor(params, "Filter")
+
         self.Capture = params.get("Capture", None)
         pass
 
@@ -29,13 +32,49 @@ class TaskScopeListener(MixinGroup, MixinObserver, Task):
             pass
         pass
 
+    def _onFinalize(self):
+        super(TaskScopeListener, self)._onFinalize()
+
+        self.Scope = None
+
+        self.Check = None
+        self.Filter = None
+        self.Capture = None
+        pass
+
+    def _onCheck(self):
+        if self.Check is not None:
+            if self.Check() is True:
+                return False
+
+        return True
+
     def _onRun(self):
         self.addObserver(self.ID, self._onNotifyFilter)
 
         return False
-        pass
 
     def _onNotifyFilter(self, *args, **kwargs):
+        if self.Filter is not None:
+            if _DEVELOPMENT is True:
+                if Utils.is_valid_functor_args(self.Filter, len(args) + len(kwargs)) is False:
+                    self.log("%s filter %s is bad arguments or kwargs" % (self.ID, self.Filter))
+
+                    return False
+
+                result = self.Filter(*args, **kwargs)
+
+                if isinstance(result, bool) is False:
+                    self.log("%s filter %s must return bool [True|False] but return %s" % (self.ID, self.Filter, result))
+
+                    return False
+
+                if result is False:
+                    return False
+            else:
+                if self.Filter(*args, **kwargs) is False:
+                    return False
+
         base = self.base
         chain = base.chain
 
@@ -49,13 +88,10 @@ class TaskScopeListener(MixinGroup, MixinObserver, Task):
 
         if isinstance(result, bool) is False:
             self.log("%s scope %s must return bool [True|False] but return %s" % (self.ID, self.Scope, result))
-
             return False
-            pass
 
         if result is False:
             return False
-            pass
 
         if self.Capture is not None:
             self.Capture.setValue(self.ID, *args, **kwargs)
@@ -75,5 +111,4 @@ class TaskScopeListener(MixinGroup, MixinObserver, Task):
             pass
 
         return True
-        pass
     pass

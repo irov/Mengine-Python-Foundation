@@ -29,13 +29,6 @@ class AuthProvider(BaseProvider):
     def switchAccount():
         return AuthProvider._call("switchAccount")
 
-    @staticmethod
-    def _switchAccountNotFoundCb():
-        if AuthProvider.isLoggedIn() is True:
-            AuthProvider.logout()
-        AuthProvider.login()
-        return True
-
 
 class DummyAuth(object):
 

@@ -35,8 +35,6 @@ class SystemGoogleServices(System):
         FIREBASE_CRASHLYTICS_PLUGIN: Mengine.isAvailablePlugin(FIREBASE_CRASHLYTICS_PLUGIN),
     }
 
-    login_event = Event("GoogleGameSocialLoginEvent")
-    logout_event = Event("GoogleGameSocialLogoutEvent")
     __on_auth_achievements = {}
     __on_auth_cbs = {}
     sku_response_event = Event("SkuListResponse")   # todo: check is deprecated
@@ -255,7 +253,6 @@ class SystemGoogleServices(System):
     @staticmethod
     def __cbSignSuccess():
         _Log("[Auth cb] successfully login in")
-        SystemGoogleServices.login_event(True)
         Notification.notify(Notificator.onUserLoggedIn)
 
         SystemGoogleServices.__cbRestoreTasks()
@@ -269,24 +266,20 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def __cbSignOutSuccess():
-        SystemGoogleServices.logout_event(True)
         _Log("[Auth cb] logout success", force=True)
 
     @staticmethod
     def __cbSignOutCanceled():
-        SystemGoogleServices.logout_event(False)
         _Log("[Auth cb] logout canceled", force=True)
 
     @staticmethod
     def __cbSignOutFailure():
-        SystemGoogleServices.logout_event(False)
         _Log("[Auth cb] logout failed", err=True, force=True)
 
     @staticmethod
     def __cbSignOutComplete():
-        SystemGoogleServices.logout_event(True)
-        Notification.notify(Notificator.onUserLoggedOut)
         _Log("[Auth cb] logout complete", force=True)
+        Notification.notify(Notificator.onUserLoggedOut)
 
     @staticmethod
     def __cbRestoreTasks():

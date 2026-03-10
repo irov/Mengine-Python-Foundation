@@ -26,7 +26,9 @@ class TaskListener(MixinObserver, Task):
     def _onFinalize(self):
         super(TaskListener, self)._onFinalize()
 
+        self.Check = None
         self.Filter = None
+        self.Capture = None
         pass
 
     def _onCheck(self):
@@ -49,15 +51,18 @@ class TaskListener(MixinObserver, Task):
 
                     return False
 
-            result = self.Filter(*args, **kwargs)
+                result = self.Filter(*args, **kwargs)
 
-            if isinstance(result, bool) is False:
-                self.log("%s filter %s must return bool [True|False] but return %s" % (self.ID, self.Filter, result))
+                if isinstance(result, bool) is False:
+                    self.log("%s filter %s must return bool [True|False] but return %s" % (self.ID, self.Filter, result))
 
-                return False
+                    return False
 
-            if result is False:
-                return False
+                if result is False:
+                    return False
+            else:
+                if self.Filter(*args, **kwargs) is False:
+                    return False
 
         if self.Capture is not None:
             self.Capture.setValue(self.ID, *args, **kwargs)
