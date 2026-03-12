@@ -19,14 +19,13 @@ class Layer2DIsometric(object):
         self.size = params.get("Size", (0.0, 0.0))
         pass
 
-    def createNode(self, scene):
-        layer = scene.createChild("Layer2DIsometric")
-        layer.setName(self.name)
+    def createNode(self, scene, behavior):
+        layer = Mengine.createLayer("Layer2DIsometric", self.name, behavior)
         layer.setSize(self.size)
         layer.enable()
+
+        scene.addChild(layer)
 
         self.node = layer
 
         return layer
-        pass
-    pass

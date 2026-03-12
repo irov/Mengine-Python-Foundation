@@ -85,7 +85,12 @@ class TaskObjectAnimatablePlay(MixinEvent, Task):
         AnimatableEntity = Animatable.getEntity()
 
         if AnimatableEntity.isActivate() is False:
-            self.log("Animatable '%s' Entity is disable", Animatable.getName())
+            self.log("Group '%s' Enable '%s' Animatable '%s' entity is not activate, entity enable: %s params: AutoEnable:%s"
+                     , Animatable.getGroup().getName()
+                     , Animatable.getGroup().getEnable()
+                     , Animatable.getName()
+                     , AnimatableEntity.isEnable()
+                     , self.AutoEnable)
 
             return True
 

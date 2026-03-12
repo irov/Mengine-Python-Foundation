@@ -77,6 +77,9 @@ class BaseEntity(Actor, Initializer):
         self.node.disable()
         pass
 
+    def isEnable(self):
+        return self.node.isEnable()
+
     def isActivate(self):
         return self.node.isActivate()
 

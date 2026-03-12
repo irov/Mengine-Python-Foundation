@@ -101,9 +101,10 @@ class Group(ChildObject):
         self.main_layer = self.createLayer(Name, **layerParams)
 
         for layer in self.layers_order:
-            node = layer.createNode(self.scene)
+            layer_name = layer.getName()
+            node = layer.createNode(self.scene, None)
 
-            name = layer.getName()
+            name = layer_name
             self.layers[name] = node
             pass
 

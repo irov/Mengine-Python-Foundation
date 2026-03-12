@@ -48,11 +48,12 @@ class Main(object):
         sceneSlots = SceneManager.getSceneSlots(self.sceneDescriptions.scene)
 
         for slot in sceneSlots:
-            layer = self.node.createChild(slot.type)
+            layer = Mengine.createLayer(slot.type, slot.name, None)
             layer.setSize((slot.width, slot.height))
             layer.setLocalPosition((slot.x, slot.y))
-            layer.setName(slot.name)
             layer.enable()
+
+            self.node.addChild(layer)
 
             if slot.main is True:
                 self.main_layer = layer
