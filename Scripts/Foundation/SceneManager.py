@@ -658,12 +658,14 @@ class SceneManager(Manager):
         pass
 
     @staticmethod
-    def restartScene(cb):
+    def restartCurrentScene(cb):
         if SceneManager.s_currentSceneName is None:
-            Trace.log("SceneManager", 0, "SceneManager.restartScene: Scene Name is None")
+            Trace.log("SceneManager", 0, "SceneManager.restartCurrentScene: current scene is None")
             return
 
-        SceneManager.changeScene(SceneManager.s_currentSceneName, cb, False)
+        Notification.notify(Notificator.onSceneRestartBegin)
+        Mengine.restartCurrentScene(True, cb)
+        Notification.notify(Notificator.onSceneRestartEnd)
         pass
 
     @staticmethod

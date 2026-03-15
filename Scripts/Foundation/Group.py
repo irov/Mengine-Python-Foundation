@@ -66,7 +66,7 @@ class Group(ChildObject):
         layer = LayerManager.createLayer(name, params)
 
         if layer is None:
-            Trace.log("Main", 0, "invalid create layer %s type %s" % (name, Type))
+            Trace.log("Main", 0, "invalid create layer %s" % (name))
             return None
 
         self.layers_desc[name] = layer
@@ -175,10 +175,18 @@ class Group(ChildObject):
         objects = self.getObjects()
 
         for obj in objects:
-            obj.onRun()
+            if obj.onRun() is False:
+                return False
             pass
 
         return True
+
+    def onStop(self):
+        objects = self.getObjects()
+
+        for obj in objects:
+            obj.onStop()
+            pass
 
     def addState(self, state, value):
         if state in self.states:
@@ -241,6 +249,10 @@ class Group(ChildObject):
         self.__enableRefcount += 1
 
         if self.__enableRefcount > 1:
+            if _DEVELOPMENT is True and self.scene.isEnable() is False:
+                Trace.log("Group", 0, "Group '%s' invalid enable, not enable" % (self.name))
+                return False
+
             return True
 
         Notification.notify(Notificator.onLayerGroupEnableBegin, self.name)
@@ -264,7 +276,6 @@ class Group(ChildObject):
         Notification.notify(Notificator.onLayerGroupRelease, self.name)
 
         self.scene.disable()
-        self.scene.release()
 
         Notification.notify(Notificator.onLayerGroupDisable, self.name)
 
@@ -272,3 +283,25 @@ class Group(ChildObject):
 
     def getEnable(self):
         return self.__enableRefcount > 0
+
+    def forceDisable(self):
+        if self.__enableRefcount == 0:
+            return
+
+        Notification.notify(Notificator.onLayerGroupRelease, self.name)
+
+        self.scene.disable()
+
+        Notification.notify(Notificator.onLayerGroupDisable, self.name)
+        pass
+
+    def restoreEnable(self):
+        if self.__enableRefcount == 0:
+            return
+
+        Notification.notify(Notificator.onLayerGroupEnableBegin, self.name)
+
+        self.scene.enable()
+
+        Notification.notify(Notificator.onLayerGroupEnable, self.name)
+        pass

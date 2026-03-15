@@ -10,6 +10,7 @@ class Main(object):
         self.sceneName = None
         self.slots = {}  # { scene_name: Mengine.Layer2D }
         self.main_layer = None  # Mengine.Layer2D ("GameArea")
+        self.is_restarting = False
 
     def getName(self):
         return self.sceneName
@@ -126,11 +127,20 @@ class Main(object):
         Notification.notify(Notificator.onSceneActivate, self.sceneName)
         pass
 
+    def onRestartBegin(self):
+        self.is_restarting = True
+        pass
+
+    def onRestartEnd(self):
+        self.is_restarting = False
+        pass
+
     def onDeactivate(self):
         Notification.notify(Notificator.onSceneDeactivate, self.sceneName)
 
-        self.onDeactivateGroups()
+        self.onStopGroups()
         self.onDisableGroups()
+        self.onDeactivateGroups()
 
         for slot in self.slots.itervalues():
             slot.removeChildren()
@@ -190,6 +200,17 @@ class Main(object):
         pass
 
     def onEnableGroups(self):
+        if self.is_restarting is True:
+            def __lambdaRestoreGroups(group):
+                if group is None:
+                    return
+
+                group.restoreEnable()
+                pass
+
+            self.foreachGroups(__lambdaRestoreGroups)
+            return
+
         def __lambdaGroups(group):
             if group is None:
                 Trace.log("Entity", "0", "Main.onEnableGroups: %s not found group %s (activate)" % (self.sceneDescriptions.scene, group.getName()))
@@ -208,6 +229,18 @@ class Main(object):
                 return
 
             group.onRun()
+            pass
+
+        self.foreachGroups(__lambdaGroups, isEnable=True)
+        pass
+
+    def onStopGroups(self):
+        def __lambdaGroups(group):
+            if group is None:
+                Trace.log("Entity", 0, "Main.onStopGroups: %s not found group %s (activate)" % (self.sceneDescriptions.scene, group.getName()))
+                return
+
+            group.onStop()
             pass
 
         self.foreachGroups(__lambdaGroups, isEnable=True)
@@ -232,6 +265,17 @@ class Main(object):
     def onDisableGroups(self):
         if GroupManager.isInitialized() is False:
             Trace.log("Entity", 0, "Main.onDisableGroups: GroupManager is not initialized (Maybe it is already finilized)")
+            return
+
+        if self.is_restarting is True:
+            def __lambdaForceGroups(group):
+                if group is None:
+                    return
+
+                group.forceDisable()
+                pass
+
+            self.foreachGroups(__lambdaForceGroups, isReverse=True)
             return
 
         def __lambdaGroups(group):

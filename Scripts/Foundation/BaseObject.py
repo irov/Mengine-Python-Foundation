@@ -10,7 +10,7 @@ class BaseObject(Params, Initializer):
         self.parent = None
         self.Group = None
 
-        self.active = 0
+        self.__active = 0
         self.__destroy = False
 
         self.entity = None
@@ -152,7 +152,7 @@ class BaseObject(Params, Initializer):
         return self.parent
 
     def isActive(self):
-        return self.active > 0
+        return self.__active > 0
 
     def isDestroy(self):
         return self.__destroy
@@ -213,9 +213,9 @@ class BaseObject(Params, Initializer):
             Trace.log("BaseObject", 0, "BaseObject.onActivate '%s:%s' (type '%s') activate is failed - not initialize" % (self.getGroupName(), self.getName(), self.getType()))
             return False
 
-        self.active += 1
+        self.__active += 1
 
-        if self.active > 1:
+        if self.__active > 1:
             return True
 
         if self._onActivate() is False:
@@ -228,13 +228,13 @@ class BaseObject(Params, Initializer):
         return True
 
     def onDeactivate(self):
-        if self.active == 0:
+        if self.__active == 0:
             Trace.log("BaseObject", 0, "BaseObject '%s:%s' (type '%s') already deactivated" % (self.getGroupName(), self.getName(), self.getType()))
             return
 
-        self.active -= 1
+        self.__active -= 1
 
-        if self.active > 0:
+        if self.__active > 0:
             return
 
         self._onDeactivate()
@@ -255,6 +255,17 @@ class BaseObject(Params, Initializer):
 
     def _onRun(self):
         return True
+
+    def onStop(self):
+        if self.isInitialized() is False:
+            Trace.log("BaseObject", 0, "BaseObject.onStop '%s:%s' (type '%s') activate is failed - not initialize" % (self.getGroupName(), self.getName(), self.getType()))
+            return
+
+        self._onStop()
+        pass
+
+    def _onStop(self):
+        pass
 
     def _checkParamExtraValue(self, value):
         type_value = type(value)

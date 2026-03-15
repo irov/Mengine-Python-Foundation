@@ -4,9 +4,6 @@ from Foundation.DatabaseManager import DatabaseManager
 
 class GroupManager(Manager):
     class EmptyGroup(object):
-        def __init__(self):
-            pass
-
         def hasObject(self, name):
             Trace.log("Group", 0, "You try to find object {} in EmptyGroup!!".format(name))
             return False
@@ -61,7 +58,7 @@ class GroupManager(Manager):
             if GroupName is None:
                 continue
 
-            if GroupName in GroupManager.s_groups:
+            if _DEVELOPMENT is True and GroupName in GroupManager.s_groups:
                 Trace.log("Manager", 0, "GroupManage.loadGroups group %s already exist" % GroupName)
                 continue
 
@@ -179,7 +176,7 @@ class GroupManager(Manager):
         if isinstance(GroupManager.getGroup(groupName), GroupManager.EmptyGroup):
             return
 
-        if not groupName in GroupManager.s_groups:
+        if _DEVELOPMENT is True and not groupName in GroupManager.s_groups:
             Trace.log("Manager", 0, "GroupManage.removeGroup group %s is missing" % groupName)
             return
 
@@ -287,7 +284,7 @@ class GroupManager(Manager):
 
     @staticmethod
     def getGroup(name):
-        if GroupManager.hasGroup(name) is False:
+        if _DEVELOPMENT is True and GroupManager.hasGroup(name) is False:
             Trace.log("Manager", 0, "GroupManager.getGroup: not found group [%s], maybe forgot add [%s] in Groups.xls)" % (name, name))
 
             return None
@@ -324,7 +321,7 @@ class GroupManager(Manager):
     def getObject(groupName, objectName):
         group = GroupManager.getGroup(groupName)
 
-        if GroupManager.hasObject(groupName, objectName) is False:
+        if _DEVELOPMENT is True and GroupManager.hasObject(groupName, objectName) is False:
             Trace.log("Manager", 0, "GroupManager.getObject: group '%s' not found object '%s')" % (groupName, objectName))
             return None
 
@@ -334,13 +331,13 @@ class GroupManager(Manager):
 
     @staticmethod
     def generateObjectUnique(objectName, groupName, prototypeName, EntityHierarchy=True, **prototypeParams):
-        if GroupManager.hasGroup(groupName) is False:
+        if _DEVELOPMENT is True and GroupManager.hasGroup(groupName) is False:
             Trace.log("Manager", 0, "GroupManager.generateObjectUnique: not found group '%s')" % (groupName))
             return None
 
         group = GroupManager.getGroup(groupName)
 
-        if group.hasPrototype(prototypeName) is False:
+        if _DEVELOPMENT is True and group.hasPrototype(prototypeName) is False:
             Trace.log("Manager", 0, "GroupManager.generateObjectUnique: group '%s' not found prototype '%s' params '%s')" % (groupName, prototypeName, prototypeParams))
             return None
 

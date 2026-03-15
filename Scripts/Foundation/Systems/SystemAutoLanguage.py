@@ -1,8 +1,7 @@
 from Foundation.System import System
-
+from Foundation.SceneManager import SceneManager
 
 class SystemAutoLanguage(System):
-
     def __init__(self):
         super(SystemAutoLanguage, self).__init__()
         self._is_enabled = Mengine.getGameParamBool("AutoLanguage", True) is True
@@ -80,4 +79,4 @@ class SystemAutoLanguage(System):
                 if scene is None:
                     Mengine.setLocale(locale)
 
-            Mengine.restartCurrentScene(True, cbOnSceneRestartChangeLocale)
+            SceneManager.restartCurrentScene(cbOnSceneRestartChangeLocale)
