@@ -1,6 +1,6 @@
 from Foundation.System import System
 from Foundation.Utils import SimpleLogger
-from Foundation.Providers.RatingAppProvider import RatingAppProvider
+from Foundation.Providers.RateAppProvider import RateAppProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.Providers.ProductsProvider import ProductsProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider
@@ -43,7 +43,7 @@ class SystemAppleServices(System):
                 self.setInAppPurchaseProvider()
 
         if self.b_plugins["Review"] is True:
-            RatingAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
+            RateAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
 
         if Mengine.isAvailablePlugin(PLUGIN_USER_MESSAGING_PLATFORM) is True:
             ConsentProvider.setProvider("Apple", dict(

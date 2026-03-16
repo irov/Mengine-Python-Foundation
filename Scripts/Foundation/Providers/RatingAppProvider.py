@@ -1,7 +1,7 @@
 from Foundation.Providers.BaseProvider import BaseProvider
 
 
-class RatingAppProvider(BaseProvider):
+class RateAppProvider(BaseProvider):
     s_allowed_methods = [
         "rateApp"
     ]
@@ -12,7 +12,7 @@ class RatingAppProvider(BaseProvider):
 
     @staticmethod
     def rateApp():
-        return RatingAppProvider._call("rateApp")
+        return RateAppProvider._call("rateApp")
 
     @staticmethod
     def _rateAppNotFoundCb():
@@ -23,7 +23,7 @@ class DummyRatingApp(object):
 
     @staticmethod
     def setProvider():
-        RatingAppProvider.setProvider("Dummy", dict(rateApp=DummyRatingApp.rateApp))
+        RateAppProvider.setProvider("Dummy", dict(rateApp=DummyRatingApp.rateApp))
 
     @staticmethod
     def rateApp():

@@ -881,7 +881,7 @@ def onInitialize():
 
     providers = [
         "AdvertisementProvider"
-        , "RatingAppProvider"
+        , "RateAppProvider"
         , "PaymentProvider"
         , "ProductsProvider"
         , "FacebookProvider"

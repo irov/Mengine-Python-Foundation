@@ -1,5 +1,5 @@
 from Foundation.PolicyManager import PolicyManager
-from Foundation.Providers.RatingAppProvider import RatingAppProvider
+from Foundation.Providers.RateAppProvider import RateAppProvider
 from Foundation.Providers.AchievementsProvider import AchievementsProvider
 from Foundation.Providers.PaymentProvider import PaymentProvider
 from Foundation.Providers.ProductsProvider import ProductsProvider
@@ -155,7 +155,7 @@ class SystemGoogleServices(System):
             _setCallback("onGoogleInAppReviewsLaunchingTheReviewSuccess", SystemGoogleServices.__cbReviewsLaunchingSuccess)
             _setCallback("onGoogleInAppReviewsLaunchingTheReviewError", SystemGoogleServices.__cbReviewsLaunchingError)
 
-            RatingAppProvider.setProvider("Google", dict(rateApp=SystemGoogleServices.rateApp))
+            RateAppProvider.setProvider("Google", dict(rateApp=SystemGoogleServices.rateApp))
 
         if self.b_plugins[GOOGLE_CONSENT_PLUGIN] is True:
             def _setCallback(method_name, *callback):
