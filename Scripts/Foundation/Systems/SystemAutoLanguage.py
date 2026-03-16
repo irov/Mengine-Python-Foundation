@@ -75,8 +75,7 @@ class SystemAutoLanguage(System):
         if Mengine.getCurrentScene() is None:
             Mengine.setLocale(locale)
         else:
-            def cbOnSceneRestartChangeLocale(scene, isActive, isError):
-                if scene is None:
-                    Mengine.setLocale(locale)
+            def __cbOnSceneRestartChangeLocale():
+                Mengine.setLocale(locale)
 
-            SceneManager.restartCurrentScene(cbOnSceneRestartChangeLocale)
+            SceneManager.restartCurrentScene(None, cb_removed=__cbOnSceneRestartChangeLocale)
