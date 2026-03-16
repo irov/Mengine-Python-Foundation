@@ -26,7 +26,6 @@ class TaskDelay(MixinTime, Task):
 
     def _onFastSkip(self):
         return True
-        pass
 
     def _onRun(self):
         if self.Scheduler is not None:
@@ -44,12 +43,10 @@ class TaskDelay(MixinTime, Task):
             pass
 
         return False
-        pass
 
     def __onDelay(self, id, isRemoved):
         if self.id != id:
             return
-            pass
 
         self.complete()
         pass

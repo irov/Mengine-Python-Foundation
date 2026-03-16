@@ -663,8 +663,17 @@ class SceneManager(Manager):
             Trace.log("SceneManager", 0, "SceneManager.restartCurrentScene: current scene is None")
             return
 
+        sceneName = SceneManager.s_currentSceneName
+
+        def _onRestartScene(scene, isActive, isError):
+            if scene is not None and isActive is True:
+                Notification.notify(Notificator.onSceneInit, sceneName)
+
+            if cb is not None:
+                cb(scene, isActive, isError)
+
         Notification.notify(Notificator.onSceneRestartBegin)
-        Mengine.restartCurrentScene(True, cb)
+        Mengine.restartCurrentScene(True, _onRestartScene)
         Notification.notify(Notificator.onSceneRestartEnd)
         pass
 

@@ -118,6 +118,14 @@ class Main(object):
             pass
         pass
 
+    def onRestartBegin(self):
+        self.is_restarting = True
+        pass
+
+    def onRestartEnd(self):
+        self.is_restarting = False
+        pass
+
     def onActivate(self):
         self.onPreparationGroups()
         self.onActivateGroups()
@@ -125,14 +133,6 @@ class Main(object):
         self.onRunGroups()
 
         Notification.notify(Notificator.onSceneActivate, self.sceneName)
-        pass
-
-    def onRestartBegin(self):
-        self.is_restarting = True
-        pass
-
-    def onRestartEnd(self):
-        self.is_restarting = False
         pass
 
     def onDeactivate(self):

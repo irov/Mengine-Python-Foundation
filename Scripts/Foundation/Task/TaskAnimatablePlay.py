@@ -88,7 +88,6 @@ class TaskAnimatablePlay(MixinEvent, Task):
             self.id = None
 
             self.complete(isSkiped=False)
-            # self.complete()
             pass
 
         def __onAnimatableStop(id):
@@ -99,8 +98,6 @@ class TaskAnimatablePlay(MixinEvent, Task):
             self.id = None
 
             self.complete(isSkiped=True)
-            # self.skip()
-            # self.complete()
             pass
 
         self.Animatable.setEventListener(onAnimatableEnd=__onAnimatableEnd)
