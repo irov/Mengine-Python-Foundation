@@ -60,27 +60,23 @@ class DefaultManager(Manager):
     @staticmethod
     def getDefault(name, default=None):
         if DefaultManager.s_loaded is False:
-            Trace.log("Manager", 0, "DefaultManager not initialize")
+            Trace.log("Manager", 0, "DefaultManager not loaded")
             return None
 
         if name not in DefaultManager.s_defaults:
             return default
-            pass
 
         value = DefaultManager.s_defaults.get(name)
 
         return value
-        pass
 
     @staticmethod
     def hasDefault(name):
         if DefaultManager.s_loaded is False:
-            Trace.log("Manager", 0, "DefaultManager not initialize")
+            Trace.log("Manager", 0, "DefaultManager not loaded")
             return False
-            pass
 
         return name in DefaultManager.s_defaults
-        pass
 
     @staticmethod
     def getDefaultKey(name, default=None):
