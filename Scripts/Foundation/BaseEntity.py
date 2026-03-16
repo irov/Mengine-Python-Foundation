@@ -224,11 +224,11 @@ class BaseEntity(Actor, Initializer):
     def _onActivate(self):
         pass
 
-    def onPreparationDeactivate(self):
-        self._onPreparationDeactivate()
+    def onPassivate(self):
+        self._onPassivate()
         pass
 
-    def _onPreparationDeactivate(self):
+    def _onPassivate(self):
         pass
 
     def onDeactivate(self):
