@@ -34,7 +34,7 @@ class TaskTransition(MixinObserver, Task):
         Notification.notify(Notificator.onTransition, self.SceneName)
 
         if self.Wait is False:
-            SceneManager.changeScene(self.SceneName, None, self.CheckToScene)
+            SceneManager.changeScene(self.SceneName, None, check_current=self.CheckToScene)
             return True
 
         if SceneManager.isChangeScene() is False:
@@ -42,7 +42,7 @@ class TaskTransition(MixinObserver, Task):
                 self.complete()
                 pass
 
-            SceneManager.changeScene(self.SceneName, __onTransition, self.CheckToScene)
+            SceneManager.changeScene(self.SceneName, __onTransition, check_current=self.CheckToScene)
 
             return False
 

@@ -678,7 +678,7 @@ class SceneManager(Manager):
         pass
 
     @staticmethod
-    def changeScene(sceneName, cb, check_current=True, immediately=False):
+    def changeScene(sceneName, cb, cb_removed = None, cb_preparation = None, check_current = True, immediately = False):
         if sceneName is None:
             Trace.log("SceneManager", 0, "SceneManager.changeScene: Scene Name is None")
             return
@@ -716,21 +716,50 @@ class SceneManager(Manager):
 
         Trace.msg_dev("<SceneManager> change scene to '%s'" % sceneName)
 
-        if Mengine.createCurrentScene("Main", sceneName, immediately, True, SceneManager._onChangeScene, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb) is False:
-            for resources in cache_resources_groups:
-                Mengine.uncacheResources(resources)
-                pass
+        def __onChangeScene(scene, isActive, isError, sceneDescription):
+            if isError is True:
+                Trace.log("SceneManager", 0, "SceneManager.__onChangeScene: change scene '%s' failed" % sceneName)
 
-            for Group in cache_active_groups:
-                Group.onDeactivate()
-                pass
-            pass
-        pass
+                for resources in cache_resources_groups:
+                    Mengine.uncacheResources(resources)
+                    pass
 
-    @staticmethod
-    def _onChangeScene(scene, isActive, isError, sceneName, sceneDescription, cache_resources_groups, cache_active_groups, cb):
-        if isError is True:
-            Trace.log("SceneManager", 0, "SceneManager._onChangeScene: change scene '%s' failed" % sceneName)
+                for Group in cache_active_groups:
+                    Group.onDeactivate()
+                    pass
+
+                SceneManager.s_changeSceneName = None
+                SceneManager.s_changeScene = False
+                return
+
+            if scene is None:
+                if sceneName in SceneManager.s_gameScenes and sceneName not in SceneManager.s_extraScenes:
+                    SceneManager.setCurrentGameSceneName(sceneName)
+                    pass
+
+                Notification.notify(Notificator.onSceneRemoved, SceneManager.s_prevSceneName)
+
+                if cb_removed is not None:
+                    cb_removed()
+                return
+
+            if isActive is False:
+                SceneManager.s_currentScene = scene
+                SceneManager.s_currentSceneName = sceneName
+
+                SceneManager.s_currentDescription = sceneDescription
+                SceneManager.s_currentSceneEntering = False
+
+                scene.setDescription(sceneName, sceneDescription)
+
+                sceneDescription = SceneManager.s_scenes[sceneName]
+                SceneManager.s_currentSceneSlots = SceneManager.s_slots[sceneDescription.scene]
+
+                Notification.notify(Notificator.onScenePreparation, sceneName)
+
+                if cb_preparation is not None:
+                    cb_preparation(scene)
+                return
 
             for resources in cache_resources_groups:
                 Mengine.uncacheResources(resources)
@@ -742,47 +771,23 @@ class SceneManager(Manager):
 
             SceneManager.s_changeSceneName = None
             SceneManager.s_changeScene = False
-            return
+            # SceneManager.s_prevSceneName = None
 
-        if scene is None:
-            if sceneName in SceneManager.s_gameScenes and sceneName not in SceneManager.s_extraScenes:
-                SceneManager.setCurrentGameSceneName(sceneName)
+            Notification.notify(Notificator.onSceneInit, sceneName)
+
+            if cb is not None:
+                cb(scene)
+                pass
+            pass
+
+        if Mengine.createCurrentScene("Main", sceneName, immediately, True, __onChangeScene, sceneDescription) is False:
+            for resources in cache_resources_groups:
+                Mengine.uncacheResources(resources)
                 pass
 
-            Notification.notify(Notificator.onSceneRemoved, SceneManager.s_prevSceneName)
-            return
-
-        if isActive is False:
-            SceneManager.s_currentScene = scene
-            SceneManager.s_currentSceneName = sceneName
-
-            SceneManager.s_currentDescription = sceneDescription
-            SceneManager.s_currentSceneEntering = False
-
-            scene.setDescription(sceneName, sceneDescription)
-
-            sceneDescription = SceneManager.s_scenes[sceneName]
-            SceneManager.s_currentSceneSlots = SceneManager.s_slots[sceneDescription.scene]
-
-            Notification.notify(Notificator.onScenePreparation, sceneName)
-            return
-
-        for resources in cache_resources_groups:
-            Mengine.uncacheResources(resources)
-            pass
-
-        for Group in cache_active_groups:
-            Group.onDeactivate()
-            pass
-
-        SceneManager.s_changeSceneName = None
-        SceneManager.s_changeScene = False
-        # SceneManager.s_prevSceneName = None
-
-        Notification.notify(Notificator.onSceneInit, sceneName)
-
-        if cb is not None:
-            cb(scene)
+            for Group in cache_active_groups:
+                Group.onDeactivate()
+                pass
             pass
         pass
 
