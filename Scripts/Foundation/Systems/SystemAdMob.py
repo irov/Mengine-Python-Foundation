@@ -97,18 +97,18 @@ class SystemAdMob(System):
     def isSdkInitialized():
         return SystemAdMob.is_sdk_init is True
 
-    def getBannerHeight(self):
+    def getBannerWidth(self):
         if _IOS:
             return Mengine.appleAdvertisementGetBannerWidth()
         elif _ANDROID:
-            return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerHeight")
+            return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerWidth")
         return None
 
-    def getBannerWidth(self):
+    def getBannerHeight(self):
         if _IOS:
             return Mengine.appleAdvertisementGetBannerHeight()
         elif _ANDROID:
-            return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerWidth")
+            return Mengine.androidIntegerMethod(ANDROID_PLUGIN_NAME, "getBannerHeight")
         return None
 
     # callbacks

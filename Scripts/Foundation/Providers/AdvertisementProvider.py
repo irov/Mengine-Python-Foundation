@@ -74,9 +74,9 @@ class AdvertisementProvider(BaseProvider):
         return AdvertisementProvider._call("IsShowingRewardedAdvert")
 
     @staticmethod
-    def getBannerHeight():
-        return AdvertisementProvider._call("GetBannerHeight")
-
-    @staticmethod
     def getBannerWidth():
         return AdvertisementProvider._call("GetBannerWidth")
+
+    @staticmethod
+    def getBannerHeight():
+        return AdvertisementProvider._call("GetBannerHeight")

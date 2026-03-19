@@ -21,6 +21,13 @@ class DummyAdvertisement(object):
         return True
 
     @staticmethod
+    def getBannerWidth():
+        viewport = Mengine.getGameViewport()
+        game_width = viewport.end.x - viewport.begin.x
+
+        return game_width
+
+    @staticmethod
     def getBannerHeight():
         viewport = Mengine.getGameViewport()
         game_width = viewport.end.x - viewport.begin.x
@@ -32,12 +39,6 @@ class DummyAdvertisement(object):
             banner_height = DummyAdvertisement.getPhoneAdaptiveBannerHeight(game_width)
 
         return banner_height
-
-    @staticmethod
-    def getBannerWidth():
-        viewport = Mengine.getGameViewport()
-        game_width = viewport.end.x - viewport.begin.x
-        return game_width
 
     @staticmethod
     def getPhoneAdaptiveBannerHeight(width):
