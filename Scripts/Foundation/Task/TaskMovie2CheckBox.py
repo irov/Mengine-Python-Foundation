@@ -11,13 +11,10 @@ class TaskMovie2CheckBox(MixinMovie2CheckBox, MixinObserver, Task):
     def _onRun(self):
         self.addObserverFilter(Notificator.onMovie2CheckBox, self._onMovie2CheckBoxFilter, self.Movie2CheckBox)
         return False
-        pass
 
     def _onMovie2CheckBoxFilter(self, checkBox, value):
         if value is not self.Value:
             return False
-            pass
 
         return True
-        pass
     pass

@@ -1,14 +1,14 @@
-﻿from Foundation.BaseEntity import BaseEntity
+﻿from Foundation.BaseScopeEntity import BaseScopeEntity
 
 from Foundation.ObjectManager import ObjectManager
 from Foundation.TaskManager import TaskManager
 
-
-class Movie2CheckBox(BaseEntity):
+class Movie2CheckBox(BaseScopeEntity):
+    ENTITY_SCOPE_REPEAT = True
 
     @staticmethod
     def declareORM(Type):
-        BaseEntity.declareORM(Type)
+        BaseScopeEntity.declareORM(Type)
         Type.addActionActivate("Value", Update=Movie2CheckBox.__updateValue)
 
         Type.addAction("ResourceMovie")
@@ -37,8 +37,6 @@ class Movie2CheckBox(BaseEntity):
 
     def __init__(self):
         super(Movie2CheckBox, self).__init__()
-        self.tc = None
-
         self.MovieButtonFalse = None
         self.MovieButtonTrue = None
 
@@ -94,43 +92,15 @@ class Movie2CheckBox(BaseEntity):
         self.MovieButtonFalse.setEnable(False)
         self.MovieButtonTrue.setEnable(False)
 
-    def __resolveClick(self, holder):
-        if self.BlockState is True:
-            return
+    def _onScopeActivate(self, source):
+        with source.addRaceTask(2) as (source_btn_true, source_btn_false):
+            source_btn_true.addTask("TaskMovie2ButtonClick", Movie2Button=self.MovieButtonTrue)
+            source_btn_true.addParam(self.object, "Value", False)
+            source_btn_true.addNotify(Notificator.onMovie2CheckBox, self.object, False)
 
-        button = holder.get()
-
-        if button is self.MovieButtonFalse:
-            self.object.setValue(True)
-            Notification.notify(Notificator.onMovie2CheckBox, self.object, True)
-        elif button is self.MovieButtonTrue:
-            self.object.setValue(False)
-            Notification.notify(Notificator.onMovie2CheckBox, self.object, False)
-
-    def _onActivate(self):
-        super(Movie2CheckBox, self)._onActivate()
-
-        click_holder = Holder()
-        self.tc = TaskManager.createTaskChain(Repeat=True)
-
-        with self.tc as source:
-            with source.addRaceTask(2) as (source_btn_true, source_btn_false):
-                # source_btn_true.addTask("TaskMovie2ButtonClick", Movie2Button=self.MovieButtonTrue)
-                source_btn_true.addListener(Notificator.onMovie2ButtonClickEnd, lambda mb: mb is self.MovieButtonTrue)
-                source_btn_true.addFunction(click_holder.set, self.MovieButtonTrue)
-
-                # source_btn_false.addTask("TaskMovie2ButtonClick", Movie2Button=self.MovieButtonFalse)
-                source_btn_false.addListener(Notificator.onMovie2ButtonClickEnd, lambda mb: mb is self.MovieButtonFalse)
-                source_btn_false.addFunction(click_holder.set, self.MovieButtonFalse)
-
-            source.addFunction(self.__resolveClick, click_holder)
-
-    def _onDeactivate(self):
-        super(Movie2CheckBox, self)._onDeactivate()
-
-        if self.tc is not None:
-            self.tc.cancel()
-            self.tc = None
+            source_btn_false.addTask("TaskMovie2ButtonClick", Movie2Button=self.MovieButtonFalse)
+            source_btn_false.addParam(self.object, "Value", True)
+            source_btn_false.addNotify(Notificator.onMovie2CheckBox, self.object, True)
 
     def _onFinalize(self):
         super(Movie2CheckBox, self)._onFinalize()
