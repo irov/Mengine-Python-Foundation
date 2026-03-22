@@ -3,14 +3,13 @@ from Foundation.SceneManager import SceneManager
 
 class Main(object):
     def __init__(self):
-        self.node = None  # Mengine.Scene - main scene
+        self.node = None
 
         self.sceneDescriptions = None
         self.groupOrder = []
         self.sceneName = None
-        self.slots = {}  # { scene_name: Mengine.Layer2D }
-        self.main_layer = None  # Mengine.Layer2D ("GameArea")
-        self.is_restarting = False
+        self.slots = {}
+        self.main_layer = None
 
     def getName(self):
         return self.sceneName
@@ -22,7 +21,6 @@ class Main(object):
         if name not in self.slots:
             Trace.log("Entity", 0, "Main.getSlot: scene %s not found slot %s" % (self.sceneName, name))
             return None
-            pass
 
         slot = self.slots[name]
 
@@ -119,11 +117,9 @@ class Main(object):
         pass
 
     def onRestartBegin(self):
-        self.is_restarting = True
         pass
 
     def onRestartEnd(self):
-        self.is_restarting = False
         pass
 
     def onActivate(self):
@@ -200,17 +196,6 @@ class Main(object):
         pass
 
     def onEnableGroups(self):
-        if self.is_restarting is True:
-            def __lambdaRestoreGroups(group):
-                if group is None:
-                    return
-
-                group.restoreEnable()
-                pass
-
-            self.foreachGroups(__lambdaRestoreGroups)
-            return
-
         def __lambdaGroups(group):
             if group is None:
                 Trace.log("Entity", "0", "Main.onEnableGroups: %s not found group %s (activate)" % (self.sceneDescriptions.scene, group.getName()))
@@ -265,17 +250,6 @@ class Main(object):
     def onDisableGroups(self):
         if GroupManager.isInitialized() is False:
             Trace.log("Entity", 0, "Main.onDisableGroups: GroupManager is not initialized (Maybe it is already finilized)")
-            return
-
-        if self.is_restarting is True:
-            def __lambdaForceGroups(group):
-                if group is None:
-                    return
-
-                group.forceDisable()
-                pass
-
-            self.foreachGroups(__lambdaForceGroups, isReverse=True)
             return
 
         def __lambdaGroups(group):
