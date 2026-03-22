@@ -17,13 +17,16 @@ class BaseScopeEntity(BaseEntity):
         self.tc = None
         pass
 
+    def _onScopeUntil(self):
+        return False
+
     def _onActivate(self):
         if self.tc is not None:
             self.tc.cancel()
             self.tc = None
             pass
 
-        self.tc = TaskManager.createTaskChain(Repeat = self.ENTITY_SCOPE_REPEAT, Group = self.object.Group)
+        self.tc = TaskManager.createTaskChain(Repeat = self.ENTITY_SCOPE_REPEAT, Until=self._onScopeUntil, Group = self.object.Group)
 
         with self.tc as source:
             self._onScopeActivate(source)
