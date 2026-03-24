@@ -1172,7 +1172,7 @@ class SimpleLogger(object):
 
         if trace is True:
             f_message += "\n"
-            f_message = "\nTraceback (most recent call last):"
+            f_message += "\nTraceback (most recent call last):"
             for (filename, line_number, function_name, text) in traceback.extract_stack()[1:]:
                 f_message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
 
