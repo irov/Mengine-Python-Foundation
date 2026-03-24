@@ -35,15 +35,37 @@ class AdjustableScreenUtils(object):
         return height
 
     @staticmethod
-    def getPhoneAdaptiveBannerHeight(width):
-        """ Banners are automatically sized to 320x50 on phones """
-        height = 50.0 * width / 320.0
-        return height
+    def getPhoneBaseBannerWidth():
+        return 320.0
+
+    @staticmethod
+    def getPhoneBaseBannerHeight():
+        return 50.0
+
+    @staticmethod
+    def getTabletBaseBannerWidth():
+        return 728.0
+
+    @staticmethod
+    def getTabletBaseBannerHeight():
+        return 90.0
 
     @staticmethod
     def getTabletAdaptiveBannerHeight(width):
+        base_width = AdjustableScreenUtils.getTabletBaseBannerWidth()
+        banner_height = AdjustableScreenUtils.getTabletBaseBannerHeight()
+
         """ Banners are automatically sized to 728x90 on tablets """
-        height = 90.0 * width / 728.0
+        height = banner_height * width / base_width
+        return height
+
+    @staticmethod
+    def getPhoneAdaptiveBannerHeight(width):
+        base_width = AdjustableScreenUtils.getPhoneBaseBannerWidth()
+        base_height = AdjustableScreenUtils.getPhoneBaseBannerHeight()
+
+        """ Banners are automatically sized to 320x50 on phones """
+        height = base_height * width / base_width
         return height
 
     @staticmethod
