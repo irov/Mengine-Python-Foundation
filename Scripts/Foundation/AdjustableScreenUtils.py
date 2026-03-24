@@ -85,9 +85,9 @@ class AdjustableScreenUtils(object):
     @staticmethod
     def getMainSizesExt():
         """ :returns: game_width, game_height, header_height, banner_height, viewport, x_center, y_center """
-        game_width, game_height, top_offset, bottom_offset = AdjustableScreenUtils.getMainSizes()
+        game_width, game_height, header_height, banner_height = AdjustableScreenUtils.getMainSizes()
         viewport = Mengine.getGameViewport()
         x_center = viewport.begin.x + game_width / 2
         y_center = viewport.begin.y + game_height / 2
 
-        return game_width, game_height, top_offset, bottom_offset, viewport, x_center, y_center
+        return game_width, game_height, header_height, banner_height, viewport, x_center, y_center

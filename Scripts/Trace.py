@@ -1,5 +1,6 @@
-import sys
 from TraceManager import TraceManager
+
+import sys
 
 def msg(text, *args):
     __validateMessage(text)

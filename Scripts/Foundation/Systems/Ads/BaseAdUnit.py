@@ -135,7 +135,7 @@ class BaseAdUnit(object):
             status = self.initialize()
             err_msg += " Status {}".format(status)
 
-        self._log(err_msg, err=True, force=True)
+        self._log(err_msg, trace=True, err=True, force=True)
 
         return False
 

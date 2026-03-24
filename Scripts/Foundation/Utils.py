@@ -1154,7 +1154,7 @@ class SimpleLogger(object):
         if option is not None and option in Mengine.getOptionValues("debug"):
             self._optional = True
 
-    def __call__(self, msg, warn=False, err=False, force=False, optional=False):
+    def __call__(self, msg, trace=False, warn=False, err=False, force=False, optional=False):
         if self._enable is False:
             return
 
@@ -1169,6 +1169,13 @@ class SimpleLogger(object):
             msg = msg()
 
         f_message = " <%s> %s" % (self.title, msg)
+
+        if trace is True:
+            f_message += "\n"
+            f_message = "\nTraceback (most recent call last):"
+            for (filename, line_number, function_name, text) in traceback.extract_stack()[1:]:
+                f_message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
+
         if err is True:
             Trace.msg_err(f_message)
         elif warn is True:
