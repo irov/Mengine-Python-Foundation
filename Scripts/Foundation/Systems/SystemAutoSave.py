@@ -26,10 +26,10 @@ class SystemAutoSave(System):
         return False
 
     def _willResignActive(self):
-        if AdvertisementProvider.isShowingInterstitialAdvert() is True:
+        if AdvertisementProvider.hasInterstitialAdvert() is True and AdvertisementProvider.isShowingInterstitialAdvert() is True:
             return False
 
-        if AdvertisementProvider.isShowingRewardedAdvert() is True:
+        if AdvertisementProvider.hasRewardedAdvert() is True and AdvertisementProvider.isShowingRewardedAdvert() is True:
             return False
 
         self.autoSave()
