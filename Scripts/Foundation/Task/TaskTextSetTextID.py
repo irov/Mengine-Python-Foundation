@@ -12,12 +12,10 @@ class TaskTextSetTextID(MixinText, Task):
 
     def _onRun(self):
         if self.Value is None:
-            self.Text.removeTextID()
+            self.Text.removeTextId()
             return
-            pass
 
-        self.Text.setTextID(self.Value)
+        self.Text.setTextId(self.Value)
 
         return True
-        pass
     pass
