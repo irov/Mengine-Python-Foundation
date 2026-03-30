@@ -12,11 +12,11 @@ class TaskIterator(Task):
         self.Incref = params.get("Incref", 1)
         pass
 
-    def _onValidate(self):
-        super(TaskIterator, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskIterator, self)._onValidate(params)
 
         if isinstance(self.Iterator, Iterator) is False:
-            self.validateFailed("Iterator '%s' is not Iterator type" % (self.Iterator))
+            self.validateFailed(params, "Iterator '%s' is not Iterator type" % (self.Iterator))
             pass
         pass
 

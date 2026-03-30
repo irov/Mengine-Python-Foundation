@@ -10,17 +10,17 @@ class TaskAnimatableRewind(Task):
         self.AutoEnable = params.get("AutoEnable", False)
         pass
 
-    def _onValidate(self):
-        super(TaskAnimatableRewind, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskAnimatableRewind, self)._onValidate(params)
 
         if Mengine.isHomeless(self.Animatable) is True:
-            self.validateFailed("Animatable %s is Homeless" % (self.Animatable.getName()))
+            self.validateFailed(params, "Animatable %s is Homeless" % (self.Animatable.getName()))
             pass
 
         Enable = self.Animatable.isEnable()
 
         if Enable is False and self.AutoEnable is False:
-            self.validateFailed("Animatable %s is Disable" % (self.Animatable.getName()))
+            self.validateFailed(params, "Animatable %s is Disable" % (self.Animatable.getName()))
             pass
         pass
 

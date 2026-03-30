@@ -16,7 +16,6 @@ class TaskBase(Initializer):
         CANCEL = "CANCEL"
         COMPLETE = "COMPLETE"
         END = "END"
-        __task_validation = Mengine.hasOption("notaskvalidation") is False
     else:
         IDLE = 0
         INVALID = 1
@@ -26,7 +25,6 @@ class TaskBase(Initializer):
         CANCEL = 6
         COMPLETE = 7
         END = 8
-        __task_validation = False
         pass
 
     def __init__(self):
@@ -145,9 +143,9 @@ class TaskBase(Initializer):
 
             return False
 
-        if self.__task_validation is True:
+        if _DEVELOPMENT is True:
             if Skiped is False:
-                if task.onValidate() is False:
+                if task.onValidate(self.taskParams) is False:
                     Trace.log("Task", 0, "invalid validate %s" % (self))
 
                     return False

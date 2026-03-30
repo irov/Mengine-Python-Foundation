@@ -814,11 +814,9 @@ def getMovieLayerPosition(GroupName, MovieName, LayerName):
 def clearMovieSlots(Movie):
     if Movie is None:
         return
-        pass
 
     if Movie.isActive() is False:
         return
-        pass
 
     MovieEntity = Movie.getEntity()
 
@@ -829,16 +827,28 @@ def clearMovieSlots(Movie):
         pass
     pass
 
-def make_functor(params, name, args="Args", kwargs="Kwargs"):
-    Fn = params.get(name)
+if _DEVELOPMENT is True:
+    def make_functor(params, name, args="Args", kwargs="Kwargs"):
+        Fn = params.get(name)
 
-    if Fn is None:
-        return None
+        Args = params.get(args, None)
+        Kwargs = params.get(kwargs, None)
 
-    Args = params.get(args, ())
-    Kwargs = params.get(kwargs, {})
+        if Fn is None:
+            return None
 
-    return FunctorStore(Fn, Args, Kwargs)
+        return FunctorStore(Fn, Args, Kwargs)
+else:
+    def make_functor(params, name, args="Args", kwargs="Kwargs"):
+        Fn = params.get(name)
+
+        if Fn is None:
+            return None
+
+        Args = params.get(args, None)
+        Kwargs = params.get(kwargs, None)
+
+        return FunctorStore(Fn, Args, Kwargs)
 
 def is_valid_functor_args(Fn, Count):
     if Fn is None:
@@ -850,7 +860,10 @@ def is_valid_functor_args(Fn, Count):
     if callable(Fn.fn) is False:
         return False
 
-    return Utils.is_valid_function_args(Fn.fn, len(Fn.args) + len(Fn.kwargs) + Count)
+    len_fn_args = 0 if Fn.args is None else len(Fn.args)
+    len_fn_kwargs = 0 if Fn.kwargs is None else len(Fn.kwargs)
+
+    return Utils.is_valid_function_args(Fn.fn, len_fn_args + len_fn_kwargs + Count)
 
 def is_valid_function_args(Fn, Count):
     import types

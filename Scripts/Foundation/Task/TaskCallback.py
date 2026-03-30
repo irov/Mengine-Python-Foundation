@@ -11,11 +11,11 @@ class TaskCallback(Task):
         self.Cb = Utils.make_functor(params, "Cb")
         pass
 
-    def _onValidate(self):
-        super(TaskCallback, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskCallback, self)._onValidate(params)
 
         if Utils.is_valid_functor_args(self.Cb, 2) is False:
-            self.validateFailed("Cb %s is bad arguments or kwargs" % (self.Cb))
+            self.validateFailed(params, "Cb %s is bad arguments or kwargs" % (self.Cb))
             pass
         pass
 

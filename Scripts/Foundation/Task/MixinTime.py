@@ -11,19 +11,19 @@ class MixinTime(Task):
         self.time = params.get("Time", 0.0)
         pass
 
-    def _onValidate(self):
-        super(MixinTime, self)._onValidate()
+    def _onValidate(self, params):
+        super(MixinTime, self)._onValidate(params)
 
         if isinstance(self.time, int) is False and isinstance(self.time, float) is False:
-            self.validateFailed("MixinTime time '%s' type '%s' but must number" % (self.time, type(self.time)))
+            self.validateFailed(params, "MixinTime time '%s' type '%s' but must number" % (self.time, type(self.time)))
             pass
 
         if self.time == 0.0 and self.MixinTime_Validate_TimeZero is True:
-            self.validateFailed("MixinTime time is not 0.0")
+            self.validateFailed(params, "MixinTime time is not 0.0")
             pass
 
         if self.time < 0.0:
-            self.validateFailed("MixinTime time is less 0.0 [{}]".format(self.time))
+            self.validateFailed(params, "MixinTime time is less 0.0 [{}]".format(self.time))
             pass
         pass
     pass

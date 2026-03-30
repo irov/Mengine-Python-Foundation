@@ -14,11 +14,11 @@ class TaskScope(MixinGroup, Task):
         self.Scope = Utils.make_functor(params, "Scope")
         pass
 
-    def _onValidate(self):
-        super(TaskScope, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskScope, self)._onValidate(params)
 
         if Utils.is_valid_functor_args(self.Scope, 1) is False:
-            self.validateFailed("Scope %s is bad arguments or kwargs" % (self.Scope))
+            self.validateFailed(params, "Scope %s is bad arguments or kwargs" % (self.Scope))
             pass
         pass
 
@@ -38,7 +38,6 @@ class TaskScope(MixinGroup, Task):
 
         if self.base is None:
             return True
-            pass
 
         nexts = base.popNexts()
 
@@ -54,5 +53,4 @@ class TaskScope(MixinGroup, Task):
             pass
 
         return True
-        pass
     pass

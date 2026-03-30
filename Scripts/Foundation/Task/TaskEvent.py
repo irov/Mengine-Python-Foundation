@@ -14,16 +14,16 @@ class TaskEvent(MixinEvent, Task):
         self.Filter = Utils.make_functor(params, "Filter")
         pass
 
-    def _onValidate(self):
-        super(TaskEvent, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskEvent, self)._onValidate(params)
 
         if isinstance(self.Event, Event) is False:
-            self.validateFailed("Event must be Event but is %s" % (self.Event))
+            self.validateFailed(params, "Event must be Event but is %s" % (self.Event))
             pass
 
         if self.Filter is not None:
             if callable(self.Filter) is False:
-                self.validateFailed("Filter %s is not callable" % (self.Filter))
+                self.validateFailed(params, "Filter %s is not callable" % (self.Filter))
                 pass
             pass
         pass

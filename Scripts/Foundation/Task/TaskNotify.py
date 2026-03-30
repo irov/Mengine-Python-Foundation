@@ -29,5 +29,4 @@ class TaskNotify(Task):
             pass
 
         return True
-        pass
     pass

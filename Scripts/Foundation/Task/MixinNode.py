@@ -13,19 +13,19 @@ class MixinNode(Task):
         self.node = None
         pass
 
-    def _onValidate(self):
-        super(MixinNode, self)._onValidate()
+    def _onValidate(self, params):
+        super(MixinNode, self)._onValidate(params)
 
         if self.node is None:
-            self.validateFailed("node is None")
+            self.validateFailed(params, "node is None")
             pass
 
         if Mengine.is_class(self.node) is False:
-            self.validateFailed("node is not pybind class")
+            self.validateFailed(params, "node is not pybind class")
             pass
 
         if Mengine.is_wrap(self.node) is False:
-            self.validateFailed("node is unwrap")
+            self.validateFailed(params, "node is unwrap")
             pass
         pass
 

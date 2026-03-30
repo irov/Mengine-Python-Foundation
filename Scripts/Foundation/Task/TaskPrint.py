@@ -10,11 +10,13 @@ class TaskPrint(Task):
         self.Args = params.get("Args", ())
         pass
 
-    def _onValidate(self):
+    def _onValidate(self, params):
+        super(TaskPrint, self)._onValidate(params)
+
         try:
             str(self.Value) % self.Args
         except TypeError as ex:
-            self.validateFailed("Invalid TaskPrint format '%s' args '%s'" % (self.Value, self.Args))
+            self.validateFailed(params, "Invalid TaskPrint format '%s' args '%s'" % (self.Value, self.Args))
             pass
         pass
 

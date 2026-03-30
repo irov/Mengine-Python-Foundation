@@ -15,11 +15,11 @@ class TaskListener(MixinObserver, Task):
         self.Capture = params.get("Capture", None)
         pass
 
-    def _onValidate(self):
-        super(TaskListener, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskListener, self)._onValidate(params)
 
         if Notification.validateIdentity(self.ID) is False:
-            self.validateFailed("invalidate id %s" % self.ID)
+            self.validateFailed(params, "invalidate id %s" % self.ID)
             pass
         pass
 

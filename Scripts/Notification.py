@@ -4,13 +4,13 @@ class Notification(object):
     notifies = {}
 
     class Observer(object):
-        __slots__ = "identity", "fn", "filter", "cb"
+        __slots__ = "identity", "fn", "cb", "filter"
 
-        def __init__(self, identity, fn, args, kwargs, filter, cb):
+        def __init__(self, identity, fn, cb, filter, args, kwargs):
             self.identity = identity
             self.fn = FunctorStore(fn, args, kwargs)
-            self.filter = filter
             self.cb = cb
+            self.filter = filter
             pass
 
         def __del__(self):
@@ -22,10 +22,8 @@ class Notification(object):
         def isValid(self):
             if self.fn is None:
                 return False
-                pass
 
             return True
-            pass
 
         def release(self):
             self.fn = None
@@ -103,7 +101,7 @@ class Notification(object):
         return True
 
     @staticmethod
-    def addObserver(identity, fn, *args, **kwargs):
+    def addObserver(identity, fn, *Args, **Kwargs):
         if _DEVELOPMENT is True:
             if Notification.validateIdentity(identity) is False:
                 Trace.log("Notification", 0, "Notification.addObserver not have identity %s" % (identity))
@@ -117,14 +115,6 @@ class Notification(object):
         observers = Notification.notifies[identity]
 
         if _DEVELOPMENT is True:
-            if args is not None and isinstance(args, tuple) is False:
-                Trace.log("Notification", 0, "Notification.addObserver %s args is not tuple" % (identity))
-                return
-
-            if kwargs is not None and isinstance(kwargs, dict) is False:
-                Trace.log("Notification", 0, "Notification.addObserver %s kwargs is not dict" % (identity))
-                return
-
             if callable(fn) is False:
                 Trace.log("Notification", 0, "Notification.addObserver %s fn is not callable" % (identity))
                 return
@@ -136,14 +126,14 @@ class Notification(object):
                 pass
             pass
 
-        observer = Notification.Observer(identity, fn, args, kwargs, None, None)
+        observer = Notification.Observer(identity, fn, None, None, Args, Kwargs)
 
         observers.append(observer)
 
         return observer
 
     @staticmethod
-    def addObserverExt(identity, fn, args=(), kwargs={}, Filter=None, Cb=None):
+    def addObserverExt(identity, fn, Cb=None, Filter=None, *Args, **Kwargs):
         if _DEVELOPMENT is True:
             if Notification.validateIdentity(identity) is False:
                 Trace.log("Notification", 0, "Notification.addObserver not have identity %s" % (identity))
@@ -157,14 +147,6 @@ class Notification(object):
         observers = Notification.notifies[identity]
 
         if _DEVELOPMENT is True:
-            if args is not None and isinstance(args, tuple) is False:
-                Trace.log("Notification", 0, "Notification.addObserver %s args is not tuple" % (identity))
-                return
-
-            if kwargs is not None and isinstance(kwargs, dict) is False:
-                Trace.log("Notification", 0, "Notification.addObserver %s kwargs is not dict" % (identity))
-                return
-
             if callable(fn) is False:
                 Trace.log("Notification", 0, "Notification.addObserver %s fn is not callable" % (identity))
                 return
@@ -176,7 +158,7 @@ class Notification(object):
                 pass
             pass
 
-        observer = Notification.Observer(identity, fn, args, kwargs, Filter, Cb)
+        observer = Notification.Observer(identity, fn, Cb, Filter, Args, Kwargs)
 
         observers.append(observer)
 

@@ -20,24 +20,24 @@ class TaskSubMoviePlay(MixinMovie, Task):
         return self.Movie
         pass
 
-    def _onValidate(self):
-        super(TaskSubMoviePlay, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskSubMoviePlay, self)._onValidate(params)
 
         Animatable = self.getAnimatable()
 
         if Animatable is None:
-            self.validateFailed("Animatable is None")
+            self.validateFailed(params, "Animatable is None")
 
         if self.SubMovieName is None:
-            self.validateFailed("SubMovieName is None")
+            self.validateFailed(params, "SubMovieName is None")
 
         Entity = Animatable.getEntity()
 
         if Entity is None:
-            self.validateFailed("Animatable {} has no Entity".format(Animatable.getName()))
+            self.validateFailed(params, "Animatable {} has no Entity".format(Animatable.getName()))
 
         if Entity.hasSubMovie(self.SubMovieName) is False:
-            self.validateFailed("Animatable {} has no submovie {}".format(Animatable.getName(), self.SubMovieName))
+            self.validateFailed(params, "Animatable {} has no submovie {}".format(Animatable.getName(), self.SubMovieName))
 
     def _onRun(self):
         Animatable = self.getAnimatable()

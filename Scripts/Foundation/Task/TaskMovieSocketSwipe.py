@@ -44,7 +44,7 @@ class TaskMovieSocketSwipe(TaskAlias, MixinMovie):
         EntityNode = self.Movie.getEntityNode()
 
         if EntityNode is None:
-            self.validateFailed("Movie %s is not Active" % (self.Movie.getName()))
+            self.invalidTask("Movie %s is not Active" % (self.Movie.getName()))
             pass
 
         if Mengine.isHomeless(EntityNode) is True:

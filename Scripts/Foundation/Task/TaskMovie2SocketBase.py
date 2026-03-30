@@ -16,20 +16,20 @@ class TaskMovie2SocketBase(MixinMovie2, MixinEvent, Task):
         self.AutoEnable = params.get("AutoEnable", False)
         pass
 
-    def _onValidate(self):
-        super(TaskMovie2SocketBase, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskMovie2SocketBase, self)._onValidate(params)
 
         if self.SocketName is None and self.Socket is not None:
             self.SocketName = self.Socket.getName()
 
         if self.Any is False and self.SocketName is None:
-            self.validateFailed("SocketName is None")
+            self.validateFailed(params, "SocketName is None")
             pass
 
         Enable = self.Movie2.getEnable()
 
         if Enable is False and self.AutoEnable is False:
-            self.validateFailed("Movie2 %s is Disable" % (self.Movie2.getName()))
+            self.validateFailed(params, "Movie2 %s is Disable" % (self.Movie2.getName()))
             pass
         pass
 

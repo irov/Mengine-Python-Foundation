@@ -11,16 +11,16 @@ class TaskNodeMovieEvent(MixinNode, Task):
         self.Filter = Utils.make_functor(params, "Filter")
         pass
 
-    def _onValidate(self):
-        super(TaskNodeMovieEvent, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskNodeMovieEvent, self)._onValidate(params)
 
         if self.node.hasMovieEvent(self.Event) is False:
-            self.validateFailed("NodeMovie '%s' not exist event '%s'" % (self.node.getName(), self.Event))
+            self.validateFailed(params, "NodeMovie '%s' not exist event '%s'" % (self.node.getName(), self.Event))
             pass
 
         if self.Filter is not None:
             if Utils.is_valid_functor_args(self.Filter, 1) is False:
-                self.validateFailed("NodeMovie %s filter %s is bad arguments or kwargs" % (self.node.getName(), self.Filter))
+                self.validateFailed(params, "NodeMovie %s filter %s is bad arguments or kwargs" % (self.node.getName(), self.Filter))
                 pass
             pass
         pass
