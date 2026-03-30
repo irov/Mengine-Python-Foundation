@@ -835,6 +835,12 @@ if _DEVELOPMENT is True:
         Kwargs = params.get(kwargs, None)
 
         if Fn is None:
+            if Args is not None and len(Args) != 0:
+                raise RuntimeError("Fn not specified for %s, but Args is not empty" % name)
+
+            if Kwargs is not None and len(Kwargs) != 0:
+                raise RuntimeError("Fn not specified for %s, but Kwargs is not empty" % name)
+
             return None
 
         return FunctorStore(Fn, Args, Kwargs)
