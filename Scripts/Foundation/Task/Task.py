@@ -11,7 +11,8 @@ class TaskException(Exception):
     pass
 
 class ValidateException(Exception):
-    def __init__(self, value):
+    def __init__(self, params, value):
+        self.params = params
         self.value = value
         pass
 
@@ -96,25 +97,25 @@ class Task(Params, Initializer):
     def _onFinally(self):
         pass
 
-    def onValidate(self):
+    def onValidate(self, params):
         #print "Task %s onValidate, skiped: %d" % (self.base, self.isSkiped())
         try:
-            self._onValidate()
+            self._onValidate(params)
         except Exception as ex:
-            self._onValidateFailed(ex)
+            self._onValidateFailed(params, ex)
 
             return False
 
         return True
 
-    def _onValidate(self):
+    def _onValidate(self, params):
         pass
 
-    def validateFailed(self, msg):
-        raise ValidateException(msg)
+    def validateFailed(self, params, msg):
+        raise ValidateException(params, msg)
 
-    def _onValidateFailed(self, ex):
-        self.base._traceException("Task %s is not validate %s" % (self.base, ex))
+    def _onValidateFailed(self, params, ex):
+        self.base._traceException("Task %s params %s is not validate %s" % (self.base, params, ex))
         pass
 
     def _onInitializeFailed(self, ex):

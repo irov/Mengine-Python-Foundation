@@ -9,17 +9,17 @@ class TaskSemaphoreIncrement(Task):
         self.Semaphore = params.get("Semaphore")
         self.Inc = params.get("Increment")
 
-    def _onValidate(self):
-        super(TaskSemaphoreIncrement, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskSemaphoreIncrement, self)._onValidate(params)
 
         if self.Inc is None:
-            self.validateFailed("Semaphore '%s' setup Increment" % (self.Semaphore))
+            self.validateFailed(params, "Semaphore '%s' setup Increment" % (self.Semaphore))
 
         if not isinstance(self.Inc, int):
-            self.validateFailed("Semaphore '%s' Increment must be an integer" % (self.Semaphore))
+            self.validateFailed(params, "Semaphore '%s' Increment must be an integer" % (self.Semaphore))
 
         if isinstance(self.Semaphore, Semaphore) is False:
-            self.validateFailed("Semaphore '%s' is not Semaphore type" % (self.Semaphore))
+            self.validateFailed(params, "Semaphore '%s' is not Semaphore type" % (self.Semaphore))
 
     def _onRun(self):
         SemaphoreValue = self.Semaphore.getValue()

@@ -15,15 +15,15 @@ class TaskScopeEvent(MixinGroup, MixinEvent, Task):
         self.Scope = Utils.make_functor(params, "Scope")
         pass
 
-    def _onValidate(self):
-        super(TaskScopeEvent, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskScopeEvent, self)._onValidate(params)
 
         if isinstance(self.Event, Event) is False:
-            self.validateFailed("Event must be Event but is %s" % (self.Event))
+            self.validateFailed(params, "Event must be Event but is %s" % (self.Event))
             pass
 
         if callable(self.Scope) is False:
-            self.validateFailed("Scope %s is not callable" % (self.Scope))
+            self.validateFailed(params, "Scope %s is not callable" % (self.Scope))
             pass
         pass
 

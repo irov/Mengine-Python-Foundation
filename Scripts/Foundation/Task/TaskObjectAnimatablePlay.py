@@ -16,25 +16,25 @@ class TaskObjectAnimatablePlay(MixinEvent, Task):
         self.ValidationParentEnable = params.get("ValidationParentEnable", True)
         self.AutoEnable = params.get("AutoEnable", False)
 
-    def _onValidate(self):
-        super(TaskObjectAnimatablePlay, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskObjectAnimatablePlay, self)._onValidate(params)
 
         Animatable = self.getAnimatable()
 
         if Animatable is None:
-            self.validateFailed("Animatable is None")
+            self.validateFailed(params, "Animatable is None")
             return
 
         Enable = Animatable.getEnable()
 
         if Enable is False and self.AutoEnable is False:
-            self.validateFailed("Animatable '%s' is Disable" % (Animatable.getName()))
+            self.validateFailed(params, "Animatable '%s' is Disable" % (Animatable.getName()))
 
         if self.ValidationParentEnable is True and Animatable.isUnique() is False:
             AnimatableParent = Animatable.getParent()
 
             if AnimatableParent is not None and AnimatableParent.getEnable() is False:
-                self.validateFailed("Animatable '%s' error: Parent '%s' is Disable" % (Animatable.getName(), AnimatableParent.getName()))
+                self.validateFailed(params, "Animatable '%s' error: Parent '%s' is Disable" % (Animatable.getName(), AnimatableParent.getName()))
 
     def _onFastSkip(self):
         Animatable = self.getAnimatable()

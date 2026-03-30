@@ -10,15 +10,15 @@ class TaskNodeSocketBase(Task):
         self.AutoEnable = params.get("AutoEnable", False)
         pass
 
-    def _onValidate(self):
-        super(TaskNodeSocketBase, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskNodeSocketBase, self)._onValidate(params)
 
         if self.Socket is None:
-            self.validateFailed("Socket is None")
+            self.validateFailed(params, "Socket is None")
             pass
 
         if Mengine.isHomeless(self.Socket) is True:
-            self.validateFailed("Socket %s is Homeless" % (self.Socket.getName()))
+            self.validateFailed(params, "Socket %s is Homeless" % (self.Socket.getName()))
             pass
         pass
 

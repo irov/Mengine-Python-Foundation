@@ -17,11 +17,11 @@ class TaskMovie2LayerAlphaTo(MixinMovie2, MixinTime, MixinAffector, Task):
         self.layer_name = params.get("Layer", None)
         self.__current_alpha = None
 
-    def _onValidate(self):
-        super(TaskMovie2LayerAlphaTo, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskMovie2LayerAlphaTo, self)._onValidate(params)
 
         if self.layer_name is None:
-            self.validateFailed("layer_name is None")
+            self.validateFailed(params, "layer_name is None")
 
     def _onInitialize(self):
         super(TaskMovie2LayerAlphaTo, self)._onInitialize()

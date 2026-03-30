@@ -11,8 +11,8 @@ class TaskSurfaceAnimationPlay(Task):
         self.id = None
         pass
 
-    def _onValidate(self):
-        super(TaskSurfaceAnimationPlay, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskSurfaceAnimationPlay, self)._onValidate(params)
         pass
 
     def _onRun(self):

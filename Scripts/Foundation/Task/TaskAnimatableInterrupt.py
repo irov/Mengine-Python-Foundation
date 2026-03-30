@@ -10,15 +10,15 @@ class TaskAnimatableInterrupt(MixinEvent, Task):
         self.Wait = params.get("Wait", True)
         pass
 
-    def _onValidate(self):
-        super(TaskAnimatableInterrupt, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskAnimatableInterrupt, self)._onValidate(params)
 
         if Mengine.isHomeless(self.Animatable) is True:
-            self.validateFailed("Animatable %s is Homeless" % (self.Node.getName()))
+            self.validateFailed(params, "Animatable %s is Homeless" % (self.Node.getName()))
             pass
 
         if self.Animatable.isActivate() is False:
-            self.validateFailed("Animatable %s is Deactive" % (self.Node.getName()))
+            self.validateFailed(params, "Animatable %s is Deactive" % (self.Node.getName()))
             pass
         pass
 

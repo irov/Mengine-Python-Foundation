@@ -63,7 +63,8 @@ def onInitialize():
     tasks = [
         "TaskChain"
         , "TaskQuitApplication"
-        , "TaskFork"
+        , "TaskForkScope"
+        , "TaskForkSource"
         , "TaskDummy"
         , "TaskNoSkip"
         , "TaskSkip"

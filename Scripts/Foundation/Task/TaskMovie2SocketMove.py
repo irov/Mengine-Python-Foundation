@@ -7,11 +7,11 @@ class TaskMovie2SocketMove(TaskMovie2SocketBase):
         self.Tracker = params.get("Tracker")
         pass
 
-    def _onValidate(self):
-        super(TaskMovie2SocketMove, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskMovie2SocketMove, self)._onValidate(params)
 
         if callable(self.Tracker) is False:
-            self.validateFailed("Tracker is uncallable %s" % (self.Tracker))
+            self.validateFailed(params, "Tracker is uncallable %s" % (self.Tracker))
             pass
         pass
 

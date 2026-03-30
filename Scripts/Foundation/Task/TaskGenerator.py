@@ -435,11 +435,11 @@ class TaskSource(object):
 
     def addPrintFormat(self, Msg, *Args, **Kwargs):
         if _DEVELOPMENT is True:
-            self.__addDesc("TaskPrintFormat", dict(Value=Msg, Args=Args, Kwargs=Kwargs))
+            self.__addDesc("TaskPrintFormat", dict(Value=Msg, Args=Args, **Kwargs))
         pass
 
-    def addDelay(self, Time, Scheduler=None):
-        self.__addDesc("TaskDelay", dict(Time=Time, Scheduler=Scheduler))
+    def addDelay(self, Time, **Kwargs):
+        self.__addDesc("TaskDelay", dict(Time=Time, **Kwargs))
         pass
 
     def addPlay(self, Object, **Kwargs):
@@ -489,8 +489,8 @@ class TaskSource(object):
         self.__addDesc("TaskFunction", dict(Fn=Fn, Args=Args, Kwargs=Kwargs))
         pass
 
-    def addCallback(self, Fn, *args, **Kwargs):
-        self.__addDesc("TaskCallback", dict(Cb=Fn, Args=args, Kwargs=Kwargs))
+    def addCallback(self, Fn, *Args, **Kwargs):
+        self.__addDesc("TaskCallback", dict(Cb=Fn, Args=Args, Kwargs=Kwargs))
         pass
 
     def addScope(self, Scope, *Args, **Kwargs):
@@ -510,8 +510,8 @@ class TaskSource(object):
 
         return TaskSourceTg(tg)
 
-    def addForkScope(self, Scope=None, *Args, **Kwargs):
-        self.__addDesc("TaskFork", dict(Scope=Scope, Args=Args, Kwargs=Kwargs))
+    def addForkScope(self, Scope, *Args, **Kwargs):
+        self.__addDesc("TaskForkScope", dict(Scope=Scope, Args=Args, Kwargs=Kwargs))
         pass
 
     def addSemaphore(self, Semaphore, From=None, Less=None, To=None, Change=False):
@@ -588,8 +588,8 @@ class TaskSource(object):
 
         return TaskSourceTgs(tgs)
 
-    def addScopeSwitch(self, Scopes, Cb, *Args, **Kwargs):
-        self.__addDesc("TaskScopeSwitch", dict(Scopes=Scopes, Cb=Cb, Args=Args, Kwargs=Kwargs))
+    def addScopeSwitch(self, Scopes, Switch, *Args, **Kwargs):
+        self.__addDesc("TaskScopeSwitch", dict(Scopes=Scopes, Switch=Switch, Args=Args, Kwargs=Kwargs))
         pass
 
     def addDictTask(self, Dict, cb, *args, **kwargs):
@@ -978,7 +978,6 @@ class TaskGenerator(object):
                         Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDummy")
 
                         return None
-                        pass
 
                     tasks[switch_key] = tci
 
@@ -986,10 +985,9 @@ class TaskGenerator(object):
                     lastTask = tg.parse()
 
                     if lastTask is None:
-                        Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskSwitchDesc (%d)" % (i))
+                        Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDictDesc (%d)" % (i))
 
                         return None
-                        pass
 
                     lasts[switch_key] = lastTask
                     pass
@@ -1043,7 +1041,7 @@ class TaskGenerator(object):
                 self._addRepeat(element)
                 pass
             elif isinstance(element, TaskForkDesc) is True:
-                self._addFork(element)
+                self._addForkSource(element)
                 pass
             elif isinstance(element, TaskParallelDesc) is True:
                 tasks = []
@@ -1131,14 +1129,13 @@ class TaskGenerator(object):
         self._addTask(task)
         pass
 
-    def _addFork(self, element):
-        task = self.chain.createTaskBase("TaskFork", self.group, Caller=element.getCaller(), Source=element.source)
+    def _addForkSource(self, element):
+        task = self.chain.createTaskBase("TaskForkSource", self.group, Caller=element.getCaller(), Source=element.source)
 
         if task is None:
-            Trace.log("Task", 0, "TaskGenerator._addFork invalid create task TaskFork")
+            Trace.log("Task", 0, "TaskGenerator._addForkSource invalid create task TaskForkSource")
 
             return
-            pass
 
         self._addTask(task)
         pass
@@ -1146,7 +1143,6 @@ class TaskGenerator(object):
     def _addGuard(self, tasks, element):
         if len(tasks) == 0:
             return
-            pass
 
         task = self.chain.createTaskBaseRace(self.group, False, True, element.getCaller())
 
@@ -1154,7 +1150,6 @@ class TaskGenerator(object):
             Trace.log("Task", 0, "TaskGenerator._addGuard invalid create task TaskRaceNeck")
 
             return
-            pass
 
         for next in tasks:
             next.addNext(task)

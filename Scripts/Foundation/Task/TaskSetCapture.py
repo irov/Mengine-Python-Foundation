@@ -16,5 +16,4 @@ class TaskSetCapture(Task):
         self.Capture.setValue(self.Type, *self.Args, **self.Kwargs)
 
         return True
-        pass
     pass

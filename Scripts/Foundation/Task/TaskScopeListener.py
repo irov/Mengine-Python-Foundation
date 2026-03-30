@@ -20,15 +20,15 @@ class TaskScopeListener(MixinGroup, MixinObserver, Task):
         self.Capture = params.get("Capture", None)
         pass
 
-    def _onValidate(self):
-        super(TaskScopeListener, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskScopeListener, self)._onValidate(params)
 
         if Notification.validateIdentity(self.ID) is False:
-            self.validateFailed("invalidate id %s" % (self.ID))
+            self.validateFailed(params, "invalidate id %s" % (self.ID))
             pass
 
         if callable(self.Scope) is False:
-            self.validateFailed("Scope %s is not callable" % (self.Scope))
+            self.validateFailed(params, "Scope %s is not callable" % (self.Scope))
             pass
         pass
 

@@ -814,11 +814,9 @@ def getMovieLayerPosition(GroupName, MovieName, LayerName):
 def clearMovieSlots(Movie):
     if Movie is None:
         return
-        pass
 
     if Movie.isActive() is False:
         return
-        pass
 
     MovieEntity = Movie.getEntity()
 
@@ -829,16 +827,34 @@ def clearMovieSlots(Movie):
         pass
     pass
 
-def make_functor(params, name, args="Args", kwargs="Kwargs"):
-    Fn = params.get(name)
+if _DEVELOPMENT is True:
+    def make_functor(params, name, args="Args", kwargs="Kwargs"):
+        Fn = params.get(name)
 
-    if Fn is None:
-        return None
+        Args = params.get(args, None)
+        Kwargs = params.get(kwargs, None)
 
-    Args = params.get(args, ())
-    Kwargs = params.get(kwargs, {})
+        if Fn is None:
+            if Args is not None and len(Args) != 0:
+                raise RuntimeError("Fn not specified for %s, but Args is not empty" % name)
 
-    return FunctorStore(Fn, Args, Kwargs)
+            if Kwargs is not None and len(Kwargs) != 0:
+                raise RuntimeError("Fn not specified for %s, but Kwargs is not empty" % name)
+
+            return None
+
+        return FunctorStore(Fn, Args, Kwargs)
+else:
+    def make_functor(params, name, args="Args", kwargs="Kwargs"):
+        Fn = params.get(name)
+
+        if Fn is None:
+            return None
+
+        Args = params.get(args, None)
+        Kwargs = params.get(kwargs, None)
+
+        return FunctorStore(Fn, Args, Kwargs)
 
 def is_valid_functor_args(Fn, Count):
     if Fn is None:
@@ -850,7 +866,10 @@ def is_valid_functor_args(Fn, Count):
     if callable(Fn.fn) is False:
         return False
 
-    return Utils.is_valid_function_args(Fn.fn, len(Fn.args) + len(Fn.kwargs) + Count)
+    len_fn_args = 0 if Fn.args is None else len(Fn.args)
+    len_fn_kwargs = 0 if Fn.kwargs is None else len(Fn.kwargs)
+
+    return Utils.is_valid_function_args(Fn.fn, len_fn_args + len_fn_kwargs + Count)
 
 def is_valid_function_args(Fn, Count):
     import types
@@ -1154,7 +1173,7 @@ class SimpleLogger(object):
         if option is not None and option in Mengine.getOptionValues("debug"):
             self._optional = True
 
-    def __call__(self, msg, warn=False, err=False, force=False, optional=False):
+    def __call__(self, msg, trace=False, warn=False, err=False, force=False, optional=False):
         if self._enable is False:
             return
 
@@ -1169,6 +1188,13 @@ class SimpleLogger(object):
             msg = msg()
 
         f_message = " <%s> %s" % (self.title, msg)
+
+        if trace is True:
+            f_message += "\n"
+            f_message += "\nTraceback (most recent call last):"
+            for (filename, line_number, function_name, text) in traceback.extract_stack()[1:]:
+                f_message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
+
         if err is True:
             Trace.msg_err(f_message)
         elif warn is True:

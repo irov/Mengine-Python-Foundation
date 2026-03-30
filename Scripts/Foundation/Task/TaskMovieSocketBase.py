@@ -16,23 +16,23 @@ class TaskMovieSocketBase(MixinMovie, MixinEvent, Task):
         self.AutoEnable = params.get("AutoEnable", False)
         pass
 
-    def _onValidate(self):
-        super(TaskMovieSocketBase, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskMovieSocketBase, self)._onValidate(params)
 
         if self.Any is False and self.SocketName is None:
-            self.validateFailed("SocketName is None")
+            self.validateFailed(params, "SocketName is None")
             pass
 
         ResourceMovie = self.Movie.getResourceMovie()
 
         if self.Any is False and ResourceMovie.hasLayerType(self.SocketName, "MovieSocketShape") is False and ResourceMovie.hasLayerType(self.SocketName, "MovieSocketImage") is False:
-            self.validateFailed("Movie %s not fount socket %s" % (self.Movie.getName(), self.SocketName))
+            self.validateFailed(params, "Movie %s not fount socket %s" % (self.Movie.getName(), self.SocketName))
             pass
 
         Enable = self.Movie.getEnable()
 
         if Enable is False and self.AutoEnable is False:
-            self.validateFailed("Movie %s is Disable" % (self.Movie.getName()))
+            self.validateFailed(params, "Movie %s is Disable" % (self.Movie.getName()))
             pass
         pass
 

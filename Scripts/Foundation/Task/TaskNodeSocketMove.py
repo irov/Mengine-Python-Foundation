@@ -7,11 +7,11 @@ class TaskNodeSocketMove(TaskNodeSocketBase):
         self.Tracker = Utils.make_functor(params, "Tracker", "TrackerArgs", "TrackerKwargs")
         pass
 
-    def _onValidate(self):
-        super(TaskNodeSocketMove, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskNodeSocketMove, self)._onValidate(params)
 
         if callable(self.Tracker) is False:
-            self.validateFailed("Tracker is uncallable %s" % (self.Tracker))
+            self.validateFailed(params, "Tracker is uncallable %s" % (self.Tracker))
             pass
         pass
 

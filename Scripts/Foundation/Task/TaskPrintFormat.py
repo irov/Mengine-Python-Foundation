@@ -8,34 +8,28 @@ class TaskPrintFormat(Task):
 
         self.Value = params.get("Value")
         self.Args = params.get("Args", ())
-        self.Kwargs = params.get("Kwargs", {})
+
+        self.center = params.get("center", None)
         pass
 
-    def _onValidate(self):
-        super(TaskPrintFormat, self)._onValidate()
-
-        if self.Kwargs is None:
-            self.validateFailed("TaskPrintFormat Kwargs is None")
-            pass
+    def _onValidate(self, params):
+        super(TaskPrintFormat, self)._onValidate(params)
 
         try:
             str(self.Value).format(*self.Args)
         except Exception as ex:
-            self.validateFailed("Invalid TaskPrintFormat format '%s' args '%s' exception '%s'" % (self.Value, self.Args, ex))
+            self.validateFailed(params, "Invalid TaskPrintFormat format '%s' args '%s' exception '%s'" % (self.Value, self.Args, ex))
             pass
         pass
 
     def _onRun(self):
         m = str(self.Value).format(*self.Args)
 
-        center = self.Kwargs.get("center", None)
-
-        if center is not None:
-            m = m.center(*center)
+        if self.center is not None:
+            m = m.center(*self.center)
             pass
 
         Trace.msg(m)
 
         return True
-        pass
     pass

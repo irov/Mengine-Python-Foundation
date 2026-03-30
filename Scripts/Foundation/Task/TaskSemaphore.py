@@ -29,15 +29,15 @@ class TaskSemaphore(MixinEvent, Task):
             pass
         pass
 
-    def _onValidate(self):
-        super(TaskSemaphore, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskSemaphore, self)._onValidate(params)
 
         if self.From is not None and self.Less is not None:
-            self.validateFailed("Semaphore '%s' choose one of [From, Less]" % (self.Semaphore))
+            self.validateFailed(params, "Semaphore '%s' choose one of [From, Less]" % (self.Semaphore))
             pass
 
         if isinstance(self.Semaphore, Semaphore) is False:
-            self.validateFailed("Semaphore '%s' is not Semaphore type" % (self.Semaphore))
+            self.validateFailed(params, "Semaphore '%s' is not Semaphore type" % (self.Semaphore))
             pass
         pass
 

@@ -35,15 +35,37 @@ class AdjustableScreenUtils(object):
         return height
 
     @staticmethod
-    def getPhoneAdaptiveBannerHeight(width):
-        """ Banners are automatically sized to 320x50 on phones """
-        height = 50.0 * width / 320.0
-        return height
+    def getPhoneBaseBannerWidth():
+        return 320.0
+
+    @staticmethod
+    def getPhoneBaseBannerHeight():
+        return 50.0
+
+    @staticmethod
+    def getTabletBaseBannerWidth():
+        return 728.0
+
+    @staticmethod
+    def getTabletBaseBannerHeight():
+        return 90.0
 
     @staticmethod
     def getTabletAdaptiveBannerHeight(width):
+        base_width = AdjustableScreenUtils.getTabletBaseBannerWidth()
+        banner_height = AdjustableScreenUtils.getTabletBaseBannerHeight()
+
         """ Banners are automatically sized to 728x90 on tablets """
-        height = 90.0 * width / 728.0
+        height = banner_height * width / base_width
+        return height
+
+    @staticmethod
+    def getPhoneAdaptiveBannerHeight(width):
+        base_width = AdjustableScreenUtils.getPhoneBaseBannerWidth()
+        base_height = AdjustableScreenUtils.getPhoneBaseBannerHeight()
+
+        """ Banners are automatically sized to 320x50 on phones """
+        height = base_height * width / base_width
         return height
 
     @staticmethod
@@ -85,9 +107,9 @@ class AdjustableScreenUtils(object):
     @staticmethod
     def getMainSizesExt():
         """ :returns: game_width, game_height, header_height, banner_height, viewport, x_center, y_center """
-        game_width, game_height, top_offset, bottom_offset = AdjustableScreenUtils.getMainSizes()
+        game_width, game_height, header_height, banner_height = AdjustableScreenUtils.getMainSizes()
         viewport = Mengine.getGameViewport()
         x_center = viewport.begin.x + game_width / 2
         y_center = viewport.begin.y + game_height / 2
 
-        return game_width, game_height, top_offset, bottom_offset, viewport, x_center, y_center
+        return game_width, game_height, header_height, banner_height, viewport, x_center, y_center

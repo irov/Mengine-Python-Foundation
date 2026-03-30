@@ -18,11 +18,11 @@ class TaskRefcount(MixinEvent, Task):
             pass
         pass
 
-    def _onValidate(self):
-        super(TaskRefcount, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskRefcount, self)._onValidate(params)
 
         if isinstance(self.Refcount, Refcount) is False:
-            self.validateFailed("Refcount '%s' is not Refcount type" % (self.Refcount))
+            self.validateFailed(params, "Refcount '%s' is not Refcount type" % (self.Refcount))
             pass
         pass
 

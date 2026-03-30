@@ -21,17 +21,17 @@ class TaskAnimatablePlay(MixinEvent, Task):
         self.id = None
         pass
 
-    def _onValidate(self):
-        super(TaskAnimatablePlay, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskAnimatablePlay, self)._onValidate(params)
 
         if Mengine.isHomeless(self.Animatable) is True:
-            self.validateFailed("Animatable %s is Homeless" % (self.Animatable.getName()))
+            self.validateFailed(params, "Animatable %s is Homeless" % (self.Animatable.getName()))
             pass
 
         Enable = self.Animatable.isEnable()
 
         if Enable is False and self.AutoEnable is False:
-            self.validateFailed("Animatable %s is Disable" % (self.Animatable.getName()))
+            self.validateFailed(params, "Animatable %s is Disable" % (self.Animatable.getName()))
             pass
         pass
 

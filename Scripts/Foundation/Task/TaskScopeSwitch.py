@@ -4,7 +4,7 @@ from Foundation.Task.TaskGenerator import TaskGenerator
 from Foundation.Task.TaskGenerator import TaskSource
 
 class TaskScopeSwitch(MixinGroup, Task):
-    __metaclass__ = finalslots("Scopes", "Cb", "switched")
+    __metaclass__ = finalslots("Scopes", "Switch", "switched")
 
     Skiped = True
 
@@ -19,15 +19,15 @@ class TaskScopeSwitch(MixinGroup, Task):
 
         self.Scopes = params.get("Scopes")
 
-        self.Cb = Utils.make_functor(params, "Cb")
+        self.Switch = Utils.make_functor(params, "Switch")
         pass
 
-    def _onValidate(self):
-        super(TaskScopeSwitch, self)._onValidate()
+    def _onValidate(self, params):
+        super(TaskScopeSwitch, self)._onValidate(params)
 
         for Name, Scope in self.Scopes.iteritems():
             if callable(Scope) is False:
-                self.validateFailed("State '%s' scope '%s' is not callable" % (Name, Scope))
+                self.validateFailed(params, "State '%s' scope '%s' is not callable" % (Name, Scope))
                 pass
             pass
         pass
@@ -35,26 +35,22 @@ class TaskScopeSwitch(MixinGroup, Task):
     def _onRun(self):
         skiped = self.isSkiped()
 
-        self.Cb(skiped, self._onSwitch)
+        self.Switch(skiped, self._onSwitch)
 
         return False
-        pass
 
     def _onSwitch(self, isSkip, switchId, *Args, **Kwargs):
         if self.isInitialized() is False:
-            self.log("_onSwitch already finalized")
+            self.invalidTask("_onSwitch already finalized")
             return
-            pass
 
         if self.switched is True:
-            self.log("_onSwitch already switched!")
+            self.invalidTask("_onSwitch already switched!")
             return
-            pass
 
         if switchId not in self.Scopes:
-            self.log("_onSwitch id '%s' not found" % (switchId))
+            self.invalidTask("_onSwitch id '%s' not found" % (switchId))
             return
-            pass
 
         Scope = self.Scopes[switchId]
 
@@ -89,13 +85,12 @@ class TaskScopeSwitch(MixinGroup, Task):
             pass
 
         return True
-        pass
 
     def _onFinalize(self):
         super(TaskScopeSwitch, self)._onFinalize()
 
         self.Scopes = None
 
-        self.Cb = None
+        self.Switch = None
         pass
     pass
