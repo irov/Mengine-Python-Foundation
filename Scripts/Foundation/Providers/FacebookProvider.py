@@ -48,8 +48,8 @@ class FacebookProvider(BaseProvider):
         return FacebookProvider._call("logout", _cb_success, _cb_error)
 
     @staticmethod
-    def getUser(_cb=None):
-        return FacebookProvider._call("getUser", _cb)
+    def getUser(_cb_success=None, _cb_error=None):
+        return FacebookProvider._call("getUser", _cb_success, _cb_error)
 
     @staticmethod
     def getProfilePictureLink(type_parameter="large", _cb_success=None, _cb_error=None):
@@ -111,15 +111,15 @@ class DummyFacebook(object):
             _cb_success(DummyFacebook.SHARE_POST_ID)
 
     @staticmethod
-    def logout(_cb_success=None, _cb_cancel=None):
+    def logout(_cb_success=None, _cb_error=None):
         if _cb_success:
             _cb_success()
         DummyFacebook._logged_in = False
 
     @staticmethod
-    def getUser(_cb=None):
+    def getUser(_cb_success=None, _cb_error=None):
         # onFacebookUserFetchSuccess
-        if _cb:
+        if _cb_success:
             response = """{
   "id": "{%id%}",
   "name": "{%username%}",
@@ -136,7 +136,7 @@ class DummyFacebook(object):
             response = response.replace("{%id%}", DummyFacebook.User.USER_ID)
             response = response.replace("{%username%}", DummyFacebook.User.USER_NAME)
             response = response.replace("{%email%}", DummyFacebook.User.USER_EMAIL)
-            _cb(response, "")
+            _cb_success(response, "")
 
     @staticmethod
     def getProfilePictureLink(type_parameter="large", _cb_success=None, _cb_error=None):
