@@ -893,6 +893,13 @@ class SceneManager(Manager):
         return True
 
     @staticmethod
+    def isPreviousScene(sceneName):
+        if sceneName != SceneManager.s_prevSceneName:
+            return False
+
+        return True
+
+    @staticmethod
     def isSceneInit(sceneName):
         if SceneManager.s_currentSceneName != sceneName:
             return False
