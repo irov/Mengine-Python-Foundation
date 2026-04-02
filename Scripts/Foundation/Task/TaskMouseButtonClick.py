@@ -13,17 +13,13 @@ class TaskMouseButtonClick(MixinObserver, Task):
         self.addObserver(Notificator.onMouseButtonEvent, self._onMouseButtonEvent)
 
         return False
-        pass
 
     def _onMouseButtonEvent(self, event):
         if self.Button != event.button:
             return False
-            pass
 
         if self.isDown is not event.isDown:
             return False
-            pass
 
         return True
-        pass
     pass

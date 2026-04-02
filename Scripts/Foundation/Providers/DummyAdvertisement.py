@@ -152,6 +152,8 @@ class DummyAdvertisement(object):
             return DummyAdvertisement.getBannerHeight()
         def _GetBannerWidth():
             return DummyAdvertisement.getBannerWidth()
+        def _GetNoAds():
+            return False
 
         methods = dict(
             # banner:
@@ -170,6 +172,8 @@ class DummyAdvertisement(object):
             CanYouShowRewardedAdvert=_CanYouShowRewardedAdvert,
             ShowRewardedAdvert=_ShowRewardedAdvert,
             IsShowingRewardedAdvert=_IsShowingRewardedAdvert,
+            # no ads:
+            GetNoAds=_GetNoAds,
         )
 
         AdvertisementProvider.setProvider("Dummy", methods)

@@ -985,19 +985,6 @@ class SystemMonetization(System):
 
         tab = Mengine.addDevToDebugTab("Monetization")
 
-        # buttons
-
-        for ad_name in MonetizationManager.getAdvertNames("Rewarded"):
-            w_show_ad = Mengine.createDevToDebugWidgetButton("show_ad_{}".format(ad_name))
-            w_show_ad.setTitle("Show {!r} ad with current provider".format(ad_name))
-            w_show_ad.setClickEvent(self.showAd, "Rewarded", ad_name)
-            tab.addWidget(w_show_ad)
-
-        w_upd_ads = Mengine.createDevToDebugWidgetButton("update_ads")
-        w_upd_ads.setTitle("Update available ads")
-        w_upd_ads.setClickEvent(self.updateAvailableAds)
-        tab.addWidget(w_upd_ads)
-
         # command lines
 
         def _addGold(text):
