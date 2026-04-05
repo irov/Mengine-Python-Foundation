@@ -750,6 +750,61 @@ class SceneManager(Manager):
         pass
 
     @staticmethod
+    def leaveScene(sceneName, cb, check_current = True):
+        if sceneName is None:
+            Trace.log("SceneManager", 0, "SceneManager.leaveScene: Scene Name is None")
+            return
+
+        if SceneManager.s_changeScene is True:
+            Trace.log("SceneManager", 0, "SceneManager.leaveScene: Already Change Scene To %s" % sceneName)
+            return
+
+        if SceneManager.hasScene(sceneName) is False:
+            Trace.log("SceneManager", 0, "SceneManager.leaveScene: Scene '%s' not found" % sceneName)
+            return
+
+        sceneDescription = SceneManager.s_scenes[sceneName]
+
+        if check_current is True and sceneDescription is SceneManager.s_currentDescription:
+            if cb is not None:
+                cb()
+                pass
+            return
+
+        Notification.notify(Notificator.onSceneChange, SceneManager.s_currentSceneName)
+
+        prevSceneName = SceneManager.s_currentSceneName
+        SceneManager.s_prevSceneName = prevSceneName
+
+        SceneManager.s_currentScene = None
+        SceneManager.s_currentSceneName = None
+        SceneManager.s_currentDescription = None
+        SceneManager.s_currentSceneEntering = False
+
+        SceneManager.s_changeScene = True
+        SceneManager.s_changeSceneName = sceneName
+
+        def __onLeaveScene():
+            if sceneName in SceneManager.s_gameScenes and sceneName not in SceneManager.s_extraScenes:
+                SceneManager.setCurrentGameSceneName(sceneName)
+                pass
+
+            if prevSceneName is not None:
+                Notification.notify(Notificator.onSceneRemoved, prevSceneName)
+
+            if cb is not None:
+                cb()
+                pass
+            pass
+
+        if prevSceneName is None:
+            __onLeaveScene()
+            return
+
+        Mengine.removeCurrentScene(False, __onLeaveScene)
+        pass
+
+    @staticmethod
     def changeScene(sceneName, cb, cb_removed = None, cb_preparation = None, check_current = True, immediately = False):
         if sceneName is None:
             Trace.log("SceneManager", 0, "SceneManager.changeScene: Scene Name is None")
@@ -861,6 +916,75 @@ class SceneManager(Manager):
                 Group.onDeactivate()
                 pass
             pass
+        pass
+
+    @staticmethod
+    def enterScene(cb, cb_preparation = None, immediately = False):
+        if SceneManager.s_changeScene is False:
+            Trace.log("SceneManager", 0, "SceneManager.enterScene: leaveScene not called")
+            return
+
+        sceneName = SceneManager.s_changeSceneName
+
+        if sceneName is None:
+            Trace.log("SceneManager", 0, "SceneManager.enterScene: Scene Name is None")
+            SceneManager.s_changeSceneName = None
+            SceneManager.s_changeScene = False
+            return
+
+        if SceneManager.hasScene(sceneName) is False:
+            Trace.log("SceneManager", 0, "SceneManager.enterScene: Scene '%s' not found" % sceneName)
+            SceneManager.s_changeSceneName = None
+            SceneManager.s_changeScene = False
+            return
+
+        sceneDescription = SceneManager.s_scenes[sceneName]
+
+        Trace.msg_dev("<SceneManager> change scene to '%s'" % sceneName)
+
+        def __onEnterScene(scene, isActive, isError, sceneDescription):
+            if isError is True:
+                Trace.log("SceneManager", 0, "SceneManager.enterScene: change scene '%s' failed" % sceneName)
+
+                SceneManager.s_changeSceneName = None
+                SceneManager.s_changeScene = False
+                return
+
+            if scene is None:
+                return
+
+            if isActive is False:
+                SceneManager.s_currentScene = scene
+                SceneManager.s_currentSceneName = sceneName
+
+                SceneManager.s_currentDescription = sceneDescription
+                SceneManager.s_currentSceneEntering = False
+
+                scene.setDescription(sceneName, sceneDescription)
+
+                SceneManager.s_currentSceneSlots = SceneManager.s_slots[sceneDescription.scene]
+
+                Notification.notify(Notificator.onScenePreparation, sceneName)
+
+                if cb_preparation is not None:
+                    cb_preparation(scene)
+                return
+
+            SceneManager.s_changeSceneName = None
+            SceneManager.s_changeScene = False
+
+            Notification.notify(Notificator.onSceneInit, sceneName)
+
+            if cb is not None:
+                cb(scene)
+                pass
+            pass
+
+        if Mengine.createCurrentScene("Main", sceneName, immediately, False, __onEnterScene, sceneDescription) is False:
+            Trace.log("SceneManager", 0, "SceneManager.enterScene: invalid scene '%s'" % sceneName)
+            SceneManager.s_changeSceneName = None
+            SceneManager.s_changeScene = False
+            return
         pass
 
     @staticmethod

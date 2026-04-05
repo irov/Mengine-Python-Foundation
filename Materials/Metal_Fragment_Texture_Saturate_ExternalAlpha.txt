@@ -1,0 +1,24 @@
+#include <metal_stdlib>
+using namespace metal;
+
+struct FragmentIn {
+    float4 position [[position]];
+    float4 v_Col;
+    float2 v_UV0;
+    float2 v_UV1;
+};
+
+fragment float4 fragmentShader(FragmentIn in [[stage_in]],
+                               texture2d<float> inSampler0 [[texture(0)]],
+                               texture2d<float> inSampler1 [[texture(1)]],
+                               sampler s0 [[sampler(0)]],
+                               sampler s1 [[sampler(1)]],
+                               constant float *uniforms [[buffer(1)]]) {
+    float u_factor = uniforms[0];
+    float4 c0 = inSampler0.sample(s0, in.v_UV0);
+    float4 c1 = inSampler1.sample(s1, in.v_UV1);
+    c0.w = c1.w;
+    float g = dot(c0.xyz, float3(0.299, 0.587, 0.114));
+    float3 sc = mix(c0.xyz, float3(g), u_factor);
+    return float4(sc * in.v_Col.xyz, c0.w * in.v_Col.w);
+}
