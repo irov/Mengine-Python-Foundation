@@ -1,5 +1,5 @@
-<DataBlock Name="Shaders_Standart">   
-    <VertexAttribute Name = "Vertex2D_UV0" RenderPlatform = "Metal">        
+<DataBlock Name="Shaders_Standart">
+    <VertexAttribute Name = "Vertex2D_UV0" RenderPlatform = "Metal">
         <Element Size = "32"/>
         <Attribute Uniform = "inVert" Index = "0" Size = "3" Type = "FLOAT" Normalized = "0" Stride = "32" Offset = "0"/>
         <Attribute Uniform = "inCol" Index = "1" Size = "4" Type = "UNSIGNED_BYTE" Normalized = "1" Stride = "32" Offset = "12"/>
