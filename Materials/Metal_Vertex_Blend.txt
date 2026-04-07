@@ -1,23 +1,31 @@
 #include <metal_stdlib>
 using namespace metal;
 
-struct VertexIn {
+struct VertexIn
+{
     float3 position [[attribute(0)]];
-    float4 color [[attribute(1)]];
-    float2 uv0 [[attribute(2)]];
+    uchar4 color    [[attribute(1)]];
+    float2 uv0      [[attribute(2)]];
 };
 
-struct VertexOut {
+struct VertexOut
+{
     float4 position [[position]];
-    float4 v_Col;
-    float2 v_UV0;
+    half4  color;
+    float2 uv0;
+};
+
+struct Uniforms
+{
+    float4x4 wvpMatrix;
 };
 
 vertex VertexOut vertexShader(VertexIn in [[stage_in]],
-                              constant float4x4 &wvpMatrix [[buffer(1)]]) {
+                              constant Uniforms & uniforms [[buffer(1)]])
+{
     VertexOut out;
-    out.position = wvpMatrix * float4(in.position, 1.0);
-    out.v_Col = in.color;
-    out.v_UV0 = in.uv0;
+    out.position = uniforms.wvpMatrix * float4(in.position, 1.0);
+    out.color = half4(float4(in.color) / 255.0);
+    out.uv0 = in.uv0;
     return out;
 }
