@@ -13,5 +13,5 @@ void main(void)
 
     mediump vec3 saturated = mix(grayscale, color.rgb, u_factor);
 
-    gl_FragColor = v_Col * vec4(saturated, color.a);
+    gl_FragColor = vec4(saturated, color.a);
 }

@@ -20,7 +20,7 @@ fragment half4 fragmentShader(FragmentIn in [[stage_in]],
     half4 c0 = inSampler0.sample(sampler0, in.uv0);
     half4 c1 = inSampler1.sample(sampler1, in.uv1);
     c0.w = c1.w;
-    half g = dot(c0.xyz, half3(0.299h, 0.587h, 0.114h));
+    half g = dot(c0.xyz, half3(0.2126h, 0.7152h, 0.0722h));
     half3 sc = mix(c0.xyz, half3(g), u_factor);
     return half4(sc * half3(in.color.xyz), c0.w * in.color.w);
 }
