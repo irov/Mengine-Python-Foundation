@@ -29,7 +29,7 @@ class AliasShowRewardedAdvert(TaskAlias):
         with source.addParallelTask(2) as (display_respond, show):
             # check is advert shown
             with display_respond.addRaceTask(2) as (completed, reached_limit):
-                completed.addListener(Notificator.onAdShowCompleted)
+                completed.addListener(Notificator.onRewardedAdShowCompleted)
                 reached_limit.addListener(Notificator.onAvailableAdsEnded)
 
             show.addFunction(self._showAd)

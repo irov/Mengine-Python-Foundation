@@ -17,7 +17,6 @@ class DummyAdvertisement(object):
     @staticmethod
     def hideBanner():
         AdType = "Banner"
-        Notification.notify(Notificator.onAdShowCompleted, AdType, True, {})
         return True
 
     @staticmethod
@@ -75,12 +74,12 @@ class DummyAdvertisement(object):
 
             if display_failed:
                 source.addDelay(FakeWatchDelay)
-                source.addNotify(Notificator.onAdShowCompleted, "Interstitial", False, {"placement": placement})
+                source.addFunction(AdvertisementProvider.cbInterstitialShowCompleted, False, {"placement": placement})
             else:
                 source.addDelay(FakeWatchDelay)
 
-                source.addNotify(Notificator.onAdShowCompleted, "Interstitial", True, {"placement": placement})
-                source.addNotify(Notificator.onAdRevenuePaid, "Interstitial", {"placement": placement, "revenue": revenue})
+                source.addFunction(AdvertisementProvider.cbInterstitialShowCompleted, True, {"placement": placement})
+                source.addFunction(AdvertisementProvider.cbInterstitialRevenuePaid, {"placement": placement, "revenue": revenue})
 
         return True
 
@@ -115,14 +114,14 @@ class DummyAdvertisement(object):
 
             if display_failed:
                 source.addDelay(FakeWatchDelay)
-                source.addNotify(Notificator.onAdShowCompleted, "Rewarded", False, {"placement": placement})
+                source.addFunction(AdvertisementProvider.cbRewardedShowCompleted, False, {"placement": placement})
             else:
                 source.addDelay(FakeWatchDelay)
 
-                source.addNotify(Notificator.onAdUserRewarded, "Rewarded", {"placement": placement})
+                source.addFunction(AdvertisementProvider.cbRewardedUserRewarded, {"placement": placement})
 
-                source.addNotify(Notificator.onAdShowCompleted, "Rewarded", True, {"placement": placement})
-                source.addNotify(Notificator.onAdRevenuePaid, "Rewarded", {"placement": placement, "revenue": revenue})
+                source.addFunction(AdvertisementProvider.cbRewardedShowCompleted, True, {"placement": placement})
+                source.addFunction(AdvertisementProvider.cbRewardedRevenuePaid, {"placement": placement, "revenue": revenue})
 
     @staticmethod
     def setProvider():

@@ -562,8 +562,8 @@ class SystemMonetization(System):
     # callbacks
 
     @staticmethod
-    def _onAdUserRewarded(ad_type, params):  # react on showAd()
-        _Log("onAdvertisementReward type: {} params: {}".format(ad_type, params))
+    def _onRewardedAdUserRewarded(params):  # react on showAd()
+        _Log("onAdvertisementReward params: {}".format(params))
 
         placement = params["placement"]
 
@@ -691,7 +691,7 @@ class SystemMonetization(System):
         self.addObserver(Notificator.onGameStorePayGold, self._onPayGold)
 
         # other
-        self.addObserver(Notificator.onAdUserRewarded, self._onAdUserRewarded)
+        self.addObserver(Notificator.onRewardedAdUserRewarded, self._onRewardedAdUserRewarded)
         self.addObserver(Notificator.onAppRated, self._onAppRated)
 
         self._setupObservers()

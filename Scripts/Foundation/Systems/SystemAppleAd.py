@@ -1,3 +1,4 @@
+from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.System import System
 from Foundation.Task.Semaphore import Semaphore
 from Foundation.Utils import SimpleLogger
@@ -204,35 +205,35 @@ class SystemAppleAd(System):
 
     def __cbBannerRevenuePaid(self, params):
         self.__logAd("[Banner cb] pay revenue {}".format(params))
-        Notification.notify(Notificator.onAdRevenuePaid, "Banner", params)
+        AdvertisementProvider.cbBannerRevenuePaid(params)
 
     def __cbInterstitialShowSuccess(self, params):
         self.__logAd("[Interstitial cb] show completed: True, params: {}".format(params))
-        Notification.notify(Notificator.onAdShowCompleted, "Interstitial", True, params)
+        AdvertisementProvider.cbInterstitialShowCompleted(True, params)
 
     def __cbInterstitialShowFailed(self, params):
         self.__logAd("[Interstitial cb] show completed: False, params: {}".format(params))
-        Notification.notify(Notificator.onAdShowCompleted, "Interstitial", False, params)
+        AdvertisementProvider.cbInterstitialShowCompleted(False, params)
 
     def __cbInterstitialRevenuePaid(self, params):
         self.__logAd("[Interstitial cb] pay revenue {}".format(params))
-        Notification.notify(Notificator.onAdRevenuePaid, "Interstitial", params)
+        AdvertisementProvider.cbInterstitialRevenuePaid(params)
 
     def __cbRewardedShowSuccess(self, params):
         self.__logAd("[Rewarded cb] show completed: True, params: {}".format(params))
-        Notification.notify(Notificator.onAdShowCompleted, "Rewarded", True, params)
+        AdvertisementProvider.cbRewardedShowCompleted(True, params)
 
     def __cbRewardedShowFailed(self, params):
         self.__logAd("[Rewarded cb] show completed: False, params: {}".format(params))
-        Notification.notify(Notificator.onAdShowCompleted, "Rewarded", False, params)
+        AdvertisementProvider.cbRewardedShowCompleted(False, params)
 
     def __cbRewardedUserRewarded(self, params):
         self.__logAd("[Rewarded cb] user rewarded: {}".format(params))
-        Notification.notify(Notificator.onAdUserRewarded, "Rewarded", params)
+        AdvertisementProvider.cbRewardedUserRewarded(params)
 
     def __cbRewardedRevenuePaid(self, params):
         self.__logAd("[Rewarded cb] pay revenue {}".format(params))
-        Notification.notify(Notificator.onAdRevenuePaid, "Rewarded", params)
+        AdvertisementProvider.cbRewardedRevenuePaid(params)
 
     def __logAd(self, *args, **kwargs):
         _Log(*args, **kwargs)

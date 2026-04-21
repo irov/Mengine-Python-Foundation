@@ -85,3 +85,35 @@ class AdvertisementProvider(BaseProvider):
     @staticmethod
     def getNoAds():
         return AdvertisementProvider._call("GetNoAds")
+
+    # --- Callbacks: must be invoked by concrete ad systems (Apple/Android/Dummy) -------------------------------------
+
+    @staticmethod
+    def cbBannerRevenuePaid(params):
+        Notification.notify(Notificator.onBannerAdRevenuePaid, params)
+        Notification.notify(Notificator.onAdRevenuePaid, "Banner", params)
+
+    @staticmethod
+    def cbInterstitialShowCompleted(success, params):
+        Notification.notify(Notificator.onInterstitialAdShowCompleted, success, params)
+        Notification.notify(Notificator.onAdShowCompleted, "Interstitial", success, params)
+
+    @staticmethod
+    def cbInterstitialRevenuePaid(params):
+        Notification.notify(Notificator.onInterstitialAdRevenuePaid, params)
+        Notification.notify(Notificator.onAdRevenuePaid, "Interstitial", params)
+
+    @staticmethod
+    def cbRewardedShowCompleted(success, params):
+        Notification.notify(Notificator.onRewardedAdShowCompleted, success, params)
+        Notification.notify(Notificator.onAdShowCompleted, "Rewarded", success, params)
+
+    @staticmethod
+    def cbRewardedUserRewarded(params):
+        Notification.notify(Notificator.onRewardedAdUserRewarded, params)
+        Notification.notify(Notificator.onAdUserRewarded, "Rewarded", params)
+
+    @staticmethod
+    def cbRewardedRevenuePaid(params):
+        Notification.notify(Notificator.onRewardedAdRevenuePaid, params)
+        Notification.notify(Notificator.onAdRevenuePaid, "Rewarded", params)

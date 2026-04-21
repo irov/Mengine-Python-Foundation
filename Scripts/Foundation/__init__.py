@@ -693,6 +693,13 @@ def onInitialize():
         , "onAdRevenuePaid"
         , "onAdUserRewarded"
 
+        , "onInterstitialAdShowCompleted"
+        , "onRewardedAdShowCompleted"
+        , "onBannerAdRevenuePaid"
+        , "onInterstitialAdRevenuePaid"
+        , "onRewardedAdRevenuePaid"
+        , "onRewardedAdUserRewarded"
+
         , "onRequestPromoCodeResult"
 
         , "onAvailableAdsEnded"
