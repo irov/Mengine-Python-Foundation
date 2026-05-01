@@ -70,11 +70,7 @@ class AdjustableScreenUtils(object):
 
     @staticmethod
     def getActualBannerHeight():
-        viewport = AdvertisementProvider.getBannerViewport()
-        if viewport is None:
-            return None
-        height = viewport.end.y - viewport.begin.y
-        return height
+        return AdvertisementProvider.getBannerHeight()
 
     @staticmethod
     def getHeaderHeight():
