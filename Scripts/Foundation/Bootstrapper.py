@@ -1,5 +1,4 @@
 from Foundation.BuildModeManager import BuildModeManager
-from Foundation.Manager import Manager
 from Foundation.Managers import Managers
 from Foundation.SystemManager import SystemManager
 
@@ -57,8 +56,6 @@ def checkPlatform(platform):
     return False
 
 class Bootstrapper(object):
-    s_sessionSystems = []
-
     @staticmethod
     def loadEntities(ModuleName, Types):
         if Mengine.getGameParamBool("NotUseDefaultEntitiesList.{}".format(ModuleName), False) is True:
@@ -159,6 +156,8 @@ class Bootstrapper(object):
                         Trace.log("Bootstrapper", 0, "Bootstrapper.loadManagers manager %s.%s invalid load param %s" % (Module, Name, Param))
                         return False
                     pass
+
+                Trace.msg_dev("Bootstrapper.loadManagers manager {}.{} loaded".format(Module, Name))
                 pass
             pass
 
@@ -173,7 +172,6 @@ class Bootstrapper(object):
         for record in records:
             Module = record.get("Module")
             Name = record.get("Name")
-            Global = bool(record.get("Global", False))
             Enable = bool(record.get("Enable", True))
             Development = record.get("Development")
             Platform = record.get("Platform")
@@ -200,22 +198,14 @@ class Bootstrapper(object):
             if Development is not _DEVELOPMENT and Development is not None:
                 continue
 
-            if Global is False:
-                Bootstrapper.s_sessionSystems.append(Name)
-            else:
-                if SystemManager.availableSystem(Name) is False:
-                    continue
+            if SystemManager.availableSystem(Name) is False:
+                continue
 
-                if SystemManager.runSystem(Name, Name) is False:
-                    Trace.log("Bootstrapper", 0, "Bootstrapper.loadSystems system %s invalid run" % Name)
-                    return False
+            if SystemManager.runSystem(Name, Name) is False:
+                Trace.log("Bootstrapper", 0, "Bootstrapper.loadSystems system %s invalid run" % Name)
+                return False
+
+            Trace.msg_dev("Bootstrapper.loadSystems system {}.{} loaded".format(Module, Name))
+            pass
 
         return True
-
-    @staticmethod
-    def getSessionSystems():
-        return Bootstrapper.s_sessionSystems
-
-    @staticmethod
-    def shutdown():
-        Bootstrapper.s_sessionSystems = []

@@ -22,9 +22,9 @@ class SystemAppleServices(System):
     """
 
     b_plugins = {
-        "GameCenter": Mengine.isAvailablePlugin(PLUGIN_GAME_CENTER),
-        "Review": Mengine.isAvailablePlugin(PLUGIN_STORE_REVIEW),
-        "InAppPurchase": Mengine.isAvailablePlugin(PLUGIN_IN_APP_PURCHASE),
+        PLUGIN_GAME_CENTER: Mengine.isAvailablePlugin(PLUGIN_GAME_CENTER),
+        PLUGIN_STORE_REVIEW: Mengine.isAvailablePlugin(PLUGIN_STORE_REVIEW),
+        PLUGIN_IN_APP_PURCHASE: Mengine.isAvailablePlugin(PLUGIN_IN_APP_PURCHASE),
     }
 
     _GameCenter_authenticated = False
@@ -37,12 +37,12 @@ class SystemAppleServices(System):
     EVENT_PRODUCTS_RESPONDED = Event("AppleInAppPurchaseProductsResponded")
 
     def _onInitialize(self):
-        if self.b_plugins["InAppPurchase"] is True:
+        if self.b_plugins[PLUGIN_IN_APP_PURCHASE] is True:
             if self.canUserMakePurchases() is True:
                 SystemAppleServices._can_use_payment = True
                 self.setInAppPurchaseProvider()
 
-        if self.b_plugins["Review"] is True:
+        if self.b_plugins[PLUGIN_STORE_REVIEW] is True:
             RateAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
 
         if Mengine.isAvailablePlugin(PLUGIN_USER_MESSAGING_PLATFORM) is True:
@@ -51,7 +51,7 @@ class SystemAppleServices(System):
                 IsConsentFlow=self.isConsentFlow,
             ))
 
-        if self.b_plugins["GameCenter"] is True:
+        if self.b_plugins[PLUGIN_GAME_CENTER] is True:
             SystemAppleServices.setGameCenterConnectProvider()
             SystemAppleServices.connectToGameCenter()
 
@@ -430,14 +430,14 @@ class SystemAppleServices(System):
             return
         if Mengine.hasDevToDebugTab("AppleServices"):
             return
-        if any([self.b_plugins["GameCenter"], self.b_plugins["Review"], self.b_plugins["InAppPurchase"]]) is False:
+        if any([self.b_plugins[PLUGIN_GAME_CENTER], self.b_plugins[PLUGIN_STORE_REVIEW], self.b_plugins[PLUGIN_IN_APP_PURCHASE]]) is False:
             return
 
         tab = Mengine.addDevToDebugTab("AppleServices")
         widgets = []
 
         # achievements
-        if self.b_plugins["GameCenter"] is True:
+        if self.b_plugins[PLUGIN_GAME_CENTER] is True:
             def _send_achievement(text):
                 """ input text allow 2 words separated by space:
                         first word - achievement_id
@@ -454,7 +454,7 @@ class SystemAppleServices(System):
             widgets.append(w_achievement)
 
         # purchases
-        if self.b_plugins["InAppPurchase"] is True:
+        if self.b_plugins[PLUGIN_IN_APP_PURCHASE] is True:
             w_restore = Mengine.createDevToDebugWidgetButton("restore_purchases")
             w_restore.setTitle("Restore Purchases")
             w_restore.setClickEvent(self.restorePurchases)
@@ -467,7 +467,7 @@ class SystemAppleServices(System):
             widgets.append(w_buy)
 
         # rateApp
-        if self.b_plugins["Review"] is True:
+        if self.b_plugins[PLUGIN_STORE_REVIEW] is True:
             w_rate = Mengine.createDevToDebugWidgetButton("rate_app")
             w_rate.setTitle("Show Rate App window")
             w_rate.setClickEvent(self.rateApp)

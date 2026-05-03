@@ -20,6 +20,7 @@ def onPreparation(isDebug):
         , "onStop"
         , "onAccountFinalize"
         , "onFinalize"
+        , "onDestroy"
 
         , "onKeyEvent"
         , "onKeyEventEnd"
@@ -168,7 +169,7 @@ def onFinalize():
 def onDestroy():
     Trace.msg_dev("Personality.onDestroy")
 
-    Bootstrapper.shutdown()
+    Notification.notify(Notificator.onDestroy)
     pass
 
 def onHandleKeyEvent(event):

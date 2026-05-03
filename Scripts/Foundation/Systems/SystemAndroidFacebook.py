@@ -1,9 +1,11 @@
 from Foundation.System import System
 from Foundation.Providers.FacebookProvider import FacebookProvider
 
-ANDROID_PLUGIN_NAME = "AndroidFacebookPlugin"
+PLUGIN_NAME = "AndroidFacebookPlugin"
 
 class SystemAndroidFacebook(System):
+    is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
+
     onLoginSuccess = Event("onLoginSuccess")
     onLoginCancel = Event("onLoginCancel")
     onLoginError = Event("onLoginError")
@@ -28,11 +30,11 @@ class SystemAndroidFacebook(System):
 
     @staticmethod
     def _onAvailable(params):
-        return Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME)
+        return SystemAndroidFacebook.is_plugin_active
 
     def _onInitialize(self):
         def _setCallback(name, cb):
-            Mengine.addAndroidCallback(ANDROID_PLUGIN_NAME, name, cb)
+            Mengine.addAndroidCallback(PLUGIN_NAME, name, cb)
 
         _setCallback("onFacebookLoginSuccess", self._cbLoginSuccess)
         _setCallback("onFacebookLoginCancel", self._cbLoginCancel)
@@ -64,11 +66,11 @@ class SystemAndroidFacebook(System):
         pass
 
     def isLoggedIn(self):
-        is_logged = Mengine.androidBooleanMethod(ANDROID_PLUGIN_NAME, "isLoggedIn")
+        is_logged = Mengine.androidBooleanMethod(PLUGIN_NAME, "isLoggedIn")
         return is_logged
 
     def getAccessToken(self):
-        token = Mengine.androidStringMethod(ANDROID_PLUGIN_NAME, "getAccessToken")
+        token = Mengine.androidStringMethod(PLUGIN_NAME, "getAccessToken")
         return token
 
     def performLogin(self, permissions=('email', 'public_profile'), _cb_success=None, _cb_cancel=None, _cb_error=None):
@@ -80,7 +82,7 @@ class SystemAndroidFacebook(System):
 
         SystemAndroidFacebook.addCallbacks(callbacks)
 
-        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "performLogin", list(permissions))
+        Mengine.androidMethod(PLUGIN_NAME, "performLogin", list(permissions))
 
     def shareLink(self, link=None, msg='', _cb_success=None, _cb_cancel=None, _cb_error=None):
         callbacks = {
@@ -91,7 +93,7 @@ class SystemAndroidFacebook(System):
 
         SystemAndroidFacebook.addCallbacks(callbacks)
 
-        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "shareLink", link, '', msg)
+        Mengine.androidMethod(PLUGIN_NAME, "shareLink", link, '', msg)
 
     def logout(self, _cb_success=None, _cb_error=None):
         callbacks = {
@@ -101,7 +103,7 @@ class SystemAndroidFacebook(System):
 
         SystemAndroidFacebook.addCallbacks(callbacks)
 
-        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "logout")
+        Mengine.androidMethod(PLUGIN_NAME, "logout")
 
     def getUser(self, _cb_success=None, _cb_error=None):
         callbacks = {
@@ -111,7 +113,7 @@ class SystemAndroidFacebook(System):
 
         SystemAndroidFacebook.addCallbacks(callbacks)
 
-        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getUser")
+        Mengine.androidMethod(PLUGIN_NAME, "getUser")
 
     def getProfilePictureLink(self, type_parameter="large", _cb_success=None, _cb_error=None):
         callbacks = {
@@ -121,7 +123,7 @@ class SystemAndroidFacebook(System):
 
         SystemAndroidFacebook.addCallbacks(callbacks)
 
-        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getProfilePictureLink", type_parameter)
+        Mengine.androidMethod(PLUGIN_NAME, "getProfilePictureLink", type_parameter)
 
     def getProfileUserPictureLink(self, user_id, type_parameter="large", _cb_success=None, _cb_error=None):
         callbacks = {
@@ -131,7 +133,7 @@ class SystemAndroidFacebook(System):
 
         SystemAndroidFacebook.addCallbacks(callbacks)
 
-        Mengine.androidMethod(ANDROID_PLUGIN_NAME, "getProfileUserPictureLink", user_id, type_parameter)
+        Mengine.androidMethod(PLUGIN_NAME, "getProfileUserPictureLink", user_id, type_parameter)
 
     def _cbLoginSuccess(self):
         self.onLoginSuccess()

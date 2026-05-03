@@ -4,18 +4,17 @@ from Foundation.Systems.SystemAndroidAd import SystemAndroidAd
 
 _Log = SimpleLogger("SystemAndroidAdMob")
 
-ANDROID_PLUGIN_NAME = "AndroidAdMobPlugin"
+PLUGIN_NAME = "AndroidAdMobPlugin"
 
 
 class SystemAndroidAdMob(SystemAndroidAd):
     """ Advertisement module 'AdMob' for Android """
 
-    is_plugin_active = False
+    is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
     is_sdk_init = False
 
     @staticmethod
     def _onAvailable(params):
-        SystemAndroidAdMob.is_plugin_active = Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME)
         return SystemAndroidAdMob.is_plugin_active
 
     def _onInitialize(self):

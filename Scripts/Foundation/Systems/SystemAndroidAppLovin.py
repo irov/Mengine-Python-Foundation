@@ -5,18 +5,16 @@ from Foundation.Systems.SystemAndroidAd import SystemAndroidAd
 
 _Log = SimpleLogger("SystemAndroidAppLovin")
 
-ANDROID_PLUGIN_NAME = "AndroidAppLovinPlugin"
-
+PLUGIN_NAME = "AndroidAppLovinPlugin"
 
 class SystemAndroidAppLovin(SystemAndroidAd):
     """ Advertisement module 'AppLovin' for Android """
 
-    is_plugin_active = False
+    is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
     is_sdk_init = False
 
     @staticmethod
     def _onAvailable(params):
-        SystemAndroidAppLovin.is_plugin_active = Mengine.isAvailablePlugin(ANDROID_PLUGIN_NAME)
         return SystemAndroidAppLovin.is_plugin_active
 
     def _onInitialize(self):
@@ -36,10 +34,10 @@ class SystemAndroidAppLovin(SystemAndroidAd):
         return SystemAndroidAppLovin.is_sdk_init is True
 
     def showConsentFlow(self):
-        self._androidMethod(ANDROID_PLUGIN_NAME, "showConsentFlow")
+        self._androidMethod(PLUGIN_NAME, "showConsentFlow")
 
     def isConsentFlow(self):
-        return self._androidBooleanMethod(ANDROID_PLUGIN_NAME, "isConsentFlowUserGeographyGDPR")
+        return self._androidBooleanMethod(PLUGIN_NAME, "isConsentFlowUserGeographyGDPR")
 
     def __cbSdkInitialized(self):
         _Log("[SDK cb] onAppLovinPluginOnSdkInitialized")

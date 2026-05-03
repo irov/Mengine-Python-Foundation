@@ -1,9 +1,11 @@
 from Foundation.System import System
 from Foundation.Providers.FacebookProvider import FacebookProvider
 
-APPLE_PLUGIN_NAME = "AppleFacebookPlugin"
+PLUGIN_NAME = "AppleFacebookPlugin"
 
 class SystemAppleFacebook(System):
+    is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
+
     onLoginSuccess = Event("onLoginSuccess")
     onLoginCancel = Event("onLoginCancel")
     onLoginError = Event("onLoginError")
@@ -28,7 +30,7 @@ class SystemAppleFacebook(System):
 
     @staticmethod
     def _onAvailable(params):
-        return Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME)
+        return SystemAppleFacebook.is_plugin_active
 
     def _onInitialize(self):
         callbacks = {

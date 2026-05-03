@@ -5,18 +5,17 @@ from Foundation.Systems.SystemAppleAd import SystemAppleAd
 
 _Log = SimpleLogger("SystemAppleAppLovin")
 
-APPLE_PLUGIN_NAME = "AppleAppLovinPlugin"
+PLUGIN_NAME = "AppleAppLovinPlugin"
 
 
 class SystemAppleAppLovin(SystemAppleAd):
     """ Advertisement module 'AppLovin' for iOS """
 
-    is_plugin_active = False
+    is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
     is_sdk_init = False
 
     @staticmethod
     def _onAvailable(params):
-        SystemAppleAppLovin.is_plugin_active = Mengine.isAvailablePlugin(APPLE_PLUGIN_NAME)
         return SystemAppleAppLovin.is_plugin_active
 
     def _onInitialize(self):
