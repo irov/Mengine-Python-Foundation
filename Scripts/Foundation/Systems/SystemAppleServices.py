@@ -9,9 +9,10 @@ from Foundation.Providers.LeaderboardProvider import LeaderboardProvider
 from Foundation.TaskManager import TaskManager
 
 _Log = SimpleLogger("SystemAppleServices", option="apple")
-PLUGIN_GAME_CENTER = "AppleGameCenter"
-PLUGIN_STORE_REVIEW = "AppleStoreReview"
-PLUGIN_IN_APP_PURCHASE = "AppleStoreInAppPurchase"
+
+PLUGIN_GAME_CENTER = "AppleGameCenterPlugin"
+PLUGIN_STORE_REVIEW = "AppleStoreReviewPlugin"
+PLUGIN_IN_APP_PURCHASE = "AppleStoreInAppPurchasePlugin"
 PLUGIN_USER_MESSAGING_PLATFORM = "AppleUserMessagingPlatformPlugin"
 
 class SystemAppleServices(System):
@@ -25,6 +26,7 @@ class SystemAppleServices(System):
         PLUGIN_GAME_CENTER: Mengine.isAvailablePlugin(PLUGIN_GAME_CENTER),
         PLUGIN_STORE_REVIEW: Mengine.isAvailablePlugin(PLUGIN_STORE_REVIEW),
         PLUGIN_IN_APP_PURCHASE: Mengine.isAvailablePlugin(PLUGIN_IN_APP_PURCHASE),
+        PLUGIN_USER_MESSAGING_PLATFORM: Mengine.isAvailablePlugin(PLUGIN_USER_MESSAGING_PLATFORM)
     }
 
     _GameCenter_authenticated = False
@@ -45,7 +47,7 @@ class SystemAppleServices(System):
         if self.b_plugins[PLUGIN_STORE_REVIEW] is True:
             RateAppProvider.setProvider("Apple", dict(rateApp=self.rateApp))
 
-        if Mengine.isAvailablePlugin(PLUGIN_USER_MESSAGING_PLATFORM) is True:
+        if self.b_plugins[PLUGIN_USER_MESSAGING_PLATFORM] is True:
             ConsentProvider.setProvider("Apple", dict(
                 ShowConsentFlow=self.showConsentFlow,
                 IsConsentFlow=self.isConsentFlow,

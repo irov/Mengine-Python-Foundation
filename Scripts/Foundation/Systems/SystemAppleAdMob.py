@@ -6,7 +6,6 @@ _Log = SimpleLogger("SystemAppleAdMob")
 
 PLUGIN_NAME = "AppleAdMobPlugin"
 
-
 class SystemAppleAdMob(SystemAppleAd):
     """ Advertisement module 'AdMob' for iOS """
 

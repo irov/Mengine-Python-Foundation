@@ -6,7 +6,6 @@ _Log = SimpleLogger("SystemAndroidAdMob")
 
 PLUGIN_NAME = "AndroidAdMobPlugin"
 
-
 class SystemAndroidAdMob(SystemAndroidAd):
     """ Advertisement module 'AdMob' for Android """
 

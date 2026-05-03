@@ -15,7 +15,6 @@ _Log = SimpleLogger("SystemMonetization", option="monetization")
 
 ALIAS_GLOBAL_ADVERT_COUNTER = "$AliasGlobalAdvertCounter"
 
-
 class SystemMonetization(System):
     storage = {}
     components = {}

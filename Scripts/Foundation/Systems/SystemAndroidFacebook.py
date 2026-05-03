@@ -27,6 +27,7 @@ class SystemAndroidFacebook(System):
 
     def __init__(self):
         super(SystemAndroidFacebook, self).__init__()
+        pass
 
     @staticmethod
     def _onAvailable(params):

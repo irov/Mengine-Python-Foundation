@@ -7,7 +7,6 @@ _Log = SimpleLogger("SystemAppleAppLovin")
 
 PLUGIN_NAME = "AppleAppLovinPlugin"
 
-
 class SystemAppleAppLovin(SystemAppleAd):
     """ Advertisement module 'AppLovin' for iOS """
 

@@ -2,7 +2,6 @@ from Foundation.DebugNotificationsManager import DebugNotificationsManager
 from Foundation.System import System
 from Foundation.Systems.SystemQALogger import SystemQALogger
 
-
 class SystemDebugNotifications(System):
     # Confluence doc: https://wonderland-games.atlassian.net/wiki/spaces/SCR/pages/1772879886/DebugNotifications
 

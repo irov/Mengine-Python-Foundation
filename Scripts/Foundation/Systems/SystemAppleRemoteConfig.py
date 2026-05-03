@@ -1,7 +1,7 @@
 from Foundation.System import System
 from Foundation.Providers.RemoteConfigProvider import RemoteConfigProvider
 
-PLUGIN_NAME = "AppleFirebaseRemoteConfig"
+PLUGIN_NAME = "AppleFirebaseRemoteConfigPlugin"
 
 class SystemAppleRemoteConfig(System):
     is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
