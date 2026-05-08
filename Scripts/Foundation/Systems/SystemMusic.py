@@ -45,13 +45,46 @@ class SystemMusic(System):
                 if self.pauseMusic is True:
                     Mengine.musicResume()
                     self.pauseMusic = False
+            elif self.__adoptPlayListIfSameTrack(playList) is True:
+                # Same currently-playing track is present in the new playlist:
+                # keep playing without restart, just rebind to the new list.
+                if self.pauseMusic is True:
+                    Mengine.musicResume()
+                    self.pauseMusic = False
             else:
                 self.__switchPlayList(playList)
+            return False
+
+        if self.__adoptPlayListIfSameTrack(playList) is True:
+            self.playMusic = True
+            if self.pauseMusic is True:
+                Mengine.musicResume()
+                self.pauseMusic = False
             return False
 
         self.__switchPlayList(playList)
         self.playMusic = True
         return False
+
+    def __adoptPlayListIfSameTrack(self, playList):
+        if playList is None or len(playList) == 0:
+            return False
+        currentTrack = self.lastTrack.get(id(self.playList)) if self.playList is not None else None
+        if currentTrack is None:
+            return False
+        try:
+            newIndex = playList.index(currentTrack)
+        except ValueError:
+            return False
+
+        # Save outgoing playlist position
+        if self.playList is not None and self.playList is not playList:
+            self.playListIndex[id(self.playList)] = self.currentIndex
+
+        self.playList = playList
+        self.currentIndex = newIndex
+        self.lastTrack[id(playList)] = currentTrack
+        return True
 
     def __switchPlayList(self, playList):
         # Save current playlist position before switching to a different one
@@ -90,15 +123,19 @@ class SystemMusic(System):
         self.lastTrack[id(playList)] = track
 
         def _onAmplifierMusicEnd(identity):
-            if self.playList is not playList:
+            # Advance only if state still matches: same track was active and we're not paused/stopped.
+            currentPlayList = self.playList
+            if currentPlayList is None or len(currentPlayList) == 0:
                 return
             if self.playMusic is False or self.pauseMusic is True:
                 return
+            if self.lastTrack.get(id(currentPlayList)) != track:
+                return
 
             if self.random is True:
-                self.currentIndex = self.__pickRandomIndex(playList)
+                self.currentIndex = self.__pickRandomIndex(currentPlayList)
             else:
-                self.currentIndex = (self.currentIndex + 1) % len(playList)
+                self.currentIndex = (self.currentIndex + 1) % len(currentPlayList)
             # Natural in-playlist transition — no fade
             self.__playCurrent(fade=False)
 
