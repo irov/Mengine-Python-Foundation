@@ -70,10 +70,12 @@ class TaskMovie2SocketBase(MixinMovie2, MixinEvent, Task):
     def _onFinally(self):
         super(TaskMovie2SocketBase, self)._onFinally()
 
-        self.Movie2.setInteractive(False)
+        if self.Movie2.isDestroy() is False:
+            self.Movie2.setInteractive(False)
 
-        if self.AutoEnable is True:
-            self.Movie2.setEnable(False)
+            if self.AutoEnable is True:
+                self.Movie2.setEnable(False)
+                pass
             pass
         pass
     pass
