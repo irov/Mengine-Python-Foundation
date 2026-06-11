@@ -274,6 +274,12 @@ class VirtualArea(Initializer):
         Mengine.enableGlobalHandler(self._mouse_release_handler, False)
         Mengine.enableGlobalHandler(self._mouse_leave_handler, False)
 
+    def lock_scroll(self, value):
+        self._frozen = value
+        Mengine.enableGlobalHandler(self._mouse_move_handler, False)
+        Mengine.enableGlobalHandler(self._mouse_release_handler, False)
+        Mengine.enableGlobalHandler(self._mouse_leave_handler, False)
+
     def setup_viewport(self, left, top=None, right=None, bottom=None):
         """
         Sets up the size of rendering viewport of virtual area.
