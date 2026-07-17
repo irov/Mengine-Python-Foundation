@@ -8,6 +8,8 @@ class AdvertisementProvider(BaseProvider):
         - Banner
     """
 
+    s_fullscreen_ad_showing = False
+
     s_allowed_methods = [
         "ShowBanner",
         "HideBanner",
@@ -30,6 +32,11 @@ class AdvertisementProvider(BaseProvider):
         from Foundation.Providers.DummyAdvertisement import DummyAdvertisement
         DummyAdvertisement.setProvider()
 
+    @classmethod
+    def removeProvider(cls):
+        cls.s_fullscreen_ad_showing = False
+        super(AdvertisementProvider, cls).removeProvider()
+
     @staticmethod
     def showBanner():
         return AdvertisementProvider._call("ShowBanner")
@@ -48,7 +55,16 @@ class AdvertisementProvider(BaseProvider):
 
     @staticmethod
     def showInterstitialAdvert(placement):
-        return AdvertisementProvider._call("ShowInterstitialAdvert", placement)
+        if AdvertisementProvider.s_fullscreen_ad_showing is True:
+            return False
+
+        AdvertisementProvider.s_fullscreen_ad_showing = True
+
+        if AdvertisementProvider._call("ShowInterstitialAdvert", placement) is True:
+            return True
+
+        AdvertisementProvider.s_fullscreen_ad_showing = False
+        return False
 
     @staticmethod
     def isShowingInterstitialAdvert():
@@ -68,7 +84,16 @@ class AdvertisementProvider(BaseProvider):
 
     @staticmethod
     def showRewardedAdvert(placement):
-        return AdvertisementProvider._call("ShowRewardedAdvert", placement)
+        if AdvertisementProvider.s_fullscreen_ad_showing is True:
+            return False
+
+        AdvertisementProvider.s_fullscreen_ad_showing = True
+
+        if AdvertisementProvider._call("ShowRewardedAdvert", placement) is True:
+            return True
+
+        AdvertisementProvider.s_fullscreen_ad_showing = False
+        return False
 
     @staticmethod
     def isShowingRewardedAdvert():
@@ -95,6 +120,7 @@ class AdvertisementProvider(BaseProvider):
 
     @staticmethod
     def cbInterstitialShowCompleted(success, params):
+        AdvertisementProvider.s_fullscreen_ad_showing = False
         Notification.notify(Notificator.onInterstitialAdShowCompleted, success, params)
         Notification.notify(Notificator.onAdShowCompleted, "Interstitial", success, params)
 
@@ -105,6 +131,7 @@ class AdvertisementProvider(BaseProvider):
 
     @staticmethod
     def cbRewardedShowCompleted(success, params):
+        AdvertisementProvider.s_fullscreen_ad_showing = False
         Notification.notify(Notificator.onRewardedAdShowCompleted, success, params)
         Notification.notify(Notificator.onAdShowCompleted, "Rewarded", success, params)
 

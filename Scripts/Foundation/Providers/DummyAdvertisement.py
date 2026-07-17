@@ -123,6 +123,8 @@ class DummyAdvertisement(object):
                 source.addFunction(AdvertisementProvider.cbRewardedShowCompleted, True, {"placement": placement})
                 source.addFunction(AdvertisementProvider.cbRewardedRevenuePaid, {"placement": placement, "revenue": revenue})
 
+        return True
+
     @staticmethod
     def setProvider():
         def _HasRewardedAdvert():

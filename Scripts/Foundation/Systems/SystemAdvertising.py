@@ -1,24 +1,9 @@
 from Foundation.System import System
 
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
-from Foundation.DefaultManager import DefaultManager
-from Foundation.PolicyManager import PolicyManager
-from Foundation.DemonManager import DemonManager
 from Foundation.TaskManager import TaskManager
 
 class SystemAdvertising(System):
-    DEFAULT_ADVERTISING_SCENE = "Advertising"
-
-    def __init__(self):
-        super(SystemAdvertising, self).__init__()
-        pass
-
-    def _onInitialize(self):
-        PolicyAliasTransitionAdvertising = DefaultManager.getDefault("AliasTransition", default="PolicyAliasTransitionAdvertising")
-
-        PolicyManager.setPolicy("AliasTransition", PolicyAliasTransitionAdvertising)
-        pass
-
     def isInterstitialEnabled(self):
         if Mengine.getConfigBool("Advertising", "Interstitial", False) is False:
             return False
@@ -49,15 +34,21 @@ class SystemAdvertising(System):
         if __checkAdInterstitial(placement) is False:
             if Skip is False:
                 Notification.notify(Notificator.onChangeScene, next_scene)
-                pass
             return False
 
-        AdvertisingScene = DemonManager.getDemon("AdvertisingScene")
-        AdvertisingScene.setParam("NextScene", next_scene)
-        AdvertisingScene.setParam("AdPlacement", placement)
+        task_chain = TaskManager.createTaskChain(CallerDeep=1, Global=True)
 
-        AdvertisingSceneName = DefaultManager.getDefault("AdvertisingSceneName", default=SystemAdvertising.DEFAULT_ADVERTISING_SCENE)
+        if task_chain is None:
+            if Skip is False:
+                Notification.notify(Notificator.onChangeScene, next_scene)
+            return False
 
-        Notification.notify(Notificator.onChangeScene, AdvertisingSceneName)
+        with task_chain as source:
+            source.addTask(
+                "AliasShowInterstitialAdvert",
+                AdPlacement=placement
+            )
+
+            source.addNotify(Notificator.onChangeScene, next_scene)
 
         return True
