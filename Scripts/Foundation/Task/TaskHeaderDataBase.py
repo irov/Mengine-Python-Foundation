@@ -15,7 +15,7 @@ class TaskHeaderDataBase(Task):
         self.requestId = None
 
     def _onRun(self):
-        json_data = json.dumps(self.data)
+        json_data = Mengine.encodeJSON(self.data)
         self.requestId = Mengine.headerData(self.url, self.headers, json_data, self.__onHeaderData)
         return False
 

@@ -1,4 +1,3 @@
-import json
 from Foundation.Task.TaskHeaderDataBase import TaskHeaderDataBase
 
 
@@ -8,7 +7,7 @@ class TaskPlayFabRequest(TaskHeaderDataBase):
         error_data = response_data = None
 
         # Contacted playfab
-        decoded_response = json.loads(response)
+        decoded_response = Mengine.decodeJSON(response)
 
         if decoded_response["code"] != 200:
             # contacted PlayFab, but response indicated failure

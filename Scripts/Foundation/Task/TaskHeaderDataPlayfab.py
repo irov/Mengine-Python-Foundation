@@ -1,4 +1,3 @@
-import json
 from Foundation.Task.Task import Task
 
 
@@ -16,7 +15,7 @@ class TaskHeaderDataPlayfab(Task):
         self.requestId = None
 
     def _onRun(self):
-        json_data = json.dumps(self.data)
+        json_data = Mengine.encodeJSON(self.data)
 
         self.requestId = Mengine.headerData(self.url, self.headers, json_data, self._onHeaderData)
 
@@ -29,7 +28,7 @@ class TaskHeaderDataPlayfab(Task):
         response_data = None
 
         if status == 0:
-            decoded_response = json.loads(response)
+            decoded_response = Mengine.decodeJSON(response)
             response_data = decoded_response.get('data', {})
         else:
             self.log("{}".format(error))

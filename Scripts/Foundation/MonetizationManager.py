@@ -1,4 +1,3 @@
-import json
 from Foundation.DatabaseManager import DatabaseManager
 from Foundation.Manager import Manager
 from Foundation.CurrencyManager import CurrencyManager
@@ -477,7 +476,7 @@ class MonetizationManager(CurrencyManager):
         }
 
         try:
-            patch = json.loads(json_string)
+            patch = Mengine.decodeJSON(json_string)
 
             for key, value in patch.items():
                 if key not in whitelist:
