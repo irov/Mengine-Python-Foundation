@@ -17,9 +17,18 @@ class TaskVirtualAreaScroll(Task):
 
         self.wait = params.get("Wait", False)
 
+    def __destroyFollowers(self):
+        if self.progress_value_follower_x is not None:
+            Mengine.destroyValueFollower(self.progress_value_follower_x)
+            self.progress_value_follower_x = None
+        if self.progress_value_follower_y is not None:
+            Mengine.destroyValueFollower(self.progress_value_follower_y)
+            self.progress_value_follower_y = None
+
     def __update_x(self, new_value, virtual_area):
         virtual_area.set_percentage(x=new_value)
         if new_value == self.finish_value.x:
+            self.progress_value_follower_x = None
             if self.wait is True:
                 self.complete()
             return True
@@ -27,6 +36,7 @@ class TaskVirtualAreaScroll(Task):
     def __update_y(self, new_value, virtual_area):
         virtual_area.set_percentage(y=new_value)
         if new_value == self.finish_value.y:
+            self.progress_value_follower_y = None
             if self.wait is True:
                 self.complete()
             return True
@@ -79,5 +89,16 @@ class TaskVirtualAreaScroll(Task):
             return False
         return True
 
+    def _onSkip(self):
+        super(TaskVirtualAreaScroll, self)._onSkip()
+        self.__destroyFollowers()
+
     def _onFinalize(self):
         super(TaskVirtualAreaScroll, self)._onFinalize()
+        # Only destroy on natural finalize when we were in wait mode: followers
+        # should already be None (cleared by __update on target reach), so this
+        # is a no-op safety net. In fire-and-forget mode (wait=False), the task
+        # finalizes immediately after _onRun while the followers still need to
+        # run — leave them alone; cancellation goes through _onSkip.
+        if self.wait is True:
+            self.__destroyFollowers()
