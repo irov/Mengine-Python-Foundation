@@ -30,7 +30,7 @@ class Initializer(object):
         self._initialized = True
 
         if _VALIDATION is True:
-            Initializer.InitializerReferences.setdefault(self.__class__, {})[self] = traceback.extract_stack()
+            Initializer.InitializerReferences.setdefault(self.__class__, {})[self] = Trace.extract_stack()
             pass
 
         return True

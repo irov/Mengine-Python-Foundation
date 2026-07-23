@@ -19,8 +19,8 @@ class TaskNodeMovieEvent(MixinNode, Task):
             pass
 
         if self.Filter is not None:
-            if Utils.is_valid_functor_args(self.Filter, 1) is False:
-                self.validateFailed(params, "NodeMovie %s filter %s is bad arguments or kwargs" % (self.node.getName(), self.Filter))
+            if Utils.is_valid_functor(self.Filter) is False:
+                self.validateFailed(params, "NodeMovie %s filter %s is not callable" % (self.node.getName(), self.Filter))
                 pass
             pass
         pass

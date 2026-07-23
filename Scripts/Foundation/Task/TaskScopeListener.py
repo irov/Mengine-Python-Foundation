@@ -27,7 +27,7 @@ class TaskScopeListener(MixinGroup, MixinObserver, Task):
             self.validateFailed(params, "invalidate id %s" % (self.ID))
             pass
 
-        if callable(self.Scope) is False:
+        if Utils.is_valid_functor(self.Scope) is False:
             self.validateFailed(params, "Scope %s is not callable" % (self.Scope))
             pass
         pass
@@ -57,8 +57,8 @@ class TaskScopeListener(MixinGroup, MixinObserver, Task):
     def _onNotifyFilter(self, *args, **kwargs):
         if self.Filter is not None:
             if _DEVELOPMENT is True:
-                if Utils.is_valid_functor_args(self.Filter, len(args) + len(kwargs)) is False:
-                    self.log("%s filter %s is bad arguments or kwargs" % (self.ID, self.Filter))
+                if Utils.is_valid_functor(self.Filter) is False:
+                    self.log("%s filter %s is not callable" % (self.ID, self.Filter))
 
                     return False
 

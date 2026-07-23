@@ -14,12 +14,8 @@ class TaskFunction(Task):
     def _onValidate(self, params):
         super(TaskFunction, self)._onValidate(params)
 
-        if callable(self.Fn) is False:
+        if Utils.is_valid_functor(self.Fn) is False:
             self.validateFailed(params, "Fn %s is not callable" % (self.Fn))
-            pass
-
-        if Utils.is_valid_functor_args(self.Fn, 0) is False:
-            self.validateFailed(params, "Fn %s is bad arguments or kwargs" % (self.Fn))
             pass
         pass
 

@@ -4,9 +4,6 @@ def onInitialize():
     Mengine.addGlobalModule("baseslots", baseslots)
     Mengine.addGlobalModule("finalslots", finalslots)
 
-    import traceback
-    Mengine.addGlobalModule("traceback", traceback)
-
     from Notificator import Notificator
     Mengine.addGlobalModule("Notificator", Notificator)
 

@@ -856,61 +856,14 @@ else:
 
         return FunctorStore(Fn, Args, Kwargs)
 
-def is_valid_functor_args(Fn, Count):
+def is_valid_functor(Fn):
     if Fn is None:
         return False
 
     if isinstance(Fn, FunctorStore) is False:
         return False
 
-    if callable(Fn.fn) is False:
-        return False
-
-    len_fn_args = 0 if Fn.args is None else len(Fn.args)
-    len_fn_kwargs = 0 if Fn.kwargs is None else len(Fn.kwargs)
-
-    return Utils.is_valid_function_args(Fn.fn, len_fn_args + len_fn_kwargs + Count)
-
-def is_valid_function_args(Fn, Count):
-    import types
-
-    if isinstance(Fn, types.MethodType) is True:
-        if Fn.func_code.co_flags & 4:
-            return True
-            pass
-
-        if Fn.func_code.co_flags & 8:
-            return True
-            pass
-
-        fn_argcount = Fn.func_code.co_argcount
-        fn_argtake = Count + 1
-        fn_default = len(Fn.func_defaults or ())
-
-        if fn_argtake > fn_argcount or fn_argcount - fn_argtake > fn_default:
-            return False
-            pass
-        pass
-    elif isinstance(Fn, types.UnboundMethodType) is True or isinstance(Fn, types.FunctionType) is True:
-        if Fn.func_code.co_flags & 4:
-            return True
-            pass
-
-        if Fn.func_code.co_flags & 8:
-            return True
-            pass
-
-        fn_argcount = Fn.func_code.co_argcount
-        fn_argtake = Count
-        fn_default = len(Fn.func_defaults or ())
-
-        if fn_argtake > fn_argcount or fn_argcount - fn_argtake > fn_default:
-            return False
-            pass
-        pass
-
-    return True
-    pass
+    return callable(Fn.fn)
 
 def id_maker(count):
     """
@@ -1132,19 +1085,20 @@ def getCurrentBuildVersionNumber():
 
 def getNumberFromVersion(version):
     """ :returns: int(hex-string) version from string version type *.*.* or None """
-    import re
+    if type(version) != str or "." not in version:
+        return None
 
-    if type(version) == str and "." in version and not re.search("[a-zA-Z]", version):
-        split_in = version.split(".")
-        split_out = []
+    split_in = version.split(".")
+    split_out = []
 
-        for char in split_in:
-            split_out.append(format(int(char), "0{}".format(4 if char == split_in[0] else 2)))
+    for char in split_in:
+        if char.isdigit() is False:
+            return None
 
-        version_number = int("0x" + "".join(char for char in split_out), 0)
-        return version_number
+        split_out.append(format(int(char), "0{}".format(4 if char == split_in[0] else 2)))
 
-    return None
+    version_number = int("0x" + "".join(char for char in split_out), 0)
+    return version_number
 
 class SimpleLogger(object):
     """ Usage example:
@@ -1192,7 +1146,7 @@ class SimpleLogger(object):
         if trace is True:
             f_message += "\n"
             f_message += "\nTraceback (most recent call last):"
-            for (filename, line_number, function_name, text) in traceback.extract_stack()[1:]:
+            for (filename, line_number, function_name, text) in Trace.extract_stack()[1:]:
                 f_message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
 
         if err is True:

@@ -1,7 +1,6 @@
 <Pak>
     <Scripts>
         <Script Path = "Scripts/" Module = "Foundation" Initializer = "onInitialize" Finalizer = "onFinalize"/>
-        <Script Path = "Scripts/Lib/"/>
     </Scripts>
     
     <Materials>

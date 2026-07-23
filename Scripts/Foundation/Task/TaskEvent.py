@@ -22,7 +22,7 @@ class TaskEvent(MixinEvent, Task):
             pass
 
         if self.Filter is not None:
-            if callable(self.Filter) is False:
+            if Utils.is_valid_functor(self.Filter) is False:
                 self.validateFailed(params, "Filter %s is not callable" % (self.Filter))
                 pass
             pass
@@ -36,14 +36,6 @@ class TaskEvent(MixinEvent, Task):
 
     def __onEventFilter(self, *args, **kwargs):
         if self.Filter is not None:
-            if _DEVELOPMENT is True:
-                if Utils.is_valid_function_args(self.Filter, len(args) + len(kwargs)) is False:
-                    self.log("%s filter %s is bad arguments or kwargs" % (self.ID, self.Filter))
-
-                    return False
-                    pass
-                pass
-
             result = self.Filter(*args, **kwargs)
 
             if isinstance(result, bool) is False:

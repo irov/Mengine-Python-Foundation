@@ -17,8 +17,8 @@ class TaskScope(MixinGroup, Task):
     def _onValidate(self, params):
         super(TaskScope, self)._onValidate(params)
 
-        if Utils.is_valid_functor_args(self.Scope, 1) is False:
-            self.validateFailed(params, "Scope %s is bad arguments or kwargs" % (self.Scope))
+        if Utils.is_valid_functor(self.Scope) is False:
+            self.validateFailed(params, "Scope %s is not callable" % (self.Scope))
             pass
         pass
 

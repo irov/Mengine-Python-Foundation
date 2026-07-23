@@ -2,6 +2,36 @@ from TraceManager import TraceManager
 
 import sys
 
+def extract_stack():
+    frame = sys._getframe().f_back
+    stack = []
+
+    while frame is not None:
+        code = frame.f_code
+        stack.append((code.co_filename, frame.f_lineno, code.co_name, None))
+        frame = frame.f_back
+
+    stack.reverse()
+
+    return stack
+
+def format_exc():
+    exception_type, exception_value, exception_traceback = sys.exc_info()
+    if exception_type is None:
+        return "None"
+
+    message = "Traceback (most recent call last):"
+    while exception_traceback is not None:
+        frame = exception_traceback.tb_frame
+        code = frame.f_code
+        message += "\n  File \"%s\", line %s in %s" % (code.co_filename, exception_traceback.tb_lineno, code.co_name)
+        exception_traceback = exception_traceback.tb_next
+
+    exception_name = getattr(exception_type, "__name__", str(exception_type))
+    message += "\n%s: %s" % (exception_name, exception_value)
+
+    return message
+
 def msg(text, *args):
     __validateMessage(text)
 
@@ -77,7 +107,7 @@ def log_exception(category, level, text, *args):
     message = "-----------------------------------------------"
     message += "\nException: " + __tryPrintMessage(text, *args) + ""
     message += "\n-----------------------------------------------"
-    message += traceback.format_exc()
+    message += format_exc()
     message += "\n-----------------------------------------------"
 
     Mengine.logError(message)
@@ -106,7 +136,7 @@ def caller(deep=0):
 
 def __getTraceback():
     message = "\nTraceback (most recent call last):"
-    for (filename, line_number, function_name, text) in traceback.extract_stack()[2:]:
+    for (filename, line_number, function_name, text) in extract_stack()[2:]:
         message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
     return message
 

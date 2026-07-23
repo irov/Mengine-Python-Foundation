@@ -18,12 +18,8 @@ class TaskForkScope(MixinGroup, Task):
         super(TaskForkScope, self)._onValidate(params)
 
         if self.Scope is not None:
-            if callable(self.Scope) is False:
+            if Utils.is_valid_functor(self.Scope) is False:
                 self.validateFailed(params, "Scope %s is not callable" % (self.Scope))
-                pass
-
-            if Utils.is_valid_functor_args(self.Scope, 1) is False:
-                self.validateFailed(params, "Scope %s is bad arguments or kwargs" % (self.Scope))
                 pass
             pass
         pass

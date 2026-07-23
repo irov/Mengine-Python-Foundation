@@ -1,5 +1,3 @@
-import re
-
 from Manager import Manager
 
 class GoogleAnalytics(Manager):
@@ -50,13 +48,15 @@ class GoogleAnalytics(Manager):
         new_dict['tid'] = GoogleAnalytics.tid
         url_collect = 'http://www.google-analytics.com/collect'
         for key, value in cDict.iteritems():
-            list_d = re.findall("dimension(\d+)", key)
-            if len(list_d) == 1:
-                new_dict['cd{}'.format(list_d[0])] = value
+            if key.startswith("dimension") is True:
+                dimension = key[len("dimension"):]
+                if dimension.isdigit() is True:
+                    new_dict['cd{}'.format(dimension)] = value
 
-            list_m = re.findall("metric(\d+)", key)
-            if len(list_m) == 1:
-                new_dict['cm{}'.format(list_m[0])] = value
+            if key.startswith("metric") is True:
+                metric = key[len("metric"):]
+                if metric.isdigit() is True:
+                    new_dict['cm{}'.format(metric)] = value
         # send analytics
 
         def cb(*args):

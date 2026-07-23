@@ -4,8 +4,6 @@ from Foundation.Bootstrapper import checkPlatform
 from Foundation.DatabaseManager import DatabaseManager
 from Foundation.GroupManager import GroupManager
 
-import copy
-
 class SceneManager(Manager):
     s_scenesType = {}
 
@@ -435,7 +433,8 @@ class SceneManager(Manager):
 
                 description = SceneManager.s_defaultDescription[DefaultScene]
 
-                copyDescription = copy.deepcopy(description)
+                for slotName, slotDescription in description.iteritems():
+                    copyDescription[slotName] = slotDescription.copy()
                 pass
 
             SceneManager.s_scenes[SceneName] = SceneManager.SceneDescription(BaseScene, copyDescription)
