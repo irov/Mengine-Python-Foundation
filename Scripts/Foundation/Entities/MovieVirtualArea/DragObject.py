@@ -65,6 +65,26 @@ class DragObject(object):
         self._friction = FrictionEffect(self, friction)
         self._snapping = SnappingEffect(self)
 
+    def finalize(self):
+        self.remove_affector()
+
+        self._on_position_changed = None
+        self._dragging_mode = None
+        self._initial_dragging_mode = None
+        self._modes = {}
+
+        if self._elasticity is not None:
+            self._elasticity._target = None
+            self._elasticity = None
+
+        if self._friction is not None:
+            self._friction._target = None
+            self._friction = None
+
+        if self._snapping is not None:
+            self._snapping._target = None
+            self._snapping = None
+
     def on_position_changed(self, callback):
         self._on_position_changed = callback
 

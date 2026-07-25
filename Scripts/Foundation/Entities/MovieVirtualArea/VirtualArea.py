@@ -133,7 +133,9 @@ class VirtualArea(Initializer):
             self._root = None
 
         # finalize target
-        self._target.remove_affector()
+        if self._target is not None:
+            self._target.finalize()
+            self._target = None
 
     def _set_position(self, x, y):
         """
