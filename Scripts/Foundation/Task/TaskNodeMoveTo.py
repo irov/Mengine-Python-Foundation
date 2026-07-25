@@ -55,6 +55,13 @@ class TaskNodeMoveTo(MixinNode, MixinTime, Task):
 
         return False
 
+    def _onFastSkip(self):
+        if self.interrupt is False:
+            self.node.setLocalPosition(self.positionTo)
+            pass
+
+        return True
+
     def _onSkip(self):
         self.affector = None
 

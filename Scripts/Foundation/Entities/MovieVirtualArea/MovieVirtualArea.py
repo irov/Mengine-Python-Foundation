@@ -1,8 +1,7 @@
 from Foundation.BaseEntity import BaseEntity
 from Foundation.ObjectManager import ObjectManager
 from Foundation.TaskManager import TaskManager
-
-from VirtualArea import VirtualArea
+from Foundation.VirtualAreaHelper import createVirtualArea, setupVirtualAreaWithMovie, destroyVirtualArea
 
 class MovieVirtualArea(BaseEntity):
     @staticmethod
@@ -52,8 +51,7 @@ class MovieVirtualArea(BaseEntity):
         return True
 
     def _onActivate(self):
-        self._virtual_area = VirtualArea()
-        self.virtual_area.onInitialize(
+        self._virtual_area = createVirtualArea(
             friction=self.Friction,
             rigidity=self.Rigidity,
             dragging_mode=self.DraggingMode,
@@ -63,21 +61,19 @@ class MovieVirtualArea(BaseEntity):
 
         if self._content_resource.hasBoundBox():
             box = self._content_resource.getBoundBox()
-            self._virtual_area.set_content_size(0, 0, box.maximum.x - box.minimum.x, box.maximum.y - box.minimum.y)
+            self._virtual_area.setVirtualAreaContentSize(0, 0, box.maximum.x - box.minimum.x, box.maximum.y - box.minimum.y)
 
         anchor = self._content.getMovieNode('anchor_solid').getWorldPosition().y
 
-        self._virtual_area.add_node(self._content.getEntityNode())
-        self._virtual_area.add_node(self._content.getMovieNode('anchor_solid'), use_as_anchor=True)
-        self._virtual_area.setup_with_movie(self._frame, 'socket')
+        self._virtual_area.addVirtualAreaContentNode(self._content.getEntityNode(), False)
+        self._virtual_area.addVirtualAreaContentNode(self._content.getMovieNode('anchor_solid'), True)
+        setupVirtualAreaWithMovie(self._virtual_area, self._frame, 'socket')
 
-        snapping = self._virtual_area.get_snapping()
-
-        snapping.set_to_Y_axis()
-        snapping.set_bounds_point(Mengine.vec2f(0.0, 0.0))
+        self._virtual_area.setVirtualAreaSnappingMode(Mengine.EVASM_VERTICAL)
+        self._virtual_area.setVirtualAreaSnappingBoundsPoint(Mengine.vec2f(0.0, 0.0))
 
         for child in self._content.getMovie().getAllChildren():
-            snapping.add_snapper(child.getWorldPosition().y - anchor)
+            self._virtual_area.addVirtualAreaSnappingPoint(child.getWorldPosition().y - anchor)
 
         with TaskManager.createTaskChain(Repeat=True) as tc:
             tc.addTask('TaskKeyPress', Keys=(Mengine.KC_P,))
@@ -90,7 +86,6 @@ class MovieVirtualArea(BaseEntity):
     def _onDeactivate(self):
         super(MovieVirtualArea, self)._onDeactivate()
 
-        # del self._virtual_area
         if self._virtual_area is not None:
-            self._virtual_area.onFinalize()
+            destroyVirtualArea(self._virtual_area)
             self._virtual_area = None

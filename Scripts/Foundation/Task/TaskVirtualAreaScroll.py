@@ -26,7 +26,7 @@ class TaskVirtualAreaScroll(Task):
             self.progress_value_follower_y = None
 
     def __update_x(self, new_value, virtual_area):
-        virtual_area.set_percentage(x=new_value)
+        virtual_area.setVirtualAreaPercentageX(new_value)
         if new_value == self.finish_value.x:
             self.progress_value_follower_x = None
             if self.wait is True:
@@ -34,7 +34,7 @@ class TaskVirtualAreaScroll(Task):
             return True
 
     def __update_y(self, new_value, virtual_area):
-        virtual_area.set_percentage(y=new_value)
+        virtual_area.setVirtualAreaPercentageY(new_value)
         if new_value == self.finish_value.y:
             self.progress_value_follower_y = None
             if self.wait is True:
@@ -42,24 +42,33 @@ class TaskVirtualAreaScroll(Task):
             return True
 
     def _onFastSkip(self):
-        self.virtual_area.set_percentage(x=self.finish_value[0], y=self.finish_value[1])
+        if self.finish_value[0] is not None:
+            self.virtual_area.setVirtualAreaPercentageX(self.finish_value[0])
+        if self.finish_value[1] is not None:
+            self.virtual_area.setVirtualAreaPercentageY(self.finish_value[1])
+
         return True
 
     def _onRun(self):
         super(TaskVirtualAreaScroll, self)._onRun()
 
-        current_percent_value = self.virtual_area.get_percentage()
+        current_percent_value = self.virtual_area.getVirtualAreaPercentage()
         if self.current_value is None:
-            self.current_value = current_percent_value
+            current_value = [current_percent_value.x, current_percent_value.y]
         else:
-            self.virtual_area.set_percentage(x=self.current_value[0], y=self.current_value[1])
+            current_value = [
+                current_percent_value.x if self.current_value[0] is None else self.current_value[0],
+                current_percent_value.y if self.current_value[1] is None else self.current_value[1]
+            ]
 
-        finish_value = [self.finish_value[0], self.finish_value[1]]
-        for dim in range(2):
-            if self.finish_value[dim] is None:
-                finish_value[dim] = current_percent_value[dim]
+            self.virtual_area.setVirtualAreaPercentage(Mengine.vec2f(current_value[0], current_value[1]))
 
-        self.current_value = Mengine.vec2f(self.current_value[0], self.current_value[1])
+        finish_value = [
+            current_percent_value.x if self.finish_value[0] is None else self.finish_value[0],
+            current_percent_value.y if self.finish_value[1] is None else self.finish_value[1]
+        ]
+
+        self.current_value = Mengine.vec2f(current_value[0], current_value[1])
         self.finish_value = Mengine.vec2f(finish_value[0], finish_value[1])
 
         if self.speed is None:
