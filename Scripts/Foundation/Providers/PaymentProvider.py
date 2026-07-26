@@ -9,6 +9,13 @@ class PaymentProvider(BaseProvider):
         "isOwnedInAppProduct"
     ]
 
+    @classmethod
+    def getTaskSourceInjections(cls):
+        return (
+            ("addPaymentProviderPay", "TaskFunction", dict(Fn=cls.pay)),
+            ("addPaymentProviderRestorePurchases", "TaskFunction", dict(Fn=cls.restorePurchases)),
+        )
+
     @staticmethod
     def _setDevProvider():
         DummyPayment.setProvider()

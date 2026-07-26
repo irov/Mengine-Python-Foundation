@@ -4,6 +4,24 @@ class ProviderManager(Manager):
     s_providers = {}
 
     @staticmethod
+    def __addTaskSourceInjections(Type):
+        from Foundation.Task.TaskGenerator import TaskSource
+
+        for MethodName, TaskTypeOrScope, Kwds in Type.getTaskSourceInjections():
+            TaskSource.injectionTaskDesc(MethodName, TaskTypeOrScope, **Kwds)
+            pass
+        pass
+
+    @staticmethod
+    def __removeTaskSourceInjections(Type):
+        from Foundation.Task.TaskGenerator import TaskSource
+
+        for MethodName, TaskTypeOrScope, Kwds in Type.getTaskSourceInjections():
+            TaskSource.removeInjectionTaskDesc(MethodName)
+            pass
+        pass
+
+    @staticmethod
     def importProviders(module, names):
         for name in names:
             ProviderManager.importProvider(module, name)
@@ -21,6 +39,7 @@ class ProviderManager(Manager):
     @staticmethod
     def addProvider(name, Type):
         Type.setDevProvider()
+        ProviderManager.__addTaskSourceInjections(Type)
         ProviderManager.s_providers[name] = Type
 
     @staticmethod
@@ -56,6 +75,7 @@ class ProviderManager(Manager):
     @staticmethod
     def _onFinalize():
         for provider in ProviderManager.s_providers.values():
+            ProviderManager.__removeTaskSourceInjections(provider)
             provider.removeProvider()
             pass
 

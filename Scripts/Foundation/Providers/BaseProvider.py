@@ -5,6 +5,10 @@ class BaseProvider(object):
     trace_level = 0
 
     @classmethod
+    def getTaskSourceInjections(cls):
+        return ()
+
+    @classmethod
     def _isMethodsValid(cls, methods):
         is_valid = True
 

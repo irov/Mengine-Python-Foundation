@@ -13,6 +13,17 @@ class FacebookProvider(BaseProvider):
     ]
 
     @staticmethod
+    def __scopeIsLoggedIn(source):
+        return source.addIfTask(FacebookProvider.isLoggedIn)
+
+    @classmethod
+    def getTaskSourceInjections(cls):
+        return (
+            ("addFacebookProviderGetProfileUserPictureLink", "TaskFunction", dict(Fn=cls.getProfileUserPictureLink)),
+            ("addFacebookProviderIsLoggedIn", cls.__scopeIsLoggedIn, {}),
+        )
+
+    @staticmethod
     def _setDevProvider():
         DummyFacebook.setProvider()
 

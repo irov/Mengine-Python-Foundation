@@ -13,6 +13,12 @@ class AnalyticsProvider(BaseProvider):
         "eventFlush",
     ]
 
+    @classmethod
+    def getTaskSourceInjections(cls):
+        return (
+            ("addAnalyticsProviderSendAnalytic", "TaskFunction", dict(Fn=cls.sendAnalytic)),
+        )
+
     @staticmethod
     def sendAnalytic(event_key, send_params):
         return AnalyticsProvider._call("sendAnalytic", event_key, send_params)

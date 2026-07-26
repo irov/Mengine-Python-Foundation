@@ -325,20 +325,31 @@ class TaskSource(object):
         return TaskType
 
     @classmethod
-    def injectionTaskDesc(cls, MethodName, TaskType, **Kwds):
+    def injectionTaskDesc(cls, MethodName, TaskTypeOrScope, **Kwds):
         assert isinstance(MethodName, basestring) is True and MethodName != ""
         assert "Args" not in Kwds and "Kwargs" not in Kwds
         assert hasattr(cls, MethodName) is False
 
-        InjectionTaskType = cls.__resolveTaskType(TaskType)
+        if isinstance(TaskTypeOrScope, (basestring, type)) is True:
+            InjectionTaskType = cls.__resolveTaskType(TaskTypeOrScope)
 
-        def __injectionTaskDesc(source, *Args, **Kwargs):
-            params = Kwds.copy()
-            params["Args"] = Args
-            params["Kwargs"] = Kwargs
+            def __injectionTaskDesc(source, *Args, **Kwargs):
+                params = Kwds.copy()
+                params["Args"] = Args
+                params["Kwargs"] = Kwargs
 
-            source.__addDesc(InjectionTaskType, params)
-            pass
+                source.__addDesc(InjectionTaskType, params)
+                pass
+        else:
+            assert callable(TaskTypeOrScope) is True
+
+            InjectionScope = TaskTypeOrScope
+
+            def __injectionTaskDesc(source, *Args, **Kwargs):
+                params = Kwds.copy()
+                params.update(Kwargs)
+
+                return InjectionScope(source, *Args, **params)
 
         __injectionTaskDesc.__name__ = MethodName
         __injectionTaskDesc.__task_desc_injection__ = True

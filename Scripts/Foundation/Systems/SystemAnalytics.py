@@ -1,9 +1,7 @@
 from Foundation.System import System
 from Foundation.Providers.AnalyticsProvider import AnalyticsProvider
-from Foundation.Task.TaskGenerator import TaskSource
 
 ANALYTIC_PREFIX_NAME = "mpr_"
-TASK_SOURCE_SEND_ANALYTIC_METHOD_NAME = "addAnalyticsProviderSendAnalytic"
 
 
 class SystemAnalytics(System):
@@ -101,12 +99,6 @@ class SystemAnalytics(System):
             Mengine.analyticsScreenView(screen_type, screen_name)
 
     def _onInitialize(self):
-        TaskSource.injectionTaskDesc(
-            TASK_SOURCE_SEND_ANALYTIC_METHOD_NAME,
-            "TaskFunction",
-            Fn=AnalyticsProvider.sendAnalytic
-        )
-
         self.addDefaultAnalytics()
 
         AnalyticsProvider.setProvider("Mengine", dict(
@@ -118,8 +110,6 @@ class SystemAnalytics(System):
         ))
 
     def _onFinalize(self):
-        TaskSource.removeInjectionTaskDesc(TASK_SOURCE_SEND_ANALYTIC_METHOD_NAME)
-
         # clean up
         for analytics_unit in SystemAnalytics.s_active_analytics.values():
             analytics_unit.clean()
