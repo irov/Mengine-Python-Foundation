@@ -10,6 +10,12 @@ class ConsentProvider(BaseProvider):
         "IsConsentFlow",
     ]
 
+    @classmethod
+    def getTaskSourceInjections(cls):
+        return (
+            ("addConsentProviderShowConsentFlow", "TaskFunction", dict(Fn=cls.showConsentFlow)),
+        )
+
     @staticmethod
     def _setDevProvider():
         from Foundation.Providers.DummyConsent import DummyConsent
@@ -22,4 +28,3 @@ class ConsentProvider(BaseProvider):
     @staticmethod
     def isConsentFlow():
         return ConsentProvider._call("IsConsentFlow")
-

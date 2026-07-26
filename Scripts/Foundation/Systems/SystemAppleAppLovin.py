@@ -19,14 +19,14 @@ class SystemAppleAppLovin(SystemAppleAd):
 
     def _onInitialize(self):
         methods = self.initAds()
-        AdvertisementProvider.setProvider("AppleAppLovin", methods)
+        AdvertisementProvider.setProvider("iOSAppLovin", methods)
 
         consent_methods = dict(
             ShowConsentFlow=self.showConsentFlow,
             IsConsentFlow=self.isConsentFlow,
         )
 
-        ConsentProvider.setProvider("AppleAppLovin", consent_methods)
+        ConsentProvider.setProvider("iOSAppLovin", consent_methods)
         Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)
 
     @staticmethod
@@ -40,13 +40,13 @@ class SystemAppleAppLovin(SystemAppleAd):
         def __cbConsentFlowShowFailed():
             _Log("[cb] Consent Flow Show Failed", err=True, force=True)
 
-        Mengine.appleAppLovinLoadAndShowCMPFlow(dict(
+        Mengine.iOSAppLovinLoadAndShowCMPFlow(dict(
             oniOSAppLovinConsentFlowShowSuccessful=__cbConsentFlowShowSuccess,
             oniOSAppLovinConsentFlowShowFailed=__cbConsentFlowShowFailed,
         ))
 
     def isConsentFlow(self):
-        return Mengine.appleAppLovinIsConsentFlowUserGeographyGDPR()
+        return Mengine.iOSAppLovinIsConsentFlowUserGeographyGDPR()
 
     def __cbSdkInitialized(self):
         _Log("[SDK cb] onAppLovinPluginOnSdkInitialized")

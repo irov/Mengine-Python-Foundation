@@ -57,13 +57,13 @@ class SystemAppleAd(System):
         )
 
     def getBannerWidth(self):
-        return Mengine.appleAdvertisementGetBannerWidth()
+        return Mengine.iOSAdvertisementGetBannerWidth()
 
     def getBannerHeight(self):
-        return Mengine.appleAdvertisementGetBannerHeight()
+        return Mengine.iOSAdvertisementGetBannerHeight()
 
     def getNoAds(self):
-        return Mengine.appleAdvertisementGetNoAds()
+        return Mengine.iOSAdvertisementGetNoAds()
 
     def showBanner(self):
         if self.banner_inited is False:
@@ -71,7 +71,7 @@ class SystemAppleAd(System):
             return False
 
         self.__logAd("[Banner] show banner")
-        return Mengine.appleAdvertisementShowBanner()
+        return Mengine.iOSAdvertisementShowBanner()
 
     def hideBanner(self):
         if self.banner_inited is False:
@@ -79,17 +79,17 @@ class SystemAppleAd(System):
             return False
 
         self.__logAd("[Banner] hide banner")
-        return Mengine.appleAdvertisementHideBanner()
+        return Mengine.iOSAdvertisementHideBanner()
 
     def hasInterstitialAdvert(self):
-        return Mengine.appleAdvertisementHasInterstitial()
+        return Mengine.iOSAdvertisementHasInterstitial()
 
     def canYouShowInterstitialAdvert(self, placement):
         if self.interstitial_inited is False:
             self.__logAd("ad canYouShowInterstitial not inited", trace=True, err=True, force=True)
             return False
 
-        status = Mengine.appleAdvertisementCanYouShowInterstitial(placement)
+        status = Mengine.iOSAdvertisementCanYouShowInterstitial(placement)
         self.__logAd("[Interstitial] available to show {} is {}".format(placement, status))
         return status
 
@@ -99,24 +99,24 @@ class SystemAppleAd(System):
             return False
 
         self.__logAd("[Interstitial] show {}".format(placement))
-        return Mengine.appleAdvertisementShowInterstitial(placement)
+        return Mengine.iOSAdvertisementShowInterstitial(placement)
 
     def isShowingInterstitialAdvert(self):
         if self.interstitial_inited is False:
             self.__logAd("ad isShowingInterstitial not inited", trace=True, err=True, force=True)
             return False
 
-        return Mengine.appleAdvertisementIsShowingInterstitial()
+        return Mengine.iOSAdvertisementIsShowingInterstitial()
 
     def hasRewardedAdvert(self):
-        return Mengine.appleAdvertisementHasRewarded()
+        return Mengine.iOSAdvertisementHasRewarded()
 
     def canOfferRewardedAdvert(self, placement):
         if self.rewarded_inited is False:
             self.__logAd("ad canOfferRewarded not inited", trace=True, err=True, force=True)
             return False
 
-        status = Mengine.appleAdvertisementCanOfferRewarded(placement)
+        status = Mengine.iOSAdvertisementCanOfferRewarded(placement)
         self.__logAd("[Rewarded] available to offer {} is {}".format(placement, status))
         return status
 
@@ -125,7 +125,7 @@ class SystemAppleAd(System):
             self.__logAd("ad canYouShowRewarded not inited", trace=True, err=True, force=True)
             return False
 
-        status = Mengine.appleAdvertisementCanYouShowRewarded(placement)
+        status = Mengine.iOSAdvertisementCanYouShowRewarded(placement)
         self.__logAd("[Rewarded] available to show {} is {}".format(placement, status))
         return status
 
@@ -135,14 +135,14 @@ class SystemAppleAd(System):
             return False
 
         self.__logAd("[Rewarded] show {}".format(placement))
-        return Mengine.appleAdvertisementShowRewarded(placement)
+        return Mengine.iOSAdvertisementShowRewarded(placement)
 
     def isShowingRewardedAdvert(self):
         if self.rewarded_inited is False:
             self.__logAd("ad isShowingRewarded not inited", trace=True, err=True, force=True)
             return False
 
-        return Mengine.appleAdvertisementIsShowingRewarded()
+        return Mengine.iOSAdvertisementIsShowingRewarded()
 
     def _initializeBannerAd(self):
         if self.banner_inited is True:
@@ -157,7 +157,7 @@ class SystemAppleAd(System):
             "oniOSAdvertisementRevenuePaid": self.__cbBannerRevenuePaid,
         }
 
-        Mengine.appleAdvertisementSetBannerCallback(callbacks)
+        Mengine.iOSAdvertisementSetBannerCallback(callbacks)
 
         self.banner_inited = True
         return True
@@ -177,7 +177,7 @@ class SystemAppleAd(System):
             "oniOSAdvertisementRevenuePaid": self.__cbInterstitialRevenuePaid,
         }
 
-        Mengine.appleAdvertisementSetInterstitialCallback(callbacks)
+        Mengine.iOSAdvertisementSetInterstitialCallback(callbacks)
 
         self.interstitial_inited = True
         return True
@@ -198,7 +198,7 @@ class SystemAppleAd(System):
             "oniOSAdvertisementRevenuePaid": self.__cbRewardedRevenuePaid,
         }
 
-        Mengine.appleAdvertisementSetRewardedCallback(callbacks)
+        Mengine.iOSAdvertisementSetRewardedCallback(callbacks)
 
         self.rewarded_inited = True
         return True

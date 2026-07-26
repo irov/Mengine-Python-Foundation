@@ -24,4 +24,4 @@ class SystemAppleRemoteConfig(System):
     @staticmethod
     def getRemoteConfigValue(key):
         """ returns dict value """
-        return Mengine.appleFirebaseRemoteConfigGetValue(key)
+        return Mengine.iOSFirebaseRemoteConfigGetValue(key)

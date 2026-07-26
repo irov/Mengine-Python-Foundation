@@ -44,7 +44,7 @@ class SystemAppleFacebook(System):
             "oniOSFacebookProfilePictureLinkGetError": self._cbProfilePictureLinkGetError,
         }
 
-        Mengine.appleFacebookSetProvider(callbacks)
+        Mengine.iOSFacebookSetProvider(callbacks)
 
         FacebookProvider.setProvider("iOSFacebook", dict(
             getAccessToken=self.getAccessToken,
@@ -61,11 +61,11 @@ class SystemAppleFacebook(System):
         pass
 
     def isLoggedIn(self):
-        is_logged = Mengine.appleFacebookIsLoggedIn()
+        is_logged = Mengine.iOSFacebookIsLoggedIn()
         return is_logged
 
     def getAccessToken(self):
-        token = Mengine.appleFacebookGetAccessToken()
+        token = Mengine.iOSFacebookGetAccessToken()
         return token
 
     def performLogin(self, permissions=('email', 'public_profile'), _cb_success=None, _cb_cancel=None, _cb_error=None):
@@ -77,7 +77,7 @@ class SystemAppleFacebook(System):
 
         SystemAppleFacebook.addCallbacks(callbacks)
 
-        Mengine.appleFacebookLogin(permissions)
+        Mengine.iOSFacebookLogin(permissions)
 
     def shareLink(self, link=None, msg='', _cb_success=None, _cb_cancel=None, _cb_error=None):
         callbacks = {
@@ -88,7 +88,7 @@ class SystemAppleFacebook(System):
 
         SystemAppleFacebook.addCallbacks(callbacks)
 
-        Mengine.appleFacebookShareLink(link, "")
+        Mengine.iOSFacebookShareLink(link, "")
 
     def logout(self, _cb_success=None, _cb_error=None):
         callbacks = {
@@ -99,14 +99,29 @@ class SystemAppleFacebook(System):
         SystemAppleFacebook.addCallbacks(callbacks)
 
         access_token = self.getAccessToken()
-        Mengine.appleFacebookLogout()
+        Mengine.iOSFacebookLogout()
         self.onLogoutSuccess(access_token)
 
     def getUser(self, _cb_success=None, _cb_error=None):
-        Trace.log("Provider", 0, "iOSFacebook getUser not supported")
+        user = Mengine.iOSFacebookGetUser()
 
-        if _cb_error is not None:
-            _cb_error(-1, "iOSFacebook getUser not supported")
+        if user is None or user.get("id") is None or user.get("name") is None:
+            if _cb_error is not None:
+                _cb_error(-1, "iOSFacebook user profile not available")
+
+            return
+
+        picture_url = user.pop("pictureURL", None)
+
+        if picture_url is not None:
+            user["picture"] = {
+                "data": {
+                    "url": picture_url,
+                },
+            }
+
+        if _cb_success is not None:
+            _cb_success(Mengine.encodeJSON(user), "")
 
     def getProfilePictureLink(self, type_parameter="large", _cb_success=None, _cb_error=None):
         callbacks = {
@@ -116,7 +131,7 @@ class SystemAppleFacebook(System):
 
         SystemAppleFacebook.addCallbacks(callbacks)
 
-        Mengine.appleFacebookGetProfilePictureLink()
+        Mengine.iOSFacebookGetProfilePictureLink()
 
     def getProfileUserPictureLink(self, user_id, type_parameter="large", _cb_success=None, _cb_error=None):
         picture_url = "https://graph.facebook.com/{}/picture?type={}".format(user_id, type_parameter)

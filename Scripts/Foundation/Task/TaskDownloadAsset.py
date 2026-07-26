@@ -82,7 +82,8 @@ class TaskDownloadAsset(Task):
             return
 
         if successful is False:
-            self.log("{}".format(error))
+            if error:
+                self.log("{}".format(error))
             self.setError(True)
             pass
 

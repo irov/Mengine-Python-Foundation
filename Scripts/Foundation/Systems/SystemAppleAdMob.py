@@ -18,7 +18,7 @@ class SystemAppleAdMob(SystemAppleAd):
 
     def _onInitialize(self):
         methods = self.initAds()
-        AdvertisementProvider.setProvider("AppleAdMob", methods)
+        AdvertisementProvider.setProvider("iOSAdMob", methods)
         Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)
 
     @staticmethod
