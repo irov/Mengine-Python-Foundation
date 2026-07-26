@@ -40,20 +40,11 @@ class TaskSwitch(Task):
             return
             pass
 
-        self.switched = True
+        assert isinstance(self.Tasks, (list, dict)) is True
+        assert isinstance(self.Tasks, list) is False or switchId >= 0 and switchId < len(self.Tasks)
+        assert isinstance(self.Tasks, dict) is False or switchId in self.Tasks
 
-        if isinstance(self.Tasks, list) is True:
-            if switchId >= len(self.Tasks):
-                self.log("_onSwitch id '%s' more source switch length '%d'" % (switchId, len(self.Tasks)))
-                return
-                pass
-            pass
-        elif isinstance(self.Tasks, dict) is True:
-            if switchId not in self.Tasks:
-                self.log("_onSwitch id '%s' not in source switch '%s'" % (switchId, self.Tasks.keys()))
-                return
-                pass
-            pass
+        self.switched = True
 
         firstTask = self.Tasks[switchId]
         lastTask = self.Lasts[switchId]

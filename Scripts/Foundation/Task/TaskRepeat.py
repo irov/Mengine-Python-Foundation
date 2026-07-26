@@ -78,7 +78,9 @@ class TaskRepeat(Task):
                 return True
 
             if self.untilTaskChain.run() is False:
-                self.repeatTaskChain.cancel()
+                if self.repeatTaskChain is not None:
+                    self.repeatTaskChain.cancel()
+                    pass
 
                 return True
             pass
