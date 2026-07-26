@@ -1,7 +1,7 @@
 from Foundation.System import System
 from Foundation.Providers.FacebookProvider import FacebookProvider
 
-PLUGIN_NAME = "AppleFacebookPlugin"
+PLUGIN_NAME = "iOSFacebookPlugin"
 
 class SystemAppleFacebook(System):
     is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
@@ -34,19 +34,19 @@ class SystemAppleFacebook(System):
 
     def _onInitialize(self):
         callbacks = {
-            "onAppleFacebookLoginSuccess": self._cbLoginSuccess,
-            "onAppleFacebookLoginCancel": self._cbLoginCancel,
-            "onAppleFacebookError": self._cbFacebookError,
-            "onAppleFacebookShareSuccess": self._cbShareSuccess,
-            "onAppleFacebookShareCancel": self._cbShareCancel,
-            "onAppleFacebookShareError": self._cbShareError,
-            "onAppleFacebookProfilePictureLinkGetSuccess": self._cbProfilePictureLinkGetSuccess,
-            "onAppleFacebookProfilePictureLinkGetError": self._cbProfilePictureLinkGetError,
+            "oniOSFacebookLoginSuccess": self._cbLoginSuccess,
+            "oniOSFacebookLoginCancel": self._cbLoginCancel,
+            "oniOSFacebookError": self._cbFacebookError,
+            "oniOSFacebookShareSuccess": self._cbShareSuccess,
+            "oniOSFacebookShareCancel": self._cbShareCancel,
+            "oniOSFacebookShareError": self._cbShareError,
+            "oniOSFacebookProfilePictureLinkGetSuccess": self._cbProfilePictureLinkGetSuccess,
+            "oniOSFacebookProfilePictureLinkGetError": self._cbProfilePictureLinkGetError,
         }
 
         Mengine.appleFacebookSetProvider(callbacks)
 
-        FacebookProvider.setProvider("AppleFacebook", dict(
+        FacebookProvider.setProvider("iOSFacebook", dict(
             getAccessToken=self.getAccessToken,
             isLoggedIn=self.isLoggedIn,
             performLogin=self.performLogin,
@@ -88,7 +88,7 @@ class SystemAppleFacebook(System):
 
         SystemAppleFacebook.addCallbacks(callbacks)
 
-        Mengine.appleFacebookShareLink(link, msg)
+        Mengine.appleFacebookShareLink(link, "")
 
     def logout(self, _cb_success=None, _cb_error=None):
         callbacks = {
@@ -103,14 +103,10 @@ class SystemAppleFacebook(System):
         self.onLogoutSuccess(access_token)
 
     def getUser(self, _cb_success=None, _cb_error=None):
-        callbacks = {
-            SystemAppleFacebook.onUserFetchSuccess: _cb_success,
-            SystemAppleFacebook.onUserFetchError: _cb_error,
-        }
+        Trace.log("Provider", 0, "iOSFacebook getUser not supported")
 
-        SystemAppleFacebook.addCallbacks(callbacks)
-
-        Trace.log("Provider", 0, "AppleFacebook getUser not exists")
+        if _cb_error is not None:
+            _cb_error(-1, "iOSFacebook getUser not supported")
 
     def getProfilePictureLink(self, type_parameter="large", _cb_success=None, _cb_error=None):
         callbacks = {
@@ -120,21 +116,18 @@ class SystemAppleFacebook(System):
 
         SystemAppleFacebook.addCallbacks(callbacks)
 
-        Trace.log("Provider", 0, "AppleFacebook getProfilePictureLink not exists")
+        Mengine.appleFacebookGetProfilePictureLink()
 
     def getProfileUserPictureLink(self, user_id, type_parameter="large", _cb_success=None, _cb_error=None):
-        callbacks = {
-            SystemAppleFacebook.onProfilePictureLinkGetSuccess: _cb_success,
-            SystemAppleFacebook.onProfilePictureLinkGetError: _cb_error
-        }
+        picture_url = "https://graph.facebook.com/{}/picture?type={}".format(user_id, type_parameter)
 
-        SystemAppleFacebook.addCallbacks(callbacks)
-
-        Mengine.appleFacebookGetProfilePictureLink(user_id, type_parameter)
+        if _cb_success is not None:
+            _cb_success(user_id, picture_url)
 
     def _cbLoginSuccess(self, params):
         Trace.msg_dev("[Facebook cb] login success: {!r}".format(params))
-        self.onLoginSuccess()
+        access_token = params.get("authentication.token", self.getAccessToken())
+        self.onLoginSuccess(access_token)
 
     def _cbLoginCancel(self):
         Trace.msg_dev("[Facebook cb] login cancel")

@@ -154,7 +154,7 @@ class SystemAppleAd(System):
         self.__logAd("[Banner] call init")
 
         callbacks = {
-            "onAppleAdvertisementRevenuePaid": self.__cbBannerRevenuePaid,
+            "oniOSAdvertisementRevenuePaid": self.__cbBannerRevenuePaid,
         }
 
         Mengine.appleAdvertisementSetBannerCallback(callbacks)
@@ -172,9 +172,9 @@ class SystemAppleAd(System):
         self.__logAd("[Interstitial] call init")
 
         callbacks = {
-            "onAppleAdvertisementShowSuccess": self.__cbInterstitialShowSuccess,
-            "onAppleAdvertisementShowFailed": self.__cbInterstitialShowFailed,
-            "onAppleAdvertisementRevenuePaid": self.__cbInterstitialRevenuePaid,
+            "oniOSAdvertisementShowSuccess": self.__cbInterstitialShowSuccess,
+            "oniOSAdvertisementShowFailed": self.__cbInterstitialShowFailed,
+            "oniOSAdvertisementRevenuePaid": self.__cbInterstitialRevenuePaid,
         }
 
         Mengine.appleAdvertisementSetInterstitialCallback(callbacks)
@@ -192,10 +192,10 @@ class SystemAppleAd(System):
         self.__logAd("[Rewarded] call init")
 
         callbacks = {
-            "onAppleAdvertisementShowSuccess": self.__cbRewardedShowSuccess,
-            "onAppleAdvertisementShowFailed": self.__cbRewardedShowFailed,
-            "onAppleAdvertisementUserRewarded": self.__cbRewardedUserRewarded,
-            "onAppleAdvertisementRevenuePaid": self.__cbRewardedRevenuePaid,
+            "oniOSAdvertisementShowSuccess": self.__cbRewardedShowSuccess,
+            "oniOSAdvertisementShowFailed": self.__cbRewardedShowFailed,
+            "oniOSAdvertisementUserRewarded": self.__cbRewardedUserRewarded,
+            "oniOSAdvertisementRevenuePaid": self.__cbRewardedRevenuePaid,
         }
 
         Mengine.appleAdvertisementSetRewardedCallback(callbacks)

@@ -10,10 +10,10 @@ from Foundation.TaskManager import TaskManager
 
 _Log = SimpleLogger("SystemAppleServices", option="apple")
 
-PLUGIN_GAME_CENTER = "AppleGameCenterPlugin"
-PLUGIN_STORE_REVIEW = "AppleStoreReviewPlugin"
-PLUGIN_IN_APP_PURCHASE = "AppleStoreInAppPurchasePlugin"
-PLUGIN_USER_MESSAGING_PLATFORM = "AppleUserMessagingPlatformPlugin"
+PLUGIN_GAME_CENTER = "iOSGameCenterPlugin"
+PLUGIN_STORE_REVIEW = "iOSStoreReviewPlugin"
+PLUGIN_IN_APP_PURCHASE = "iOSStoreInAppPurchasePlugin"
+PLUGIN_USER_MESSAGING_PLATFORM = "iOSUserMessagingPlatformPlugin"
 
 class SystemAppleServices(System):
     """
@@ -94,8 +94,8 @@ class SystemAppleServices(System):
     @staticmethod
     def connectToGameCenter():
         status = Mengine.appleGameCenterConnect({
-            "onAppleGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate,
-            "onAppleGameCenterSynchronize": SystemAppleServices.__cbGameCenterSynchronize
+            "oniOSGameCenterAuthenticate": SystemAppleServices.__cbGameCenterAuthenticate,
+            "oniOSGameCenterSynchronize": SystemAppleServices.__cbGameCenterSynchronize
         })  # check is request to GameCenter was sent
         # if True, cb provider will return bool that means player connected or not
 

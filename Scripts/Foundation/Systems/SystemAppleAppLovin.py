@@ -5,7 +5,7 @@ from Foundation.Systems.SystemAppleAd import SystemAppleAd
 
 _Log = SimpleLogger("SystemAppleAppLovin")
 
-PLUGIN_NAME = "AppleAppLovinPlugin"
+PLUGIN_NAME = "iOSAppLovinPlugin"
 
 class SystemAppleAppLovin(SystemAppleAd):
     """ Advertisement module 'AppLovin' for iOS """
@@ -34,15 +34,15 @@ class SystemAppleAppLovin(SystemAppleAd):
         return SystemAppleAppLovin.is_sdk_init is True
 
     def showConsentFlow(self):
-        def __cbConsentFlowShowSuccess(self):
+        def __cbConsentFlowShowSuccess():
             _Log("[cb] Consent Flow Show Successful")
 
-        def __cbConsentFlowShowFailed(self):
+        def __cbConsentFlowShowFailed():
             _Log("[cb] Consent Flow Show Failed", err=True, force=True)
 
         Mengine.appleAppLovinLoadAndShowCMPFlow(dict(
-            onAppleAppLovinConsentFlowShowSuccess=__cbConsentFlowShowSuccess,
-            onAppleAppLovinConsentFlowShowFailed=__cbConsentFlowShowFailed,
+            oniOSAppLovinConsentFlowShowSuccessful=__cbConsentFlowShowSuccess,
+            oniOSAppLovinConsentFlowShowFailed=__cbConsentFlowShowFailed,
         ))
 
     def isConsentFlow(self):
