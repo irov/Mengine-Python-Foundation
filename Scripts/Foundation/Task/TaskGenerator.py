@@ -1,18 +1,8 @@
 from Foundation.PolicyManager import PolicyManager
 from Foundation.Task.Capture import Capture as _Capture
+from Foundation.Task.Task import Task
 from Foundation.Task.TaskBase import TaskBase
 from Foundation.TaskManager import TaskManager
-
-class TaskGeneratorException(Exception):
-    def __init__(self, value, *args):
-        assert type(value) == str
-
-        self.value = value % (args)
-        pass
-
-    def __str__(self):
-        return str(self.value)
-    pass
 
 class TaskSourceTg(object):
     __slots__ = "tg"
@@ -27,14 +17,12 @@ class TaskSourceTg(object):
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             self.tg.end()
             pass
 
         return True
-        pass
     pass
 
 class TaskSourceTgIter(object):
@@ -47,7 +35,6 @@ class TaskSourceTgIter(object):
 
     def __enter__(self):
         return self.it, self.tg
-        pass
 
     def __exit__(self, type, value, traceback):
         if type is not None:
@@ -58,7 +45,6 @@ class TaskSourceTgIter(object):
             pass
 
         return True
-        pass
     pass
 
 class TaskSourceTgs(object):
@@ -103,7 +89,6 @@ class TaskSourceTgsList(object):
     def __exit__(self, type, value, traceback):
         if type is not None:
             return False
-            pass
 
         if _DEVELOPMENT is True:
             for o, tg in self.tgs:
@@ -164,7 +149,6 @@ if _DEVELOPMENT is True:
 
         def getCaller(self):
             return self.caller_info
-        pass
 else:
     class TaskDescBase(object):
         DEFAULT_CALLER = (None, None, None)
@@ -177,7 +161,6 @@ else:
 
         def getCaller(self):
             return TaskDescBase.DEFAULT_CALLER
-        pass
 
 class TaskDesc(TaskDescBase):
     __slots__ = "type", "params"
@@ -327,6 +310,53 @@ class TaskForkDesc(TaskDescBase):
 class TaskSource(object):
     __slots__ = "source", "complete", "skiped", "doc"
 
+    @staticmethod
+    def __resolveTaskType(TaskType):
+        if isinstance(TaskType, basestring) is True:
+            task_type = TaskManager.getTaskType(TaskType)
+
+            assert task_type is not None
+
+            return task_type
+
+        assert isinstance(TaskType, type) is True
+        assert issubclass(TaskType, Task) is True
+
+        return TaskType
+
+    @classmethod
+    def injectionTaskDesc(cls, MethodName, TaskType, **Kwds):
+        assert isinstance(MethodName, basestring) is True and MethodName != ""
+        assert "Args" not in Kwds and "Kwargs" not in Kwds
+        assert hasattr(cls, MethodName) is False
+
+        InjectionTaskType = cls.__resolveTaskType(TaskType)
+
+        def __injectionTaskDesc(source, *Args, **Kwargs):
+            params = Kwds.copy()
+            params["Args"] = Args
+            params["Kwargs"] = Kwargs
+
+            source.__addDesc(InjectionTaskType, params)
+            pass
+
+        __injectionTaskDesc.__name__ = MethodName
+        __injectionTaskDesc.__task_desc_injection__ = True
+
+        setattr(cls, MethodName, __injectionTaskDesc)
+
+        return True
+
+    @classmethod
+    def removeInjectionTaskDesc(cls, MethodName):
+        injection = cls.__dict__.get(MethodName)
+        assert injection is not None
+        assert getattr(injection, "__task_desc_injection__", False) is True
+
+        delattr(cls, MethodName)
+
+        return True
+
     def __init__(self, source, skiped=False):
         super(TaskSource, self).__init__()
 
@@ -364,15 +394,12 @@ class TaskSource(object):
     def getSize(self):
         return len(self.source)
 
-    def __addDesc(self, typeName, params):
+    def __addDesc(self, TaskType, params):
         self.checkComplete()
 
-        taskType = TaskManager.getTaskType(typeName)
+        task_type = self.__resolveTaskType(TaskType)
 
-        if taskType is None:
-            raise TaskGeneratorException("invalid generate source [__addDesc] not found task '%s' with params: %s", typeName, params)
-
-        self.__addDescType(taskType, params)
+        self.__addDescType(task_type, params)
         pass
 
     def __addDescType(self, taskType, params):
@@ -454,16 +481,14 @@ class TaskSource(object):
         if check is False:
             if Object is None:
                 return
-            pass
 
         self.__addDesc("TaskEnable", dict(Object=Object, Value=True))
         pass
 
     def addDisable(self, Object, check=True):
         if check is False:
-            if object is None:
+            if Object is None:
                 return
-            pass
 
         self.__addDesc("TaskEnable", dict(Object=Object, Value=False))
         pass
@@ -472,7 +497,6 @@ class TaskSource(object):
         if check is False:
             if Object is None:
                 return
-            pass
 
         self.__addDesc("TaskDestroy", dict(Object=Object))
         pass
@@ -618,9 +642,7 @@ class TaskSource(object):
 
         taskType = TaskManager.getTaskType(typeName)
 
-        if taskType is None:
-            raise TaskGeneratorException("invalid generate source [addTryTask] not found task '%s' with params: %s", typeName, params)
-            pass
+        assert taskType is not None
 
         desc = TaskTryDesc([], [], taskType, params)
 
@@ -840,8 +862,8 @@ class TaskSource(object):
 
         def __states(isSkip, cb):
             value, = winner.getArgs()
-            if value == -1:
-                raise TaskGeneratorException("invalid generate source [addRaceScope] winner value %s", value)
+            assert value != -1
+
             cb(isSkip, value)
 
         return self.addSwitchTask(count, __states)
@@ -867,10 +889,7 @@ class TaskSource(object):
         pass
 
     def checkComplete(self):
-        if self.complete is True:
-            Trace.log("Task", 0, "TaskSource.checkComplete: error is end!")
-            pass
-        pass
+        assert self.complete is False
 
     def end(self):
         self.complete = True
@@ -891,27 +910,14 @@ class TaskGenerator(object):
         pass
 
     def parse(self):
-        if self.chain is None:
-            Trace.log("Task", 0, "TaskGenerator.parse chain is None")
-
-            return None
-            pass
-
-        if isinstance(self.lastTask, TaskBase) is False:
-            Trace.log("Task", 0, "TaskGenerator.parse lastTask is not TaskBase [%s]" % (self.lastTask))
-
-            return None
-            pass
+        assert self.chain is not None
+        assert isinstance(self.lastTask, TaskBase) is True
 
         for element in self.source:
             if isinstance(element, TaskDesc) is True:
                 task = self.chain.createTaskBaseTypeParams(element.type, self.group, element.getCaller(), element.params)
 
-                if task is None:
-                    Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDesc %s" % (element.type))
-
-                    return None
-                    pass
+                assert task is not None
 
                 self._addTask(task)
                 pass
@@ -921,22 +927,14 @@ class TaskGenerator(object):
                 tg_guard_check = TaskGenerator(self.chain, self.group, element.guard_check, self.lastTask)
                 tg_guard_check_lastTask = tg_guard_check.parse()
 
-                if tg_guard_check_lastTask is None:
-                    Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskGuardDesc source_check")
-
-                    return None
-                    pass
+                assert tg_guard_check_lastTask is not None
 
                 tasks.append(tg_guard_check_lastTask)
 
                 tg_guard_source = TaskGenerator(self.chain, self.group, element.guard_source, self.lastTask)
                 tg_guard_source_lastTask = tg_guard_source.parse()
 
-                if tg_guard_source_lastTask is None:
-                    Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskGuardDesc")
-
-                    return None
-                    pass
+                assert tg_guard_source_lastTask is not None
 
                 tasks.append(tg_guard_source_lastTask)
 
@@ -945,23 +943,17 @@ class TaskGenerator(object):
             elif isinstance(element, TaskSwitchDesc) is True:
                 tasks = []
                 lasts = []
-                for i, switch_source in enumerate(element.switch):
+                for switch_source in element.switch:
                     tci = self.chain.createTaskBaseParams("TaskDummy", self.group, element.getCaller(), {})
 
-                    if tci is None:
-                        Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDummy")
-
-                        return None
+                    assert tci is not None
 
                     tasks.append(tci)
 
                     tg = TaskGenerator(self.chain, self.group, switch_source, tci)
                     lastTask = tg.parse()
 
-                    if lastTask is None:
-                        Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskSwitchDesc (%d)" % (i))
-
-                        return None
+                    assert lastTask is not None
 
                     lasts.append(lastTask)
                     pass
@@ -971,23 +963,17 @@ class TaskGenerator(object):
             elif isinstance(element, TaskDictDesc) is True:
                 tasks = {}
                 lasts = {}
-                for i, (switch_key, switch_source) in enumerate(element.switch.iteritems()):
+                for switch_key, switch_source in element.switch.iteritems():
                     tci = self.chain.createTaskBaseParams("TaskDummy", self.group, element.getCaller(), {})
 
-                    if tci is None:
-                        Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDummy")
-
-                        return None
+                    assert tci is not None
 
                     tasks[switch_key] = tci
 
                     tg = TaskGenerator(self.chain, self.group, switch_source, tci)
                     lastTask = tg.parse()
 
-                    if lastTask is None:
-                        Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDictDesc (%d)" % (i))
-
-                        return None
+                    assert lastTask is not None
 
                     lasts[switch_key] = lastTask
                     pass
@@ -997,40 +983,26 @@ class TaskGenerator(object):
             elif isinstance(element, TaskIfDesc) is True:
                 task = self.chain.createTaskBase("TaskIf", self.group, Caller=element.getCaller(), Fn=element.fn, Args=element.args, Source_True=element.source_true, Source_False=element.source_false)
 
-                if task is None:
-                    Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDesc %s" % ("TaskIf"))
-
-                    return None
-                    pass
+                assert task is not None
 
                 self._addTask(task)
                 pass
             elif isinstance(element, TaskTryDesc) is True:
                 task_type = self.chain.createTaskBaseTypeParams(element.type, self.group, element.getCaller(), element.params)
 
-                if task_type is None:
-                    Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskDesc %s" % ("TaskTryDesc"))
-
-                    return None
-                    pass
+                assert task_type is not None
 
                 self._addTask(task_type)
 
                 def __check_task_error(task_type):
                     if task_type.getError() is True:
                         return False
-                        pass
 
                     return True
-                    pass
 
                 task_if = self.chain.createTaskBase("TaskIf", self.group, Caller=element.getCaller(), Fn=__check_task_error, Args=(task_type,), Source_True=element.source_true, Source_False=element.source_false)
 
-                if task_if is None:
-                    Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskIf %s" % ("TaskTryDesc"))
-
-                    return None
-                    pass
+                assert task_if is not None
 
                 self._addTask(task_if)
                 pass
@@ -1049,11 +1021,7 @@ class TaskGenerator(object):
                     tg = TaskGenerator(self.chain, self.group, parallel_source, self.lastTask)
                     lastTask = tg.parse()
 
-                    if lastTask is None:
-                        Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskParallelDesc")
-
-                        return None
-                        pass
+                    assert lastTask is not None
 
                     tasks.append(lastTask)
                     pass
@@ -1066,11 +1034,7 @@ class TaskGenerator(object):
                     tg = TaskGenerator(self.chain, self.group, race_source, self.lastTask)
                     lastTask = tg.parse()
 
-                    if lastTask is None:
-                        Trace.log("Task", 0, "TaskGenerator.parse invalid create task TaskRaceDesc")
-
-                        return None
-                        pass
+                    assert lastTask is not None
 
                     tasks.append(lastTask)
                     pass
@@ -1081,10 +1045,7 @@ class TaskGenerator(object):
                 self._addShiftCollect(element)
                 pass
             else:
-                Trace.log("Task", 0, "TaskGenerator.parse invalid element type %s" % (element))
-
-                return None
-                pass
+                assert False
             pass
 
         lastTask = self.lastTask
@@ -1095,7 +1056,6 @@ class TaskGenerator(object):
         self.lastTask = None
 
         return lastTask
-        pass
 
     def _addTask(self, task):
         if self.lastTask is not None:
@@ -1108,11 +1068,7 @@ class TaskGenerator(object):
     def _addFor(self, element):
         task = self.chain.createTaskBase("TaskFor", self.group, Caller=element.getCaller(), Source=element.source, Iterator=element.iterator, Count=element.count)
 
-        if task is None:
-            Trace.log("Task", 0, "TaskGenerator._addFor invalid create task TaskFor")
-
-            return
-            pass
+        assert task is not None
 
         self._addTask(task)
         pass
@@ -1120,11 +1076,7 @@ class TaskGenerator(object):
     def _addRepeat(self, element):
         task = self.chain.createTaskBase("TaskRepeat", self.group, Caller=element.getCaller(), RepeatSource=element.repeat, UntilSource=element.until, HasUntil=element.hasUntil)
 
-        if task is None:
-            Trace.log("Task", 0, "TaskGenerator._addRepeat invalid create task TaskRepeat")
-
-            return
-            pass
+        assert task is not None
 
         self._addTask(task)
         pass
@@ -1132,10 +1084,7 @@ class TaskGenerator(object):
     def _addForkSource(self, element):
         task = self.chain.createTaskBase("TaskForkSource", self.group, Caller=element.getCaller(), Source=element.source)
 
-        if task is None:
-            Trace.log("Task", 0, "TaskGenerator._addForkSource invalid create task TaskForkSource")
-
-            return
+        assert task is not None
 
         self._addTask(task)
         pass
@@ -1146,10 +1095,7 @@ class TaskGenerator(object):
 
         task = self.chain.createTaskBaseRace(self.group, False, True, element.getCaller())
 
-        if task is None:
-            Trace.log("Task", 0, "TaskGenerator._addGuard invalid create task TaskRaceNeck")
-
-            return
+        assert task is not None
 
         for next in tasks:
             next.addNext(task)
@@ -1161,15 +1107,10 @@ class TaskGenerator(object):
     def _addSwitch(self, element, tasks, lasts):
         if len(tasks) == 0:
             return
-            pass
 
         task = self.chain.createTaskBase("TaskSwitch", self.group, Caller=element.getCaller(), Cb=element.cb, CbArgs=element.args, CbKwargs=element.kwargs, Tasks=tasks, Lasts=lasts)
 
-        if task is None:
-            Trace.log("Task", 0, "TaskGenerator._addSwitch invalid create task TaskSwitch")
-
-            return
-            pass
+        assert task is not None
 
         self._addTask(task)
         pass
@@ -1178,21 +1119,18 @@ class TaskGenerator(object):
         PolicyShiftCollect = PolicyManager.getPolicy("ShiftCollect", "PolicySocketShiftCollect")
         task = self.chain.createTaskBase(PolicyShiftCollect, self.group, Caller=element.getCaller(), Index=element.index, Collects=element.shiftCollect)
 
+        assert task is not None
+
         self._addTask(task)
         pass
 
     def _addParallel(self, tasks, element):
         if len(tasks) == 0:
             return
-            pass
 
         task = self.chain.createTaskBase("TaskParallelNeck", self.group, Caller=element.getCaller())
 
-        if task is None:
-            Trace.log("Task", 0, "TaskGenerator._addParallel invalid create task TaskParallelNeck")
-
-            return
-            pass
+        assert task is not None
 
         for next in tasks:
             next.addNext(task)
@@ -1204,15 +1142,10 @@ class TaskGenerator(object):
     def _addRace(self, tasks, element):
         if len(tasks) == 0:
             return
-            pass
 
         task = self.chain.createTaskBaseRace(self.group, element.NoSkip, element.RaceSkip, element.getCaller())
 
-        if task is None:
-            Trace.log("Task", 0, "TaskGenerator._addRace invalid create task TaskRaceNeck")
-
-            return
-            pass
+        assert task is not None
 
         for next in tasks:
             next.addNext(task)
