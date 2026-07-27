@@ -32,6 +32,7 @@ class ObjectMovie2Button(DemonObject):
         Type.declareParam("KeyTag")
         Type.declareParam("BlockKeys")
         Type.declareParam("Synchronize")
+        Type.declareParam("ClickOnly")
         pass
 
     def _onParams(self, params):
@@ -64,6 +65,7 @@ class ObjectMovie2Button(DemonObject):
 
         self.initParam("BlockKeys", params, False)
         self.initParam("Synchronize", params, False)
+        self.initParam("ClickOnly", params, False)
 
     def hasSlot(self, slot_name):
         return self.getEntity().hasSlot(slot_name)

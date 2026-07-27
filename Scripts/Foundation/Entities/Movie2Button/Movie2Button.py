@@ -42,6 +42,7 @@ class Movie2Button(BaseEntity):
         Type.addAction("BlockKeys")
         Type.addAction("KeyTag")
         Type.addAction("Synchronize")
+        Type.addActionActivate("ClickOnly", Update=Type.__updateClickOnly)
 
     def __init__(self):
         super(Movie2Button, self).__init__()
@@ -161,6 +162,9 @@ class Movie2Button(BaseEntity):
             self.SemaphoreBlock.setValue(False)
             return
         self.SemaphoreSelected.setValue(False)
+
+    def __updateClickOnly(self, value):
+        self.EventSkipState()
 
     def getCurrentMovie(self):
         if self.state not in self.Movies:
@@ -431,7 +435,10 @@ class Movie2Button(BaseEntity):
 
         with source.addRaceTask(3) as (source_push_movie, source_push_leave, source_pressed_click_rel):
             source_push_movie.addTask("TaskMovie2Play", Movie2=MoviePush)
-            source_push_movie.addFunction(self.__setState, "Pressed")
+            if self.ClickOnly is True:
+                source_push_movie.addBlock()
+            else:
+                source_push_movie.addFunction(self.__setState, "Pressed")
 
             source_push_leave.addTask("TaskMovie2SocketLeave", SocketName="socket", Movie2=MoviePush)
             source_push_leave.addNotify(Notificator.onMovie2ButtonMouseLeave, self.object)
@@ -441,7 +448,10 @@ class Movie2Button(BaseEntity):
             #                                  Movie2 = MoviePush, isDown = False, Already = True)
             source_pressed_click_rel.addTask("TaskMovie2SocketClick", SocketName="socket",
                                              Movie2=MoviePush, isDown=False, isPressed=False)
-            source_pressed_click_rel.addFunction(self.__setState, "Click")
+            if self.ClickOnly is True:
+                source_pressed_click_rel.addFunction(self.__setState, "Release_Click")
+            else:
+                source_pressed_click_rel.addFunction(self.__setState, "Click")
 
         source.addDisable(MoviePush)
 
@@ -452,12 +462,17 @@ class Movie2Button(BaseEntity):
 
         source.addScope(self.__scopeEnable, MoviePressed)
         source.addDelay(0.0)
-        source.addNotify(Notificator.onMovie2ButtonPressed, self.object)
+
+        if self.ClickOnly is False:
+            source.addNotify(Notificator.onMovie2ButtonPressed, self.object)
 
         with source.addRaceTask(4) as (source_pressed_click_rel, source_pressed_leave, source_block, source_selected):
             source_pressed_click_rel.addTask("TaskMovie2SocketClick", SocketName="socket",
                                              Movie2=MoviePressed, isDown=False, isPressed=False, Already=True)
-            source_pressed_click_rel.addFunction(self.__setState, "Click")
+            if self.ClickOnly is True:
+                source_pressed_click_rel.addFunction(self.__setState, "Release_Click")
+            else:
+                source_pressed_click_rel.addFunction(self.__setState, "Click")
 
             source_pressed_leave.addTask("TaskMovie2SocketLeave", SocketName="socket", Movie2=MoviePressed)
             source_pressed_leave.addNotify(Notificator.onMovie2ButtonMouseLeave, self.object)
@@ -499,6 +514,17 @@ class Movie2Button(BaseEntity):
         source.addTask("TaskMovie2Play", Movie2=MovieRelease)
         source.addTask("TaskMovie2Rewind", Movie2=MovieRelease)
         source.addFunction(self.__setState, "Idle")
+        source.addDisable(MovieRelease)
+
+    def __stateReleaseClick(self, source, MovieRelease):
+        if MovieRelease is None:
+            source.addFunction(self.__setState, "Click")
+            return
+
+        source.addScope(self.__scopeEnable, MovieRelease)
+        source.addTask("TaskMovie2Play", Movie2=MovieRelease)
+        source.addTask("TaskMovie2Rewind", Movie2=MovieRelease)
+        source.addFunction(self.__setState, "Click")
         source.addDisable(MovieRelease)
 
     def __stateClick(self, source, MovieClick):
@@ -599,7 +625,8 @@ class Movie2Button(BaseEntity):
 
     def setState(self, state):
         states = ("Idle", "Appear", "Enter", "Leave", "Over", "Click", "Push", "Pressed",
-                  "Release", "Block", "BlockEnter", "BlockEnd", "Selected", "SelectedEnter", "SelectedEnd")
+                  "Release", "Release_Click", "Block", "BlockEnter", "BlockEnd",
+                  "Selected", "SelectedEnter", "SelectedEnd")
         if state not in states:
             return
 
@@ -672,6 +699,7 @@ class Movie2Button(BaseEntity):
                 Pressed=Functor(self.__statePressed, MoviePressed),
                 Release=Functor(self.__stateRelease, MovieRelease),
                 Release_Play=Functor(self.__stateReleasePlay, MovieRelease),
+                Release_Click=Functor(self.__stateReleaseClick, MovieRelease),
                 Block=Functor(self.__stateBlock, MovieBlock),
                 BlockEnter=Functor(self.__stateBlockEnter, MovieBlockEnter),
                 BlockEnd=Functor(self.__stateBlockEnd, MovieBlockEnd),
