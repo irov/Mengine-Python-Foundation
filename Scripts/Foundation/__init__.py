@@ -78,6 +78,7 @@ def onInitialize():
         , "TaskSetCapture"
 
         , "TaskDelay"
+        , "TaskNextFrame"
         , "TaskPipe"
         , "TaskWait"
         , "TaskNotify"

@@ -121,7 +121,7 @@ class MovieButton(BaseEntity):
 
     def __stateIdle(self, source, MovieIdle):
         source.addEnable(MovieIdle)
-        source.addDelay(0.0)
+        source.addNextFrame()
         with source.addRaceTask(3) as (source_over_click, source_over_enter, source_block):
             source_over_click.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MovieIdle, isDown=True)
             source_over_click.addFunction(self.__setState, "Push")
@@ -143,7 +143,7 @@ class MovieButton(BaseEntity):
             pass
 
         source.addEnable(MovieOver)
-        source.addDelay(0.0)
+        source.addNextFrame()
 
         with source.addRaceTask(3) as (source_over_click, source_over_leave, source_block):
             source_over_click.addTask("TaskMovieSocketClick", SocketName="socket", Movie=MovieOver,
@@ -169,7 +169,7 @@ class MovieButton(BaseEntity):
             pass
 
         source.addEnable(MovieEnter)
-        source.addDelay(0.0)
+        source.addNextFrame()
         source.addNotify(Notificator.onButtonMouseEnter, self.object)
         source.addNotify(Notificator.onMovieButtonMouseEnter, self.object)
 
@@ -196,7 +196,7 @@ class MovieButton(BaseEntity):
             pass
 
         source.addEnable(MovieLeave)
-        source.addDelay(0.0)
+        source.addNextFrame()
         source.addNotify(Notificator.onMovieButtonMouseLeave, self.object)
 
         with source.addRaceTask(2) as (source_leave_movie, source_leave_enter):
@@ -219,7 +219,7 @@ class MovieButton(BaseEntity):
 
         source.addEnable(MoviePush)
         source.addNotify(Notificator.onMovieButtonPush, self.object)
-        source.addDelay(0.0)
+        source.addNextFrame()
 
         with source.addRaceTask(3) as (source_Push_movie, source_Push_leave, source_Pressed_click_Rel):
             source_Push_movie.addTask("TaskMoviePlay", Movie=MoviePush)
@@ -243,7 +243,7 @@ class MovieButton(BaseEntity):
             pass
 
         source.addEnable(MoviePressed)
-        source.addDelay(0.0)
+        source.addNextFrame()
         source.addNotify(Notificator.onMovieButtonPressed, self.object)
 
         with source.addRaceTask(3) as (source_Pressed_click_Rel, source_Pressed_leave, source_block):
@@ -270,7 +270,7 @@ class MovieButton(BaseEntity):
 
         source.addEnable(MoviePressed)
         source.addNotify(Notificator.onMovieButtonRelease, self.object)
-        source.addDelay(0.0)
+        source.addNextFrame()
 
         with source.addRaceTask(2) as (source_Release_movie, source_Release_enter):
             source_Release_movie.addTask("TaskMouseButtonClick", isDown=False)

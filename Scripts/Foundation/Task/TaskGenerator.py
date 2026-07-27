@@ -480,6 +480,10 @@ class TaskSource(object):
         self.__addDesc("TaskDelay", dict(Time=Time, **Kwargs))
         pass
 
+    def addNextFrame(self):
+        self.__addDesc("TaskNextFrame", {})
+        pass
+
     def addPlay(self, Object, **Kwargs):
         self.__addDesc("TaskObjectPlay", dict(Object=Object, **Kwargs))
         pass

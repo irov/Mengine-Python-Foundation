@@ -278,7 +278,7 @@ class Movie2EditBox(BaseEntity):
 
     def __stateIdle(self, source, MovieIdle):
         source.addEnable(MovieIdle)
-        source.addDelay(0.0)
+        source.addNextFrame()
         source.addFunction(self.updateValue)
         with source.addRaceTask(4) as (source_over_click, source_over_enter, source_block, source_tab_focus):
             source_over_click.addTask("TaskMovie2SocketClick", SocketName="socket", Movie2=MovieIdle, isDown=True)
@@ -304,7 +304,7 @@ class Movie2EditBox(BaseEntity):
             pass
 
         source.addEnable(MovieOver)
-        source.addDelay(0.0)
+        source.addNextFrame()
         source.addFunction(self.updateValue)
         with source.addRaceTask(4) as (source_over_click, source_over_leave, source_block, source_tab_focus):
             source_over_click.addTask("TaskMovie2SocketClick", SocketName="socket", Movie2=MovieOver, isDown=True, Already=True)
