@@ -1,13 +1,13 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.Utils import SimpleLogger
 from Foundation.Providers.ConsentProvider import ConsentProvider
-from Foundation.Systems.SystemAppleAd import SystemAppleAd
+from Foundation.Systems.SystemiOSAd import SystemiOSAd
 
-_Log = SimpleLogger("SystemAppleAppLovin")
+_Log = SimpleLogger("SystemiOSAppLovin")
 
 PLUGIN_NAME = "iOSAppLovinPlugin"
 
-class SystemAppleAppLovin(SystemAppleAd):
+class SystemiOSAppLovin(SystemiOSAd):
     """ Advertisement module 'AppLovin' for iOS """
 
     is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
@@ -15,7 +15,7 @@ class SystemAppleAppLovin(SystemAppleAd):
 
     @staticmethod
     def _onAvailable(params):
-        return SystemAppleAppLovin.is_plugin_active
+        return SystemiOSAppLovin.is_plugin_active
 
     def _onInitialize(self):
         methods = self.initAds()
@@ -31,7 +31,7 @@ class SystemAppleAppLovin(SystemAppleAd):
 
     @staticmethod
     def isSdkInitialized():
-        return SystemAppleAppLovin.is_sdk_init is True
+        return SystemiOSAppLovin.is_sdk_init is True
 
     def showConsentFlow(self):
         def __cbConsentFlowShowSuccess():
@@ -50,5 +50,5 @@ class SystemAppleAppLovin(SystemAppleAd):
 
     def __cbSdkInitialized(self):
         _Log("[SDK cb] onAppLovinPluginOnSdkInitialized")
-        SystemAppleAppLovin.is_sdk_init = True
+        SystemiOSAppLovin.is_sdk_init = True
         self._setAdServiceReady()

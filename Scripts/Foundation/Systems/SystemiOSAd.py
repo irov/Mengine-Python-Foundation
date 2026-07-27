@@ -6,9 +6,9 @@ from Foundation.Utils import SimpleLogger
 _Log = SimpleLogger("SystemAdService")
 
 
-class SystemAppleAd(System):
+class SystemiOSAd(System):
     def __init__(self):
-        super(SystemAppleAd, self).__init__()
+        super(SystemiOSAd, self).__init__()
 
         self.semaphoreAdServiceReady = Semaphore(False, "AdServiceReady")
         self.banner_inited = False

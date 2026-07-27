@@ -3,7 +3,7 @@ from Foundation.Providers.FacebookProvider import FacebookProvider
 
 PLUGIN_NAME = "iOSFacebookPlugin"
 
-class SystemAppleFacebook(System):
+class SystemiOSFacebook(System):
     is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
 
     onLoginSuccess = Event("onLoginSuccess")
@@ -26,11 +26,11 @@ class SystemAppleFacebook(System):
     callbacks = {}
 
     def __init__(self):
-        super(SystemAppleFacebook, self).__init__()
+        super(SystemiOSFacebook, self).__init__()
 
     @staticmethod
     def _onAvailable(params):
-        return SystemAppleFacebook.is_plugin_active
+        return SystemiOSFacebook.is_plugin_active
 
     def _onInitialize(self):
         callbacks = {
@@ -70,33 +70,33 @@ class SystemAppleFacebook(System):
 
     def performLogin(self, permissions=('email', 'public_profile'), _cb_success=None, _cb_cancel=None, _cb_error=None):
         callbacks = {
-            SystemAppleFacebook.onLoginSuccess: _cb_success,
-            SystemAppleFacebook.onLoginCancel: _cb_cancel,
-            SystemAppleFacebook.onLoginError: _cb_error
+            SystemiOSFacebook.onLoginSuccess: _cb_success,
+            SystemiOSFacebook.onLoginCancel: _cb_cancel,
+            SystemiOSFacebook.onLoginError: _cb_error
         }
 
-        SystemAppleFacebook.addCallbacks(callbacks)
+        SystemiOSFacebook.addCallbacks(callbacks)
 
         Mengine.iOSFacebookLogin(permissions)
 
     def shareLink(self, link=None, msg='', _cb_success=None, _cb_cancel=None, _cb_error=None):
         callbacks = {
-            SystemAppleFacebook.onShareSuccess: _cb_success,
-            SystemAppleFacebook.onShareCancel: _cb_cancel,
-            SystemAppleFacebook.onShareError: _cb_error
+            SystemiOSFacebook.onShareSuccess: _cb_success,
+            SystemiOSFacebook.onShareCancel: _cb_cancel,
+            SystemiOSFacebook.onShareError: _cb_error
         }
 
-        SystemAppleFacebook.addCallbacks(callbacks)
+        SystemiOSFacebook.addCallbacks(callbacks)
 
         Mengine.iOSFacebookShareLink(link, "")
 
     def logout(self, _cb_success=None, _cb_error=None):
         callbacks = {
-            SystemAppleFacebook.onLogoutSuccess: _cb_success,
-            SystemAppleFacebook.onLogoutError: _cb_error,
+            SystemiOSFacebook.onLogoutSuccess: _cb_success,
+            SystemiOSFacebook.onLogoutError: _cb_error,
         }
 
-        SystemAppleFacebook.addCallbacks(callbacks)
+        SystemiOSFacebook.addCallbacks(callbacks)
 
         access_token = self.getAccessToken()
         Mengine.iOSFacebookLogout()
@@ -125,11 +125,11 @@ class SystemAppleFacebook(System):
 
     def getProfilePictureLink(self, type_parameter="large", _cb_success=None, _cb_error=None):
         callbacks = {
-            SystemAppleFacebook.onProfilePictureLinkGetSuccess: _cb_success,
-            SystemAppleFacebook.onProfilePictureLinkGetError: _cb_error
+            SystemiOSFacebook.onProfilePictureLinkGetSuccess: _cb_success,
+            SystemiOSFacebook.onProfilePictureLinkGetError: _cb_error
         }
 
-        SystemAppleFacebook.addCallbacks(callbacks)
+        SystemiOSFacebook.addCallbacks(callbacks)
 
         Mengine.iOSFacebookGetProfilePictureLink()
 
@@ -178,7 +178,7 @@ class SystemAppleFacebook(System):
             return
 
         def _cb(*args, **kwargs):
-            callbacks = SystemAppleFacebook.callbacks.pop(event, None)
+            callbacks = SystemiOSFacebook.callbacks.pop(event, None)
             if callbacks is None:
                 return
 
@@ -187,12 +187,12 @@ class SystemAppleFacebook(System):
 
             fn(*args, **kwargs)
 
-        if event not in SystemAppleFacebook.callbacks:
-            SystemAppleFacebook.callbacks[event] = []
-        SystemAppleFacebook.callbacks[event].append(_cb)
+        if event not in SystemiOSFacebook.callbacks:
+            SystemiOSFacebook.callbacks[event] = []
+        SystemiOSFacebook.callbacks[event].append(_cb)
         event += _cb
 
     @staticmethod
     def addCallbacks(callbacks):
         for event, fn in callbacks.iteritems():
-            SystemAppleFacebook.addCallback(event, fn)
+            SystemiOSFacebook.addCallback(event, fn)

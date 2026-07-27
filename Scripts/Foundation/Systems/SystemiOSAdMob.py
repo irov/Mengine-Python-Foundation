@@ -1,12 +1,12 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.Utils import SimpleLogger
-from Foundation.Systems.SystemAppleAd import SystemAppleAd
+from Foundation.Systems.SystemiOSAd import SystemiOSAd
 
-_Log = SimpleLogger("SystemAppleAdMob")
+_Log = SimpleLogger("SystemiOSAdMob")
 
 PLUGIN_NAME = "iOSAdMobPlugin"
 
-class SystemAppleAdMob(SystemAppleAd):
+class SystemiOSAdMob(SystemiOSAd):
     """ Advertisement module 'AdMob' for iOS """
 
     is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
@@ -14,7 +14,7 @@ class SystemAppleAdMob(SystemAppleAd):
 
     @staticmethod
     def _onAvailable(params):
-        return SystemAppleAdMob.is_plugin_active
+        return SystemiOSAdMob.is_plugin_active
 
     def _onInitialize(self):
         methods = self.initAds()
@@ -23,9 +23,9 @@ class SystemAppleAdMob(SystemAppleAd):
 
     @staticmethod
     def isSdkInitialized():
-        return SystemAppleAdMob.is_sdk_init is True
+        return SystemiOSAdMob.is_sdk_init is True
 
     def __cbSdkInitialized(self):
         _Log("[SDK cb] onAdMobPluginOnSdkInitialized")
-        SystemAppleAdMob.is_sdk_init = True
+        SystemiOSAdMob.is_sdk_init = True
         self._setAdServiceReady()

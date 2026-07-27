@@ -3,19 +3,19 @@ from Foundation.Providers.RemoteConfigProvider import RemoteConfigProvider
 
 PLUGIN_NAME = "iOSFirebaseRemoteConfigPlugin"
 
-class SystemAppleRemoteConfig(System):
+class SystemiOSRemoteConfig(System):
     is_plugin_active = Mengine.isAvailablePlugin(PLUGIN_NAME)
 
     @staticmethod
     def isPluginEnable():
-        return SystemAppleRemoteConfig.is_plugin_active
+        return SystemiOSRemoteConfig.is_plugin_active
 
     def _onInitialize(self):
         if self.isPluginEnable() is False:
             return
 
         RemoteConfigProvider.setProvider("Firebase", dict(
-            getRemoteConfigValue=SystemAppleRemoteConfig.getRemoteConfigValue,
+            getRemoteConfigValue=SystemiOSRemoteConfig.getRemoteConfigValue,
         ))
 
     def _onRun(self):
