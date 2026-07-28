@@ -14,7 +14,7 @@ def createVirtualArea(name='VirtualArea', enable_scale=True, scale_factor=0.375,
                       friction_base=DUNGEON_VIRTUAL_AREA_FRICTION_BASE,
                       friction_factor=DUNGEON_VIRTUAL_AREA_FRICTION_FACTOR,
                       rigidity=0.5, dragging_mode='free', max_scale=6.0,
-                      disable_drag_if_invalid=True, drag_start_threshold=2.0,
+                      disable_drag_if_invalid=True, drag_start_threshold=0.0,
                       allow_out_of_bounds=True):
     mode = _DRAGGING_MODES.get(dragging_mode)
     if mode is None:
