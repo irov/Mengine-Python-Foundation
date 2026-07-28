@@ -437,6 +437,8 @@ class Movie2Button(BaseEntity):
         source.addDisable(MovieLeave)
 
     def __statePushClickOnly(self, source, MovieIdle, MoviePush, MoviePressed):
+        MoviePressedOrIdle = MoviePressed or MovieIdle
+
         source.addScope(self.__scopeEnable, MovieIdle)
         source.addFunction(self.__enableInteractive, MovieIdle)
         source.addNextFrame()
@@ -460,13 +462,13 @@ class Movie2Button(BaseEntity):
                         source_animation.addTask("TaskMovie2Rewind", Movie2=MoviePush)
                         source_animation.addDisable(MoviePush)
 
-                    source_animation.addScope(self.__scopeEnable, MoviePressed)
-                    source_animation.addFunction(self.__enableInteractive, MoviePressed)
+                    source_animation.addScope(self.__scopeEnable, MoviePressedOrIdle)
+                    source_animation.addFunction(self.__enableInteractive, MoviePressedOrIdle)
                     source_animation.addNotify(Notificator.onMovie2ButtonPressed, self.object)
 
                     source_release.addTask("TaskMouseButtonClick", isDown=False)
 
-                source_hold.addFunction(self.__setStateBySocketEnter, MoviePressed, "Release_Click", "Release_Play")
+                source_hold.addFunction(self.__setStateBySocketEnter, MoviePressedOrIdle, "Release_Click", "Release_Play")
 
         source.addScope(self.scopeDisableAllMovies)
 
