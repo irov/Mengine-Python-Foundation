@@ -81,7 +81,7 @@ class DummyAdvertisement(object):
 
         Trace.msg("<DummyAdvertisement> show interstitial system dialog {} (fail: {})...".format(placement, display_failed))
 
-        return Mengine.showSystemDialog("INTERSTITIAL", "Dummy advertisement", __onSystemDialogClosed)
+        return Mengine.showSystemDialog("INTERSTITIAL", "Dummy advertisement\nPlacement: {}".format(placement), __onSystemDialogClosed)
 
     @staticmethod
     def hasRewardedAdvert():
