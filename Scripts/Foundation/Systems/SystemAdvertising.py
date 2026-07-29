@@ -16,6 +16,9 @@ class SystemAdvertising(System):
         return True
 
     def tryInterstitial(self, next_scene, placement, Skip = False):
+        if AdvertisementProvider.s_fullscreen_ad_showing is True:
+            return True
+
         def __checkAdInterstitial(placement):
             if self.isInterstitialEnabled() is False:
                 return False
