@@ -32,7 +32,8 @@ class TaskNodeBezier2ScreenFollow(MixinNode, Task):
         if self.Time is None:
             positionFrom = self.node.getScreenPosition()
             positionTo = self.Follow.getScreenPosition()
-            length = Mengine.length_v2_v2(positionFrom, positionTo)
+            point1 = (positionTo[0], positionFrom[1])
+            length = Mengine.length_bezier2(positionFrom, point1, positionTo)
             self.Time = length / self.Speed
             pass
         pass

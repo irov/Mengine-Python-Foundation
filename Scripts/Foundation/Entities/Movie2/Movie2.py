@@ -69,6 +69,9 @@ class Movie2(BaseAnimatable):
         movie.setResourceMovie2(self.ResourceMovie)
         movie.setCompositionName(self.CompositionName)
 
+        if self.TextAliasEnvironment is not None:
+            movie.setTextAliasEnvironment(self.TextAliasEnvironment)
+
         movie.setEventListener(onAnimatableEnd=self.__onAnimatableEnd,
                                onAnimatableStop=self.__onAnimatableStop)
         movie.enable()
@@ -380,7 +383,7 @@ class Movie2(BaseAnimatable):
 
     def __updateTextAliasEnvironment(self, value):
         if value is not None:
-            self.movie.setTextAliasEnvironment(str(value))
+            self.movie.setTextAliasEnvironment(value)
 
     def _onPreparation(self):
         super(Movie2, self)._onPreparation()

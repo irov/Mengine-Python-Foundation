@@ -106,7 +106,7 @@ class Text(BaseEntity):
 
     def __updateMaxVisibleChar(self, value):
         if value is None:
-            self.text_field.setMaxCharCount(-1)
+            self.text_field.setMaxCharCount(0xFFFFFFFF)
         else:
             self.text_field.setMaxCharCount(value)
             pass

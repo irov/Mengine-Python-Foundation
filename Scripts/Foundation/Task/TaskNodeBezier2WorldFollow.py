@@ -23,8 +23,10 @@ class TaskNodeBezier2WorldFollow(MixinNode, Task):
             if self.Speed is None:
                 self.initializeFailed("Time and speed is None.")
             positionFrom = self.node.getWorldPosition()
-            positionTo = self.Follow.getWorldPosition()
-            length = Mengine.length_v2_v2(positionFrom, positionTo)
+            followPosition = self.Follow.getWorldPosition()
+            positionTo = (followPosition[0] + self.Offset[0], followPosition[1] + self.Offset[1])
+            point1 = (positionTo[0], positionFrom[1])
+            length = Mengine.length_bezier2(positionFrom, point1, positionTo)
             self.Time = length / self.Speed
             pass
         pass

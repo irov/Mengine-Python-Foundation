@@ -33,11 +33,6 @@ class TaskNodeBezier2To(MixinNode, Task):
     def _onRun(self):
         positionFrom = self.node.getLocalPosition()
 
-        if self.time is None:
-            length = Mengine.length_v2_v2(positionFrom, self.positionTo)
-            self.time = length / self.speed
-            pass
-
         if self.Point1 is None:
             fx = positionFrom[0]
             fy = positionFrom[1]
@@ -55,6 +50,11 @@ class TaskNodeBezier2To(MixinNode, Task):
                 pass
 
             self.Point1 = (px, py)
+            pass
+
+        if self.time is None:
+            length = Mengine.length_bezier2(positionFrom, self.Point1, self.positionTo)
+            self.time = length / self.speed
             pass
 
         def __onBezierTo(node, isEnd):

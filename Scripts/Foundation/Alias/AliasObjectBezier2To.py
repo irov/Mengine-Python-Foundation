@@ -25,7 +25,7 @@ class AliasObjectBezier2To(MixinObject, TaskAlias):
         positionFrom = self.Object.getPosition()
 
         if self.time is None:
-            length = Mengine.length_v2_v2(positionFrom, self.positionTo)
+            length = Mengine.length_bezier2(positionFrom, self.P1, self.positionTo)
             self.time = length / self.speed
             pass
 
