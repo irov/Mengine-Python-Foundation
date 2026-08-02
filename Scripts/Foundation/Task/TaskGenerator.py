@@ -406,7 +406,7 @@ class TaskSource(object):
         return len(self.source)
 
     def __addDesc(self, TaskType, params):
-        self.checkComplete()
+        assert self.complete is False
 
         task_type = self.__resolveTaskType(TaskType)
 
@@ -414,7 +414,7 @@ class TaskSource(object):
         pass
 
     def __addDescType(self, taskType, params):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskDesc(taskType, params)
 
@@ -537,7 +537,7 @@ class TaskSource(object):
         pass
 
     def addFork(self):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskForkDesc([])
 
@@ -586,7 +586,7 @@ class TaskSource(object):
         pass
 
     def makeGuardSource(self, enable, guard, *args):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskGuardDesc([], [], enable, guard, args)
 
@@ -607,7 +607,7 @@ class TaskSource(object):
         return TaskSourceTg(source)
 
     def addSwitchTask(self, count, cb, *args, **kwargs):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskSwitchDesc([], cb, args, kwargs)
 
@@ -632,7 +632,7 @@ class TaskSource(object):
         pass
 
     def addDictTask(self, Dict, cb, *args, **kwargs):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskDictDesc({}, cb, args, kwargs)
 
@@ -653,7 +653,7 @@ class TaskSource(object):
         return TaskSourceTgw(tgw)
 
     def addTryTask(self, typeName, **params):
-        self.checkComplete()
+        assert self.complete is False
 
         taskType = TaskManager.getTaskType(typeName)
 
@@ -676,7 +676,7 @@ class TaskSource(object):
         return TaskSourceTgs(tgs)
 
     def addIfTask(self, fn, *args):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskIfDesc([], [], fn, args)
 
@@ -695,7 +695,7 @@ class TaskSource(object):
         return TaskSourceTgs(tgs)
 
     def addIfSemaphore(self, semaphore, value):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskIfDesc([], [], lambda: semaphore.equalValue(value), ())
 
@@ -714,7 +714,7 @@ class TaskSource(object):
         return TaskSourceTgs(tgs)
 
     def addForTask(self, count):
-        self.checkComplete()
+        assert self.complete is False
 
         it = Iterator(0)
 
@@ -729,7 +729,7 @@ class TaskSource(object):
         return TaskSourceTgIter(it, tg)
 
     def addRepeatTask(self):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskRepeatDesc([], [], True)
 
@@ -748,7 +748,7 @@ class TaskSource(object):
         return TaskSourceTgs(tgs)
 
     def addRepeatTaskScope(self, Scope, *Args, **Kwargs):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskRepeatDesc([], [], True)
 
@@ -765,7 +765,7 @@ class TaskSource(object):
         return until_tg
 
     def addWhileTask(self):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskRepeatDesc([], [], False)
 
@@ -778,7 +778,7 @@ class TaskSource(object):
         return TaskSourceTg(tg)
 
     def addParallelTask(self, count):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskParallelDesc([])
 
@@ -799,7 +799,7 @@ class TaskSource(object):
         return TaskSourceTgs(tgs)
 
     def addParallelTaskList(self, objects):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskParallelDesc([])
 
@@ -823,7 +823,7 @@ class TaskSource(object):
         return self.addParallelTaskList(list(zip(*objects)))
 
     def addRaceTask(self, count, NoSkip=False, RaceSkip=False):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskRaceDesc([], NoSkip, RaceSkip)
 
@@ -844,7 +844,7 @@ class TaskSource(object):
         return TaskSourceTgs(tgs)
 
     def addRaceTaskList(self, objects, NoSkip=False, RaceSkip=False):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskRaceDesc([], NoSkip, RaceSkip)
 
@@ -894,7 +894,7 @@ class TaskSource(object):
             return source_request.addRaceTask(Count)
 
     def addShiftCollect(self, index, shiftCollect):
-        self.checkComplete()
+        assert self.complete is False
 
         desc = TaskShiftCollectDesc(index, shiftCollect)
 
@@ -902,9 +902,6 @@ class TaskSource(object):
 
         self.source.append(desc)
         pass
-
-    def checkComplete(self):
-        assert self.complete is False
 
     def end(self):
         self.complete = True
