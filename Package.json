@@ -1,0 +1,34 @@
+{
+    "Scripts": {
+        "Script": [
+            {
+                "Path": "Scripts/",
+                "Module": "Foundation",
+                "Initializer": "onInitialize",
+                "Finalizer": "onFinalize"
+            }
+        ]
+    },
+    "Materials": {
+        "Material": [
+            {
+                "Path": "Materials/Shader_DX11.json"
+            },
+            {
+                "Path": "Materials/Shader_DX9.json"
+            },
+            {
+                "Path": "Materials/Shader_OpenGL.json"
+            },
+            {
+                "Path": "Materials/Shader_OpenGLES.json"
+            },
+            {
+                "Path": "Materials/Shader_Metal.json"
+            },
+            {
+                "Path": "Materials/Standart.json"
+            }
+        ]
+    }
+}
