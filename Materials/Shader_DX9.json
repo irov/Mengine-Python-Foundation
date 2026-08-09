@@ -3,7 +3,6 @@
     "VertexAttribute": [
         {
             "Name": "Vertex2D_UV0",
-            "RenderPlatform": "DX9",
             "Element": {
                 "Size": 32
             },
@@ -30,7 +29,6 @@
         },
         {
             "Name": "Vertex2D_UV1",
-            "RenderPlatform": "DX9",
             "Element": {
                 "Size": 32
             },
@@ -66,7 +64,6 @@
         },
         {
             "Name": "Vertex2D_UV2",
-            "RenderPlatform": "DX9",
             "Element": {
                 "Size": 32
             },
@@ -113,7 +110,6 @@
     "VertexShader": [
         {
             "Name": "Vertex_Blend",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Vertex_Blend.txt",
                 "Converter": "text2vso",
@@ -122,7 +118,6 @@
         },
         {
             "Name": "Vertex_Color",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Vertex_Color.txt",
                 "Converter": "text2vso",
@@ -131,7 +126,6 @@
         },
         {
             "Name": "Vertex_Blend_ExternalAlpha",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Vertex_Blend_ExternalAlpha.txt",
                 "Converter": "text2vso",
@@ -142,7 +136,6 @@
     "FragmentShader": [
         {
             "Name": "Fragment_Blend",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Blend.txt",
                 "Converter": "text2pso",
@@ -151,7 +144,6 @@
         },
         {
             "Name": "Fragment_Blend_Premultiply",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Blend_Premultiply.txt",
                 "Converter": "text2pso",
@@ -160,7 +152,6 @@
         },
         {
             "Name": "Fragment_Blend_OnlyColor",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Blend_OnlyColor.txt",
                 "Converter": "text2pso",
@@ -169,7 +160,6 @@
         },
         {
             "Name": "Fragment_TrackMatte",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_TrackMatte.txt",
                 "Converter": "text2pso",
@@ -178,7 +168,6 @@
         },
         {
             "Name": "Fragment_TrackMatteInverted",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_TrackMatteInverted.txt",
                 "Converter": "text2pso",
@@ -187,7 +176,6 @@
         },
         {
             "Name": "Fragment_TrackMatte_ExternalAlpha",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_TrackMatte_ExternalAlpha.txt",
                 "Converter": "text2pso",
@@ -196,7 +184,6 @@
         },
         {
             "Name": "Fragment_TrackMatteInverted_ExternalAlpha",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_TrackMatteInverted_ExternalAlpha.txt",
                 "Converter": "text2pso",
@@ -205,7 +192,6 @@
         },
         {
             "Name": "Fragment_AlphaMask",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_AlphaMask.txt",
                 "Converter": "text2pso",
@@ -214,7 +200,6 @@
         },
         {
             "Name": "Fragment_Accumulator",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Accumulator.txt",
                 "Converter": "text2pso",
@@ -223,7 +208,6 @@
         },
         {
             "Name": "Fragment_Blend_ExternalAlpha",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Blend_ExternalAlpha.txt",
                 "Converter": "text2pso",
@@ -232,7 +216,6 @@
         },
         {
             "Name": "Fragment_Blend_ExternalAlpha_OnlyColor",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Blend_ExternalAlpha_OnlyColor.txt",
                 "Converter": "text2pso",
@@ -241,7 +224,6 @@
         },
         {
             "Name": "Fragment_Color",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Color.txt",
                 "Converter": "text2pso",
@@ -250,7 +232,6 @@
         },
         {
             "Name": "Fragment_Color_Premultiply",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Color_Premultiply.txt",
                 "Converter": "text2pso",
@@ -259,7 +240,6 @@
         },
         {
             "Name": "Fragment_Color_Saturate",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Color_Saturate.txt",
                 "Converter": "text2pso",
@@ -268,7 +248,6 @@
         },
         {
             "Name": "Fragment_Texture_Saturate",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Texture_Saturate.txt",
                 "Converter": "text2pso",
@@ -277,7 +256,6 @@
         },
         {
             "Name": "Fragment_Texture_Saturate_ExternalAlpha",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Texture_Saturate_ExternalAlpha.txt",
                 "Converter": "text2pso",
@@ -286,7 +264,6 @@
         },
         {
             "Name": "Fragment_Desaturate",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Desaturate.txt",
                 "Converter": "text2pso",
@@ -295,7 +272,6 @@
         },
         {
             "Name": "Fragment_Legendary",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Legendary.txt",
                 "Converter": "text2pso",
@@ -304,7 +280,6 @@
         },
         {
             "Name": "Fragment_Legendary_ExternalAlpha",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Legendary_ExternalAlpha.txt",
                 "Converter": "text2pso",
@@ -313,7 +288,6 @@
         },
         {
             "Name": "Fragment_Alphapow",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_Alphapow.txt",
                 "Converter": "text2pso",
@@ -322,7 +296,6 @@
         },
         {
             "Name": "Fragment_HSL",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_HSL.txt",
                 "Converter": "text2pso",
@@ -331,7 +304,6 @@
         },
         {
             "Name": "Fragment_HSV",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Fragment_HSV.txt",
                 "Converter": "text2pso",
@@ -340,7 +312,6 @@
         },
         {
             "Name": "Ozz_Fragment_Blend",
-            "RenderPlatform": "DX9",
             "File": {
                 "Path": "Materials/DX9_Ozz_Fragment_Blend.txt",
                 "Converter": "text2pso",
