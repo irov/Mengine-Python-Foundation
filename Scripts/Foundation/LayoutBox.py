@@ -9,11 +9,13 @@ class LayoutBox(object):
         return w, h
 
     def finalize(self):
-        self.sizer = None
         if self.component is not None:
-            self.component.finalize()
+            Mengine.destroyLayoutBox(self.component)
             self.component = None
             pass
+
+        self.sizer = None
+        pass
 
     class ElementFixed(object):
         def __init__(self, getter, setter):
@@ -29,39 +31,12 @@ class LayoutBox(object):
             return self.weight
         pass
 
-    class Component(object):
-        def __init__(self, x, y, sizer, layout, parent):
-            self.x = x
-            self.y = y
-            self.sizer = sizer
-            self.layout = layout
-            self.parent = parent
-
-        def finalize(self):
-            Mengine.destroyLayout(self.layout)
-            self.layout = None
-            self.parent = None
-
-        def getOffsetX(self):
-            if self.parent is None:
-                return self.x
-            parentOffsetX = self.parent.getOffsetX()
-            offsetX = parentOffsetX + self.x
-            return offsetX
-
-        def getOffsetY(self):
-            if self.parent is None:
-                return self.y
-            parentOffsetY = self.parent.getOffsetY()
-            offsetY = parentOffsetY + self.y
-            return offsetY
-
     class BuilderElement(object):
         def __init__(self):
             self.elements = []
             pass
 
-        def addFixed(self, _getter, _setter):
+        def addFixed(self, _getter, _setter=None):
             element = LayoutBox.ElementFixed(_getter, _setter)
             self.elements.append(element)
             return self
@@ -81,103 +56,52 @@ class LayoutBox(object):
             self.elements.append(builder)
             return builder
 
-        def buildSubHorizontalComponent(self, height, parent, elements):
-            def __horizontal():
-                w, h = parent.sizer()
-                return w
-
-            layout = Mengine.createLayout(__horizontal)
-
-            def __sizer():
-                w, h = parent.sizer()
-                return w, height
-
-            component = LayoutBox.Component(0.0, 0.0, __sizer, layout, parent)
-
+        def buildElements(self, container, elements, box):
             for element in elements:
-                def __process(element):
-                    if isinstance(element, LayoutBox.BuilderSubVertical):
-                        width = element.width
+                if isinstance(element, LayoutBox.BuilderSubVertical):
+                    sub = container.addBox(Mengine.ELBD_VERTICAL, element.width)
 
-                        self.buildSubVerticalComponent(width, component, element.elements)
-                        pass
-                    elif isinstance(element, LayoutBox.ElementFixed):
-                        if element.setter is not None:
-                            def __setter(offset, size):
-                                offsetX = component.getOffsetX()
-                                offsetY = component.getOffsetY()
-                                element.setter(self.box, (offsetX + offset, offsetY), (size, height))
-                                pass
+                    self.buildElements(sub, element.elements, box)
+                    pass
+                elif isinstance(element, LayoutBox.BuilderSubHorizontal):
+                    sub = container.addBox(Mengine.ELBD_HORIZONTAL, element.height)
 
-                            layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
-                        else:
-                            layout.addElement(Mengine.LET_FIXED, element.getter, None)
+                    self.buildElements(sub, element.elements, box)
+                    pass
+                elif isinstance(element, LayoutBox.ElementFixed):
+                    setter = None
+
+                    if element.setter is not None:
+                        def __setter(offset, size, element=element):
+                            element.setter(box, (offset.x, offset.y), (size.x, size.y))
                             pass
-                    elif isinstance(element, LayoutBox.ElementPadding):
-                        layout.addElement(Mengine.LET_PAD, element.getWeight, None)
+
+                        setter = __setter
                         pass
-                __process(element)
 
-            def __getter():
-                return height
+                    container.addFixed(element.getter, setter)
+                    pass
+                elif isinstance(element, LayoutBox.ElementPadding):
+                    container.addPadding(element.getWeight())
+                    pass
+                pass
+            pass
 
-            def __setter(offset, size):
-                component.x = 0.0
-                component.y = offset
+        def build(self, box, direction):
+            if box.component is not None:
+                Mengine.destroyLayoutBox(box.component)
+                box.component = None
                 pass
 
-            parent.layout.addSubLayout(Mengine.LET_FIXED, layout, __getter, __setter)
+            layout = Mengine.createLayoutBox(box.sizer)
+            root = layout.createRoot(direction)
 
-            return component
+            self.buildElements(root, self.elements, box)
 
-        def buildSubVerticalComponent(self, width, parent, elements):
-            def __vertical():
-                w, h = parent.sizer()
-                return h
+            box.component = layout
 
-            layout = Mengine.createLayout(__vertical)
-
-            def __sizer():
-                w, h = parent.sizer()
-                return width, h
-
-            component = LayoutBox.Component(0.0, 0.0, __sizer, layout, parent)
-
-            for element in elements:
-                def __process(element):
-                    if isinstance(element, LayoutBox.BuilderSubHorizontal):
-                        height = element.height
-
-                        self.buildSubHorizontalComponent(height, component, element.elements)
-                        pass
-                    elif isinstance(element, LayoutBox.ElementFixed):
-                        if element.setter is not None:
-                            def __setter(offset, size):
-                                offsetX = component.getOffsetX()
-                                offsetY = component.getOffsetY()
-                                element.setter(self.box, (offsetX, offsetY + offset), (width, size))
-                                pass
-
-                            layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
-                        else:
-                            layout.addElement(Mengine.LET_FIXED, element.getter, None)
-                            pass
-                    elif isinstance(element, LayoutBox.ElementPadding):
-                        layout.addElement(Mengine.LET_PAD, element.getWeight, None)
-                        pass
-                __process(element)
-
-            def __getter():
-                return width
-
-            def __setter(offset, size):
-                component.x = offset
-                component.y = 0.0
-                pass
-
-            parent.layout.addSubLayout(Mengine.LET_FIXED, layout, __getter, __setter)
-
-            return component
+            layout.flush()
+            pass
 
     class BuilderSubVertical(BuilderElement):
         def __init__(self, width):
@@ -189,8 +113,10 @@ class LayoutBox(object):
             def __getter():
                 w, h = ob.getLayoutSize()
                 return h
+
             def __setter(box, offset, size):
                 ob.setLayoutOffset(box, offset, size)
+
             self.addFixed(__getter, __setter)
             return self
 
@@ -210,8 +136,10 @@ class LayoutBox(object):
             def __getter():
                 w, h = ob.getLayoutSize()
                 return w
+
             def __setter(box, offset, size):
                 ob.setLayoutOffset(box, offset, size)
+
             self.addFixed(__getter, __setter)
             return self
 
@@ -231,48 +159,7 @@ class LayoutBox(object):
             return self
 
         def __exit__(self, exc_type, exc_val, exc_t):
-            def __vertical():
-                w, h = self.box.sizer()
-                return h
-
-            layout = Mengine.createLayout(__vertical)
-
-            component = LayoutBox.Component(0, 0, self.box.sizer, layout, None)
-
-            self.box.component = component
-
-            for element in self.elements:
-                def __process(element):
-                    if isinstance(element, LayoutBox.BuilderSubHorizontal):
-                        height = element.height
-
-                        self.buildSubHorizontalComponent(height, component, element.elements)
-                        pass
-                    elif isinstance(element, LayoutBox.BuilderSubVertical):
-                        width = element.width
-
-                        self.buildSubVerticalComponent(width, component, element.elements)
-                        pass
-                    elif isinstance(element, LayoutBox.ElementFixed):
-                        if element.setter is not None:
-                            def __setter(offset, size):
-                                w, h = self.box.sizer()
-                                offsetX = component.getOffsetX()
-                                offsetY = component.getOffsetY()
-                                element.setter(self.box, (offsetX, offsetY + offset), (w, size))
-
-                            layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
-                        else:
-                            layout.addElement(Mengine.LET_FIXED, element.getter, None)
-                            pass
-                    elif isinstance(element, LayoutBox.ElementPadding):
-                        layout.addElement(Mengine.LET_PAD, element.getWeight, None)
-                        pass
-
-                __process(element)
-                pass
-
-            layout.flush()
+            self.build(self.box, Mengine.ELBD_VERTICAL)
             pass
 
     class BuilderHorizontal(BuilderSubHorizontal):
@@ -285,47 +172,5 @@ class LayoutBox(object):
             return self
 
         def __exit__(self, exc_type, exc_val, exc_t):
-            def __horizontal():
-                w, h = self.box.sizer()
-                return w
-
-            layout = Mengine.createLayout(__horizontal)
-
-            component = LayoutBox.Component(0, 0, self.box.sizer, layout, None)
-
-            self.box.component = component
-
-            for element in self.elements:
-                def __process(element):
-                    if isinstance(element, LayoutBox.BuilderSubVertical):
-                        width = element.width
-
-                        self.buildSubVerticalComponent(width, component, element.elements)
-                        pass
-                    elif isinstance(element, LayoutBox.BuilderSubHorizontal):
-                        height = element.height
-
-                        self.buildSubHorizontalComponent(height, component, element.elements)
-                        pass
-                    elif isinstance(element, LayoutBox.ElementFixed):
-                        if element.setter is not None:
-                            def __setter(offset, size):
-                                w, h = self.box.sizer()
-                                offsetX = component.getOffsetX()
-                                offsetY = component.getOffsetY()
-                                element.setter(self.box, (offsetX + offset, offsetY), (size, h))
-
-                            layout.addElement(Mengine.LET_FIXED, element.getter, __setter)
-                        else:
-                            layout.addElement(Mengine.LET_FIXED, element.getter, None)
-                            pass
-                    elif isinstance(element, LayoutBox.ElementPadding):
-                        layout.addElement(Mengine.LET_PAD, element.getWeight, None)
-                        pass
-                    pass
-
-                __process(element)
-                pass
-
-            layout.flush()
+            self.build(self.box, Mengine.ELBD_HORIZONTAL)
             pass
