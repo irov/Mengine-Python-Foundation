@@ -406,7 +406,7 @@ class MonetizationManager(CurrencyManager):
 
         MonetizationManager.addObserver(Notificator.onGetRemoteConfig, MonetizationManager._cbGetRemoteConfig)
 
-        for ad_type, ad_names in list(MonetizationManager.s_advert_names.items()):
+        for ad_type, ad_names in MonetizationManager.s_advert_names.items():
             if len(ad_names) == 0:
                 MonetizationManager.s_advert_names[ad_type] = [ad_type]     # default name
 
