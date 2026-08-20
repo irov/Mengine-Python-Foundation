@@ -110,6 +110,9 @@ class SystemiOSServices(System):
 
         SystemiOSServices._GameCenter_authenticated = status
 
+        if status is True:
+            Mengine.activateSemaphore("GameCenterAuthenticated")
+
     @staticmethod
     def __cbGameCenterSynchronize(status, *args):
         """ callback for oniOSGameCenterSynchronize """

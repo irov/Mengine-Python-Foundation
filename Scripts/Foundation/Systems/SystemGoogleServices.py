@@ -721,7 +721,7 @@ class SystemGoogleServices(System):
 
     @staticmethod
     def isConsentFlow():
-        return Mengine.androidBooleanMethod(GOOGLE_CONSENT_PLUGIN, "isConsentFlowUserGeographyGDPR")
+        return Mengine.androidBooleanMethod(GOOGLE_CONSENT_PLUGIN, "isPrivacyOptionsRequired")
 
     # callbacks
 
