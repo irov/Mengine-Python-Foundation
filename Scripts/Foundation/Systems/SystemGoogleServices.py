@@ -6,7 +6,7 @@ from Foundation.Providers.ProductsProvider import ProductsProvider
 from Foundation.Providers.AuthProvider import AuthProvider
 from Foundation.Providers.ConsentProvider import ConsentProvider
 from Foundation.Providers.LeaderboardProvider import LeaderboardProvider
-from Foundation.System import System
+from Foundation.Systems.SystemAndroid import SystemAndroid
 from Foundation.TaskManager import TaskManager
 from Foundation.Utils import SimpleLogger
 
@@ -17,8 +17,9 @@ GOOGLE_PLAY_BILLING_PLUGIN = "AndroidGPlayBillingPlugin"
 GOOGLE_IN_APP_REVIEWS_PLUGIN = "AndroidGInAppReviewsPlugin"
 GOOGLE_CONSENT_PLUGIN = "AndroidGConsentPlugin"
 FIREBASE_CRASHLYTICS_PLUGIN = "AndroidFBCrashlyticsPlugin"
+MONITOR_CONNECTIVITY_PLUGIN = "AndroidMonitorConnStatusPlugin"
 
-class SystemGoogleServices(System):
+class SystemGoogleServices(SystemAndroid):
     # Google service that provides
     #    - authentication in Google Account
     #    - Billing
@@ -33,6 +34,7 @@ class SystemGoogleServices(System):
         GOOGLE_IN_APP_REVIEWS_PLUGIN: Mengine.isAvailablePlugin(GOOGLE_IN_APP_REVIEWS_PLUGIN),
         GOOGLE_CONSENT_PLUGIN: Mengine.isAvailablePlugin(GOOGLE_CONSENT_PLUGIN),
         FIREBASE_CRASHLYTICS_PLUGIN: Mengine.isAvailablePlugin(FIREBASE_CRASHLYTICS_PLUGIN),
+        MONITOR_CONNECTIVITY_PLUGIN: Mengine.isAvailablePlugin(MONITOR_CONNECTIVITY_PLUGIN),
     }
 
     __on_auth_achievements = {}
@@ -44,7 +46,7 @@ class SystemGoogleServices(System):
     def _onInitialize(self):
         if self.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is True:
             def _setCallback(method_name, *callback):
-                Mengine.addAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
+                self._addAndroidCallback(GOOGLE_GAME_SOCIAL_PLUGIN, method_name, *callback)
 
             # request achievements state
             _setCallback("onGoogleGameSocialRequestAchievementsStateSuccessful", SystemGoogleServices.__cbRequestAchievementsStateSuccessful)
@@ -97,7 +99,7 @@ class SystemGoogleServices(System):
 
         if self.b_plugins[GOOGLE_PLAY_BILLING_PLUGIN] is True:
             def _setCallback(method_name, *callback):
-                Mengine.addAndroidCallback(GOOGLE_PLAY_BILLING_PLUGIN, method_name, *callback)
+                self._addAndroidCallback(GOOGLE_PLAY_BILLING_PLUGIN, method_name, *callback)
 
             # purchase status
             _setCallback("onGooglePlayBillingPurchasesUpdatedServiceTimeout", SystemGoogleServices.__cbBillingPurchaseError, "ServiceTimeout")
@@ -149,7 +151,7 @@ class SystemGoogleServices(System):
 
         if self.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is True:
             def _setCallback(callback_name, *callback):
-                Mengine.addAndroidCallback(GOOGLE_IN_APP_REVIEWS_PLUGIN, callback_name, *callback)
+                self._addAndroidCallback(GOOGLE_IN_APP_REVIEWS_PLUGIN, callback_name, *callback)
 
             Mengine.waitSemaphore("GoogleInAppReviewsReady", SystemGoogleServices.__cbGoogleInAppReviewsReady)
 
@@ -161,7 +163,7 @@ class SystemGoogleServices(System):
 
         if self.b_plugins[GOOGLE_CONSENT_PLUGIN] is True:
             def _setCallback(method_name, *callback):
-                Mengine.addAndroidCallback(GOOGLE_CONSENT_PLUGIN, method_name, *callback)
+                self._addAndroidCallback(GOOGLE_CONSENT_PLUGIN, method_name, *callback)
 
             _setCallback("onAndroidGoogleConsentFlowCompleted", SystemGoogleServices.__cbConsentFlowCompleted)
             _setCallback("onAndroidGoogleConsentFlowError", SystemGoogleServices.__cbConsentFlowError)
@@ -170,6 +172,10 @@ class SystemGoogleServices(System):
                 ShowConsentFlow=SystemGoogleServices.showConsentFlow,
                 IsConsentFlow=SystemGoogleServices.isConsentFlow,
             ))
+
+        if self.b_plugins[MONITOR_CONNECTIVITY_PLUGIN] is True:
+            self._addAndroidCallback(MONITOR_CONNECTIVITY_PLUGIN, "onAndroidNetworkAvailable", SystemGoogleServices.__cbNetworkAvailable)
+            self._addAndroidCallback(MONITOR_CONNECTIVITY_PLUGIN, "onAndroidNetworkLost", SystemGoogleServices.__cbNetworkLost)
 
         if self.b_plugins[GOOGLE_GAME_SOCIAL_PLUGIN] is True:
             # google do auto login on create app, so we don't need to do it manually here
@@ -181,6 +187,7 @@ class SystemGoogleServices(System):
         self.__addDevToDebug()
 
     def _onFinalize(self):
+        self._removeAndroidCallbacks()
         self.__remDevToDebug()
 
     def _onStop(self):
@@ -188,6 +195,14 @@ class SystemGoogleServices(System):
             TaskManager.cancelTaskChain("SystemGoogleServices_RetryPurchase")
         if TaskManager.existTaskChain("SystemGoogleServices_SignIn") is True:
             TaskManager.cancelTaskChain("SystemGoogleServices_SignIn")
+
+    @staticmethod
+    def __cbNetworkAvailable():
+        Notification.notify(Notificator.onInternetConnectionAvailable)
+
+    @staticmethod
+    def __cbNetworkLost():
+        Notification.notify(Notificator.onInternetConnectionLost)
 
     def _onRun(self):
         self.__setDefaultSaves()
@@ -393,12 +408,20 @@ class SystemGoogleServices(System):
 
         with TaskManager.createTaskChain(Global=True) as tc:
             for prod_id in products:
+                def _filter(rewarded_id, rewarded_transaction_id, expected_id=prod_id, expected_transaction_id=transaction_id):
+                    if rewarded_id != expected_id:
+                        return False
+
+                    if rewarded_transaction_id != expected_transaction_id:
+                        return False
+
+                    return True
+
                 with tc.addParallelTask(2) as (response, request):
                     response.addListener(
                         Notificator.onPayRewardHandled,
-                        Filter=lambda rewarded_id, expected_id=prod_id: rewarded_id == expected_id)
-                    request.addNotify(Notificator.onPayTransaction, prod_id, transaction_id)
-                    request.addNotify(Notificator.onPaySuccess, prod_id)
+                        Filter=_filter)
+                    request.addNotify(Notificator.onPaySuccess, prod_id, transaction_id)
 
             tc.addFunction(cb, True, {})
 
@@ -462,12 +485,28 @@ class SystemGoogleServices(System):
         SystemGoogleServices.completePurchased(products)
 
     @staticmethod
-    def __cbBillingPurchaseAcknowledged(products):
+    def __cbBillingPurchaseAcknowledged(products, transaction_id, cb):
         # pay success if already purchased non-consumable
         _Log("[Billing cb] purchase non-consumable already acknowledged: {!r}".format(products))
-        for prod_id in products:
-            Notification.notify(Notificator.onProductAlreadyOwned, prod_id)
-            # SystemMonetization sends onPayComplete when done
+
+        with TaskManager.createTaskChain(Global=True) as tc:
+            for prod_id in products:
+                def _filter(rewarded_id, rewarded_transaction_id, expected_id=prod_id, expected_transaction_id=transaction_id):
+                    if rewarded_id != expected_id:
+                        return False
+
+                    if rewarded_transaction_id != expected_transaction_id:
+                        return False
+
+                    return True
+
+                with tc.addParallelTask(2) as (response, request):
+                    response.addListener(
+                        Notificator.onPayRewardHandled,
+                        Filter=_filter)
+                    request.addNotify(Notificator.onProductAlreadyOwned, prod_id, transaction_id)
+
+            tc.addFunction(cb, True, {})
 
     @staticmethod
     def __cbBillingPurchaseAcknowledgeSuccess(products):
@@ -528,7 +567,7 @@ class SystemGoogleServices(System):
     def __cbBillingPurchaseItemAlreadyOwned():
         product_id = SystemGoogleServices.__lastProductId
         _Log("[Billing cb] purchase process error: ItemAlreadyOwned".format(product_id), force=True, err=True)
-        Notification.notify(Notificator.onProductAlreadyOwned, product_id)
+        Notification.notify(Notificator.onProductAlreadyOwned, product_id, None)
 
     @staticmethod
     def __cbBillingPurchaseOk():

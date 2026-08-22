@@ -81,6 +81,9 @@ class SystemManager(Manager):
         SystemManager.systems[name] = sys
 
         if sys.run() is False:
+            SystemManager.systems.pop(name, None)
+            sys.onFinalize()
+
             return False
 
         return sys
@@ -122,6 +125,10 @@ class SystemManager(Manager):
             pass
 
         sys = SystemManager.systems.pop(name)
+
+        if sys.isRun() is True:
+            sys.stop()
+
         sys.onFinalize()
 
         return True

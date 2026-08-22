@@ -107,7 +107,7 @@ class SystemMonetization(System):
     def scopePay(cls, source, prod_id, scopeSuccess=None, scopeFail=None, scopeTimeout=None):
         TIMEOUT = 30 * 1000  # ms
 
-        def __filter(_id):
+        def __filter(_id, transaction_id=None):
             return str(_id) == str(prod_id)
 
         with source.addParallelTask(2) as (respond, pay):
@@ -130,7 +130,7 @@ class SystemMonetization(System):
     # observers
 
     @staticmethod
-    def _onPaySuccess(prod_id):
+    def _onPaySuccess(prod_id, transaction_id=None):
         product = MonetizationManager.getProductInfo(prod_id)
 
         if product is None:
@@ -156,7 +156,7 @@ class SystemMonetization(System):
         return False
 
     @staticmethod
-    def _onProductAlreadyOwned(prod_id):
+    def _onProductAlreadyOwned(prod_id, transaction_id=None):
         product = MonetizationManager.getProductInfo(prod_id)
         if product.isConsumable() is True:
             _Log("Product {!r} is consumable and can't be restored".format(prod_id), err=True, force=True)
@@ -168,7 +168,7 @@ class SystemMonetization(System):
             return False
 
         _Log("Product {!r} already owned, but not applied - fix it".format(prod_id))
-        Notification.notify(Notificator.onPaySuccess, prod_id)
+        Notification.notify(Notificator.onPaySuccess, prod_id, transaction_id)
         Notification.notify(Notificator.onPayComplete, prod_id)
         return False
 

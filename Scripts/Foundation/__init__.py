@@ -715,7 +715,6 @@ def onInitialize():
         , "onProductAlreadyOwned"
         , "onRestorePurchasesDone"
         , "onPaySuccess"
-        , "onPayTransaction"
         , "onPayRewardHandled"
         , "onPayFailed"
         , "onPayComplete"

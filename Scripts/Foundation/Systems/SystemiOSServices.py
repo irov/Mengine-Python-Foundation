@@ -40,6 +40,7 @@ class SystemiOSServices(System):
     _restore_in_progress = False
     _restore_queue_finished = False
     _restore_pending_transactions = 0
+    _processing_transactions = {}
 
     def _onInitialize(self):
         if self.b_plugins[PLUGIN_IN_APP_PURCHASE] is True:
@@ -76,6 +77,11 @@ class SystemiOSServices(System):
 
     def _onFinalize(self):
         self.__remDevToDebug()
+
+        SystemiOSServices._restore_in_progress = False
+        SystemiOSServices._restore_queue_finished = False
+        SystemiOSServices._restore_pending_transactions = 0
+        SystemiOSServices._processing_transactions = {}
 
         if SystemiOSServices._GameCenter_provider_status is True:
             self.removeGameCenterConnectProvider()
@@ -291,11 +297,18 @@ class SystemiOSServices(System):
     @staticmethod
     def restorePurchases():
         """ returns list of purchased products via cb _cbPaymentRestored """
+        if SystemiOSServices._restore_in_progress is True:
+            _Log("[InAppPurchase] restore purchases already in progress", optional=True)
+
+            return False
+
         _Log("[InAppPurchase] restore purchases...", optional=True)
         SystemiOSServices._restore_in_progress = True
         SystemiOSServices._restore_queue_finished = False
         SystemiOSServices._restore_pending_transactions = 0
         Mengine.iOSStoreInAppPurchaseRestoreCompletedTransactions()
+
+        return True
 
     @staticmethod
     def isOwnedInAppProduct(product_id):
@@ -394,8 +407,10 @@ class SystemiOSServices(System):
         transaction_id = str(transaction_id)
         _Log("[InAppPurchase] (callback) Payment Purchased (success) {}".format(product_id))
 
-        Notification.notify(Notificator.onPayTransaction, product_id, transaction_id)
-        SystemiOSServices._finishPaymentTransaction(transaction, product_id)
+        if SystemiOSServices._beginTransaction(transaction_id, transaction) is False:
+            return
+
+        SystemiOSServices._finishPaymentTransaction(product_id, transaction_id)
 
     @staticmethod
     def _cbPaymentFailed(transaction):
@@ -411,12 +426,21 @@ class SystemiOSServices(System):
     def _cbPaymentRestored(transaction):
         """ (CALLBACK onPaymentQueueUpdatedTransactionRestored) purchased product """
         product_id = str(transaction.getProductIdentifier())
+        transaction_id = transaction.getTransactionIdentifier()
+
+        if transaction_id is None:
+            raise RuntimeError("StoreKit returned restore without transaction identifier for {!r}".format(product_id))
+
+        transaction_id = str(transaction_id)
         _Log("[InAppPurchase] (callback) Product Restored {}".format(product_id))
+
+        if SystemiOSServices._beginTransaction(transaction_id, transaction) is False:
+            return
 
         if SystemiOSServices._restore_in_progress is True:
             SystemiOSServices._restore_pending_transactions += 1
 
-        SystemiOSServices._finishProductRestoreTransaction(transaction, product_id)
+        SystemiOSServices._finishProductRestoreTransaction(product_id, transaction_id)
 
     @staticmethod
     def _cbRestoreFinished():
@@ -451,6 +475,26 @@ class SystemiOSServices(System):
         SystemiOSServices._tryCompleteRestore()
 
     @staticmethod
+    def _beginTransaction(transaction_id, transaction):
+        transactions = SystemiOSServices._processing_transactions.get(transaction_id)
+
+        if transactions is not None:
+            transactions.append(transaction)
+
+            return False
+
+        SystemiOSServices._processing_transactions[transaction_id] = [transaction]
+
+        return True
+
+    @staticmethod
+    def _finishTransactions(transaction_id):
+        transactions = SystemiOSServices._processing_transactions.pop(transaction_id, [])
+
+        for transaction in transactions:
+            transaction.finish()
+
+    @staticmethod
     def _cbPaymentDeferred(transaction):
         """ (CALLBACK onPaymentQueueUpdatedTransactionDeferred) something went wrong during purchase """
         product_id = str(transaction.getProductIdentifier())
@@ -459,25 +503,45 @@ class SystemiOSServices(System):
         Notification.notify(Notificator.onPayComplete, product_id)
 
     @staticmethod
-    def _finishPaymentTransaction(transaction, product_id):
+    def _finishPaymentTransaction(product_id, transaction_id):
+        def _filter(rewarded_product_id, rewarded_transaction_id):
+            if rewarded_product_id != product_id:
+                return False
+
+            if rewarded_transaction_id != transaction_id:
+                return False
+
+            return True
+
         with TaskManager.createTaskChain(Global=True) as tc:
             with tc.addParallelTask(2) as (reward, complete):
-                reward.addListener(Notificator.onPayRewardHandled, Filter=lambda prod_id: prod_id == product_id)
-                complete.addNotify(Notificator.onPaySuccess, product_id)
+                reward.addListener(
+                    Notificator.onPayRewardHandled,
+                    Filter=_filter)
+                complete.addNotify(Notificator.onPaySuccess, product_id, transaction_id)
                 complete.addNotify(Notificator.onPayComplete, product_id)
 
-            tc.addFunction(transaction.finish)
+            tc.addFunction(SystemiOSServices._finishTransactions, transaction_id)
 
     @staticmethod
-    def _finishProductRestoreTransaction(transaction, product_id):
+    def _finishProductRestoreTransaction(product_id, transaction_id):
+        def _filter(rewarded_product_id, rewarded_transaction_id):
+            if rewarded_product_id != product_id:
+                return False
+
+            if rewarded_transaction_id != transaction_id:
+                return False
+
+            return True
+
         with TaskManager.createTaskChain(Global=True) as tc:
             with tc.addParallelTask(2) as (response, request):
                 response.addListener(
                     Notificator.onPayRewardHandled,
-                    Filter=lambda prod_id: prod_id == product_id)
-                request.addNotify(Notificator.onProductAlreadyOwned, product_id)
+                    Filter=_filter)
+                request.addNotify(Notificator.onProductAlreadyOwned, product_id, transaction_id)
 
-            tc.addFunction(transaction.finish)
+            tc.addFunction(SystemiOSServices._finishTransactions, transaction_id)
             tc.addFunction(SystemiOSServices._completeRestoreTransaction)
 
     # --- DevToDebug ---------------------------------------------------------------------------------------------------

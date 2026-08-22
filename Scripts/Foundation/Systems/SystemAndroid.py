@@ -7,13 +7,13 @@ class SystemAndroid(System):
 
         self._android_callbacks = {}
 
-    def _addAndroidCallback(self, plugin_name, callback_name, callback):
+    def _addAndroidCallback(self, plugin_name, callback_name, *callback):
         plugin_callbacks = self._android_callbacks.setdefault(plugin_name, {})
 
         if _DEVELOPMENT is True and callback_name in plugin_callbacks:
             Trace.log("System", 0, "{}: callback {!r} is already exists !!!".format(self.__class__.__name__, callback_name))
 
-        identity = Mengine.addAndroidCallback(plugin_name, callback_name, callback)
+        identity = Mengine.addAndroidCallback(plugin_name, callback_name, *callback)
         plugin_callbacks[callback_name] = identity
         return identity
 
@@ -27,6 +27,10 @@ class SystemAndroid(System):
 
         for callback_name, identity in plugin_callbacks.items():
             Mengine.removeAndroidCallback(plugin_name, callback_name, identity)
+
+    def _onInitializeFailed(self, ex):
+        self._removeAndroidCallbacks()
+        super(SystemAndroid, self)._onInitializeFailed(ex)
 
     @staticmethod
     def _androidMethod(plugin_name, method_name, *args):
