@@ -44,10 +44,20 @@ def checkPlatform(platform):
     if platform is None:
         return True
 
-    # option: -touchpad
-    if platform == "MOBILE" or _DEVELOPMENT and platform in ["ANDROID", "IOS"]:
+    # option: -touchpad is only a desktop development fallback. A real mobile
+    # build must use its platform tag, even when it is a development build.
+    if platform == "MOBILE":
         return Mengine.hasTouchpad() is True
-    elif platform == "PC":
+
+    if _DEVELOPMENT and platform in ["ANDROID", "IOS"]:
+        has_mobile_platform_tag = (
+            Mengine.hasPlatformTag("ANDROID") is True or
+            Mengine.hasPlatformTag("IOS") is True)
+
+        if has_mobile_platform_tag is False:
+            return Mengine.hasTouchpad() is True
+
+    if platform == "PC":
         return Mengine.hasTouchpad() is False
 
     if Mengine.hasPlatformTag(platform) is True:

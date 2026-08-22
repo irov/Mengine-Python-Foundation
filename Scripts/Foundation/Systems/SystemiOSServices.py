@@ -37,6 +37,9 @@ class SystemiOSServices(System):
 
     _products = {}
     EVENT_PRODUCTS_RESPONDED = Event("iOSInAppPurchaseProductsResponded")
+    _restore_in_progress = False
+    _restore_queue_finished = False
+    _restore_pending_transactions = 0
 
     def _onInitialize(self):
         if self.b_plugins[PLUGIN_IN_APP_PURCHASE] is True:
@@ -253,6 +256,8 @@ class SystemiOSServices(System):
             "onPaymentQueueUpdatedTransactionFailed": SystemiOSServices._cbPaymentFailed,
             "onPaymentQueueUpdatedTransactionRestored": SystemiOSServices._cbPaymentRestored,
             "onPaymentQueueUpdatedTransactionDeferred": SystemiOSServices._cbPaymentDeferred,
+            "onPaymentQueueRestoreCompletedTransactionsFinished": SystemiOSServices._cbRestoreFinished,
+            "onPaymentQueueRestoreCompletedTransactionsFailed": SystemiOSServices._cbRestoreFailed,
         })
 
         PaymentProvider.setProvider("iOS", dict(
@@ -287,9 +292,10 @@ class SystemiOSServices(System):
     def restorePurchases():
         """ returns list of purchased products via cb _cbPaymentRestored """
         _Log("[InAppPurchase] restore purchases...", optional=True)
+        SystemiOSServices._restore_in_progress = True
+        SystemiOSServices._restore_queue_finished = False
+        SystemiOSServices._restore_pending_transactions = 0
         Mengine.iOSStoreInAppPurchaseRestoreCompletedTransactions()
-        Notification.notify(Notificator.onRestorePurchasesDone)
-        # TODO: it would be better to know when we complete all _cbPaymentRestored
 
     @staticmethod
     def isOwnedInAppProduct(product_id):
@@ -380,8 +386,15 @@ class SystemiOSServices(System):
     def _cbPaymentPurchased(transaction):
         """ (CALLBACK onPaymentQueueUpdatedTransactionPurchased) payment complete """
         product_id = str(transaction.getProductIdentifier())
+        transaction_id = transaction.getTransactionIdentifier()
+
+        if transaction_id is None:
+            raise RuntimeError("StoreKit returned purchase without transaction identifier for {!r}".format(product_id))
+
+        transaction_id = str(transaction_id)
         _Log("[InAppPurchase] (callback) Payment Purchased (success) {}".format(product_id))
 
+        Notification.notify(Notificator.onPayTransaction, product_id, transaction_id)
         SystemiOSServices._finishPaymentTransaction(transaction, product_id)
 
     @staticmethod
@@ -400,19 +413,56 @@ class SystemiOSServices(System):
         product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Product Restored {}".format(product_id))
 
+        if SystemiOSServices._restore_in_progress is True:
+            SystemiOSServices._restore_pending_transactions += 1
+
         SystemiOSServices._finishProductRestoreTransaction(transaction, product_id)
+
+    @staticmethod
+    def _cbRestoreFinished():
+        _Log("[InAppPurchase] (callback) Restore transactions queue finished")
+        SystemiOSServices._restore_queue_finished = True
+        SystemiOSServices._tryCompleteRestore()
+
+    @staticmethod
+    def _cbRestoreFailed():
+        _Log("[InAppPurchase] (callback) Restore transactions queue failed", err=True, force=True)
+        SystemiOSServices._restore_queue_finished = True
+        SystemiOSServices._tryCompleteRestore()
+
+    @staticmethod
+    def _tryCompleteRestore():
+        if SystemiOSServices._restore_in_progress is False:
+            return
+        if SystemiOSServices._restore_queue_finished is False:
+            return
+        if SystemiOSServices._restore_pending_transactions != 0:
+            return
+
+        SystemiOSServices._restore_in_progress = False
+        Notification.notify(Notificator.onRestorePurchasesDone)
+
+    @staticmethod
+    def _completeRestoreTransaction():
+        if SystemiOSServices._restore_in_progress is False:
+            return
+
+        SystemiOSServices._restore_pending_transactions -= 1
+        SystemiOSServices._tryCompleteRestore()
 
     @staticmethod
     def _cbPaymentDeferred(transaction):
         """ (CALLBACK onPaymentQueueUpdatedTransactionDeferred) something went wrong during purchase """
         product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment Deferred {}".format(product_id))
+        Notification.notify(Notificator.onPayPending, product_id)
+        Notification.notify(Notificator.onPayComplete, product_id)
 
     @staticmethod
     def _finishPaymentTransaction(transaction, product_id):
-        with TaskManager.createTaskChain(Name="iOSPaymentFinisher_%s" % product_id) as tc:
+        with TaskManager.createTaskChain(Global=True) as tc:
             with tc.addParallelTask(2) as (reward, complete):
-                reward.addListener(Notificator.onGameStoreSentRewards, Filter=lambda prod_id, _: prod_id == product_id)
+                reward.addListener(Notificator.onPayRewardHandled, Filter=lambda prod_id: prod_id == product_id)
                 complete.addNotify(Notificator.onPaySuccess, product_id)
                 complete.addNotify(Notificator.onPayComplete, product_id)
 
@@ -420,13 +470,15 @@ class SystemiOSServices(System):
 
     @staticmethod
     def _finishProductRestoreTransaction(transaction, product_id):
-        with TaskManager.createTaskChain(Name="iOSProductRestoreFinisher_%s" % product_id) as tc:
+        with TaskManager.createTaskChain(Global=True) as tc:
             with tc.addParallelTask(2) as (response, request):
-                response.addListener(Notificator.onPayComplete, Filter=lambda prod_id: prod_id == product_id)
-                # SystemMonetization sends onPayComplete when done
+                response.addListener(
+                    Notificator.onPayRewardHandled,
+                    Filter=lambda prod_id: prod_id == product_id)
                 request.addNotify(Notificator.onProductAlreadyOwned, product_id)
 
             tc.addFunction(transaction.finish)
+            tc.addFunction(SystemiOSServices._completeRestoreTransaction)
 
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 

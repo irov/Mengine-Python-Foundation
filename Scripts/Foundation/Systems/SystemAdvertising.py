@@ -1,5 +1,6 @@
 from Foundation.System import System
 
+from Foundation.DefaultManager import DefaultManager
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
 from Foundation.TaskManager import TaskManager
 
@@ -17,6 +18,15 @@ class SystemAdvertising(System):
 
     def tryInterstitial(self, next_scene, placement, Skip = False):
         if AdvertisementProvider.s_fullscreen_ad_showing is True:
+            if Skip is False:
+                with TaskManager.createTaskChain(Global=True) as tc:
+                    with tc.addRaceTask(2) as (completed, timeout):
+                        completed.addListener(Notificator.onAdShowCompleted)
+                        timeout.addDelay(DefaultManager.getDefaultInt("FullscreenAdvertShowTimeout", 60) * 1000.0)
+                        timeout.addFunction(AdvertisementProvider.resetFullscreenAdvertState)
+
+                    tc.addNotify(Notificator.onChangeScene, next_scene)
+
             return True
 
         def __checkAdInterstitial(placement):

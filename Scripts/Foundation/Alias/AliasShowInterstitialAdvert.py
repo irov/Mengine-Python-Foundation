@@ -1,4 +1,5 @@
 from Foundation.Providers.AdvertisementProvider import AdvertisementProvider
+from Foundation.DefaultManager import DefaultManager
 from Foundation.Task.TaskAlias import TaskAlias
 
 
@@ -10,12 +11,16 @@ class AliasShowInterstitialAdvert(TaskAlias):
     def _setDisplayFailed(self, msg):
         Trace.msg_err("AliasShowInterstitialAdvert [{}] display [{}] failed: {}"
                       .format(self.AdPlacement, AdvertisementProvider.getName(), msg))
+        AdvertisementProvider.resetFullscreenAdvertState()
         self._semaphore_ad_display_fail.setValue(True)
 
     def _showAd(self):
         return AdvertisementProvider.showInterstitialAdvert(self.AdPlacement)
 
     def _onShowCompleted(self, success, params):
+        if params.get("placement") != self.AdPlacement:
+            return False
+
         if success is False:
             self._setDisplayFailed("show failed")
 
@@ -23,9 +28,11 @@ class AliasShowInterstitialAdvert(TaskAlias):
 
     def _scopeShowAdvert(self, source):
         with source.addParallelTask(2) as (response, request):
-            with response.addRaceTask(2) as (completed, show_failed):
+            with response.addRaceTask(3) as (completed, show_failed, timeout):
                 completed.addListener(Notificator.onInterstitialAdShowCompleted, Filter=self._onShowCompleted)
                 show_failed.addSemaphore(self._semaphore_ad_display_fail, From=True)
+                timeout.addDelay(DefaultManager.getDefaultInt("FullscreenAdvertShowTimeout", 60) * 1000.0)
+                timeout.addFunction(self._setDisplayFailed, "show timeout")
 
             with request.addIfTask(self._showAd) as (show_accepted, show_rejected):
                 show_accepted.addDummy()

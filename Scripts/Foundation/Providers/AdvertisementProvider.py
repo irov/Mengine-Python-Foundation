@@ -100,6 +100,10 @@ class AdvertisementProvider(BaseProvider):
         return AdvertisementProvider._call("IsShowingRewardedAdvert")
 
     @staticmethod
+    def resetFullscreenAdvertState():
+        AdvertisementProvider.s_fullscreen_ad_showing = False
+
+    @staticmethod
     def getBannerWidth():
         return AdvertisementProvider._call("GetBannerWidth")
 
