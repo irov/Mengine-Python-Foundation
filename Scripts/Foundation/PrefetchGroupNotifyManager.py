@@ -27,6 +27,8 @@ class PrefetchGroupNotifyManager(Manager):
                 Mengine.unfetchResources(GroupName)
 
         PrefetchGroupNotifyManager.s_groups = []
+        PrefetchGroupNotifyManager.s_prefetch_list = {}
+        PrefetchGroupNotifyManager.s_status = PrefetchGroupNotifyManager.STATUS_NO
         pass
 
     @staticmethod
@@ -58,6 +60,9 @@ class PrefetchGroupNotifyManager(Manager):
 
     @staticmethod
     def mergeGroupsTagged(PrefetchTag, UnfetchTag):
+        if PrefetchTag == UnfetchTag:
+            return
+
         PrefetchGroups = set()
         UnfetchGroups = set()
 
@@ -67,9 +72,9 @@ class PrefetchGroupNotifyManager(Manager):
             elif GroupTag == UnfetchTag:
                 UnfetchGroups.add(GroupName)
 
-        UnionGroups = PrefetchGroups.union(UnfetchGroups)
-        UnfetchGroups.difference(UnionGroups)
-        PrefetchGroups.difference(UnionGroups)
+        CommonGroups = PrefetchGroups.intersection(UnfetchGroups)
+        UnfetchGroups.difference_update(CommonGroups)
+        PrefetchGroups.difference_update(CommonGroups)
 
         for GroupName in UnfetchGroups:
             PrefetchGroupNotifyManager.unfetchGroup(GroupName)
@@ -79,6 +84,9 @@ class PrefetchGroupNotifyManager(Manager):
 
     @staticmethod
     def getMergeGroupsTagged(PrefetchTag, UnfetchTag):
+        if PrefetchTag == UnfetchTag:
+            return set(), set()
+
         PrefetchGroups = set()
         UnfetchGroups = set()
 
@@ -88,15 +96,27 @@ class PrefetchGroupNotifyManager(Manager):
             elif GroupTag == UnfetchTag:
                 UnfetchGroups.add(GroupName)
 
-        UnionGroups = PrefetchGroups.union(UnfetchGroups)
-        UnfetchGroups.difference(UnionGroups)
-        PrefetchGroups.difference(UnionGroups)
+        CommonGroups = PrefetchGroups.intersection(UnfetchGroups)
+        UnfetchGroups.difference_update(CommonGroups)
+        PrefetchGroups.difference_update(CommonGroups)
 
         return UnfetchGroups, PrefetchGroups
 
     @staticmethod
     def prefetchGroupsTagged(Tag):
-        PrefetchGroupNotifyManager.s_prefetch_list[Tag] = []
+        pending_groups = []
+
+        for GroupName, Prefetch, GroupTag in PrefetchGroupNotifyManager.s_groups:
+            if GroupTag != Tag:
+                continue
+
+            if Prefetch != 2:
+                continue
+
+            pending_groups.append(GroupName)
+
+        has_pending_groups = len(pending_groups) != 0
+        PrefetchGroupNotifyManager.s_prefetch_list[Tag] = pending_groups
 
         for GroupName, Prefetch, GroupTag in PrefetchGroupNotifyManager.s_groups:
             if GroupTag != Tag:
@@ -109,17 +129,31 @@ class PrefetchGroupNotifyManager(Manager):
                 Mengine.incrementResources(GroupName)
             elif Prefetch == 2:
                 def __cb(successful, tag, group_name):
-                    if group_name in PrefetchGroupNotifyManager.s_prefetch_list[tag]:
-                        PrefetchGroupNotifyManager.s_prefetch_list[tag].remove(group_name)
-                        Notification.notify(Notificator.onPrefetchGroupsTaggedComplete, tag, group_name, successful)
+                    groups = PrefetchGroupNotifyManager.s_prefetch_list.get(tag)
 
-                    if len(PrefetchGroupNotifyManager.s_prefetch_list[tag]) == 0:
-                        PrefetchGroupNotifyManager.s_status = PrefetchGroupNotifyManager.STATUS_FINISHED
-                        Notification.notify(Notificator.onPrefetchGroupsTaggedFinished, tag)
+                    if groups is None:
+                        return
 
-                PrefetchGroupNotifyManager.s_prefetch_list[Tag].append(GroupName)
+                    if group_name not in groups:
+                        return
+
+                    groups.remove(group_name)
+                    Notification.notify(Notificator.onPrefetchGroupsTaggedComplete, tag, group_name, successful)
+
+                    if len(groups) != 0:
+                        return
+
+                    PrefetchGroupNotifyManager.s_status = PrefetchGroupNotifyManager.STATUS_FINISHED
+                    Notification.notify(Notificator.onPrefetchGroupsTaggedFinished, tag)
+
                 if Mengine.prefetchResources(GroupName, __cb, Tag, GroupName) is False:
                     __cb(False, Tag, GroupName)
+
+        if has_pending_groups is True:
+            return
+
+        PrefetchGroupNotifyManager.s_status = PrefetchGroupNotifyManager.STATUS_FINISHED
+        Notification.notify(Notificator.onPrefetchGroupsTaggedFinished, Tag)
 
     @staticmethod
     def isPrefetchFinished():
@@ -144,7 +178,10 @@ class PrefetchGroupNotifyManager(Manager):
 
     @staticmethod
     def prefetchGroup(GroupName):
-        for GroupName, Prefetch, GroupTag in PrefetchGroupNotifyManager.s_groups:
+        for group_name, Prefetch, GroupTag in PrefetchGroupNotifyManager.s_groups:
+            if group_name != GroupName:
+                continue
+
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
@@ -158,7 +195,10 @@ class PrefetchGroupNotifyManager(Manager):
 
     @staticmethod
     def unfetchGroup(GroupName):
-        for GroupName, Prefetch, GroupTag in PrefetchGroupNotifyManager.s_groups:
+        for group_name, Prefetch, GroupTag in PrefetchGroupNotifyManager.s_groups:
+            if group_name != GroupName:
+                continue
+
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:

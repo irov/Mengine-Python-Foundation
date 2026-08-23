@@ -18,6 +18,8 @@ GOOGLE_IN_APP_REVIEWS_PLUGIN = "AndroidGInAppReviewsPlugin"
 GOOGLE_CONSENT_PLUGIN = "AndroidGConsentPlugin"
 FIREBASE_CRASHLYTICS_PLUGIN = "AndroidFBCrashlyticsPlugin"
 MONITOR_CONNECTIVITY_PLUGIN = "AndroidMonitorConnStatusPlugin"
+BILLING_QUERY_PRODUCTS_RETRY_TASK = "SystemGoogleServices_RetryQueryProducts"
+BILLING_QUERY_PRODUCTS_RETRY_DELAY = 5000
 
 class SystemGoogleServices(SystemAndroid):
     # Google service that provides
@@ -25,8 +27,6 @@ class SystemGoogleServices(SystemAndroid):
     #    - Billing
     #    - Google Play Social
     #    - InAppReviews
-
-    __lastProductId = None
 
     b_plugins = {
         GOOGLE_GAME_SOCIAL_PLUGIN: Mengine.isAvailablePlugin(GOOGLE_GAME_SOCIAL_PLUGIN),
@@ -102,7 +102,6 @@ class SystemGoogleServices(SystemAndroid):
                 self._addAndroidCallback(GOOGLE_PLAY_BILLING_PLUGIN, method_name, *callback)
 
             # purchase status
-            _setCallback("onGooglePlayBillingPurchasesUpdatedServiceTimeout", SystemGoogleServices.__cbBillingPurchaseError, "ServiceTimeout")
             _setCallback("onGooglePlayBillingPurchasesUpdatedFeatureNotSupported", SystemGoogleServices.__cbBillingPurchaseError, "FeatureNotSupported")
             _setCallback("onGooglePlayBillingPurchasesUpdatedServiceDisconnected", SystemGoogleServices.__cbBillingPurchaseError, "ServiceDisconnected")
             _setCallback("onGooglePlayBillingPurchasesUpdatedServiceUnavailable", SystemGoogleServices.__cbBillingPurchaseError, "ServiceUnavailable")
@@ -191,8 +190,8 @@ class SystemGoogleServices(SystemAndroid):
         self.__remDevToDebug()
 
     def _onStop(self):
-        if TaskManager.existTaskChain("SystemGoogleServices_RetryPurchase") is True:
-            TaskManager.cancelTaskChain("SystemGoogleServices_RetryPurchase")
+        if TaskManager.existTaskChain(BILLING_QUERY_PRODUCTS_RETRY_TASK) is True:
+            TaskManager.cancelTaskChain(BILLING_QUERY_PRODUCTS_RETRY_TASK)
         if TaskManager.existTaskChain("SystemGoogleServices_SignIn") is True:
             TaskManager.cancelTaskChain("SystemGoogleServices_SignIn")
 
@@ -329,7 +328,6 @@ class SystemGoogleServices(SystemAndroid):
     @staticmethod
     def buy(product_id):
         _Log("[Billing] buy {!r}".format(product_id))
-        SystemGoogleServices.__lastProductId = product_id
         Mengine.androidMethod(GOOGLE_PLAY_BILLING_PLUGIN, "buyInApp", product_id)
 
     @staticmethod
@@ -406,24 +404,30 @@ class SystemGoogleServices(SystemAndroid):
             cb(False, {})
             return
 
+        successful_holder = Holder(True)
+
         with TaskManager.createTaskChain(Global=True) as tc:
             for prod_id in products:
-                def _filter(rewarded_id, rewarded_transaction_id, expected_id=prod_id, expected_transaction_id=transaction_id):
+                def _filter(rewarded_id, rewarded_transaction_id, successful, expected_id=prod_id, expected_transaction_id=transaction_id):
                     if rewarded_id != expected_id:
                         return False
 
                     if rewarded_transaction_id != expected_transaction_id:
                         return False
 
+                    if successful is False:
+                        successful_holder.set(False)
+
                     return True
 
                 with tc.addParallelTask(2) as (response, request):
-                    response.addListener(
-                        Notificator.onPayRewardHandled,
-                        Filter=_filter)
+                    response.addListener(Notificator.onPayRewardResult, Filter=_filter)
                     request.addNotify(Notificator.onPaySuccess, prod_id, transaction_id)
 
-            tc.addFunction(cb, True, {})
+            def _complete():
+                cb(successful_holder.get(), {})
+
+            tc.addFunction(_complete)
 
     @staticmethod
     def __cbBillingPurchaseDeliveryFailed(products):
@@ -460,6 +464,10 @@ class SystemGoogleServices(SystemAndroid):
         #    - description - Description of the product.
 
         _Log("[Billing cb] query products SUCCESS: {!r}".format(products))
+
+        if TaskManager.existTaskChain(BILLING_QUERY_PRODUCTS_RETRY_TASK) is True:
+            TaskManager.cancelTaskChain(BILLING_QUERY_PRODUCTS_RETRY_TASK)
+
         SystemGoogleServices.sku_response_event()
 
         # save
@@ -469,10 +477,28 @@ class SystemGoogleServices(SystemAndroid):
     @staticmethod
     def __cbBillingQueryProductsFail():
         _Log("[Billing cb] query products FAIL", err=True, force=True)
+        SystemGoogleServices.__scheduleBillingQueryProductsRetry()
 
     @staticmethod
     def __cbBillingQueryProductsError(code, exception):
         _Log("[Billing cb] query products ERROR: code={!r} exception={!r}".format(code, exception), err=True, force=True)
+
+    @staticmethod
+    def __scheduleBillingQueryProductsRetry():
+        if TaskManager.existTaskChain(BILLING_QUERY_PRODUCTS_RETRY_TASK) is True:
+            return
+
+        def _retry(isSkip):
+            if isSkip is True:
+                return
+
+            SystemGoogleServices.__cbGooglePlayBillingInitialized()
+
+        with TaskManager.createTaskChain(
+                Name=BILLING_QUERY_PRODUCTS_RETRY_TASK,
+                Global=True,
+                Cb=_retry) as tc:
+            tc.addDelay(BILLING_QUERY_PRODUCTS_RETRY_DELAY)
 
     @staticmethod
     def __cbBillingPurchaseOnConsumeSuccess(products):
@@ -489,24 +515,30 @@ class SystemGoogleServices(SystemAndroid):
         # pay success if already purchased non-consumable
         _Log("[Billing cb] purchase non-consumable already acknowledged: {!r}".format(products))
 
+        successful_holder = Holder(True)
+
         with TaskManager.createTaskChain(Global=True) as tc:
             for prod_id in products:
-                def _filter(rewarded_id, rewarded_transaction_id, expected_id=prod_id, expected_transaction_id=transaction_id):
+                def _filter(rewarded_id, rewarded_transaction_id, successful, expected_id=prod_id, expected_transaction_id=transaction_id):
                     if rewarded_id != expected_id:
                         return False
 
                     if rewarded_transaction_id != expected_transaction_id:
                         return False
 
+                    if successful is False:
+                        successful_holder.set(False)
+
                     return True
 
                 with tc.addParallelTask(2) as (response, request):
-                    response.addListener(
-                        Notificator.onPayRewardHandled,
-                        Filter=_filter)
+                    response.addListener(Notificator.onPayRewardResult, Filter=_filter)
                     request.addNotify(Notificator.onProductAlreadyOwned, prod_id, transaction_id)
 
-            tc.addFunction(cb, True, {})
+            def _complete():
+                cb(successful_holder.get(), {})
+
+            tc.addFunction(_complete)
 
     @staticmethod
     def __cbBillingPurchaseAcknowledgeSuccess(products):
@@ -548,47 +580,47 @@ class SystemGoogleServices(SystemAndroid):
         _Log("[Billing cb] requestAchievementsState error: exception={!r}".format(exception), err=True, force=True)
 
     @staticmethod
-    def __cbBillingPurchaseError(reason):
+    def __cbBillingPurchaseError(product_id, reason):
         #  error while purchase
-        product_id = SystemGoogleServices.__lastProductId
         _Log("[Billing cb] purchase process error, product {!r}: {}".format(product_id, reason), force=True, err=True)
 
         SystemGoogleServices.handlePurchased([product_id], False)
 
     @staticmethod
-    def __cbBillingPurchaseErrorUnknown(response_code):
+    def __cbBillingPurchaseErrorUnknown(product_id, response_code):
         #  error while purchase, unknown error
-        product_id = SystemGoogleServices.__lastProductId
         _Log("[Billing cb] purchase process error, product {!r}: Unknown error: {}".format(product_id, response_code), force=True, err=True)
 
         SystemGoogleServices.handlePurchased([product_id], False)
 
     @staticmethod
-    def __cbBillingPurchaseItemAlreadyOwned():
-        product_id = SystemGoogleServices.__lastProductId
-        _Log("[Billing cb] purchase process error: ItemAlreadyOwned".format(product_id), force=True, err=True)
+    def __cbBillingPurchaseItemAlreadyOwned(product_id):
+        _Log("[Billing cb] purchase process error, product {!r}: ItemAlreadyOwned".format(product_id), force=True, err=True)
         Notification.notify(Notificator.onProductAlreadyOwned, product_id, None)
 
     @staticmethod
-    def __cbBillingPurchaseOk():
+    def __cbBillingPurchaseOk(product_id):
         #  item purchased successful
-        _Log("[Billing cb] purchase process ok: {}".format(SystemGoogleServices.__lastProductId))
+        _Log("[Billing cb] purchase process ok: {}".format(product_id))
         pass
 
     @staticmethod
     def __cbBillingRestorePurchasesSuccess(products):
         _Log("[Billing cb] restore purchases successful: products={!r}".format(products))
+        Notification.notify(Notificator.onRestorePurchasesResult, True)
         Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod
     def __cbBillingRestorePurchasesFailed():
         _Log("[Billing cb] restore purchases failed", err=True, force=True)
+        Notification.notify(Notificator.onRestorePurchasesResult, False)
         Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod
     def __cbBillingRestorePurchasesError(code, exception):
         #  error while query purchases
         _Log("[Billing cb] restore purchases error: code={!r} exception={!r}".format(code, exception), err=True, force=True)
+        Notification.notify(Notificator.onRestorePurchasesResult, False)
         Notification.notify(Notificator.onRestorePurchasesDone)
 
     # --- Achievements --------------------------------------------------------------------------------------------

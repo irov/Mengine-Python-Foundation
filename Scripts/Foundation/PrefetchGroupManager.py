@@ -50,6 +50,9 @@ class PrefetchGroupManager(Manager):
 
     @staticmethod
     def mergeGroupsTagged(PrefetchTag, UnfetchTag):
+        if PrefetchTag == UnfetchTag:
+            return
+
         PrefetchGroups = set()
         UnfetchGroups = set()
 
@@ -62,9 +65,9 @@ class PrefetchGroupManager(Manager):
                 pass
             pass
 
-        UnionGroups = PrefetchGroups.union(UnfetchGroups)
-        UnfetchGroups.difference(UnionGroups)
-        PrefetchGroups.difference(UnionGroups)
+        CommonGroups = PrefetchGroups.intersection(UnfetchGroups)
+        UnfetchGroups.difference_update(CommonGroups)
+        PrefetchGroups.difference_update(CommonGroups)
 
         for GroupName in UnfetchGroups:
             PrefetchGroupManager.unfetchGroup(GroupName)
@@ -77,6 +80,9 @@ class PrefetchGroupManager(Manager):
 
     @staticmethod
     def getMergeGroupsTagged(PrefetchTag, UnfetchTag):
+        if PrefetchTag == UnfetchTag:
+            return set(), set()
+
         PrefetchGroups = set()
         UnfetchGroups = set()
 
@@ -89,9 +95,9 @@ class PrefetchGroupManager(Manager):
                 pass
             pass
 
-        UnionGroups = PrefetchGroups.union(UnfetchGroups)
-        UnfetchGroups.difference(UnionGroups)
-        PrefetchGroups.difference(UnionGroups)
+        CommonGroups = PrefetchGroups.intersection(UnfetchGroups)
+        UnfetchGroups.difference_update(CommonGroups)
+        PrefetchGroups.difference_update(CommonGroups)
 
         return UnfetchGroups, PrefetchGroups
         pass
@@ -135,7 +141,10 @@ class PrefetchGroupManager(Manager):
 
     @staticmethod
     def prefetchGroup(GroupName):
-        for GroupName, Prefetch, GroupTag in PrefetchGroupManager.s_groups:
+        for group_name, Prefetch, GroupTag in PrefetchGroupManager.s_groups:
+            if group_name != GroupName:
+                continue
+
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
@@ -152,7 +161,10 @@ class PrefetchGroupManager(Manager):
 
     @staticmethod
     def unfetchGroup(GroupName):
-        for GroupName, Prefetch, GroupTag in PrefetchGroupManager.s_groups:
+        for group_name, Prefetch, GroupTag in PrefetchGroupManager.s_groups:
+            if group_name != GroupName:
+                continue
+
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:

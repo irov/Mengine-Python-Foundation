@@ -39,6 +39,7 @@ class SystemiOSServices(System):
     EVENT_PRODUCTS_RESPONDED = Event("iOSInAppPurchaseProductsResponded")
     _restore_in_progress = False
     _restore_queue_finished = False
+    _restore_failed = False
     _restore_pending_transactions = 0
     _processing_transactions = {}
 
@@ -80,6 +81,7 @@ class SystemiOSServices(System):
 
         SystemiOSServices._restore_in_progress = False
         SystemiOSServices._restore_queue_finished = False
+        SystemiOSServices._restore_failed = False
         SystemiOSServices._restore_pending_transactions = 0
         SystemiOSServices._processing_transactions = {}
 
@@ -305,6 +307,7 @@ class SystemiOSServices(System):
         _Log("[InAppPurchase] restore purchases...", optional=True)
         SystemiOSServices._restore_in_progress = True
         SystemiOSServices._restore_queue_finished = False
+        SystemiOSServices._restore_failed = False
         SystemiOSServices._restore_pending_transactions = 0
         Mengine.iOSStoreInAppPurchaseRestoreCompletedTransactions()
 
@@ -451,6 +454,7 @@ class SystemiOSServices(System):
     @staticmethod
     def _cbRestoreFailed():
         _Log("[InAppPurchase] (callback) Restore transactions queue failed", err=True, force=True)
+        SystemiOSServices._restore_failed = True
         SystemiOSServices._restore_queue_finished = True
         SystemiOSServices._tryCompleteRestore()
 
@@ -463,13 +467,18 @@ class SystemiOSServices(System):
         if SystemiOSServices._restore_pending_transactions != 0:
             return
 
+        successful = SystemiOSServices._restore_failed is False
         SystemiOSServices._restore_in_progress = False
+        Notification.notify(Notificator.onRestorePurchasesResult, successful)
         Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod
-    def _completeRestoreTransaction():
+    def _completeRestoreTransaction(successful):
         if SystemiOSServices._restore_in_progress is False:
             return
+
+        if successful is False:
+            SystemiOSServices._restore_failed = True
 
         SystemiOSServices._restore_pending_transactions -= 1
         SystemiOSServices._tryCompleteRestore()
@@ -495,6 +504,10 @@ class SystemiOSServices(System):
             transaction.finish()
 
     @staticmethod
+    def _releaseTransactions(transaction_id):
+        SystemiOSServices._processing_transactions.pop(transaction_id, None)
+
+    @staticmethod
     def _cbPaymentDeferred(transaction):
         """ (CALLBACK onPaymentQueueUpdatedTransactionDeferred) something went wrong during purchase """
         product_id = str(transaction.getProductIdentifier())
@@ -504,45 +517,68 @@ class SystemiOSServices(System):
 
     @staticmethod
     def _finishPaymentTransaction(product_id, transaction_id):
-        def _filter(rewarded_product_id, rewarded_transaction_id):
+        successful_holder = Holder(False)
+
+        def _filter(rewarded_product_id, rewarded_transaction_id, successful):
             if rewarded_product_id != product_id:
                 return False
 
             if rewarded_transaction_id != transaction_id:
                 return False
 
+            successful_holder.set(successful)
+
             return True
+
+        def _complete():
+            if successful_holder.get() is False:
+                SystemiOSServices._releaseTransactions(transaction_id)
+                Notification.notify(Notificator.onPayFailed, product_id)
+                Notification.notify(Notificator.onPayComplete, product_id)
+
+                return
+
+            SystemiOSServices._finishTransactions(transaction_id)
+            Notification.notify(Notificator.onPayComplete, product_id)
 
         with TaskManager.createTaskChain(Global=True) as tc:
             with tc.addParallelTask(2) as (reward, complete):
-                reward.addListener(
-                    Notificator.onPayRewardHandled,
-                    Filter=_filter)
+                reward.addListener(Notificator.onPayRewardResult, Filter=_filter)
                 complete.addNotify(Notificator.onPaySuccess, product_id, transaction_id)
-                complete.addNotify(Notificator.onPayComplete, product_id)
 
-            tc.addFunction(SystemiOSServices._finishTransactions, transaction_id)
+            tc.addFunction(_complete)
 
     @staticmethod
     def _finishProductRestoreTransaction(product_id, transaction_id):
-        def _filter(rewarded_product_id, rewarded_transaction_id):
+        successful_holder = Holder(False)
+
+        def _filter(rewarded_product_id, rewarded_transaction_id, successful):
             if rewarded_product_id != product_id:
                 return False
 
             if rewarded_transaction_id != transaction_id:
                 return False
 
+            successful_holder.set(successful)
+
             return True
+
+        def _complete():
+            successful = successful_holder.get()
+
+            if successful is True:
+                SystemiOSServices._finishTransactions(transaction_id)
+            else:
+                SystemiOSServices._releaseTransactions(transaction_id)
+
+            SystemiOSServices._completeRestoreTransaction(successful)
 
         with TaskManager.createTaskChain(Global=True) as tc:
             with tc.addParallelTask(2) as (response, request):
-                response.addListener(
-                    Notificator.onPayRewardHandled,
-                    Filter=_filter)
+                response.addListener(Notificator.onPayRewardResult, Filter=_filter)
                 request.addNotify(Notificator.onProductAlreadyOwned, product_id, transaction_id)
 
-            tc.addFunction(SystemiOSServices._finishTransactions, transaction_id)
-            tc.addFunction(SystemiOSServices._completeRestoreTransaction)
+            tc.addFunction(_complete)
 
     # --- DevToDebug ---------------------------------------------------------------------------------------------------
 

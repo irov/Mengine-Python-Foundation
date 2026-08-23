@@ -201,7 +201,7 @@ class System(Params, Initializer):
 
         try:
             self._onStop()
-        except TypeError as ex:
+        except Exception as ex:
             Trace.log_exception("System", 0, "System '%s' _onStop %s error: %s" % (self.name, self._onStop, ex))
             return
 

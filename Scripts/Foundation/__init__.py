@@ -713,8 +713,10 @@ def onInitialize():
         , "onGameStoreSentRewards"
 
         , "onProductAlreadyOwned"
+        , "onRestorePurchasesResult"
         , "onRestorePurchasesDone"
         , "onPaySuccess"
+        , "onPayRewardResult"
         , "onPayRewardHandled"
         , "onPayFailed"
         , "onPayComplete"
