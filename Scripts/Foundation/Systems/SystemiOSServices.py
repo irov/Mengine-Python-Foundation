@@ -470,7 +470,6 @@ class SystemiOSServices(System):
         successful = SystemiOSServices._restore_failed is False
         SystemiOSServices._restore_in_progress = False
         Notification.notify(Notificator.onRestorePurchasesResult, successful)
-        Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod
     def _completeRestoreTransaction(successful):

@@ -608,20 +608,17 @@ class SystemGoogleServices(SystemAndroid):
     def __cbBillingRestorePurchasesSuccess(products):
         _Log("[Billing cb] restore purchases successful: products={!r}".format(products))
         Notification.notify(Notificator.onRestorePurchasesResult, True)
-        Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod
     def __cbBillingRestorePurchasesFailed():
         _Log("[Billing cb] restore purchases failed", err=True, force=True)
         Notification.notify(Notificator.onRestorePurchasesResult, False)
-        Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod
     def __cbBillingRestorePurchasesError(code, exception):
         #  error while query purchases
         _Log("[Billing cb] restore purchases error: code={!r} exception={!r}".format(code, exception), err=True, force=True)
         Notification.notify(Notificator.onRestorePurchasesResult, False)
-        Notification.notify(Notificator.onRestorePurchasesDone)
 
     # --- Achievements --------------------------------------------------------------------------------------------
 

@@ -30,7 +30,7 @@ class PaymentProvider(BaseProvider):
     @staticmethod
     def restorePurchases():
         """ check player previous non-consumable purchases and call onPaySuccess for each of them
-            when restore completed - sends onRestorePurchasesResult and onRestorePurchasesDone
+            when restore completed - sends onRestorePurchasesResult(successful)
         """
         return PaymentProvider._call("restorePurchases")
 
@@ -77,7 +77,6 @@ class DummyPayment(object):
     def restorePurchases():
         Trace.msg("DUMMY restorePurchases - no actions")
         Notification.notify(Notificator.onRestorePurchasesResult, True)
-        Notification.notify(Notificator.onRestorePurchasesDone)
 
     @staticmethod
     def isOwnedInAppProduct(product_id):
