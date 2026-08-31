@@ -37,6 +37,7 @@ def onPreparation(isDebug):
         , "onSelectAccount"
         , "onRenderViewportChange"
         , "onGameViewportChange"
+        , "onSafeAreaViewportChange"
         , "onUnselectAccount"
         , "onDeleteAccount"
         , "onInitializeRenderResources"
@@ -224,6 +225,9 @@ def onRenderViewport(viewport, contentResolution):
 
 def onGameViewport(viewport, aspect):
     Notification.notify(Notificator.onGameViewportChange, viewport, aspect)
+
+def onSafeAreaViewport(viewport):
+    Notification.notify(Notificator.onSafeAreaViewportChange, viewport)
 
 def onUnselectAccount(accountID):
     Notification.notify(Notificator.onUnselectAccount, accountID)
