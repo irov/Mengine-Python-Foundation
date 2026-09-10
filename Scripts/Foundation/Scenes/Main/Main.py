@@ -259,9 +259,10 @@ class Main(object):
                 return
 
             # Dynamic layers (Options, store pages, etc.) also belong to this
-            # scene. Release every enable reference before detaching their
-            # nodes, including references kept while the objects are cached.
-            while group.getEnable() is True:
+            # scene. Release their scene-owned enable before detaching nodes.
+            # This must be a bounded operation: an onLayerGroupDisable
+            # observer is allowed to change another layer synchronously.
+            if group.getEnable() is True:
                 group.onDisable()
             pass
 
