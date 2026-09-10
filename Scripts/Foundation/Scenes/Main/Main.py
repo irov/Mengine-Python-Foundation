@@ -137,6 +137,7 @@ class Main(object):
         self.onStopGroups()
         self.onDisableGroups()
         self.onDeactivateGroups()
+        self.groupOrder = []
 
         for slot in self.slots.itervalues():
             slot.removeChildren()
@@ -257,9 +258,13 @@ class Main(object):
                 Trace.log("Entity", "0", "Main.onDisableGroups: %s not found group %s (activate)" % (self.sceneDescriptions.scene, group.getName()))
                 return
 
-            group.onDisable()
+            # Dynamic layers (Options, store pages, etc.) also belong to this
+            # scene. Release every enable reference before detaching their
+            # nodes, including references kept while the objects are cached.
+            while group.getEnable() is True:
+                group.onDisable()
             pass
 
-        self.foreachGroups(__lambdaGroups, isEnable=True, isReverse=True)
+        self.foreachGroups(__lambdaGroups, isReverse=True)
         pass
     pass
