@@ -24,4 +24,4 @@ class SystemAndroidRemoteConfig(System):
     @staticmethod
     def getRemoteConfigValue(key):
         """ returns dict value """
-        return Mengine.androidObjectMethod(PLUGIN_NAME, "getRemoteConfigValue", key)
+        return Mengine.androidJSONObjectMethod(PLUGIN_NAME, "getRemoteConfigValue", key)

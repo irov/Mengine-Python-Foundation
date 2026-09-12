@@ -68,18 +68,18 @@ class SystemiOSAd(System):
     def showBanner(self):
         if self.banner_inited is False:
             self.__logAd("ad showBanner not inited", trace=True, err=True, force=True)
-            return False
+            return
 
         self.__logAd("[Banner] show banner")
-        return Mengine.iOSAdvertisementShowBanner()
+        Mengine.iOSAdvertisementShowBanner()
 
     def hideBanner(self):
         if self.banner_inited is False:
             self.__logAd("ad hideBanner not inited", trace=True, err=True, force=True)
-            return False
+            return
 
         self.__logAd("[Banner] hide banner")
-        return Mengine.iOSAdvertisementHideBanner()
+        Mengine.iOSAdvertisementHideBanner()
 
     def hasInterstitialAdvert(self):
         return Mengine.iOSAdvertisementHasInterstitial()

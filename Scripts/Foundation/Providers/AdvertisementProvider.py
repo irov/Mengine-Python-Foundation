@@ -39,11 +39,11 @@ class AdvertisementProvider(BaseProvider):
 
     @staticmethod
     def showBanner():
-        return AdvertisementProvider._call("ShowBanner")
+        AdvertisementProvider._call("ShowBanner")
 
     @staticmethod
     def hideBanner():
-        return AdvertisementProvider._call("HideBanner")
+        AdvertisementProvider._call("HideBanner")
 
     @staticmethod
     def hasInterstitialAdvert():

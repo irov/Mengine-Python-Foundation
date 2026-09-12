@@ -12,12 +12,10 @@ class DummyAdvertisement(object):
         AdType = "Banner"
         display_failed = Mengine.rand(20) < 5
         Trace.msg("<DummyAdvertisement> show advert {} (fail: {})...".format(AdType, display_failed))
-        return True
 
     @staticmethod
     def hideBanner():
-        AdType = "Banner"
-        return True
+        pass
 
     @staticmethod
     def getBannerWidth():

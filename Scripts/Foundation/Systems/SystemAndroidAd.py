@@ -38,7 +38,7 @@ class SystemAndroidAd(SystemAndroid):
             if self._initializeInterstitialAd() is False:
                 Trace.log("System", 0, "Failed to init interstitial advert")
 
-        if Mengine.getConfigBool("Advertising", "Rewarded", False) is True:
+        if Mengine.getConfigBool("Advertising", "Rewarded", False) is True or Mengine.getConfigBool("Advertising", "RewardedInterstitial", False) is True:
             if self._initializeRewardedAd() is False:
                 Trace.log("System", 0, "Failed to init rewarded advert")
 
@@ -71,18 +71,18 @@ class SystemAndroidAd(SystemAndroid):
     def showBanner(self):
         if self.banner_inited is False:
             self.__logAd("ad showBanner not inited", trace=True, err=True, force=True)
-            return False
+            return
 
         self.__logAd("[Banner] show banner")
-        return self._androidMethod(ANDROID_ADSERVICE_PLUGIN_NAME, "showBanner")
+        self._androidMethod(ANDROID_ADSERVICE_PLUGIN_NAME, "showBanner")
 
     def hideBanner(self):
         if self.banner_inited is False:
             self.__logAd("ad hideBanner not inited", trace=True, err=True, force=True)
-            return False
+            return
 
         self.__logAd("[Banner] hide banner")
-        return self._androidMethod(ANDROID_ADSERVICE_PLUGIN_NAME, "hideBanner")
+        self._androidMethod(ANDROID_ADSERVICE_PLUGIN_NAME, "hideBanner")
 
     def hasInterstitialAdvert(self):
         return self._androidBooleanMethod(ANDROID_ADSERVICE_PLUGIN_NAME, "hasInterstitial")
@@ -178,7 +178,8 @@ class SystemAndroidAd(SystemAndroid):
             return True
 
         if Mengine.getConfigBool("Advertising", "Rewarded", False) is False:
-            return False
+            if Mengine.getConfigBool("Advertising", "RewardedInterstitial", False) is False:
+                return False
 
         self.__logAd("[Rewarded] call init")
         self._addAndroidCallback(ANDROID_ADSERVICE_PLUGIN_NAME, "onAndroidAdServiceRewardedShowSuccess", self.__cbRewardedShowSuccess)
