@@ -136,6 +136,7 @@ class MonetizationManager(CurrencyManager):
             else:
                 self.price = MonetizationManager.getRecordValue(record, "Price", default=0)
             self.discount = MonetizationManager.getRecordValue(record, "Discount")
+            self.formatted_price = None  # localized price supplied by the store, including currency
             self.currency = MonetizationManager.getRecordValue(record, "Currency", default="Real")
 
             self.group_id = MonetizationManager.getRecordValue(record, "GroupID")
@@ -429,21 +430,25 @@ class MonetizationManager(CurrencyManager):
             @param upd_params_dict: dict with next template: {prod_id: {param: new_value}, ...};
             @param currency: ISO 4217 currency code;
 
-            You can change only this values: price, name, descr
+            You can change only this values: price, formatted_price, name, descr
         """
         if isinstance(upd_params_dict, dict) is False:
             Trace.log("Manager", 0, "_cbProductsUpdate works only with dicts")
             return False
 
-        whitelist_params = ["price", "name", "descr"]
+        whitelist_params = ["price", "formatted_price", "name", "descr"]
 
-        MonetizationManager.setCurrentCurrencyCode(currency)
+        if currency is not None and currency != "":
+            MonetizationManager.setCurrentCurrencyCode(currency)
 
         for prod_id, new_params_dict in upd_params_dict.items():
             if MonetizationManager.hasProductInfo(prod_id) is False:
                 continue
 
             product = MonetizationManager.getProductInfo(prod_id)
+            if "price" in new_params_dict and "formatted_price" not in new_params_dict:
+                # A numeric price change invalidates the old localized price.
+                product.formatted_price = None
             for key, value in new_params_dict.items():
                 if key not in whitelist_params:
                     continue

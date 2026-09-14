@@ -146,7 +146,9 @@ class SystemGoogleServices(SystemAndroid):
                 isOwnedInAppProduct=SystemGoogleServices.isOwnedInAppProduct,
             ))
 
-            Mengine.waitSemaphore("GooglePlayBillingReady", SystemGoogleServices.__cbGooglePlayBillingInitialized)
+            # Billing may already be connected without emitting the Ready semaphore.
+            # Query explicitly; QueryProductFailed schedules a retry until it is ready.
+            SystemGoogleServices.__cbGooglePlayBillingInitialized()
 
         if self.b_plugins[GOOGLE_IN_APP_REVIEWS_PLUGIN] is True:
             def _setCallback(callback_name, *callback):
@@ -349,16 +351,25 @@ class SystemGoogleServices(SystemAndroid):
         currency = None
         products = {}
         for prod_id, details in SystemGoogleServices.s_products.items():
+            offer = details.get("oneTimePurchaseOfferDetails")
+            if (offer is None or "priceAmountMicros" not in offer or
+                    (offer.get("priceCurrencyCode") in (None, "") and
+                     offer.get("formattedPrice") in (None, ""))):
+                _Log("[Billing] product {!r} has no price offer; skipping price update".format(prod_id),
+                     warn=True, force=True)
+                continue
+
             params = {
                 # convert price from micros to normal with 2 digits after comma
-                "price": round(float(details["oneTimePurchaseOfferDetails"]["priceAmountMicros"]) / 1000000, 2),
+                "price": round(float(offer["priceAmountMicros"]) / 1000000, 2),
+                "formatted_price": offer.get("formattedPrice"),
                 "descr": str(details["description"]),
                 "name": str(details["name"])
             }
             products[prod_id] = params
 
-            if currency is None:
-                currency = str(details["oneTimePurchaseOfferDetails"]["priceCurrencyCode"])
+            if currency is None or currency == "":
+                currency = offer.get("priceCurrencyCode")
 
         _Log("[Billing] response on queryProducts: {}".format(products))
 
@@ -453,15 +464,9 @@ class SystemGoogleServices(SystemAndroid):
 
     @staticmethod
     def __cbBillingQueryProductsSuccess(products):
-        # this callback receives details of every product in json format
-        #    - productId - The product ID for the product.
-        #    - type - "inapp"  for an in-app product or "subs" for subscriptions.
-        #    - price - formatted price without taxes, i.e. "UAH 37.22".
-        #    - price_amount_micros - Price in micro-units (1000000 micro-units = 1 unit), i.e. "EUR 7.99" is "7990000".
-        #    - price_currency_code - ISO 4217 currency code for price, i.e. "GBP".
-        #    - title - Title of the product with Game ID.
-        #    - name - Just title of the product.
-        #    - description - Description of the product.
+        # ProductDetails from the Android bridge contain productId, name,
+        # description and oneTimePurchaseOfferDetails with priceAmountMicros,
+        # priceCurrencyCode and formattedPrice (including the currency).
 
         _Log("[Billing cb] query products SUCCESS: {!r}".format(products))
 
