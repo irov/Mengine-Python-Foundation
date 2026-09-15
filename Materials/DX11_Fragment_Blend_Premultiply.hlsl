@@ -17,5 +17,5 @@ void main( in v2p IN, out p2f OUT )
 {
     float4 color = tex0.Sample( sampler0, IN.tex0 );
 
-    OUT.color = IN.color * color * IN.color.a;
+    OUT.color = float4( IN.color.rgb * IN.color.a, IN.color.a ) * color;
 }

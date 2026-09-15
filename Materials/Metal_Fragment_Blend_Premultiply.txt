@@ -13,5 +13,5 @@ fragment half4 fragmentShader(FragmentIn in [[stage_in]],
                               sampler sampler0 [[sampler(0)]])
 {
     half4 c0 = inSampler0.sample(sampler0, in.uv0);
-    return in.color * c0 * in.color.w;
+    return half4(in.color.rgb * in.color.w, in.color.w) * c0;
 }

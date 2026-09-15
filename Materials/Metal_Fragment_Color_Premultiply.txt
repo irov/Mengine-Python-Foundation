@@ -9,5 +9,5 @@ struct FragmentIn
 
 fragment half4 fragmentShader(FragmentIn in [[stage_in]])
 {
-    return in.color * in.color.w;
+    return half4(in.color.rgb * in.color.w, in.color.w);
 }
