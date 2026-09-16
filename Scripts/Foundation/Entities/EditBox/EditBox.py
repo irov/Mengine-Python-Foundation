@@ -109,7 +109,7 @@ class EditBox(BaseEntity):
             self.updateCarriage()
             pass
 
-        if len(value) is 0:
+        if len(value) == 0:
             Notification.notify(Notificator.EditBoxEmpty, self.object)
             pass
         else:

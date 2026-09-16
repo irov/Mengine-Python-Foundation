@@ -39,7 +39,7 @@ class Movie2EditBox(BaseEntity):
         pass
 
     def __updatePresent(self, value):
-        if self.state is not 'Focus' and len(self.object.getValue()) == 0:
+        if self.state != 'Focus' and len(self.object.getValue()) == 0:
             self.setText(self.__getText(), value)
         pass
 
@@ -95,14 +95,14 @@ class Movie2EditBox(BaseEntity):
         present_text = self.object.getPresent()
 
         if text_field is not None:
-            if len(old_value) == 0 and self.state is not 'Focus':
+            if len(old_value) == 0 and self.state != 'Focus':
                 text_field.setTextFormatArgs(present_text)
                 return u''
             else:
                 text_field.setTextFormatArgs('')
                 return old_value
         else:
-            if len(old_value) == 0 and self.state is not 'Focus':
+            if len(old_value) == 0 and self.state != 'Focus':
                 return present_text
             else:
                 return old_value
@@ -168,7 +168,7 @@ class Movie2EditBox(BaseEntity):
             self.updateCarriage()
             pass
 
-        if len(value) is 0:
+        if len(value) == 0:
             Notification.notify(Notificator.onMovie2EditBoxEmpty, self.object)
             pass
         else:
