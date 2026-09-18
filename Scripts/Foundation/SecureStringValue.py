@@ -43,9 +43,12 @@ class SecureStringValue(object):
 
     def loadSave(self, save):
         if save == "":
-            return
+            return False
         if self.value.loadHexadecimal(save) is False:
             Trace.log("Utils", 0, "SecureStringValue {} - your save {!r} is broken!!!".format(self.id, save))
+            return False
+
+        return True
 
     @staticmethod
     def getValueFromSecure(secure_value):

@@ -47,14 +47,26 @@ class AdvertisementProvider(BaseProvider):
 
     @staticmethod
     def hasInterstitialAdvert():
+        from Foundation.Systems.SystemMonetization import SystemMonetization
+        if SystemMonetization.areInterstitialAdsDisabled() is True:
+            return False
+
         return AdvertisementProvider._call("HasInterstitialAdvert")
 
     @staticmethod
     def canYouShowInterstitialAdvert(placement):
+        from Foundation.Systems.SystemMonetization import SystemMonetization
+        if SystemMonetization.areInterstitialAdsDisabled() is True:
+            return False
+
         return AdvertisementProvider._call("CanYouShowInterstitialAdvert", placement)
 
     @staticmethod
     def showInterstitialAdvert(placement):
+        from Foundation.Systems.SystemMonetization import SystemMonetization
+        if SystemMonetization.areInterstitialAdsDisabled() is True:
+            return False
+
         if AdvertisementProvider.s_fullscreen_ad_showing is True:
             return False
 

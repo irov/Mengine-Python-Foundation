@@ -506,8 +506,10 @@ class SystemGoogleServices(SystemAndroid):
             tc.addDelay(BILLING_QUERY_PRODUCTS_RETRY_DELAY)
 
     @staticmethod
-    def __cbBillingPurchaseOnConsumeSuccess(products):
+    def __cbBillingPurchaseOnConsumeSuccess(products, transaction_id=None):
         _Log("[Billing cb] purchase consumable finalized: {!r}".format(products))
+        for prod_id in products:
+            Notification.notify(Notificator.onPayFinalized, prod_id, transaction_id)
         SystemGoogleServices.completePurchased(products)
 
     @staticmethod
@@ -542,12 +544,17 @@ class SystemGoogleServices(SystemAndroid):
 
             def _complete():
                 cb(successful_holder.get(), {})
+                if successful_holder.get() is True:
+                    for prod_id in products:
+                        Notification.notify(Notificator.onPayFinalized, prod_id, transaction_id)
 
             tc.addFunction(_complete)
 
     @staticmethod
-    def __cbBillingPurchaseAcknowledgeSuccess(products):
+    def __cbBillingPurchaseAcknowledgeSuccess(products, transaction_id=None):
         _Log("[Billing cb] purchase non-consumable finalized: {!r}".format(products))
+        for prod_id in products:
+            Notification.notify(Notificator.onPayFinalized, prod_id, transaction_id)
         SystemGoogleServices.completePurchased(products)
 
     @staticmethod
@@ -562,11 +569,11 @@ class SystemGoogleServices(SystemAndroid):
             Notification.notify(Notificator.onPayComplete, prod_id)
 
     @staticmethod
-    def handlePurchased(_products, status):
+    def handlePurchased(_products, status, transaction_id=None):
         products = filter(lambda x: x is not None, _products)
         for prod_id in products:
-            if status is True:
-                Notification.notify(Notificator.onPaySuccess, prod_id)
+            if status is True and transaction_id:
+                Notification.notify(Notificator.onPaySuccess, prod_id, transaction_id)
             else:
                 Notification.notify(Notificator.onPayFailed, prod_id)
             Notification.notify(Notificator.onPayComplete, prod_id)

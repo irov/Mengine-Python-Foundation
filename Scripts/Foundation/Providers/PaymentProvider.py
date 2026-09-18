@@ -25,6 +25,9 @@ class PaymentProvider(BaseProvider):
         """ starts payment process,
              - onPaySuccess prod_id: all ok
              - onPayFailed prod_id: error """
+        from Foundation.Systems.SystemMonetization import SystemMonetization
+        if SystemMonetization.checkPurchaseReady(product_id) is False:
+            return False
         return PaymentProvider._call("pay", product_id)
 
     @staticmethod
@@ -58,6 +61,7 @@ class DummyPayment(object):
 
         prod_params = ProductsProvider.getProductInfo(product_id)
 
+        transaction_id = "dummy:" + Mengine.makeUID(32)
         success = Mengine.rand(100) >= 15    # 85% chance
 
         with TaskManager.createTaskChain(Name="DummyPaymentProcessing_{}".format(product_id)) as tc:
@@ -66,7 +70,19 @@ class DummyPayment(object):
 
             if success is True:
                 tc.addPrint("DUMMY payment {!r} OK".format(product_id))
-                tc.addNotify(Notificator.onPaySuccess, product_id)
+                successful_holder = Holder(False)
+                def _filter(rewarded_id, rewarded_transaction_id, successful):
+                    if rewarded_id != product_id or rewarded_transaction_id != transaction_id:
+                        return False
+                    successful_holder.set(successful)
+                    return True
+
+                with tc.addParallelTask(2) as (response, request):
+                    response.addListener(Notificator.onPayRewardResult, Filter=_filter)
+                    request.addNotify(Notificator.onPaySuccess, product_id, transaction_id)
+                with tc.addIfTask(successful_holder.get) as (applied, failed):
+                    applied.addNotify(Notificator.onPayFinalized, product_id, transaction_id)
+                    failed.addNotify(Notificator.onPayFailed, product_id)
             else:
                 tc.addNotify(Notificator.onPayFailed, product_id)
             tc.addNotify(Notificator.onPayComplete, product_id)

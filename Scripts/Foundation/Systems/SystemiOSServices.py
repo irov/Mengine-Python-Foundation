@@ -501,6 +501,7 @@ class SystemiOSServices(System):
 
         for transaction in transactions:
             transaction.finish()
+            Notification.notify(Notificator.onPayFinalized, str(transaction.getProductIdentifier()), transaction_id)
 
     @staticmethod
     def _releaseTransactions(transaction_id):

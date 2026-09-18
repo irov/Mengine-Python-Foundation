@@ -6,6 +6,10 @@ from Foundation.TaskManager import TaskManager
 
 class SystemAdvertising(System):
     def isInterstitialEnabled(self):
+        from Foundation.Systems.SystemMonetization import SystemMonetization
+        if SystemMonetization.areInterstitialAdsDisabled() is True:
+            return False
+
         if Mengine.getConfigBool("Advertising", "Interstitial", False) is False:
             return False
 

@@ -1,6 +1,7 @@
 from Foundation.DemonManager import DemonManager
 from Foundation.GroupManager import GroupManager
 from Foundation.MonetizationManager import MonetizationManager
+from Foundation.MonetizationTransaction import MonetizationTransaction
 from Foundation.AccountManager import AccountManager
 from Foundation.SecureStringValue import SecureStringValue
 from Foundation.SecureValue import SecureValue
@@ -18,8 +19,13 @@ ALIAS_GLOBAL_ADVERT_COUNTER = "$AliasGlobalAdvertCounter"
 class SystemMonetization(System):
     storage = {}
     components = {}
-    _session_purchased_products = []
-    _session_delayed_products = []
+    s_reward_types = {}
+    s_storage_types = {}  # key -> (secure value type, default)
+    _storage_error = False
+    _loaded_account = None
+    _pending_account_purchases = []  # purchases waiting for their account or reward systems
+    _pending_purchase_timer = None
+    _applying_pending_purchases = False
 
     game_store_name = None
 
@@ -40,6 +46,9 @@ class SystemMonetization(System):
     def _onInitialize(self):
         super(SystemMonetization, self)._onInitialize()
 
+        SystemMonetization.addRewardType("Gold", SystemMonetization._prepareGold, SystemMonetization._validAmount, additive=True)
+        SystemMonetization.addRewardType("DisableInterstitialAds", SystemMonetization._prepareDisableAds, SystemMonetization._validEnableFlag, restore=SystemMonetization._prepareDisableAds)
+
         if SystemMonetization.__isActive() is False:
             return
 
@@ -49,14 +58,19 @@ class SystemMonetization(System):
 
     def _onFinalize(self):
         super(SystemMonetization, self)._onFinalize()
+        SystemMonetization._clearPendingPurchases()
+
+        SystemMonetization.s_reward_types = {}
+        SystemMonetization.s_storage_types = {}
+        SystemMonetization._storage_error = False
+        SystemMonetization._loaded_account = None
 
         if SystemMonetization.__isActive() is False:
             return
 
         SystemMonetization.storage = {}
         SystemMonetization.components = {}
-        SystemMonetization._session_purchased_products = []
-        SystemMonetization._session_delayed_products = []
+        SystemMonetization._pending_account_purchases = []
 
     def _onRun(self):
         if SystemMonetization.__isActive() is False:
@@ -72,6 +86,7 @@ class SystemMonetization(System):
         return True
 
     def _onStop(self):
+        SystemMonetization._clearPendingPurchases()
         for component in SystemMonetization.components.values():
             component.stop()
         SystemMonetization.components = {}
@@ -96,6 +111,9 @@ class SystemMonetization(System):
             return
 
         real_prod_id = MonetizationManager.getProductRealId(prod_id)
+
+        if cls.checkPurchaseReady(real_prod_id) is False:
+            return False
 
         if cls.isPurchaseDelayed(real_prod_id) is True:
             Notification.notify(Notificator.onReleasePurchased, real_prod_id)
@@ -131,46 +149,85 @@ class SystemMonetization(System):
 
     @staticmethod
     def _onPaySuccess(prod_id, transaction_id=None):
-        product = MonetizationManager.getProductInfo(prod_id)
+        return SystemMonetization._receivePurchase(prod_id, transaction_id, False)
 
-        if product is None:
-            _Log("Unknown product id {!r} ({})".format(prod_id, type(prod_id)), err=True, force=True)
+    @staticmethod
+    def _deliverPurchase(product, transaction_id=None):
+        try:
+            return SystemMonetization._applyPurchase(product, transaction_id)
+        except Exception as ex:
+            Trace.log_exception("System", 0, "Unable to apply purchase {!r}: {}".format(product.id, ex))
             return False
 
-        SystemMonetization._session_purchased_products.append(prod_id)
-        SystemMonetization.sendReward(prod_id=prod_id)
+    @staticmethod
+    def _applyPurchase(product, transaction_id):
+        if SystemMonetization._isStorageReady() is False:
+            return False if SystemMonetization._storage_error else None
 
-        if product.group_id is not None:
-            if SystemMonetization.isProductGroupPurchased(product.group_id) is False:
-                SystemMonetization.addStorageListValue("PurchasedProductGroups", product.group_id)
-
-                if product.group_id in MonetizationManager.getGeneralSetting("DoubledGroupOnFirstPurchase", []):
-                    SystemMonetization.sendReward(prod_id=prod_id)
-
-        if product.isConsumable() is True:
+        if product.isConsumable() is True and product.getCurrency() == "Real" and not transaction_id:
+            _Log("Consumable {!r} has no store transaction id".format(product.id), err=True, force=True)
             return False
 
-        # save non-consumable product
-        SystemMonetization.addStorageListValue("purchased", prod_id)
+        receipts = SystemMonetization._loadRewardReceipts()
+        finalized = SystemMonetization._loadFinalizedPurchases()
+        purchase_key = Mengine.encodeJSON([product.id, transaction_id]) if transaction_id or product.isConsumable() is False else None
+        receipt = receipts.get(purchase_key)
+        if purchase_key in finalized:
+            return True
 
-        return False
+        transaction = MonetizationTransaction(SystemMonetization.storage)
+        owned = product.isConsumable() is False and SystemMonetization.isProductPurchased(product.id) is True
+        complete = receipt is not None and receipt["complete"] is True
+        first_in_group = product.group_id is not None and SystemMonetization.isProductGroupPurchased(product.group_id) is False
+        repeats = 2 if first_in_group and product.group_id in MonetizationManager.getGeneralSetting("DoubledGroupOnFirstPurchase", []) else 1
+
+        if owned is False and complete is False:
+            reward = product.reward if receipt is None else receipt["reward"]
+            repeats = repeats if receipt is None else receipt["repeats"]
+            applied = [] if receipt is None else receipt["applied"]
+            if SystemMonetization._validateReward(reward) is False:
+                return False
+            if SystemMonetization._isRewardReady(reward) is False:
+                return None
+            if SystemMonetization._prepareReward(transaction, reward, repeats, applied, product.id) is False:
+                return False
+
+        if first_in_group:
+            transaction.addListValue("PurchasedProductGroups", product.group_id)
+        if product.isConsumable() is False:
+            transaction.addListValue("purchased", product.id)
+        if SystemMonetization.isPurchaseDelayed(product.id) is True:
+            transaction.removeListValue("delayed", product.id)
+        if purchase_key is not None and not complete and not owned and transaction_id:
+            receipts[purchase_key] = {"complete": True}
+            transaction.setValue("purchaseRewards", Mengine.encodeJSON(receipts))
+
+        return transaction.commit()
 
     @staticmethod
     def _onProductAlreadyOwned(prod_id, transaction_id=None):
-        product = MonetizationManager.getProductInfo(prod_id)
-        if product.isConsumable() is True:
-            _Log("Product {!r} is consumable and can't be restored".format(prod_id), err=True, force=True)
-            return False
+        return SystemMonetization._receivePurchase(prod_id, transaction_id, True)
 
-        if SystemMonetization.isProductPurchased(prod_id) is True:
-            _Log("Product {!r} already owned and applied for game".format(prod_id))
-            Notification.notify(Notificator.onPayComplete, prod_id)
-            return False
+    @staticmethod
+    def _deliverOwnedPurchase(product, transaction_id):
+        if SystemMonetization._isStorageReady() is False:
+            return False if SystemMonetization._storage_error else None
 
-        _Log("Product {!r} already owned, but not applied - fix it".format(prod_id))
-        Notification.notify(Notificator.onPaySuccess, prod_id, transaction_id)
-        Notification.notify(Notificator.onPayComplete, prod_id)
-        return False
+        if SystemMonetization.isProductPurchased(product.id) is True:
+            return True
+
+        if product.isDelayPurchase() is True:
+            # Persist the delayed entitlement before updating restore buttons or answering the store.
+            transaction = MonetizationTransaction(SystemMonetization.storage)
+            transaction.addListValue("delayed", product.id)
+            transaction.afterCommit(Notification.notify, Notificator.onDelayPurchased, product.id)
+            return transaction.commit()
+
+        successful = SystemMonetization._deliverPurchase(product, transaction_id)
+        if successful is True:
+            # Keep the UI event; the pending entry suppresses its delivery observer's duplicate request.
+            Notification.notify(Notificator.onPaySuccess, product.id, transaction_id)
+        return successful
 
     @staticmethod
     def _onDelayPurchased(prod_id):
@@ -184,8 +241,14 @@ class SystemMonetization(System):
             _Log("Purchase already delayed {!r}".format(prod_id), err=True, optional=True)
             return False
 
-        SystemMonetization._session_delayed_products.append(prod_id)
-        _Log("Delay purchase {!r}".format(prod_id), optional=True)
+        if SystemMonetization._isStorageReady() is False:
+            return False
+        try:
+            transaction = MonetizationTransaction(SystemMonetization.storage)
+            transaction.addListValue("delayed", prod_id)
+            transaction.commit()
+        except Exception as ex:
+            Trace.log_exception("System", 0, "Unable to delay purchase {!r}: {}".format(prod_id, ex))
 
         return False
 
@@ -195,8 +258,21 @@ class SystemMonetization(System):
             _Log("Product {!r} not purchased or delayed".format(prod_id), err=True, force=True)
             return False
 
-        SystemMonetization._session_delayed_products.remove(prod_id)
+        product = MonetizationManager.getProductInfo(prod_id)
+        if product is None or product.isConsumable() is True:
+            return False
+
         _Log("Release delayed purchase {!r}...".format(prod_id), optional=True)
+
+        if SystemMonetization.checkPurchaseReady(prod_id) is False:
+            return False
+
+        # onPaySuccess also notifies existing UI listeners. Its delivery observer sees persisted ownership
+        # and acknowledges without applying or saving the reward again.
+        if SystemMonetization._deliverPurchase(product) is not True:
+            Notification.notify(Notificator.onPayFailed, prod_id)
+            return False
+
         Notification.notify(Notificator.onPaySuccess, prod_id)
 
         return False
@@ -388,10 +464,13 @@ class SystemMonetization(System):
             return False
 
         currency = product.getCurrency()
-        if currency == "Gold":
-            return cls.addGold(product.price)
-        elif currency == "Energy":
-            return cls.addEnergy(product.price)
+        fn = SystemMonetization.s_reward_types.get(currency)
+
+        if fn is None:
+            _Log("Can't rollback {!r}: no reward type for currency {!r}".format(_prod_id, currency), err=True, force=True)
+            return False
+
+        return cls.sendReward(rew_dict={currency: product.price})
 
     @classmethod
     def rollbackGold(cls, prod_id=None, component_tag=None):    # DEPRECATED
@@ -420,76 +499,230 @@ class SystemMonetization(System):
 
     # --- Rewards ------------------------------------------------------------------------------------------------------
 
-    @classmethod
-    def _getPossibleRewards(cls):
-        rewards = {
-            "Gold": cls.addGold,
-            "Energy": cls.addEnergy,
-            "EnergyInfinity": cls.setInfinityEnergy,
-            "DisableInterstitialAds": cls.disableInterstitialAds
-        }
-        return rewards
+    @staticmethod
+    def addRewardType(reward_type, prepare, validate, additive=False, ready=None, restore=None):
+        """Validate catalog values independently of runtime readiness; prepare changes without side effects."""
+        SystemMonetization.s_reward_types[reward_type] = dict(
+            prepare=prepare, validate=validate, additive=additive, ready=ready, restore=restore)
 
-    @classmethod
-    def sendReward(cls, rew_dict=None, prod_id=None):
-        """ sends reward according to custom dict or product reward info. Select one: `rew_dict` or `prod_id`.
-            @param rew_dict: dict with reward info, allowed keys:
-                "Gold" (adds gold), "Chapter" (unlocks chapter), "SceneUnlock" (unlocks scene),
-                "Energy" (adds energy), "DisableInterstitialAds" (disable interstitial adverts)
-            @param prod_id: id of product, which has reward info """
+    @staticmethod
+    def addStorageType(key, value_type, default):
+        """Register extension-owned settings before storage initialization or account loading."""
+        SystemMonetization.s_storage_types[key] = (value_type, default)
 
-        if MonetizationManager.isMonetizationEnable() is False:
+    @staticmethod
+    def _validEnableFlag(value):
+        return type(value) is int and value == 1
+
+    @staticmethod
+    def _validAmount(value):
+        return type(value) is int and value >= 0
+
+    @staticmethod
+    def isProductAvailable(prod_id):
+        product = MonetizationManager.getProductInfo(prod_id)
+        return product is not None and SystemMonetization._validateReward(product.reward)
+
+    @staticmethod
+    def _validateReward(reward):
+        if not isinstance(reward, dict) or not reward:
             return False
-
-        reward = {}
-        if prod_id is not None:
-            reward = MonetizationManager.getProductReward(prod_id)
-        elif rew_dict is not None:
-            reward = rew_dict
-
-        if not (isinstance(reward, dict) and len(reward) > 0):
-            if _DEVELOPMENT is True:
-                Trace.log("System", 0, "SystemMonetization.sendReward wrong reward dict {!r} (your input: {!r}, id={!r})".format(reward, rew_dict, prod_id))
-            return False
-
-        rewards = cls._getPossibleRewards()
-        for reward_type, arg in reward.items():
-            if reward_type not in rewards:
-                _Log("Unknown reward type {!r} (prod_id={!r})".format(reward_type, prod_id), warn=True)
-                continue
-
-            fn = rewards.get(reward_type)
-
-            if callable(fn) is False:
-                _Log("Reward function for type {!r} is not callable (prod_id={!r})".format(reward_type, prod_id), err=True)
-                continue
-
-            fn(arg)
-            pass
-
-        Notification.notify(Notificator.onGameStoreSentRewards, prod_id, reward)
+        for reward_type, value in reward.items():
+            handler = SystemMonetization.s_reward_types.get(reward_type)
+            try:
+                valid = handler is not None and handler["validate"](value) is True
+            except Exception:
+                valid = False
+            if valid is False:
+                _Log("Unsupported reward {!r}={!r}".format(reward_type, value), err=True, force=True)
+                return False
         return True
 
     @staticmethod
-    def addEnergy(energy):
-        Notification.notify(Notificator.onEnergyIncrease, energy)
+    def _isRewardReady(reward):
+        for reward_type, value in reward.items():
+            ready = SystemMonetization.s_reward_types[reward_type]["ready"]
+            try:
+                if ready is not None and ready(value) is not True:
+                    return False
+            except Exception:
+                return False
+        return True
 
     @staticmethod
-    def setInfinityEnergy(code):
-        if code == 1:
-            Notification.notify(Notificator.onEnergySet, "inf")
-        else:
-            _Log("Invalid infinity energy code {} - must be 1 to set infinity".format(code), err=True)
+    def getPurchaseUnavailableReason(prod_id):
+        if SystemMonetization._storage_error is True:
+            return "storage_error"
+        if SystemMonetization._isStorageReady() is False:
+            return "not_ready"
+        if SystemMonetization.isProductAvailable(prod_id) is False:
+            return "unsupported"
+        reward = MonetizationManager.getProductReward(prod_id)
+        if SystemMonetization._isRewardReady(reward) is False:
+            return "not_ready"
+        return None
 
     @staticmethod
-    def disableInterstitialAds(*args):
-        if MonetizationManager.isMonetizationEnable() is False:
+    def checkPurchaseReady(prod_id):
+        reason = SystemMonetization.getPurchaseUnavailableReason(prod_id)
+        if reason is None:
+            return True
+        Notification.notify(Notificator.onPayUnavailable, prod_id, reason)
+        Notification.notify(Notificator.onPayFailed, prod_id)
+        Notification.notify(Notificator.onPayComplete, prod_id)
+        return False
+
+    @staticmethod
+    def _prepareReward(transaction, reward, repeats=1, applied=None, prod_id=None):
+        if SystemMonetization._validateReward(reward) is False or type(repeats) is not int or repeats < 1:
+            return False
+        if SystemMonetization._isRewardReady(reward) is False:
+            return False
+
+        applied = applied or []
+        total_reward = {}
+        for reward_type, value in reward.items():
+            handler = SystemMonetization.s_reward_types[reward_type]
+            prepare, additive = handler["prepare"], handler["additive"]
+            total_reward[reward_type] = value * repeats if additive else value
+            remaining = sum(1 for index in range(repeats) if [index, reward_type] not in applied)
+            if remaining == 0:
+                continue
+            amount = value * remaining if additive else value
+            if prepare(transaction, amount) is not True:
+                return False
+        transaction.afterCommit(Notification.notify, Notificator.onGameStoreSentRewards, prod_id, total_reward)
+        return True
+
+    @classmethod
+    def sendReward(cls, rew_dict=None, prod_id=None):
+        if MonetizationManager.isMonetizationEnable() is False or cls._isStorageReady() is False:
+            return False
+        reward = MonetizationManager.getProductReward(prod_id) if prod_id is not None else rew_dict
+        try:
+            transaction = MonetizationTransaction(SystemMonetization.storage)
+            if cls._prepareReward(transaction, reward, prod_id=prod_id) is False:
+                return False
+            return transaction.commit()
+        except Exception as ex:
+            Trace.log_exception("System", 0, "Unable to commit reward: {}".format(ex))
+            return False
+
+    @staticmethod
+    def _decodeRewardReceipts(raw):
+        # Missing settings are initialized by loadData. Corrupt history must never become an empty journal.
+        receipts = Mengine.decodeJSON(raw)
+        if not isinstance(receipts, dict):
+            raise ValueError("Invalid purchaseRewards journal")
+        for key, receipt in receipts.items():
+            identity = Mengine.decodeJSON(key)
+            if not isinstance(identity, list) or len(identity) != 2 or not isinstance(receipt, dict):
+                raise ValueError("Invalid purchase receipt")
+            if receipt.get("complete") is True:
+                receipts[key] = {"complete": True}
+                continue
+            reward = receipt.get("reward")
+            repeats = receipt.get("repeats")
+            applied = receipt.get("applied")
+            if receipt.get("complete") is not False or not isinstance(reward, dict) or not reward or type(repeats) is not int or repeats < 1 or not isinstance(applied, list):
+                raise ValueError("Invalid pending purchase receipt")
+            for step in applied:
+                if not isinstance(step, list) or len(step) != 2 or type(step[0]) is not int or not 0 <= step[0] < repeats or step[1] not in reward:
+                    raise ValueError("Invalid purchase reward step")
+        return receipts
+
+    @staticmethod
+    def _loadRewardReceipts():
+        return SystemMonetization._decodeRewardReceipts(SystemMonetization.getStorageValue("purchaseRewards"))
+
+    @staticmethod
+    def _decodeFinalizedPurchases(raw):
+        finalized = Mengine.decodeJSON(raw)
+        if not isinstance(finalized, list) or any(not isinstance(key, basestring) for key in finalized):
+            raise ValueError("Invalid finalized purchase journal")
+        return finalized
+
+    @staticmethod
+    def _loadFinalizedPurchases():
+        return SystemMonetization._decodeFinalizedPurchases(SystemMonetization.getStorageValue("finalizedPurchases"))
+
+    @staticmethod
+    def _onPayFinalized(prod_id, transaction_id):
+        if not transaction_id:
+            return False
+        product = MonetizationManager.getProductInfo(prod_id)
+        if product is None:
+            return False
+        key = Mengine.encodeJSON([product.id, transaction_id])
+        # A store callback can arrive after the player switches profiles.
+        for account_id in Mengine.getAccounts():
+            try:
+                SystemMonetization._finalizeAccountPurchase(account_id, key)
+            except Exception as ex:
+                Trace.log_exception("System", 0, "Unable to finalize purchase journal: {}".format(ex))
+        return False
+
+    @staticmethod
+    def _finalizeAccountPurchase(account_id, key):
+        if Mengine.hasAccountSetting(account_id, "purchaseRewards") is False:
             return
-        if SystemManager.hasSystem("SystemAdvertising") is False:
+        journal = SecureStringValue("purchaseRewards", "{}")
+        if journal.loadSave(str(Mengine.getAccountSetting(account_id, "purchaseRewards"))) is not True:
             return
-        #SystemAdvertising = SystemManager.getSystem("SystemAdvertising")
-        #SystemAdvertising.disableForever()
-        _Log("disabled interstitial ads", optional=True)
+        receipts = SystemMonetization._decodeRewardReceipts(journal.getValue())
+        if key not in receipts or receipts[key]["complete"] is not True:
+            return
+        history = SecureStringValue("finalizedPurchases", "[]")
+        if Mengine.hasAccountSetting(account_id, "finalizedPurchases") is False:
+            return
+        if history.loadSave(str(Mengine.getAccountSetting(account_id, "finalizedPurchases"))) is not True:
+            return
+        finalized = SystemMonetization._decodeFinalizedPurchases(history.getValue())
+        if key not in finalized:
+            finalized.append(key)
+        del receipts[key]
+        journal.setValue(Mengine.encodeJSON(receipts))
+        history.setValue(Mengine.encodeJSON(finalized[-128:]))
+        previous = {}
+        try:
+            for value in (journal, history):
+                previous[value.id] = Mengine.getAccountSetting(account_id, value.id)
+                if Mengine.changeAccountSetting(account_id, value.id, unicode(value.getSave())) is not True:
+                    raise RuntimeError("Unable to update finalized purchase journal")
+            if Mengine.saveAccounts() is not True:
+                raise RuntimeError("Unable to save finalized purchase journal")
+        except Exception:
+            for name, value in previous.items():
+                Mengine.changeAccountSetting(account_id, name, value)
+            raise
+        if SystemMonetization._loaded_account == account_id:
+            SystemMonetization.storage["purchaseRewards"] = journal
+            SystemMonetization.storage["finalizedPurchases"] = history
+
+    @staticmethod
+    def _prepareGold(transaction, amount):
+        balance = transaction.getValue("gold") + amount
+        transaction.setValue("gold", balance)
+        transaction.afterCommit(Notification.notify, Notificator.onUpdateGoldBalance, balance)
+        return True
+
+    @staticmethod
+    def _prepareDisableAds(transaction, value):
+        if SystemMonetization._validEnableFlag(value) is False:
+            return False
+
+        if transaction.getValue("disableInterstitialAds") != 1:
+            transaction.setValue("disableInterstitialAds", 1)
+        return True
+
+    @staticmethod
+    def disableInterstitialAds(value=1):
+        return SystemMonetization.sendReward(rew_dict={"DisableInterstitialAds": value})
+
+    @staticmethod
+    def areInterstitialAdsDisabled():
+        value = SystemMonetization.storage.get("disableInterstitialAds")
+        return value is not None and value.getValue() == 1
 
     # --- Advertisements -----------------------------------------------------------------------------------------------
 
@@ -674,12 +907,18 @@ class SystemMonetization(System):
         if MonetizationManager.isMonetizationEnable() is False:
             return False
 
-        return prod_id in SystemMonetization._session_delayed_products
+        items = SystemMonetization.getStorageListValues("delayed")
+
+        if items is None:
+            return False
+
+        return str(prod_id) in items
 
     # --- Observers ----------------------------------------------------------------------------------------------------
 
     def setupObservers(self):
         self.addObserver(Notificator.onSelectAccount, self._onSelectAccount)
+        self.addObserver(Notificator.onSessionLoadComplete, self._applyPendingPurchases)
 
         # payment
         self.addObserver(Notificator.onProductAlreadyOwned, self._onProductAlreadyOwned)
@@ -687,6 +926,7 @@ class SystemMonetization(System):
         self.addObserver(Notificator.onDelayPurchased, self._onDelayPurchased)
         self.addObserver(Notificator.onReleasePurchased, self._onReleasePurchased)
         self.addObserver(Notificator.onPayFailed, self._onPayFailed)
+        self.addObserver(Notificator.onPayFinalized, self._onPayFinalized)
         self.addObserver(Notificator.onGameStorePayGold, self._onPayGold)
 
         # other
@@ -700,7 +940,12 @@ class SystemMonetization(System):
         pass
 
     def _onSelectAccount(self, account_id):
-        self._saveSessionPurchases()
+        if self._loaded_account != account_id and self.loadData() is False:
+            return False
+        # Default-account creation sets its flag after onSelectAccount returns.
+        with TaskManager.createTaskChain(Global=True) as tc:
+            tc.addDelay(0)
+            tc.addFunction(self._applyPendingPurchases)
 
         self._initAdvertCounterText()
         self.updateAvailableAds()
@@ -709,6 +954,8 @@ class SystemMonetization(System):
     @staticmethod
     def _onChangeGold(account_id, value):
         """ `gold` observer in addExtraAccountSettings """
+        if MonetizationTransaction.active is True:
+            return
         balance = SystemMonetization.getBalance()
         Notification.notify(Notificator.onUpdateGoldBalance, balance)
 
@@ -738,18 +985,13 @@ class SystemMonetization(System):
             params.update({str(key): value for key, value in rewards.items()})
             return params
 
-        def _cbEarnCurrency(prod_id, rewards):
-            currencies = ['Gold', 'Energy']
-            for key, amount in rewards.items():
-                if key not in currencies:
-                    continue
-                return {'name': str(key.lower()), 'amount': amount}
-
         advert_prod_id = MonetizationManager.getGeneralSetting("AdvertProductID")
 
-        SystemAnalytics.addAnalytic("earn_currency_by_purchase", Notificator.onGameStoreSentRewards,
-                                    service_key="earn_currency", params_method=_cbEarnCurrency,
-                                    check_method=lambda _, rewards: 'Gold' in rewards or 'Energy' in rewards)
+        for currency in ("Gold", "Energy"):
+            SystemAnalytics.addAnalytic("earn_currency_{}_by_purchase".format(currency.lower()), Notificator.onGameStoreSentRewards,
+                                        service_key="earn_currency",
+                                        params_method=lambda _, rewards, name=currency: {'name': name.lower(), 'amount': rewards[name]},
+                                        check_method=lambda _, rewards, name=currency: name in rewards)
         SystemAnalytics.addAnalytic("spent_currency_gold", Notificator.onGameStorePayGoldSuccess,
                                     service_key="spent_currency",
                                     params_method=lambda gold, descr: {'amount': gold, 'description': descr, 'name': 'gold'})
@@ -783,6 +1025,10 @@ class SystemMonetization(System):
             "skippedMGs": SecureStringValue("skippedMGs", ""),
             "acceptPrice": SecureStringValue("acceptPrice", ""),
             "purchased": SecureStringValue("purchased", ""),  # "{}, "...
+            "delayed": SecureStringValue("delayed", ""),  # owned, but the reward waits for the restore button
+            "purchaseRewards": SecureStringValue("purchaseRewards", "{}"),  # delivered, awaiting store finalization
+            "finalizedPurchases": SecureStringValue("finalizedPurchases", "[]"),  # bounded late-callback deduplication
+            "disableInterstitialAds": SecureValue("disableInterstitialAds", 0),
             "PurchasedProductGroups": SecureStringValue("PurchasedProductGroups", "")
         }
         for ad_name in MonetizationManager.getAdvertNames("Rewarded"):
@@ -791,6 +1037,11 @@ class SystemMonetization(System):
             last_viewed_date = storage_keys["last_viewed_date"]
             storage[today_viewed_ads] = SecureValue(today_viewed_ads, 0)
             storage[last_viewed_date] = SecureStringValue(last_viewed_date, "")
+
+        for key, (value_type, default) in SystemMonetization.s_storage_types.items():
+            if key in storage:
+                raise ValueError("Duplicate monetization storage key {!r}".format(key))
+            storage[key] = value_type(key, default)
 
         SystemMonetization.storage = storage
 
@@ -814,21 +1065,108 @@ class SystemMonetization(System):
     # storage interaction ---
 
     @staticmethod
-    def _saveSessionPurchases():
-        """ We need to save again some products, because sometimes user can buy product and leave game
-            Then SDK sends cbPaySuccess immediately after init, but user not selected yet
-            So this purchase didn't save in user settings.json and may cause bugs
-            EXAMPLE: https://drive.google.com/file/d/11thAK73I-gNxxwPmLhFquTOxY2CTU1xz/view """
+    def _receivePurchase(prod_id, transaction_id, restore):
+        product = MonetizationManager.getProductInfo(prod_id)
+        if product is None or (restore and product.isConsumable()):
+            Notification.notify(Notificator.onPayRewardResult, prod_id, transaction_id, False)
+            return False
 
-        if len(SystemMonetization._session_purchased_products) == 0:
+        # Store callbacks for the same transaction share one delivery, including across profile switches.
+        pending = SystemMonetization._pending_account_purchases
+        duplicate = any(item["product"] == prod_id and item["transaction"] == transaction_id for item in pending)
+        if duplicate is False:
+            account_id = None
+            if Mengine.hasCurrentAccount() is True and Mengine.isCurrentDefaultAccount() is False:
+                account_id = Mengine.getCurrentAccountName()
+            pending.append(dict(product=prod_id, transaction=transaction_id, account=account_id, restore=restore))
+
+        SystemMonetization._applyPendingPurchases()
+        return False
+
+    @staticmethod
+    def _deliverPendingPurchase(purchase):
+        """Return None to keep waiting, or the final boolean result for the store."""
+        try:
+            if purchase["account"] is not None and purchase["account"] not in Mengine.getAccounts():
+                return False
+            if Mengine.hasCurrentAccount() is False or Mengine.isCurrentDefaultAccount() is True:
+                return None
+            account_id = Mengine.getCurrentAccountName()
+            if purchase["account"] is None:
+                purchase["account"] = account_id
+            if purchase["account"] != account_id:
+                return None
+
+            product = MonetizationManager.getProductInfo(purchase["product"])
+            if product is None:
+                return False
+            if purchase["restore"] is True:
+                return SystemMonetization._deliverOwnedPurchase(product, purchase["transaction"])
+            return SystemMonetization._deliverPurchase(product, purchase["transaction"])
+        except Exception as ex:
+            Trace.log_exception("System", 0, "Unable to deliver pending purchase: {}".format(ex))
+            return False
+
+    @staticmethod
+    def _applyPendingPurchases():
+        if SystemMonetization._applying_pending_purchases is True:
+            return False
+        SystemMonetization._applying_pending_purchases = True
+        try:
+            SystemMonetization._processPendingPurchases()
+        finally:
+            SystemMonetization._applying_pending_purchases = False
+            SystemMonetization._schedulePendingPurchases()
+        return False
+
+    @staticmethod
+    def _processPendingPurchases():
+        for purchase in SystemMonetization._pending_account_purchases[:]:
+            successful = SystemMonetization._deliverPendingPurchase(purchase)
+            if purchase not in SystemMonetization._pending_account_purchases:
+                continue  # A post-commit callback stopped the monetization system.
+            if successful is None:
+                continue  # Keep both the purchase and the SDK listener until runtime dependencies are ready.
+
+            SystemMonetization._pending_account_purchases.remove(purchase)
+            Notification.notify(Notificator.onPayRewardResult, purchase["product"], purchase["transaction"], successful)
+            if purchase["restore"] is True:
+                Notification.notify(Notificator.onPayComplete, purchase["product"])
+
+    @staticmethod
+    def _schedulePendingPurchases():
+        if not SystemMonetization._pending_account_purchases:
+            SystemMonetization._cancelPendingPurchaseTimer()
+        elif SystemMonetization._pending_purchase_timer is None:
+            # Poll only while deliveries are pending; systems can become ready after session load or on a new profile.
+            # The global scheduler survives scene changes, which flush the local one.
+            SystemMonetization._pending_purchase_timer = Mengine.scheduleGlobal(250, SystemMonetization._retryPendingPurchases)
+
+    @staticmethod
+    def _retryPendingPurchases(timer_id, successful):
+        if timer_id != SystemMonetization._pending_purchase_timer:
             return
+        SystemMonetization._pending_purchase_timer = None
+        if successful is True:
+            SystemMonetization._applyPendingPurchases()
+        else:
+            # The scheduler dropped the timer; keep polling while deliveries are pending.
+            SystemMonetization._schedulePendingPurchases()
 
-        for product_id in SystemMonetization._session_purchased_products:
-            if SystemMonetization.isProductPurchased(product_id) is True:
-                continue
-            Notification.notify(Notificator.onPaySuccess, product_id)
+    @staticmethod
+    def _cancelPendingPurchaseTimer():
+        timer_id = SystemMonetization._pending_purchase_timer
+        SystemMonetization._pending_purchase_timer = None
+        if timer_id is not None:
+            Mengine.scheduleGlobalRemove(timer_id)
 
-        SystemMonetization._session_purchased_products = []
+    @staticmethod
+    def _clearPendingPurchases():
+        SystemMonetization._cancelPendingPurchaseTimer()
+        purchases = SystemMonetization._pending_account_purchases
+        SystemMonetization._pending_account_purchases = []
+        for purchase in purchases:
+            Notification.notify(Notificator.onPayRewardResult, purchase["product"], purchase["transaction"], False)
 
     @staticmethod
     def addStorageListValue(key, value):
@@ -848,6 +1186,27 @@ class SystemMonetization(System):
         SystemMonetization.saveData(key)
 
         _Log("successfully append {!r} to '{}' list: {}".format(value, key, raw_items), optional=True)
+
+    @staticmethod
+    def removeStorageListValue(key, value):
+        raw_items = SystemMonetization.getStorageValue(key)
+        if raw_items is None:
+            return
+
+        items = raw_items.strip(", ").split(", ")
+
+        if str(value) not in items:
+            _Log("value {!r} is not in '{}': {}".format(value, key, items), err=True, optional=True)
+            return
+
+        items.remove(str(value))
+
+        raw_items = "".join("{}, ".format(item) for item in items if item != "")
+        SystemMonetization.storage[key].setValue(raw_items)
+
+        SystemMonetization.saveData(key)
+
+        _Log("successfully remove {!r} from '{}' list: {}".format(value, key, raw_items), optional=True)
 
     @staticmethod
     def getStorageListValues(key):
@@ -881,6 +1240,9 @@ class SystemMonetization(System):
                 if 0 keys: saves all values from storage
         """
 
+        if SystemMonetization._isStorageReady() is False:
+            return False
+
         if len(keys) == 0:
             _Log("Saver: save all data on device...", optional=True)
             for key, value in SystemMonetization.storage.items():
@@ -904,10 +1266,7 @@ class SystemMonetization(System):
         if isGlobal is True:
             return
 
-        observers = {
-            # add here key from storage and function that will be called if setting would be changed
-            "gold": SystemMonetization._onChangeGold,
-        }
+        observers = SystemMonetization.__getStorageObservers()
 
         for key in SystemMonetization.storage.keys():
             fn = observers.get(key)
@@ -918,19 +1277,63 @@ class SystemMonetization(System):
         _Log("added storage settings to account {} params".format(account_id), optional=True)
 
     @staticmethod
+    def __getStorageObservers():
+        """ storage key -> function that will be called if its account setting would be changed """
+
+        return {
+            "gold": SystemMonetization._onChangeGold,
+        }
+
+    @staticmethod
+    def _isStorageReady():
+        return (Mengine.hasCurrentAccount() is True and Mengine.isCurrentDefaultAccount() is False
+                and SystemMonetization._loaded_account == Mengine.getCurrentAccountName())
+
+    @staticmethod
     def loadData():
-        if SystemMonetization.__isActive() is False:
-            return
-        _Log("restore storage from USER saves...")
-
-        for key in SystemMonetization.storage.keys():
-            value_save = str(Mengine.getCurrentAccountSetting(key))
-            if value_save == "None":
-                SystemMonetization.saveData(key)
-            else:
-                SystemMonetization.storage[key].loadSave(value_save)
-
-            _Log("--- key={!r} save={!r} value={!r}".format(key, value_save, SystemMonetization.getStorageValue(key)))
+        SystemMonetization._storage_error = False
+        SystemMonetization._loaded_account = None
+        if SystemMonetization.__isActive() is False or Mengine.hasCurrentAccount() is False:
+            return False
+        SystemMonetization.__initStorage()
+        transaction = MonetizationTransaction(SystemMonetization.storage)
+        try:
+            for key, value in SystemMonetization.storage.items():
+                if Mengine.hasCurrentAccountSetting(key) is False:
+                    _Log("--- key={!r} is missing in the account, add it".format(key))
+                    transaction.setValue(key, value.getValue())
+                    continue
+                saved = str(Mengine.getCurrentAccountSetting(key))
+                if saved == "None":
+                    transaction.setValue(key, value.getValue())
+                elif value.loadSave(saved) is not True:
+                    raise ValueError("Corrupt account setting {!r}".format(key))
+            receipts = SystemMonetization._loadRewardReceipts()
+            SystemMonetization._loadFinalizedPurchases()
+            compacted = Mengine.encodeJSON(receipts)
+            if compacted != SystemMonetization.getStorageValue("purchaseRewards"):
+                transaction.setValue("purchaseRewards", compacted)
+            # Restore entitlements recorded by older builds in the owned-products list.
+            for product in MonetizationManager.getProductsInfo().values():
+                if str(product.id) not in SystemMonetization.getStorageListValues("purchased"):
+                    continue
+                for reward_type, value in product.reward.items():
+                    handler = SystemMonetization.s_reward_types.get(reward_type)
+                    if handler is not None and handler["restore"] is not None:
+                        if handler["validate"](value) is not True:
+                            raise ValueError("Invalid owned reward {!r}".format(reward_type))
+                        handler["restore"](transaction, value)
+            if transaction.values:
+                # Register newly created accounts before a later purchase commits only their settings file.
+                if Mengine.saveAccounts() is not True:
+                    raise RuntimeError("Unable to save account registration before storage migration")
+                transaction.commit()
+            SystemMonetization._loaded_account = Mengine.getCurrentAccountName()
+            return True
+        except Exception as ex:
+            SystemMonetization._storage_error = True
+            Trace.log_exception("System", 0, "Unable to load purchase storage: {}".format(ex))
+            return False
 
     def _onSave(self):
         if SystemMonetization.__isActive() is False:

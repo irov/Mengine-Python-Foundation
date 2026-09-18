@@ -142,6 +142,10 @@ class MonetizationManager(CurrencyManager):
             self.group_id = MonetizationManager.getRecordValue(record, "GroupID")
             self.subgroup_id = MonetizationManager.getRecordValue(record, "SubGroupID")
 
+            # store reports this product as owned on a fresh install: with True the reward is not applied silently,
+            # the purchase becomes delayed and the player takes it by the restore button
+            self.delay_purchase = MonetizationManager.getRecordValue(record, "DelayPurchase", default=False, cast=bool)
+
         @property
         def discount_price(self):
             if self.discount is None:
@@ -153,6 +157,9 @@ class MonetizationManager(CurrencyManager):
 
         def isConsumable(self):
             return self.is_consumable is True
+
+        def isDelayPurchase(self):
+            return self.delay_purchase is True
 
         def getCurrency(self):
             return self.currency
