@@ -689,7 +689,7 @@ class SystemMonetization(System):
                 previous[value.id] = Mengine.getAccountSetting(account_id, value.id)
                 if Mengine.changeAccountSetting(account_id, value.id, unicode(value.getSave())) is not True:
                     raise RuntimeError("Unable to update finalized purchase journal")
-            if Mengine.saveAccounts() is not True:
+            if Mengine.saveAccounts() is False:
                 raise RuntimeError("Unable to save finalized purchase journal")
         except Exception:
             for name, value in previous.items():
@@ -1325,7 +1325,7 @@ class SystemMonetization(System):
                         handler["restore"](transaction, value)
             if transaction.values:
                 # Register newly created accounts before a later purchase commits only their settings file.
-                if Mengine.saveAccounts() is not True:
+                if Mengine.saveAccounts() is False:
                     raise RuntimeError("Unable to save account registration before storage migration")
                 transaction.commit()
             SystemMonetization._loaded_account = Mengine.getCurrentAccountName()

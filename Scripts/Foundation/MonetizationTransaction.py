@@ -56,7 +56,7 @@ class MonetizationTransaction(object):
                     raise RuntimeError("Unable to write purchase setting {!r}".format(key))
 
             # saveAccount replaces this account's settings file and reports the actual write result.
-            if settings and Mengine.saveAccount() is not True:
+            if settings and Mengine.saveAccount() is False:
                 raise RuntimeError("Unable to commit purchase account {!r}".format(self.account_id))
         except Exception:
             for key, value in previous.items():
