@@ -20,13 +20,13 @@ class SystemAndroidAdMob(SystemAndroidAd):
     def _onInitialize(self):
         methods = self.initAds()
         AdvertisementProvider.setProvider("AndroidAdMob", methods)
-        Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)
+        Mengine.waitSemaphore("AdServiceReady", self.__onAdServiceReady)
 
     @staticmethod
     def isSdkInitialized():
         return SystemAndroidAdMob.is_sdk_init is True
 
-    def __cbSdkInitialized(self):
-        _Log("[SDK cb] onAdMobPluginOnSdkInitialized")
-        SystemAndroidAdMob.is_sdk_init = True
+    def __onAdServiceReady(self):
+        SystemAndroidAdMob.is_sdk_init = self._androidBooleanMethod(ANDROID_PLUGIN_NAME, "isSdkInitialized")
+        _Log("[AdService] ready, SDK initialized: {}".format(SystemAndroidAdMob.is_sdk_init))
         self._setAdServiceReady()
