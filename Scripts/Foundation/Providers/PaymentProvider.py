@@ -27,11 +27,6 @@ class PaymentProvider(BaseProvider):
         """ starts payment process,
              - onPaySuccess prod_id: all ok
              - onPayFailed prod_id: error """
-        from Foundation.MonetizationManager import MonetizationManager
-        if MonetizationManager.isMonetizationEnable() is True:
-            from Foundation.Systems.SystemMonetization import SystemMonetization
-            if SystemMonetization.checkPurchaseReady(product_id) is False:
-                return False
         return PaymentProvider._call("pay", product_id)
 
     @staticmethod
