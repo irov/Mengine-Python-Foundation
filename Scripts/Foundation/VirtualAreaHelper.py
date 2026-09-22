@@ -15,7 +15,8 @@ def createVirtualArea(name='VirtualArea', enable_scale=True, scale_factor=0.375,
                       friction_factor=DUNGEON_VIRTUAL_AREA_FRICTION_FACTOR,
                       rigidity=0.5, dragging_mode='free', max_scale=6.0,
                       disable_drag_if_invalid=True, drag_start_threshold=0.0,
-                      allow_out_of_bounds=True):
+                      allow_out_of_bounds=True, drag_inverted=None,
+                      drag_inverted_x=None, drag_inverted_y=None):
     mode = _DRAGGING_MODES.get(dragging_mode)
     if mode is None:
         raise TypeError('"%s" dragging mode is not supported' % dragging_mode)
@@ -34,6 +35,13 @@ def createVirtualArea(name='VirtualArea', enable_scale=True, scale_factor=0.375,
     virtual_area.setVirtualAreaDisableDragIfInvalid(disable_drag_if_invalid)
     virtual_area.setVirtualAreaDragStartThreshold(drag_start_threshold)
     virtual_area.setVirtualAreaAllowOutOfBounds(allow_out_of_bounds)
+    if drag_inverted is not None:
+        virtual_area.setVirtualAreaDragInvertedX(drag_inverted)
+        virtual_area.setVirtualAreaDragInvertedY(drag_inverted)
+    if drag_inverted_x is not None:
+        virtual_area.setVirtualAreaDragInvertedX(drag_inverted_x)
+    if drag_inverted_y is not None:
+        virtual_area.setVirtualAreaDragInvertedY(drag_inverted_y)
 
     return virtual_area
 

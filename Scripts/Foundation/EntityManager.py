@@ -67,5 +67,9 @@ class EntityManager(Manager):
 
     @staticmethod
     def _onFinalize():
+        for name in EntityManager.s_types:
+            Mengine.removeEntityPrototypeFinder(name)
+            pass
+
         EntityManager.s_types = {}
         pass

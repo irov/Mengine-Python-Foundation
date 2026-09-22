@@ -6,7 +6,9 @@ class PaymentProvider(BaseProvider):
     s_allowed_methods = [
         "pay",
         "restorePurchases",
-        "isOwnedInAppProduct"
+        "isOwnedInAppProduct",
+        "querySubscriptionStatus",
+        "openSubscriptionManagement",
     ]
 
     @classmethod
@@ -41,6 +43,15 @@ class PaymentProvider(BaseProvider):
     def isOwnedInAppProduct(product_id):
         """ check if product is owned by user """
         return bool(PaymentProvider._call("isOwnedInAppProduct", product_id))
+
+    @staticmethod
+    def querySubscriptionStatus(product_id, callback):
+        """Return True when the provider accepts responsibility for the callback."""
+        return PaymentProvider._call("querySubscriptionStatus", product_id, callback)
+
+    @staticmethod
+    def openSubscriptionManagement(product_id):
+        return bool(PaymentProvider._call("openSubscriptionManagement", product_id))
 
 class DummyPayment(object):
     @staticmethod

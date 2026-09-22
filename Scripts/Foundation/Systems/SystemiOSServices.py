@@ -41,6 +41,7 @@ class SystemiOSServices(System):
     _restore_queue_finished = False
     _restore_failed = False
     _restore_pending_transactions = 0
+    _subscription_callbacks = {}
     _processing_transactions = {}
 
     def _onInitialize(self):
@@ -266,12 +267,15 @@ class SystemiOSServices(System):
             "onPaymentQueueUpdatedTransactionDeferred": SystemiOSServices._cbPaymentDeferred,
             "onPaymentQueueRestoreCompletedTransactionsFinished": SystemiOSServices._cbRestoreFinished,
             "onPaymentQueueRestoreCompletedTransactionsFailed": SystemiOSServices._cbRestoreFailed,
+            "onSubscriptionStatus": SystemiOSServices._cbSubscriptionStatus,
         })
 
         PaymentProvider.setProvider("iOS", dict(
             pay=SystemiOSServices.pay,
             restorePurchases=SystemiOSServices.restorePurchases,
             isOwnedInAppProduct=SystemiOSServices.isOwnedInAppProduct,
+            querySubscriptionStatus=SystemiOSServices.querySubscriptionStatus,
+            openSubscriptionManagement=SystemiOSServices.openSubscriptionManagement,
         ))
 
         _Log("[InAppPurchase] AppleStoreInAppPurchase is ready", optional=True)
@@ -285,6 +289,7 @@ class SystemiOSServices(System):
         """ finish InAppPurchase callbacks provider """
         _Log("[InAppPurchase] remove provider...", optional=True)
         Mengine.iOSStoreInAppPurchaseRemovePaymentTransactionProvider()
+        SystemiOSServices._subscription_callbacks = {}
         SystemiOSServices._InAppPurchase_provider_status = False
 
     @staticmethod
@@ -321,6 +326,25 @@ class SystemiOSServices(System):
         """
         _Log("[InAppPurchase] isOwnedInAppProduct {!r}...".format(product_id), optional=True)
         return Mengine.iOSStoreInAppPurchaseIsOwnedProduct(product_id)
+
+    @staticmethod
+    def querySubscriptionStatus(product_id, callback):
+        callbacks = SystemiOSServices._subscription_callbacks.setdefault(product_id, [])
+        callbacks.append(callback)
+        if len(callbacks) == 1:
+            Mengine.iOSStoreInAppPurchaseQuerySubscriptionStatus(product_id)
+        return True
+
+    @staticmethod
+    def _cbSubscriptionStatus(product_id, status):
+        callbacks = SystemiOSServices._subscription_callbacks.pop(str(product_id), [])
+        for callback in callbacks:
+            callback(status)
+
+    @staticmethod
+    def openSubscriptionManagement(product_id):
+        # Apple's account sheet also works on versions before StoreKit 2.
+        return Mengine.openUrlInDefaultBrowser("https://apps.apple.com/account/subscriptions")
 
     @staticmethod
     def pay(product_id):
@@ -370,6 +394,8 @@ class SystemiOSServices(System):
 
             params = {
                 "price": product.getProductPrice(),
+                "formatted_price": product.getProductPriceFormatted(),
+                "subscription_period": product.getProductSubscriptionPeriod(),
                 "descr": str(product.getProductDescription()),
                 "name": str(product.getProductTitle())
             }
@@ -421,6 +447,10 @@ class SystemiOSServices(System):
         product_id = str(transaction.getProductIdentifier())
         _Log("[InAppPurchase] (callback) Payment purchase Failed {}".format(product_id))
 
+        if transaction.isCancelled() is True:
+            Notification.notify(Notificator.onPayCancelled, product_id)
+        # Keep legacy payment listeners informed; newer clients retain the
+        # more specific cancellation result before the completion event.
         Notification.notify(Notificator.onPayFailed, product_id)
         Notification.notify(Notificator.onPayComplete, product_id)
         transaction.finish()

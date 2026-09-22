@@ -48,6 +48,13 @@ class SceneManager(Manager):
 
     @staticmethod
     def _onFinalize():
+        Mengine.removeCurrentScene(True, None)
+
+        for name in SceneManager.s_scenesType:
+            Mengine.removeScenePrototypeFinder(name)
+            pass
+
+        SceneManager.s_scenesType = {}
         SceneManager.s_scenes = {}
         SceneManager.s_gameScenes = []
         SceneManager.s_extraScenes = []
@@ -93,13 +100,13 @@ class SceneManager(Manager):
             return None
             pass
 
-        SceneManager.s_scenesType[name] = (Type, module)
-
         if Mengine.addScenePrototypeFinder(name, SceneManager.getSceneType) is False:
             Trace.log("Manager", 0, "SceneManager.importScene invalid scene %s module %s" % (name, module))
 
             return None
             pass
+
+        SceneManager.s_scenesType[name] = (Type, module)
 
         return Type
         pass

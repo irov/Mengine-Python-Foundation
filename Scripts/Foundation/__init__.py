@@ -719,6 +719,7 @@ def onInitialize():
         , "onPayFinalized"
         , "onPayUnavailable"
         , "onPayFailed"
+        , "onPayCancelled"
         , "onPayComplete"
         , "onPayLaunchFlowSuccess"
         , "onPayLaunchFlowFailed"
