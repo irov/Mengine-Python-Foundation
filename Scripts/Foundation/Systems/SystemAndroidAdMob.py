@@ -26,7 +26,7 @@ class SystemAndroidAdMob(SystemAndroidAd):
     def isSdkInitialized():
         return SystemAndroidAdMob.is_sdk_init is True
 
-    def __onAdServiceReady(self):
-        SystemAndroidAdMob.is_sdk_init = self._androidBooleanMethod(ANDROID_PLUGIN_NAME, "isSdkInitialized")
-        _Log("[AdService] ready, SDK initialized: {}".format(SystemAndroidAdMob.is_sdk_init))
+    def __onAdServiceReady(self, successful):
+        SystemAndroidAdMob.is_sdk_init = successful
+        _Log("[AdService] ready, successful: {}".format(successful))
         self._setAdServiceReady()

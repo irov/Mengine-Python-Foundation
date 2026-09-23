@@ -27,7 +27,7 @@ class SystemiOSAppLovin(SystemiOSAd):
         )
 
         ConsentProvider.setProvider("iOSAppLovin", consent_methods)
-        Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)
+        Mengine.waitSemaphore("AdServiceReady", self.__onAdServiceReady)
 
     @staticmethod
     def isSdkInitialized():
@@ -48,7 +48,7 @@ class SystemiOSAppLovin(SystemiOSAd):
     def isConsentFlow(self):
         return Mengine.iOSAppLovinIsConsentFlowUserGeographyGDPR()
 
-    def __cbSdkInitialized(self):
-        _Log("[SDK cb] onAppLovinPluginOnSdkInitialized")
-        SystemiOSAppLovin.is_sdk_init = True
+    def __onAdServiceReady(self, successful):
+        SystemiOSAppLovin.is_sdk_init = successful
+        _Log("[AdService] ready, successful: {}".format(successful))
         self._setAdServiceReady()

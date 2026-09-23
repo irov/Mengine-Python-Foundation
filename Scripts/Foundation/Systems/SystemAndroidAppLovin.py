@@ -27,7 +27,7 @@ class SystemAndroidAppLovin(SystemAndroidAd):
         )
 
         ConsentProvider.setProvider("AndroidAppLovin", consent_methods)
-        Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)
+        Mengine.waitSemaphore("AdServiceReady", self.__onAdServiceReady)
 
     @staticmethod
     def isSdkInitialized():
@@ -39,7 +39,7 @@ class SystemAndroidAppLovin(SystemAndroidAd):
     def isConsentFlow(self):
         return self._androidBooleanMethod(PLUGIN_NAME, "isConsentFlowUserGeographyGDPR")
 
-    def __cbSdkInitialized(self):
-        _Log("[SDK cb] onAppLovinPluginOnSdkInitialized")
-        SystemAndroidAppLovin.is_sdk_init = True
+    def __onAdServiceReady(self, successful):
+        SystemAndroidAppLovin.is_sdk_init = successful
+        _Log("[AdService] ready, successful: {}".format(successful))
         self._setAdServiceReady()

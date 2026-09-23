@@ -19,13 +19,13 @@ class SystemiOSAdMob(SystemiOSAd):
     def _onInitialize(self):
         methods = self.initAds()
         AdvertisementProvider.setProvider("iOSAdMob", methods)
-        Mengine.waitSemaphore("AdServiceReady", self.__cbSdkInitialized)
+        Mengine.waitSemaphore("AdServiceReady", self.__onAdServiceReady)
 
     @staticmethod
     def isSdkInitialized():
         return SystemiOSAdMob.is_sdk_init is True
 
-    def __cbSdkInitialized(self):
-        _Log("[SDK cb] onAdMobPluginOnSdkInitialized")
-        SystemiOSAdMob.is_sdk_init = True
+    def __onAdServiceReady(self, successful):
+        SystemiOSAdMob.is_sdk_init = successful
+        _Log("[AdService] ready, successful: {}".format(successful))
         self._setAdServiceReady()

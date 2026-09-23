@@ -269,7 +269,7 @@ class SystemGoogleServices(SystemAndroid):
     # callbacks
 
     @staticmethod
-    def __cbSignSuccess():
+    def __cbSignSuccess(_value):
         _Log("[Auth cb] successfully login in")
         Notification.notify(Notificator.onUserLoggedIn)
 
@@ -791,7 +791,7 @@ class SystemGoogleServices(SystemAndroid):
     # callbacks
 
     @staticmethod
-    def __cbGoogleInAppReviewsReady():
+    def __cbGoogleInAppReviewsReady(_value):
         # on initialize success
         _Log("[Reviews cb] GettingReviewObject")
         pass
