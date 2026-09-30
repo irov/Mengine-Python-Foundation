@@ -79,7 +79,7 @@ class SystemQALogger(System):
             "onButtonClick": self._cbButtonClick,
             # HOPA
             "onInventoryAddItem": self._cbInventoryAddItem,
-            "onItemClick": self._cbButtonClick,
+            "onItemClick": self._cbItemClick,
             "onItemCollectComplete": self._cbItemCollectComplete,
             "onInventoryCombineInventoryItem": self._cbInventoryCombineInventoryItem,
             "onHintActionStart": self._cbHintActionStart,
@@ -141,6 +141,12 @@ class SystemQALogger(System):
         return False
 
     # HOPA
+
+    @staticmethod
+    def _cbItemClick(obj, x, y):
+        f_message = "click on item {!r} [{!r}]: x={}, y={}".format(obj.getName(), obj.getGroupName(), x, y)
+        SystemQALogger.notify(f_message)
+        return False
 
     @staticmethod
     def _cbInventoryCombineInventoryItem(inv, arrowItem, invItem):
