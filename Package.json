@@ -24,8 +24,12 @@
                 "RenderPlatform": "OpenGL"
             },
             {
-                "Path": "Materials/Shader_OpenGLES.json",
-                "RenderPlatform": "OpenGLES"
+                "Path": "Materials/Shader_OpenGLES2.json",
+                "RenderPlatform": "OpenGLES2"
+            },
+            {
+                "Path": "Materials/Shader_OpenGLES3.json",
+                "RenderPlatform": "OpenGLES3"
             },
             {
                 "Path": "Materials/Shader_Metal.json",

@@ -1,0 +1,253 @@
+{
+    "Name": "Shaders_Standart",
+    "VertexAttribute": [
+        {
+            "Name": "Vertex2D_UV0",
+            "Element": {
+                "Size": 32
+            },
+            "Attribute": [
+                {
+                    "Uniform": "inVert",
+                    "Index": 0,
+                    "Size": 3,
+                    "Type": "FLOAT",
+                    "Normalized": false,
+                    "Stride": 32,
+                    "Offset": 0
+                },
+                {
+                    "Uniform": "inCol",
+                    "Index": 0,
+                    "Size": 4,
+                    "Type": "UNSIGNED_BYTE",
+                    "Normalized": true,
+                    "Stride": 32,
+                    "Offset": 12
+                }
+            ]
+        },
+        {
+            "Name": "Vertex2D_UV1",
+            "Element": {
+                "Size": 32
+            },
+            "Attribute": [
+                {
+                    "Uniform": "inVert",
+                    "Index": 0,
+                    "Size": 3,
+                    "Type": "FLOAT",
+                    "Normalized": false,
+                    "Stride": 32,
+                    "Offset": 0
+                },
+                {
+                    "Uniform": "inCol",
+                    "Index": 0,
+                    "Size": 4,
+                    "Type": "UNSIGNED_BYTE",
+                    "Normalized": true,
+                    "Stride": 32,
+                    "Offset": 12
+                },
+                {
+                    "Uniform": "inUV0",
+                    "Index": 0,
+                    "Size": 2,
+                    "Type": "FLOAT",
+                    "Normalized": false,
+                    "Stride": 32,
+                    "Offset": 16
+                }
+            ]
+        },
+        {
+            "Name": "Vertex2D_UV2",
+            "Element": {
+                "Size": 32
+            },
+            "Attribute": [
+                {
+                    "Uniform": "inVert",
+                    "Index": 0,
+                    "Size": 3,
+                    "Type": "FLOAT",
+                    "Normalized": false,
+                    "Stride": 32,
+                    "Offset": 0
+                },
+                {
+                    "Uniform": "inCol",
+                    "Index": 0,
+                    "Size": 4,
+                    "Type": "UNSIGNED_BYTE",
+                    "Normalized": true,
+                    "Stride": 32,
+                    "Offset": 12
+                },
+                {
+                    "Uniform": "inUV0",
+                    "Index": 0,
+                    "Size": 2,
+                    "Type": "FLOAT",
+                    "Normalized": false,
+                    "Stride": 32,
+                    "Offset": 16
+                },
+                {
+                    "Uniform": "inUV1",
+                    "Index": 1,
+                    "Size": 2,
+                    "Type": "FLOAT",
+                    "Normalized": false,
+                    "Stride": 32,
+                    "Offset": 24
+                }
+            ]
+        }
+    ],
+    "VertexShader": [
+        {
+            "Name": "Vertex_Blend",
+            "File": {
+                "Path": "Materials/GLES2_Vertex_Blend.txt"
+            }
+        },
+        {
+            "Name": "Vertex_Blend_ExternalAlpha",
+            "File": {
+                "Path": "Materials/GLES2_Vertex_Blend_ExternalAlpha.txt"
+            }
+        },
+        {
+            "Name": "Vertex_Color",
+            "File": {
+                "Path": "Materials/GLES2_Vertex_Color.txt"
+            }
+        }
+    ],
+    "FragmentShader": [
+        {
+            "Name": "Fragment_Blend",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Blend.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Blend_Premultiply",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Blend_Premultiply.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Blend_ExternalAlpha",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Blend_ExternalAlpha.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Blend_ExternalAlpha_OnlyColor",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Blend_ExternalAlpha_OnlyColor.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Blend_OnlyColor",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Blend_OnlyColor.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Accumulator",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Accumulator.txt"
+            }
+        },
+        {
+            "Name": "Fragment_TrackMatte",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_TrackMatte.txt"
+            }
+        },
+        {
+            "Name": "Fragment_TrackMatteInverted",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_TrackMatteInverted.txt"
+            }
+        },
+        {
+            "Name": "Fragment_TrackMatte_ExternalAlpha",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_TrackMatte_ExternalAlpha.txt"
+            }
+        },
+        {
+            "Name": "Fragment_TrackMatteInverted_ExternalAlpha",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_TrackMatteInverted_ExternalAlpha.txt"
+            }
+        },
+        {
+            "Name": "Fragment_AlphaMask",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_AlphaMask.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Color",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Color.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Color_Premultiply",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Color_Premultiply.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Color_Saturate",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Color_Saturate.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Texture_Saturate",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Texture_Saturate.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Texture_Saturate_ExternalAlpha",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Texture_Saturate_ExternalAlpha.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Desaturate",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Desaturate.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Legendary",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Legendary.txt"
+            }
+        },
+        {
+            "Name": "Fragment_Legendary_ExternalAlpha",
+            "File": {
+                "Path": "Materials/GLES2_Fragment_Legendary_ExternalAlpha.txt"
+            }
+        },
+        {
+            "Name": "Ozz_Fragment_Blend",
+            "File": {
+                "Path": "Materials/GLES2_Ozz_Fragment_Blend.txt",
+                "Compile": true
+            }
+        }
+    ]
+}

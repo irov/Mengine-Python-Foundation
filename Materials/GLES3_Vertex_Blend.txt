@@ -1,0 +1,17 @@
+#version 300 es
+
+uniform highp mat4 wvpMatrix;
+
+in highp vec4 inVert;
+in mediump vec4 inCol;
+in highp vec2 inUV0;
+
+out mediump vec4 v_Col;
+out highp vec2 v_UV0;
+
+void main(void)
+{
+    gl_Position = wvpMatrix * inVert;
+    v_Col = inCol;
+    v_UV0 = inUV0;
+}

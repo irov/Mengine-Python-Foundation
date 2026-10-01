@@ -1,0 +1,27 @@
+#version 300 es
+
+uniform sampler2D inSampler0;
+uniform sampler2D inSampler1;
+
+uniform highp vec4 uvbb;
+
+in highp vec2 v_UV0;
+in highp vec2 v_UV1;
+in mediump vec4 v_Col;
+
+layout(location = 0) out mediump vec4 outColor;
+
+void main(void)
+{
+    highp vec2 tex1_clamp;
+    tex1_clamp.x = clamp(v_UV1.x, uvbb.x, uvbb.z);
+    tex1_clamp.y = clamp(v_UV1.y, uvbb.y, uvbb.w);
+
+	mediump vec4 c0 = texture(inSampler0, v_UV0);
+    mediump vec4 c1 = texture(inSampler1, tex1_clamp);
+
+	mediump vec4 c = v_Col * c0;
+    c.a *= c1.a;
+
+	outColor = c;
+}
