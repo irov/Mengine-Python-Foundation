@@ -110,7 +110,7 @@ def log_exception(category, level, text, *args):
     message += format_exc()
     message += "\n-----------------------------------------------"
 
-    Mengine.logError(message)
+    Mengine.logException(message)
 
 def log_dev_err(category, level, text, *args):
     if _DEVELOPMENT is True:
