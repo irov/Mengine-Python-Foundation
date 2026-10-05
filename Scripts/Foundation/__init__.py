@@ -736,6 +736,9 @@ def onInitialize():
         , "onUserLoggedIn"
         , "onUserLoggedOut"
 
+        , "onInternetConnectionAvailable"
+        , "onInternetConnectionLost"
+
     ]
 
     Notificator.addIdentities(notifiers)
