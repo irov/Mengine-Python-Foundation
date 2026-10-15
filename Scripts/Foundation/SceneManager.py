@@ -30,6 +30,7 @@ class SceneManager(Manager):
     s_stageScenes = {}
 
     s_transitionProgress = False
+    s_cachedResourcePackets = []
 
     module = None
 
@@ -49,6 +50,7 @@ class SceneManager(Manager):
     @staticmethod
     def _onFinalize():
         Mengine.removeCurrentScene(True, None)
+        SceneManager.__uncacheResourcesGroups(SceneManager.s_cachedResourcePackets[:])
 
         for name in SceneManager.s_scenesType:
             Mengine.removeScenePrototypeFinder(name)
@@ -623,9 +625,18 @@ class SceneManager(Manager):
             resources = Mengine.cacheResources(Group.name)
 
             cache_groups_resource.append(resources)
+            SceneManager.s_cachedResourcePackets.append(resources)
             pass
 
         return cache_groups_resource
+
+    @staticmethod
+    def __uncacheResourcesGroups(packets):
+        for resources in packets:
+            if resources not in SceneManager.s_cachedResourcePackets:
+                continue
+            SceneManager.s_cachedResourcePackets.remove(resources)
+            Mengine.uncacheResources(resources)
 
     @staticmethod
     def __cacheActiveGroups(oldSceneName, newSceneName):
@@ -691,9 +702,7 @@ class SceneManager(Manager):
             if isError is True:
                 Trace.log("SceneManager", 0, "SceneManager.restartCurrentScene: restart scene '%s' failed" % sceneName)
 
-                for resources in cache_resources_groups:
-                    Mengine.uncacheResources(resources)
-                    pass
+                SceneManager.__uncacheResourcesGroups(cache_resources_groups)
 
                 for Group in cache_active_groups:
                     Group.onDeactivate()
@@ -732,9 +741,7 @@ class SceneManager(Manager):
                     cb_preparation(scene)
                 return
 
-            for resources in cache_resources_groups:
-                Mengine.uncacheResources(resources)
-                pass
+            SceneManager.__uncacheResourcesGroups(cache_resources_groups)
 
             for Group in cache_active_groups:
                 Group.onDeactivate()
@@ -853,9 +860,7 @@ class SceneManager(Manager):
             if isError is True:
                 Trace.log("SceneManager", 0, "SceneManager.__onChangeScene: change scene '%s' failed" % sceneName)
 
-                for resources in cache_resources_groups:
-                    Mengine.uncacheResources(resources)
-                    pass
+                SceneManager.__uncacheResourcesGroups(cache_resources_groups)
 
                 for Group in cache_active_groups:
                     Group.onDeactivate()
@@ -894,9 +899,7 @@ class SceneManager(Manager):
                     cb_preparation(scene)
                 return
 
-            for resources in cache_resources_groups:
-                Mengine.uncacheResources(resources)
-                pass
+            SceneManager.__uncacheResourcesGroups(cache_resources_groups)
 
             for Group in cache_active_groups:
                 Group.onDeactivate()
@@ -914,9 +917,7 @@ class SceneManager(Manager):
             pass
 
         if Mengine.createCurrentScene("Main", sceneName, immediately, True, __onChangeScene, sceneDescription) is False:
-            for resources in cache_resources_groups:
-                Mengine.uncacheResources(resources)
-                pass
+            SceneManager.__uncacheResourcesGroups(cache_resources_groups)
 
             for Group in cache_active_groups:
                 Group.onDeactivate()

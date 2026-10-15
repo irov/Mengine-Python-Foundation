@@ -15,6 +15,9 @@ class PrefetchGroupManager(Manager):
 
     @staticmethod
     def _onFinalize():
+        if PrefetchGroupManager.s_onInitializeRenderResourcesComplete is True:
+            PrefetchGroupManager.__onFinalizeRenderResources()
+
         PrefetchGroupManager.s_groups = []
         pass
 
@@ -42,6 +45,9 @@ class PrefetchGroupManager(Manager):
 
     @staticmethod
     def __onFinalizeRenderResources():
+        if PrefetchGroupManager.s_onInitializeRenderResourcesComplete is False:
+            return True
+
         PrefetchGroupManager.s_onInitializeRenderResourcesComplete = False
 
         PrefetchGroupManager.unfetchGroupsTagged(None)
