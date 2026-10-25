@@ -4,6 +4,7 @@ from Foundation.SceneManager import SceneManager
 class SystemAutoLanguage(System):
     def __init__(self):
         super(SystemAutoLanguage, self).__init__()
+        self._default_locale = Mengine.getLocale()
         self._is_enabled = Mengine.getGameParamBool("AutoLanguage", True) is True
         self._has_locale_option = Mengine.hasOption("locale") is True
         self.disabled = False
@@ -45,24 +46,13 @@ class SystemAutoLanguage(System):
             Mengine.changeCurrentAccountSettingBool("AutoLanguageDisable", True)
             Mengine.saveAccounts()
 
-    @staticmethod
-    def getFullDeviceLang():
-        """ Returns current device full language code like 'en-US' """
-        lang = Mengine.getDeviceLanguage()
-        return lang
-
-    @staticmethod
-    def getDeviceLangCode():
-        """ Returns current device language code like 'en' """
-        full_lang = SystemAutoLanguage.getFullDeviceLang()
-        locale = full_lang[:2]
-        return locale
-
     def setGameLangAsDevice(self):
-        locale = self.getDeviceLangCode()
-        self._setLocale(locale)
+        self._setLocale(self._default_locale)
 
     def _setLocale(self, locale):
+        if locale == "":
+            return
+
         if Mengine.getLocale() == locale:
             # already set to this locale
             return
