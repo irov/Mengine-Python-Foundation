@@ -1323,7 +1323,7 @@ class SystemMonetization(System):
                         if handler["validate"](value) is not True:
                             raise ValueError("Invalid owned reward {!r}".format(reward_type))
                         handler["restore"](transaction, value)
-            if transaction.values:
+            if transaction.values or transaction.settings:
                 # Register newly created accounts before a later purchase commits only their settings file.
                 if Mengine.saveAccounts() is False:
                     raise RuntimeError("Unable to save account registration before storage migration")
