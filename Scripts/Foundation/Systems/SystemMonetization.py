@@ -1001,7 +1001,7 @@ class SystemMonetization(System):
             SystemAnalytics.addAnalytic("got_promocode_reward", Notificator.onGiftExchangeRedeemResult, None,
                                     lambda label, result: {'type': str(label), 'result': str(result)})
         SystemAnalytics.addAnalytic("got_purchase_reward", Notificator.onGameStoreSentRewards,
-                                    lambda prod_id, *_: prod_id != advert_prod_id, _cbSentRewardParams)
+                                    lambda prod_id, *_: prod_id is not None and prod_id != advert_prod_id, _cbSentRewardParams)
         SystemAnalytics.addAnalytic("got_ad_reward", Notificator.onGameStoreSentRewards,
                                     lambda prod_id, *_: prod_id == advert_prod_id,
                                     lambda prod_id, rewards: rewards.copy())
