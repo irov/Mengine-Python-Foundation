@@ -68,4 +68,4 @@ class SystemAutoLanguage(System):
             def __cbOnSceneRestartChangeLocale():
                 Mengine.setLocale(locale)
 
-            SceneManager.restartCurrentScene(None, cb_removed=__cbOnSceneRestartChangeLocale)
+            SceneManager.reloadCurrentScene(None, cb_removed=__cbOnSceneRestartChangeLocale)

@@ -675,6 +675,18 @@ class SceneManager(Manager):
         pass
 
     @staticmethod
+    def reloadCurrentScene(cb, cb_removed = None):
+        # Locale changes must release the old resources before unloading their packages.
+        sceneName = SceneManager.s_currentSceneName
+
+        def __onLeaveScene():
+            if cb_removed is not None:
+                cb_removed()
+            SceneManager.enterScene(cb)
+
+        SceneManager.leaveScene(sceneName, __onLeaveScene, check_current=False)
+
+    @staticmethod
     def restartCurrentScene(cb, cb_removed = None, cb_preparation = None):
         if SceneManager.s_currentSceneName is None:
             Trace.log("SceneManager", 0, "SceneManager.restartCurrentScene: current scene is None")
