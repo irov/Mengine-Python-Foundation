@@ -9,27 +9,59 @@ class PrefetchGroupNotifyManager(Manager):
     s_status = STATUS_NO
     s_prefetch_list = {}
     s_groups = []
+    s_active_groups = {}
+    s_render_resources_initialized = False
 
     @staticmethod
     def _onInitialize(*args):
+        PrefetchGroupNotifyManager.s_active_groups = {}
+        PrefetchGroupNotifyManager.s_render_resources_initialized = False
         PrefetchGroupNotifyManager.addObserver(Notificator.onInitializeRenderResources, PrefetchGroupNotifyManager.__onInitializeRenderResources)
         PrefetchGroupNotifyManager.addObserver(Notificator.onFinalizeRenderResources, PrefetchGroupNotifyManager.__onFinalizeRenderResources)
         pass
 
     @staticmethod
     def _onFinalize():
-        for GroupName, Prefetch, Tag in PrefetchGroupNotifyManager.s_groups:
-            if Prefetch == 0:
-                pass
-            elif Prefetch == 1:
-                Mengine.decrementResources(GroupName)
-            elif Prefetch == 2:
-                Mengine.unfetchResources(GroupName)
+        for (GroupName, Prefetch), count in PrefetchGroupNotifyManager.s_active_groups.items():
+            for _ in xrange(count):
+                PrefetchGroupNotifyManager.__unfetchGroup(GroupName, Prefetch)
 
+        PrefetchGroupNotifyManager.s_render_resources_initialized = False
         PrefetchGroupNotifyManager.s_groups = []
         PrefetchGroupNotifyManager.s_prefetch_list = {}
         PrefetchGroupNotifyManager.s_status = PrefetchGroupNotifyManager.STATUS_NO
         pass
+
+    @staticmethod
+    def __prefetchGroup(GroupName, Prefetch, callback=None, *args):
+        key = (GroupName, Prefetch)
+        PrefetchGroupNotifyManager.s_active_groups[key] = PrefetchGroupNotifyManager.s_active_groups.get(key, 0) + 1
+
+        if Prefetch == 1:
+            print "PrefetchGroupNotifyManager: incrementing resources for group '%s'" % GroupName
+            Mengine.incrementResources(GroupName)
+            return True
+
+        # False means no pending asynchronous work; resources may still be retained.
+        return Mengine.prefetchResources(GroupName, callback, *args)
+
+    @staticmethod
+    def __unfetchGroup(GroupName, Prefetch):
+        key = (GroupName, Prefetch)
+        count = PrefetchGroupNotifyManager.s_active_groups.get(key, 0)
+
+        if count == 0:
+            return
+
+        if count == 1:
+            del PrefetchGroupNotifyManager.s_active_groups[key]
+        else:
+            PrefetchGroupNotifyManager.s_active_groups[key] = count - 1
+
+        if Prefetch == 1:
+            Mengine.decrementResources(GroupName)
+        elif Prefetch == 2:
+            Mengine.unfetchResources(GroupName)
 
     @staticmethod
     def loadParams(module, param):
@@ -46,6 +78,10 @@ class PrefetchGroupNotifyManager(Manager):
 
     @staticmethod
     def __onInitializeRenderResources():
+        if PrefetchGroupNotifyManager.s_render_resources_initialized is True:
+            return True
+
+        PrefetchGroupNotifyManager.s_render_resources_initialized = True
         PrefetchGroupNotifyManager.s_status = PrefetchGroupNotifyManager.STATUS_START
         PrefetchGroupNotifyManager.prefetchGroupsTagged(None)
 
@@ -53,6 +89,10 @@ class PrefetchGroupNotifyManager(Manager):
 
     @staticmethod
     def __onFinalizeRenderResources():
+        if PrefetchGroupNotifyManager.s_render_resources_initialized is False:
+            return True
+
+        PrefetchGroupNotifyManager.s_render_resources_initialized = False
         PrefetchGroupNotifyManager.s_status = PrefetchGroupNotifyManager.STATUS_FINISHED
         PrefetchGroupNotifyManager.unfetchGroupsTagged(None)
 
@@ -125,8 +165,7 @@ class PrefetchGroupNotifyManager(Manager):
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
-                print "PrefetchGroupNotifyManager: incrementing resources for group '%s'" % GroupName
-                Mengine.incrementResources(GroupName)
+                PrefetchGroupNotifyManager.__prefetchGroup(GroupName, Prefetch)
             elif Prefetch == 2:
                 def __cb(successful, tag, group_name):
                     groups = PrefetchGroupNotifyManager.s_prefetch_list.get(tag)
@@ -146,7 +185,7 @@ class PrefetchGroupNotifyManager(Manager):
                     PrefetchGroupNotifyManager.s_status = PrefetchGroupNotifyManager.STATUS_FINISHED
                     Notification.notify(Notificator.onPrefetchGroupsTaggedFinished, tag)
 
-                if Mengine.prefetchResources(GroupName, __cb, Tag, GroupName) is False:
+                if PrefetchGroupNotifyManager.__prefetchGroup(GroupName, Prefetch, __cb, Tag, GroupName) is False:
                     __cb(False, Tag, GroupName)
 
         if has_pending_groups is True:
@@ -169,12 +208,8 @@ class PrefetchGroupNotifyManager(Manager):
             if GroupTag != Tag:
                 continue
 
-            if Prefetch == 0:
-                pass
-            elif Prefetch == 1:
-                Mengine.decrementResources(GroupName)
-            elif Prefetch == 2:
-                Mengine.unfetchResources(GroupName)
+            if Prefetch in (1, 2):
+                PrefetchGroupNotifyManager.__unfetchGroup(GroupName, Prefetch)
 
     @staticmethod
     def prefetchGroup(GroupName):
@@ -185,13 +220,12 @@ class PrefetchGroupNotifyManager(Manager):
             if Prefetch == 0:
                 pass
             elif Prefetch == 1:
-                print "PrefetchGroupNotifyManager: incrementing resources for group '%s'" % GroupName
-                Mengine.incrementResources(GroupName)
+                PrefetchGroupNotifyManager.__prefetchGroup(GroupName, Prefetch)
             elif Prefetch == 2:
                 def __cb(successful, GroupName):
                     pass
 
-                Mengine.prefetchResources(GroupName, __cb, GroupName)
+                PrefetchGroupNotifyManager.__prefetchGroup(GroupName, Prefetch, __cb, GroupName)
 
     @staticmethod
     def unfetchGroup(GroupName):
@@ -199,9 +233,5 @@ class PrefetchGroupNotifyManager(Manager):
             if group_name != GroupName:
                 continue
 
-            if Prefetch == 0:
-                pass
-            elif Prefetch == 1:
-                Mengine.decrementResources(GroupName)
-            elif Prefetch == 2:
-                Mengine.unfetchResources(GroupName)
+            if Prefetch in (1, 2):
+                PrefetchGroupNotifyManager.__unfetchGroup(GroupName, Prefetch)
