@@ -905,6 +905,7 @@ def onInitialize():
         , "RemoteConfigProvider"
         , "AnalyticsProvider"
         , "ConsentProvider"
+        , "SupportProvider"
     ]
 
     from Foundation.ProviderManager import ProviderManager
