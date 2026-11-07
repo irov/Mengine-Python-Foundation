@@ -16,14 +16,26 @@ class MonetizationTransaction(object):
     def setValue(self, key, value):
         self.values[key] = value
 
+    def getListValues(self, key):
+        value = self.getValue(key)
+        stripped_value = value.strip(", ")
+        items = stripped_value.split(", ")
+        return items
+
     def addListValue(self, key, value):
-        items = self.getValue(key).strip(", ").split(", ")
-        if str(value) not in items:
-            self.setValue(key, self.getValue(key) + "{}, ".format(value))
+        items = self.getListValues(key)
+        item_value = str(value)
+        if item_value not in items:
+            current_value = self.getValue(key)
+            formatted_value = "{}, ".format(value)
+            updated_value = current_value + formatted_value
+            self.setValue(key, updated_value)
 
     def removeListValue(self, key, value):
-        items = self.getValue(key).strip(", ").split(", ")
-        self.setValue(key, "".join("{}, ".format(item) for item in items if item and item != str(value)))
+        items = self.getListValues(key)
+        remaining_items = ("{}, ".format(item) for item in items if item and item != str(value))
+        updated_value = "".join(remaining_items)
+        self.setValue(key, updated_value)
 
     def getSetting(self, key, default):
         return self.settings.get(key, default)

@@ -33,7 +33,6 @@ class SystemiOSServices(System):
     _GameCenter_synchronized = False
     _GameCenter_provider_status = False
     _InAppPurchase_provider_status = False
-    _can_use_payment = False
 
     _products = {}
     EVENT_PRODUCTS_RESPONDED = Event("iOSInAppPurchaseProductsResponded")
@@ -46,9 +45,7 @@ class SystemiOSServices(System):
 
     def _onInitialize(self):
         if self.b_plugins[PLUGIN_IN_APP_PURCHASE] is True:
-            if self.canUserMakePurchases() is True:
-                SystemiOSServices._can_use_payment = True
-                self.setInAppPurchaseProvider()
+            self.setInAppPurchaseProvider()
 
         if self.b_plugins[PLUGIN_STORE_REVIEW] is True:
             RateAppProvider.setProvider("iOS", dict(rateApp=self.rateApp))
@@ -252,14 +249,13 @@ class SystemiOSServices(System):
         """ returns True if user could do purchases (not a child) or False, if not """
         status = Mengine.iOSStoreInAppPurchaseCanMakePayments()
         _Log("[InAppPurchase] Can user make purchases? {}".format(status), optional=True)
-        SystemiOSServices._can_use_payment = status
         return status
 
     @staticmethod
     def setInAppPurchaseProvider():
         """ setup payment callbacks """
         _Log("[InAppPurchase] set provider...", optional=True)
-        Mengine.iOSStoreInAppPurchaseSetPaymentTransactionProvider({
+        payment_callbacks = {
             "onPaymentQueueUpdatedTransactionPurchasing": SystemiOSServices._cbPaymentPurchasing,
             "onPaymentQueueUpdatedTransactionPurchased": SystemiOSServices._cbPaymentPurchased,
             "onPaymentQueueUpdatedTransactionFailed": SystemiOSServices._cbPaymentFailed,
@@ -268,15 +264,18 @@ class SystemiOSServices(System):
             "onPaymentQueueRestoreCompletedTransactionsFinished": SystemiOSServices._cbRestoreFinished,
             "onPaymentQueueRestoreCompletedTransactionsFailed": SystemiOSServices._cbRestoreFailed,
             "onSubscriptionStatus": SystemiOSServices._cbSubscriptionStatus,
-        })
+            "onProductEntitlementChanged": SystemiOSServices._cbProductEntitlementChanged,
+        }
+        Mengine.iOSStoreInAppPurchaseSetPaymentTransactionProvider(payment_callbacks)
 
-        PaymentProvider.setProvider("iOS", dict(
+        payment_provider = dict(
             pay=SystemiOSServices.pay,
             restorePurchases=SystemiOSServices.restorePurchases,
             isOwnedInAppProduct=SystemiOSServices.isOwnedInAppProduct,
             querySubscriptionStatus=SystemiOSServices.querySubscriptionStatus,
             openSubscriptionManagement=SystemiOSServices.openSubscriptionManagement,
-        ))
+        )
+        PaymentProvider.setProvider("iOS", payment_provider)
 
         _Log("[InAppPurchase] AppleStoreInAppPurchase is ready", optional=True)
         consumableIds, nonconsumableIds = ProductsProvider.getQueryProductIds()
@@ -337,20 +336,24 @@ class SystemiOSServices(System):
 
     @staticmethod
     def _cbSubscriptionStatus(product_id, status):
-        callbacks = SystemiOSServices._subscription_callbacks.pop(str(product_id), [])
+        callbacks = SystemiOSServices._subscription_callbacks.pop(product_id, [])
         for callback in callbacks:
             callback(status)
 
     @staticmethod
+    def _cbProductEntitlementChanged(product_id, owned):
+        Notification.notify(Notificator.onProductEntitlementChanged, product_id, owned)
+
+    @staticmethod
     def openSubscriptionManagement(product_id):
-        # Apple's account sheet also works on versions before StoreKit 2.
-        return Mengine.openUrlInDefaultBrowser("https://apps.apple.com/account/subscriptions")
+        opened = Mengine.openUrlInDefaultBrowser("https://apps.apple.com/account/subscriptions")
+        return opened
 
     @staticmethod
     def pay(product_id):
         _Log("[InAppPurchase] pay {!r}...".format(product_id), optional=True)
 
-        if SystemiOSServices._can_use_payment is False:
+        if SystemiOSServices.canUserMakePurchases() is False:
             Notification.notify(Notificator.onPayFailed, product_id)
             Notification.notify(Notificator.onPayComplete, product_id)
             Trace.log("System", 0, "This user can't use payment (product_id={})".format(product_id))
@@ -369,17 +372,7 @@ class SystemiOSServices(System):
 
     @staticmethod
     def _cbProductResponse(request, products):
-        """
-            input: AppleStoreInAppPurchaseProductInterface[]
-
-            .def( "getProductIdentifier", &AppleStoreInAppPurchaseProductInterface::getProductIdentifier )
-            .def( "getProductTitle", &AppleStoreInAppPurchaseProductInterface::getProductTitle )
-            .def( "getProductDescription", &AppleStoreInAppPurchaseProductInterface::getProductDescription )
-            .def( "getProductCurrencyCode", &AppleStoreInAppPurchaseProductInterface::getProductCurrencyCode )
-            .def( "getProductPriceFormatted", &AppleStoreInAppPurchaseProductInterface::getProductPriceFormatted )
-            .def( "getProductPrice", &AppleStoreInAppPurchaseProductInterface::getProductPrice )
-
-        """
+        """Publish store prices and retain native products for purchase requests."""
 
         if len(products) == 0:
             _Log("[InAppPurchase] (callback) Product Response Empty", err=True, force=True)
@@ -390,14 +383,19 @@ class SystemiOSServices(System):
         game_products = {}
 
         for product in products:
-            product_id = str(product.getProductIdentifier())
+            product_id = product.getProductIdentifier()
+            price = product.getProductPrice()
+            formatted_price = product.getProductPriceFormatted()
+            subscription_period = product.getProductSubscriptionPeriod()
+            description = product.getProductDescription()
+            title = product.getProductTitle()
 
             params = {
-                "price": product.getProductPrice(),
-                "formatted_price": product.getProductPriceFormatted(),
-                "subscription_period": product.getProductSubscriptionPeriod(),
-                "descr": str(product.getProductDescription()),
-                "name": str(product.getProductTitle())
+                "price": price,
+                "formatted_price": formatted_price,
+                "subscription_period": subscription_period,
+                "descr": description,
+                "name": title
             }
             game_products[product_id] = params
 
@@ -421,19 +419,19 @@ class SystemiOSServices(System):
     @staticmethod
     def _cbPaymentPurchasing(transaction):
         """ (CALLBACK onPaymentQueueUpdatedTransactionPurchasing) start purchase process """
-        product_id = str(transaction.getProductIdentifier())
+        product_id = transaction.getProductIdentifier()
         _Log("[InAppPurchase] (callback) Payment Purchasing start {}".format(product_id))
 
     @staticmethod
     def _cbPaymentPurchased(transaction):
         """ (CALLBACK onPaymentQueueUpdatedTransactionPurchased) payment complete """
-        product_id = str(transaction.getProductIdentifier())
+        product_id = transaction.getProductIdentifier()
         transaction_id = transaction.getTransactionIdentifier()
 
         if transaction_id is None:
-            raise RuntimeError("StoreKit returned purchase without transaction identifier for {!r}".format(product_id))
+            message = "StoreKit returned purchase without transaction identifier for {!r}".format(product_id)
+            raise RuntimeError(message)
 
-        transaction_id = str(transaction_id)
         _Log("[InAppPurchase] (callback) Payment Purchased (success) {}".format(product_id))
 
         if SystemiOSServices._beginTransaction(transaction_id, transaction) is False:
@@ -444,7 +442,7 @@ class SystemiOSServices(System):
     @staticmethod
     def _cbPaymentFailed(transaction):
         """ (CALLBACK onPaymentQueueUpdatedTransactionFailed) payment failed """
-        product_id = str(transaction.getProductIdentifier())
+        product_id = transaction.getProductIdentifier()
         _Log("[InAppPurchase] (callback) Payment purchase Failed {}".format(product_id))
 
         if transaction.isCancelled() is True:
@@ -458,13 +456,13 @@ class SystemiOSServices(System):
     @staticmethod
     def _cbPaymentRestored(transaction):
         """ (CALLBACK onPaymentQueueUpdatedTransactionRestored) purchased product """
-        product_id = str(transaction.getProductIdentifier())
+        product_id = transaction.getProductIdentifier()
         transaction_id = transaction.getTransactionIdentifier()
 
         if transaction_id is None:
-            raise RuntimeError("StoreKit returned restore without transaction identifier for {!r}".format(product_id))
+            message = "StoreKit returned restore without transaction identifier for {!r}".format(product_id)
+            raise RuntimeError(message)
 
-        transaction_id = str(transaction_id)
         _Log("[InAppPurchase] (callback) Product Restored {}".format(product_id))
 
         if SystemiOSServices._beginTransaction(transaction_id, transaction) is False:
@@ -531,7 +529,8 @@ class SystemiOSServices(System):
 
         for transaction in transactions:
             transaction.finish()
-            Notification.notify(Notificator.onPayFinalized, str(transaction.getProductIdentifier()), transaction_id)
+            product_id = transaction.getProductIdentifier()
+            Notification.notify(Notificator.onPayFinalized, product_id, transaction_id)
 
     @staticmethod
     def _releaseTransactions(transaction_id):
@@ -540,7 +539,7 @@ class SystemiOSServices(System):
     @staticmethod
     def _cbPaymentDeferred(transaction):
         """ (CALLBACK onPaymentQueueUpdatedTransactionDeferred) something went wrong during purchase """
-        product_id = str(transaction.getProductIdentifier())
+        product_id = transaction.getProductIdentifier()
         _Log("[InAppPurchase] (callback) Payment Deferred {}".format(product_id))
         Notification.notify(Notificator.onPayPending, product_id)
         Notification.notify(Notificator.onPayComplete, product_id)
