@@ -195,6 +195,9 @@ class Movie2EditBox(BaseEntity):
         self.state = "Idle"
 
         self.Movies = {}
+        self._mouse_move_handler = None
+        self.KeyHandlerID = None
+        self.TextHandlerID = None
 
         self.SemaphoreBlock = Semaphore(False, "Movie2EditBoxBlock")
         self.SemaphoreFocus = Semaphore(False, "Movie2EditBoxFocus")
@@ -404,7 +407,9 @@ class Movie2EditBox(BaseEntity):
         self.text = u""
 
         Mengine.removeGlobalHandler(self.KeyHandlerID)
+        self.KeyHandlerID = None
         Mengine.removeGlobalHandler(self.TextHandlerID)
+        self.TextHandlerID = None
 
         Mengine.hideKeyboard()
 
@@ -420,12 +425,35 @@ class Movie2EditBox(BaseEntity):
             mov.setEnable(False)
 
     def _onFinalize(self):
-        super(Movie2EditBox, self)._onFinalize()
+        # Cancel chains before the base disables the node and removes input handlers.
+        if self.tc is not None:
+            tc = self.tc
+            self.tc = None
+            tc.cancel()
+
+        if self.tc_slider is not None:
+            tc_slider = self.tc_slider
+            self.tc_slider = None
+            tc_slider.cancel()
+
+        if self._mouse_move_handler is not None:
+            Mengine.removeGlobalHandler(self._mouse_move_handler)
+            self._mouse_move_handler = None
+
+        if self.KeyHandlerID is not None:
+            Mengine.removeGlobalHandler(self.KeyHandlerID)
+            self.KeyHandlerID = None
+            Mengine.hideKeyboard()
+
+        if self.TextHandlerID is not None:
+            Mengine.removeGlobalHandler(self.TextHandlerID)
+            self.TextHandlerID = None
 
         for mov in self.Movies.itervalues():
             mov.onDestroy()
 
         self.Movies = {}
+        super(Movie2EditBox, self)._onFinalize()
 
     # EDITING EVENTS
     def __onGlobalHandleKeyEvent(self, event):

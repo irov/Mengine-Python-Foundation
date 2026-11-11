@@ -186,6 +186,24 @@ class SaveManager(Manager):
         return params
 
     @staticmethod
+    def __getObjectPath(value, path):
+        name = value.getName()
+        path.append(name)
+
+        group = value.getGroup()
+
+        if isinstance(group, Group) is True:
+            groupName = group.getName()
+            return groupName
+        elif isinstance(group, BaseObject) is True:
+            objectPath = SaveManager.__getObjectPath(group, path)
+            return objectPath
+        else:
+            group_type = type(group)
+            object_type = type(value)
+            raise Exception("__getObjectPath '%s' invalid group type '%s' for object '%s' type '%s'" % (group, group_type, name, object_type))
+
+    @staticmethod
     def _saveValue(value):
         if value is None:
             return None
@@ -236,22 +254,7 @@ class SaveManager(Manager):
         elif isinstance(value, BaseObject) is True:
             object_path = []
 
-            def __getObjectPath(value, path):
-                name = value.getName()
-                path.append(name)
-
-                group = value.getGroup()
-
-                if isinstance(group, Group) is True:
-                    groupName = group.getName()
-                    return groupName
-                elif isinstance(group, BaseObject) is True:
-                    objectPath = __getObjectPath(group, path)
-                    return objectPath
-                else:
-                    raise Exception("__getObjectPath '%s' invalid group type '%s' for object '%s' type '%s'" % (group, type(group), value.getName(), type(value)))
-
-            groupName = __getObjectPath(value, object_path)
+            groupName = SaveManager.__getObjectPath(value, object_path)
 
             save_value = SaveObjectRef((groupName, object_path))
             pass

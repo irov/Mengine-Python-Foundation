@@ -48,7 +48,7 @@ class TaskNodeBezier2LocalFollow(MixinNode, Task):
         return False
 
     def _onSkip(self):
-        self.id = 0
+        self.affector = None
         self.node.moveStop()
         pass
     pass

@@ -16,6 +16,17 @@ class SystemiOSAd(System):
         self.rewarded_inited = False
 
     def _onFinalize(self):
+        super(SystemiOSAd, self)._onFinalize()
+
+        if self.banner_inited is True:
+            Mengine.iOSAdvertisementSetBannerCallback({})
+
+        if self.interstitial_inited is True:
+            Mengine.iOSAdvertisementSetInterstitialCallback({})
+
+        if self.rewarded_inited is True:
+            Mengine.iOSAdvertisementSetRewardedCallback({})
+
         self.banner_inited = False
         self.interstitial_inited = False
         self.rewarded_inited = False

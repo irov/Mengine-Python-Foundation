@@ -1153,6 +1153,8 @@ class SystemMonetization(System):
             if component.initialize(self) is True:
                 component.run()
                 SystemMonetization.components[component.component_id] = component
+            else:
+                component.stop()
 
     @staticmethod
     def _setDebugCurrency():

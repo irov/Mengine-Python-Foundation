@@ -119,10 +119,12 @@ class TaskChain(MixinGroup, Params, Initializer):
 
     def __exit__(self, type, value, traceback):
         if type is not None:
+            self.__clearUninitialized()
             return False
 
         if len(self.source) == 0:
             Trace.log("TaskChain", 0, "%s empty source task, maybe you forget [with + as]" % (self))
+            self.__clearUninitialized()
             return True
 
         if self.AutoRun is True:
@@ -151,7 +153,15 @@ class TaskChain(MixinGroup, Params, Initializer):
         super(TaskChain, self)._onFinalize()
 
         TaskManager.removeTaskChain(self, self.named)
+        self.__clear()
 
+    def __clearUninitialized(self):
+        super(TaskChain, self)._onFinalize()
+
+        self.repeat = False
+        self.__clear()
+
+    def __clear(self):
         self.__finializeSourceTask()
 
         self.source = []
@@ -169,6 +179,8 @@ class TaskChain(MixinGroup, Params, Initializer):
         self.node = None
         self.cb = None
         self.cbArgs = None
+        self.until = None
+        self.removeParams()
 
         self.state = TaskChain.FINALIZE
         pass
@@ -248,6 +260,16 @@ class TaskChain(MixinGroup, Params, Initializer):
             self.state = TaskChain.IDLE
 
             self.__finializeSourceTask()
+
+            # Release the previous graph before building the next repeat.
+            # A task in END is still inside its complete() further up the stack (it led here)
+            # and finalizes itself when complete() returns.
+            for task in self.tasks:
+                if task.isInitialized() is True and task.state is not TaskBase.END:
+                    task.onFinalize()
+                    pass
+                pass
+            self.tasks = []
 
             if self.NoCheckAntiStackCycle is False and self.queue.checkAntiStackCycle() >= 2:
                 Trace.log("TaskChain", 0, "%s Anti Stack Cycle %s:%s doc('%s')" % (self, self.caller[0], self.caller[1], self.caller[2]))

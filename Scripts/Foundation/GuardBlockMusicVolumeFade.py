@@ -5,17 +5,17 @@ class GuardBlockMusicVolumeFade(object):
         self.To = To
         pass
 
-    def __guard(self, value):
-        if value is True:
-            Mengine.musicSetVolumeTag(self.Tag, self.To, 1.0)
-            pass
-        else:
-            Mengine.musicSetVolumeTag(self.Tag, 1.0, self.To)
-            pass
-        pass
-
     def __enter__(self):
-        return self.source.makeGuardSource(True, self.__guard)
+        def __guard(value, tag, to):
+            if value is True:
+                Mengine.musicSetVolumeTag(tag, to, 1.0)
+                pass
+            else:
+                Mengine.musicSetVolumeTag(tag, 1.0, to)
+                pass
+            pass
+
+        return self.source.makeGuardSource(True, __guard, self.Tag, self.To)
         pass
 
     def __exit__(self, type, value, traceback):

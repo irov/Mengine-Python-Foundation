@@ -27,6 +27,7 @@ class SystemAndroidFacebook(System):
 
     def __init__(self):
         super(SystemAndroidFacebook, self).__init__()
+        self._android_callbacks = []
         pass
 
     @staticmethod
@@ -35,7 +36,8 @@ class SystemAndroidFacebook(System):
 
     def _onInitialize(self):
         def _setCallback(name, cb):
-            Mengine.addAndroidCallback(PLUGIN_NAME, name, cb)
+            callback = Mengine.addAndroidCallback(PLUGIN_NAME, name, cb)
+            self._android_callbacks.append((name, callback))
 
         _setCallback("onFacebookLoginSuccess", self._cbLoginSuccess)
         _setCallback("onFacebookLoginCancel", self._cbLoginCancel)
@@ -64,7 +66,19 @@ class SystemAndroidFacebook(System):
         ))
 
     def _onFinalize(self):
-        pass
+        super(SystemAndroidFacebook, self)._onFinalize()
+
+        for name, callback in self._android_callbacks:
+            Mengine.removeAndroidCallback(PLUGIN_NAME, name, callback)
+        self._android_callbacks = []
+
+        for event, callbacks in SystemAndroidFacebook.callbacks.items():
+            for callback in callbacks:
+                event.removeObserver(callback)
+        SystemAndroidFacebook.callbacks.clear()
+
+        if FacebookProvider.getName() == "AndroidFacebook":
+            FacebookProvider.removeProvider()
 
     def isLoggedIn(self):
         is_logged = Mengine.androidBooleanMethod(PLUGIN_NAME, "isLoggedIn")

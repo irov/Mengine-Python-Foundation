@@ -908,6 +908,7 @@ def onInitialize():
         , "AnalyticsProvider"
         , "ConsentProvider"
         , "SupportProvider"
+        , "LocalNotificationsProvider"
     ]
 
     from Foundation.ProviderManager import ProviderManager

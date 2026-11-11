@@ -1,11 +1,12 @@
-﻿from Foundation.BaseEntity import BaseEntity
+﻿from Foundation.BaseScopeEntity import BaseScopeEntity
 from Foundation.ObjectManager import ObjectManager
-from Foundation.TaskManager import TaskManager
 
-class MovieScrollbar(BaseEntity):
+class MovieScrollbar(BaseScopeEntity):
+    ENTITY_SCOPE_REPEAT = True
+
     @staticmethod
     def declareORM(Type):
-        BaseEntity.declareORM(Type)
+        BaseScopeEntity.declareORM(Type)
         Type.addAction("ResourceMovieSlider")
         Type.addAction("ResourceMovieBar")
         Type.addAction("IsHorizontal")
@@ -21,7 +22,7 @@ class MovieScrollbar(BaseEntity):
         self._slider = None
         self._bar = None
 
-        self.tc = None
+        self._mouse_handler = None
 
         self._slider_box = None
         self._slider_size = Mengine.vec2f(0.0, 0.0)
@@ -29,9 +30,6 @@ class MovieScrollbar(BaseEntity):
         self._bar_box = None
 
     def _onInitialize(self, obj):
-        self._mouse_handler = Mengine.addMouseMoveHandler(self._on_mouse_move)
-        Mengine.enableGlobalHandler(self._mouse_handler, False)
-
         super(MovieScrollbar, self)._onInitialize(obj)
 
         def create_movie(name, resource_name, enable):
@@ -144,7 +142,10 @@ class MovieScrollbar(BaseEntity):
         else:
             self._move(0.0, mouse_pos.y - socket_pos.y)
 
-    def _onActivate(self):
+    def _getScopeGroup(self):
+        return None
+
+    def _onScopeActivate(self, source):
         self._mouse_handler = Mengine.addMouseMoveHandler(self._on_mouse_move)
         Mengine.enableGlobalHandler(self._mouse_handler, False)
 
@@ -158,19 +159,20 @@ class MovieScrollbar(BaseEntity):
 
         self._half_slider_size = self._slider_size * 0.5
 
-        self.tc = TaskManager.createTaskChain(Repeat=True)
-        with self.tc as tc:
-            with tc.addRaceTask(2) as (slider, bar):
-                bar.addTask('TaskMovieSocketClick', Movie=self._bar, SocketName='socket', isDown=True)
-                bar.addFunction(self._on_bar_click)
-                bar.addFunction(self._on_mouse_up)
+        with source.addRaceTask(2) as (slider, bar):
+            bar.addTask('TaskMovieSocketClick', Movie=self._bar, SocketName='socket', isDown=True)
+            bar.addFunction(self._on_bar_click)
+            bar.addFunction(self._on_mouse_up)
 
-                slider.addTask('TaskMovieSocketClick', Movie=self._slider, SocketName='socket', isDown=True)
-                slider.addFunction(self._on_mouse_down)
-                slider.addFunction(Mengine.enableGlobalHandler, self._mouse_handler, True)
-                slider.addTask('TaskMouseButtonClick', isDown=False)
-                slider.addFunction(Mengine.enableGlobalHandler, self._mouse_handler, False)
-                slider.addFunction(self._on_mouse_up)
+            slider.addTask('TaskMovieSocketClick', Movie=self._slider, SocketName='socket', isDown=True)
+            slider.addFunction(self._on_mouse_down)
+            slider.addFunction(Mengine.enableGlobalHandler, self._mouse_handler, True)
+            slider.addTask('TaskMouseButtonClick', isDown=False)
+            slider.addFunction(Mengine.enableGlobalHandler, self._mouse_handler, False)
+            slider.addFunction(self._on_mouse_up)
+
+    def _onActivate(self):
+        super(MovieScrollbar, self)._onActivate()
 
         if self.object.SetToZero is True:
             self.set_percentage(0)
@@ -181,10 +183,6 @@ class MovieScrollbar(BaseEntity):
         if self._mouse_handler is not None:
             Mengine.removeGlobalHandler(self._mouse_handler)
         self._mouse_handler = None
-
-        if self.tc is not None:
-            self.tc.cancel()
-            self.tc = None
 
     def _onFinalize(self):
         super(MovieScrollbar, self)._onFinalize()

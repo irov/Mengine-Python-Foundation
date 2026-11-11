@@ -58,7 +58,7 @@ class TaskNodeBezier2To(MixinNode, Task):
             pass
 
         def __onBezierTo(node, isEnd):
-            self.affector = 0
+            self.affector = None
 
             self.complete(isSkiped=isEnd is False)
             pass

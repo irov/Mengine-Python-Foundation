@@ -52,6 +52,24 @@ class TaskDownloadAsset(Task):
 
         self.id = None
 
+    def __cancelRequest(self):
+        request_id = self.id
+        self.id = None
+        self.cb = None
+
+        if request_id is None:
+            return
+
+        if request_id == 0:
+            return
+
+        Mengine.cancelRequest(request_id)
+
+    def _onFinalize(self):
+        super(TaskDownloadAsset, self)._onFinalize()
+
+        self.__cancelRequest()
+
     @print_request  # debug
     def _onRun(self):
         if Mengine.existFile(self.file_group, self.file_path):
@@ -71,7 +89,7 @@ class TaskDownloadAsset(Task):
                      "password = {}, "
                      "file_group = {}, "
                      "file_path = {}"
-                     "timeout = {}".format(self.url, self.login, self.password, self.file_group, self.file_path, self.timeout))
+                     "timeout = {}".format(self.url, self.login, self.password, self.file_group, self.file_path, self.time_out))
             self.setError(True)
             return True
         return False
@@ -81,18 +99,24 @@ class TaskDownloadAsset(Task):
         if id_ != self.id:
             return
 
+        self.id = None
+        cb = self.cb
+        self.cb = None
+
         if successful is False:
             if error:
                 self.log("{}".format(error))
             self.setError(True)
             pass
 
-        if self.cb is not None:
-            if self.cb(status, error, response, code, successful) is False:
-                self.setError(True)
-                pass
+        if cb is not None:
+            base = self.base
+            result = cb(status, error, response, code, successful)
+            if result is False:
+                base.setError(True)
             pass
 
-        self.id = None
-
         self.complete()
+
+    def _onSkip(self):
+        self.__cancelRequest()

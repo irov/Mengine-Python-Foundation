@@ -20,13 +20,15 @@ class BaseScopeEntity(BaseEntity):
     def _onScopeUntil(self):
         return False
 
-    def _onActivate(self):
-        if self.tc is not None:
-            self.tc.cancel()
-            self.tc = None
-            pass
+    def _getScopeGroup(self):
+        return self.object.Group
 
-        self.tc = TaskManager.createTaskChain(Repeat = self.ENTITY_SCOPE_REPEAT, Until=self._onScopeUntil, Group = self.object.Group)
+    def _onActivate(self):
+        super(BaseScopeEntity, self)._onActivate()
+
+        self.__cancelScope()
+
+        self.tc = TaskManager.createTaskChain(Repeat=self.ENTITY_SCOPE_REPEAT, Until=self._onScopeUntil, Group=self._getScopeGroup())
 
         with self.tc as source:
             self._onScopeActivate(source)
@@ -37,12 +39,25 @@ class BaseScopeEntity(BaseEntity):
         pass
 
     def _onDeactivate(self):
-        self._onScopeDeactivate()
+        super(BaseScopeEntity, self)._onDeactivate()
 
-        if self.tc is not None:
-            self.tc.cancel()
-            self.tc = None
-            pass
+        self._onScopeDeactivate()
+        self.__cancelScope()
+        pass
+
+    def _onFinalize(self):
+        super(BaseScopeEntity, self)._onFinalize()
+
+        self.__cancelScope()
+        pass
+
+    def __cancelScope(self):
+        if self.tc is None:
+            return
+
+        tc = self.tc
+        self.tc = None
+        tc.cancel()
         pass
 
     def _onScopeDeactivate(self):

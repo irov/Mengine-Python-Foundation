@@ -7,6 +7,7 @@ class ArcadeInventorySlot(Initializer):
         super(ArcadeInventorySlot, self).__init__()
         self.node = None
         self.item = None
+        self.parentInventory = None
 
         self.socket_node = None
         self.item_node = None
@@ -30,6 +31,10 @@ class ArcadeInventorySlot(Initializer):
 
     def _onFinalize(self):
         super(ArcadeInventorySlot, self)._onFinalize()
+
+        self.item = None
+        self.parentInventory = None
+
         if self.socket_node is not None:
             Mengine.destroyNode(self.socket_node)
             self.socket_node = None
@@ -167,6 +172,7 @@ class ArcadeInventory(Initializer):
     def __init__(self):
         super(ArcadeInventory, self).__init__()
         self.node = None
+        self.chain = None
 
         self.GroupName = None
         self.MovieName = None
@@ -210,6 +216,22 @@ class ArcadeInventory(Initializer):
 
     def _onFinalize(self):
         super(ArcadeInventory, self)._onFinalize()
+
+        if self.chain is not None:
+            chain = self.chain
+            self.chain = None
+            chain.cancel()
+
+        for slot in self.inventorySlots:
+            if slot.isInitialized() is True:
+                slot.onFinalize()
+        self.inventorySlots = []
+        self.inventoryItems = []
+        self.friends = []
+
+        if self.node is not None:
+            Mengine.destroyNode(self.node)
+            self.node = None
         pass
 
     def addInventoryItem(self, item):

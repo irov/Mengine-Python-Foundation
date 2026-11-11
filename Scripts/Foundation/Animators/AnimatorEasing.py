@@ -62,3 +62,4 @@ class AnimatorEasing(Initializer):
 
     def _onFinalize(self):
         self._stop()
+        self._pos_setter = None

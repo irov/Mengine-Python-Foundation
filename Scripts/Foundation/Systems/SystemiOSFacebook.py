@@ -58,7 +58,17 @@ class SystemiOSFacebook(System):
         ))
 
     def _onFinalize(self):
-        pass
+        super(SystemiOSFacebook, self)._onFinalize()
+
+        Mengine.iOSFacebookSetProvider({})
+
+        for event, callbacks in SystemiOSFacebook.callbacks.items():
+            for callback in callbacks:
+                event.removeObserver(callback)
+        SystemiOSFacebook.callbacks.clear()
+
+        if FacebookProvider.getName() == "iOSFacebook":
+            FacebookProvider.removeProvider()
 
     def isLoggedIn(self):
         is_logged = Mengine.iOSFacebookIsLoggedIn()

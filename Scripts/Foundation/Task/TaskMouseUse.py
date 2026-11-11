@@ -17,8 +17,9 @@ class TaskMouseUse(Task):
     def _onFinally(self):
         super(TaskMouseUse, self)._onFinally()
 
-        Mengine.removeMouseButtonHandler(self.GlobalHandleAdapter)
-        self.GlobalHandleAdapter = None
+        if self.GlobalHandleAdapter is not None:
+            Mengine.removeGlobalHandler(self.GlobalHandleAdapter)
+            self.GlobalHandleAdapter = None
         pass
 
     def __onGlobalHandleMouseButtonEvent(self, event):

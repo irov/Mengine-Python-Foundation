@@ -70,14 +70,28 @@ class TaskPipe(MixinTime, Task):
             return
             pass
 
+        self.id = None
         self.Event(isComplete)
 
         self.complete(isSkiped=isComplete is False)
         pass
 
+    def _onFinally(self):
+        super(TaskPipe, self)._onFinally()
+
+        self.__removePipe()
+
     def _onSkip(self):
+        self.__removePipe()
+
+    def __removePipe(self):
         remove_id = self.id
         self.id = None
+
+        if remove_id is None:
+            return
+        if remove_id == 0:
+            return
 
         if self.Scheduler.remove(remove_id) is False:
             Trace.trace()

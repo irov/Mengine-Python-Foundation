@@ -78,7 +78,7 @@ class System(Params, Initializer):
     def removeTaskChain(self, Name):
         tc = self.__task_chains[Name]
         tc.cancel()
-        self.__task_chains.pop(Name)
+        self.__task_chains.pop(Name, None)
 
     def removeObserver(self, observer):
         if observer not in self.__observers:
@@ -180,7 +180,7 @@ class System(Params, Initializer):
         self.active = False
 
         for pipe in self.__pipes:
-            Mengine.scheduleGlobalRemove(pipe)
+            Mengine.scheduleRemove(pipe)
 
         self.__pipes = []
 
@@ -194,7 +194,7 @@ class System(Params, Initializer):
 
         self.__events = []
 
-        for chain in self.__task_chains.itervalues():
+        for chain in self.__task_chains.values():
             chain.cancel()
 
         self.__task_chains = {}

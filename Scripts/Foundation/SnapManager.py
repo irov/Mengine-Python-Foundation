@@ -6,6 +6,10 @@ from Foundation.GroupManager import GroupManager
 class SnapManager(Manager):
     s_Snaps = {}  # group # item [][]
 
+    @staticmethod
+    def _onFinalize():
+        SnapManager.s_Snaps.clear()
+
     class Snap(object):
         def __init__(self, Object, SnapDir):
             self.Object = Object

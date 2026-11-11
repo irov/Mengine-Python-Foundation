@@ -21,6 +21,9 @@ class TaskManager(Manager):
             chain.cancel()
             pass
 
+        for chain in TaskManager.s_idleChain[:]:
+            chain.cancel()
+
         TaskManager.s_runningNamedChain = {}
         TaskManager.s_idleNamedChain = {}
 

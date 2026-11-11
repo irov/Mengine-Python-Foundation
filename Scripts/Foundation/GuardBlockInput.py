@@ -16,18 +16,18 @@ class GuardBlockInput(object):
         socket = GroupManager.getObject(GroupName, SocketName)
         socket.setInteractive(value)
 
-    def __blockInput(self, value):
-        socket = GroupManager.getObject(self.GroupName, self.SocketName)
-
-        socket.setInteractive(value)
-        GameManager.blockKeyboard(value)
-
     def __enter__(self):
+        def __blockInput(value, groupName, socketName):
+            socket = GroupManager.getObject(groupName, socketName)
+
+            socket.setInteractive(value)
+            GameManager.blockKeyboard(value)
+
         if GroupManager.hasObject(self.GroupName, self.SocketName) is False:
             Trace.log("Object", 0, "GuardBlockInput invalid get object %s:%s" % (self.GroupName, self.SocketName))
             return self.source
 
-        return self.source.makeGuardSource(self.enable, self.__blockInput)
+        return self.source.makeGuardSource(self.enable, __blockInput, self.GroupName, self.SocketName)
 
     def __exit__(self, type, value, traceback):
         if type is not None:

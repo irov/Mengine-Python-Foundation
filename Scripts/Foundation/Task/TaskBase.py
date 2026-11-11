@@ -212,6 +212,14 @@ class TaskBase(Initializer):
 
         return True
 
+    def __onTaskCancelIdle(self):
+        try:
+            self.taskType.onCancelIdle(self)
+        except Exception as ex:
+            self._traceException("TaskBase '%s' cancel idle is except '%s'" % (self, ex))
+            pass
+        pass
+
     def run(self, checkSkipedFalse=False):
         if self.state is not TaskBase.IDLE:
             Trace.log("Task", 0, "TaskBase.run: %s invalid run [state %s]" % (self, self.state))
@@ -340,6 +348,7 @@ class TaskBase(Initializer):
         self.prevs = None
 
         self.chain = None
+        self.taskParams = None
 
         self.state = TaskBase.END
 
@@ -433,6 +442,10 @@ class TaskBase(Initializer):
             return
 
         self.skiped = True
+
+        if self.state is TaskBase.IDLE:
+            self.__onTaskCancelIdle()
+            pass
 
         if self.state is TaskBase.RUN:
             self.state = TaskBase.CANCEL

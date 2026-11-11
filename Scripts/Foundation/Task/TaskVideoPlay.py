@@ -1,8 +1,8 @@
 from Foundation.Task.MixinObjectTemplate import MixinVideo
+from Foundation.Task.MixinObserver import MixinObserver
 from Foundation.Task.Task import Task
-from Foundation.TaskManager import TaskManager
 
-class TaskVideoPlay(MixinVideo, Task):
+class TaskVideoPlay(MixinVideo, MixinObserver, Task):
     Skiped = True
 
     def _onParams(self, params):
@@ -11,21 +11,16 @@ class TaskVideoPlay(MixinVideo, Task):
         pass
 
     def _onRun(self):
+        if self.wait is True:
+            self.addObserver(Notificator.onVideoEnd, self._onVideoPlayFilter)
+
         self.Video.setParam("Play", True)
 
         if self.wait is True:
-            with TaskManager.createTaskChain(Cb=self._onVideoPlayWait) as tc:
-                tc.addListener(Notificator.onVideoEnd, Filter=self._onVideoPlayFilter)
-                pass
-
             return False
             pass
 
         return True
-        pass
-
-    def _onVideoPlayWait(self, isSkip):
-        self.complete()
         pass
 
     def _onVideoPlayFilter(self, video):

@@ -50,11 +50,22 @@ class TaskWait(MixinTime, Task):
         self.complete()
         pass
 
+    def _onFinally(self):
+        super(TaskWait, self)._onFinally()
+
+        self.__removeTiming()
+
     def _onSkip(self):
+        self.__removeTiming()
+
+    def __removeTiming(self):
         remove_id = self.id
         self.id = 0
 
-        if self.Scheduler is not None:
+        if remove_id == 0:
+            return
+
+        if self.Timing is not None:
             if self.Timing.remove(remove_id) is False:
                 Trace.trace()
                 pass

@@ -146,6 +146,24 @@ class TaskHeaderData(Task):
 
         self.id = None
 
+    def __cancelRequest(self):
+        request_id = self.id
+        self.id = None
+        self.cb = None
+
+        if request_id is None:
+            return
+
+        if request_id == 0:
+            return
+
+        Mengine.cancelRequest(request_id)
+
+    def _onFinalize(self):
+        super(TaskHeaderData, self)._onFinalize()
+
+        self.__cancelRequest()
+
     @print_request  # debug
     def _onRun(self):
         # print "[TaskHeaderData|_onRun] BEFORE " \
@@ -184,17 +202,19 @@ class TaskHeaderData(Task):
             # print "TaskHeaderData._onHeaderData self.id != id, {} != {}".format(self.id, id)
             return
 
+        self.id = None
+        cb = self.cb
+        self.cb = None
+
         if successful is False:
             self.log("{}".format(error))
 
-        if self.cb is not None:
+        if cb is not None:
             if self.__debug_force_response_code is not None:
                 code = self.__debug_force_response_code
-            self.cb(status, error, response, code, successful)
-
-        self.id = None
+            cb(status, error, response, code, successful)
 
         self.complete()
 
     def _onSkip(self):
-        pass
+        self.__cancelRequest()

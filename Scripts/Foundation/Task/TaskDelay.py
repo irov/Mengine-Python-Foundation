@@ -48,12 +48,26 @@ class TaskDelay(MixinTime, Task):
         if self.id != id:
             return
 
+        self.id = None
         self.complete()
         pass
 
+    def _onFinally(self):
+        super(TaskDelay, self)._onFinally()
+
+        self.__removeDelay()
+
     def _onSkip(self):
+        self.__removeDelay()
+
+    def __removeDelay(self):
         remove_id = self.id
         self.id = None
+
+        if remove_id is None:
+            return
+        if remove_id == 0:
+            return
 
         if self.Scheduler is not None:
             if self.Scheduler.remove(remove_id) is False:

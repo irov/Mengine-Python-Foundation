@@ -25,7 +25,7 @@ class TaskNodePercentVisibilityTo(MixinNode, MixinTime, Task):
             self.complete(isSkiped=isEnd is False)
             pass
 
-        self.affector = self.node.setPercentVisibilityTo(self.time, self.percentTo, self.easing, self.__onPercentVisibilityTo)
+        self.affector = self.node.setPercentVisibilityTo(self.time, self.percentTo, self.easing, __onPercentVisibilityTo)
 
         if self.affector is None:
             self.log("[%s] not active" % (self.node.getName()))

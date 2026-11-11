@@ -1,16 +1,16 @@
+from Foundation.Task.MixinObserver import MixinObserver
 from Foundation.TaskManager import TaskManager
 
 from MixinNode import MixinNode
 from MixinTime import MixinTime
 from Task import Task
 
-class TaskNodeLoopedRotate(MixinNode, MixinTime, Task):
+class TaskNodeLoopedRotate(MixinNode, MixinTime, MixinObserver, Task):
     Skiped = True
 
     def _onParams(self, params):
         super(TaskNodeLoopedRotate, self)._onParams(params)
 
-        self.onSpinnerStop = None
         self.tc = None
         pass
 
@@ -21,7 +21,7 @@ class TaskNodeLoopedRotate(MixinNode, MixinTime, Task):
         pass
 
     def _onRun(self):
-        self.onSpinnerStop = Notification.addObserver(Notificator.onSpinnerStop, self.comp)
+        self.addObserver(Notificator.onSpinnerStop, self._onSpinnerStop)
 
         self.tc = TaskManager.createTaskChain(Repeat=True)
         with self.tc as tc:
@@ -31,17 +31,15 @@ class TaskNodeLoopedRotate(MixinNode, MixinTime, Task):
         return False
         pass
 
-    def comp(self):
-        self.complete()
-        self.tc.cancel()
+    def _onSpinnerStop(self):
         return True
 
-    def _onFinalize(self):
-        super(Task, self)._onFinalize()
+    def _onFinally(self):
+        super(TaskNodeLoopedRotate, self)._onFinally()
 
-        Notification.removeObserver(self.onSpinnerStop)
-
-        if self.tc is not None:
-            self.tc.cancel()
-        self.base = None
+        chain = self.tc
+        self.tc = None
+        if chain is not None:
+            chain.cancel()
         pass
+    pass

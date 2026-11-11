@@ -15,7 +15,45 @@ class TaskSubMovie2Play(MixinMovie2, Task):
     def _onInitialize(self):
         super(TaskSubMovie2Play, self)._onInitialize()
         self.playId = None
+        self.listening = False
         pass
+
+    def _onFinalize(self):
+        super(TaskSubMovie2Play, self)._onFinalize()
+
+        # end() normally removes the listener; this only covers a task finalized while still waiting
+        self.__removeEventListener()
+
+        self.playId = None
+
+    def __removeEventListener(self):
+        if self.listening is False:
+            return
+
+        self.listening = False
+
+        Animatable = self.getAnimatable()
+
+        if Animatable is None:
+            return
+
+        if Animatable.isActive() is False:
+            return
+
+        Entity = Animatable.getEntity()
+
+        if Entity is None:
+            return
+
+        if Entity.isInitialized() is False:
+            return
+
+        SubMovie = Entity.getSubMovie(self.SubMovieName)
+
+        if SubMovie is None:
+            return
+
+        SubMovie.setEventListener(onAnimatableEnd=None)
 
     def getAnimatable(self):
         return self.Movie2
@@ -68,6 +106,7 @@ class TaskSubMovie2Play(MixinMovie2, Task):
             pass
 
         SubMovie.setEventListener(onAnimatableEnd=self.__onAnimatableEnd)
+        self.listening = True
 
         return False
         pass
@@ -86,14 +125,9 @@ class TaskSubMovie2Play(MixinMovie2, Task):
         pass
 
     def end(self):
+        self.__removeEventListener()
+
         Animatable = self.getAnimatable()
         Animatable.appendParam('LastFrameSubMovies', self.SubMovieName)
-
-        if Animatable.isActive():
-            Entity = Animatable.getEntity()
-
-            if Entity is not None:
-                SubMovie = Entity.getSubMovie(self.SubMovieName)
-                SubMovie.setEventListener(onAnimatableEnd=None)
 
         self.complete()

@@ -5,14 +5,14 @@ class GuardBlockGame(object):
         self.source = source
         pass
 
-    def __blockGame(self, value):
-        GameManager.blockGame(value)
-        pass
-
     def __enter__(self):
+        def __blockGame(value):
+            GameManager.blockGame(value)
+            pass
+
         self.source.addTask("TaskGameUnblock")
 
-        return self.source.makeGuardSource(True, self.__blockGame)
+        return self.source.makeGuardSource(True, __blockGame)
         pass
 
     def __exit__(self, type, value, traceback):

@@ -11,6 +11,10 @@ class TaskCallback(Task):
         self.Cb = Utils.make_functor(params, "Cb")
         pass
 
+    def _onFinalize(self):
+        super(TaskCallback, self)._onFinalize()
+        self.Cb = None
+
     def _onValidate(self, params):
         super(TaskCallback, self)._onValidate(params)
 

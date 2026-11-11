@@ -1,7 +1,10 @@
+import _weakref
+
+
 class XmlNode(object):
     def __init__(self, name, parent):
         self.__name = name
-        self.__parent = parent
+        self.__parent = _weakref.ref(parent) if parent is not None else None
         self.__attr = {}
         self.__child = []
         pass
@@ -25,8 +28,11 @@ class XmlNode(object):
         pass
 
     def getParent(self):
-        return self.__parent
-        pass
+        if self.__parent is None:
+            return None
+
+        parent = self.__parent()
+        return parent
 
     def getChild(self):
         return self.__child

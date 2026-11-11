@@ -1,13 +1,14 @@
-﻿from Foundation.BaseEntity import BaseEntity
+﻿from Foundation.BaseScopeEntity import BaseScopeEntity
 from Foundation.ObjectManager import ObjectManager
-from Foundation.TaskManager import TaskManager
 
-class MovieTabsGroup(BaseEntity):
+class MovieTabsGroup(BaseScopeEntity):
+    ENTITY_SCOPE_REPEAT = True
+
     available_movies = ['Idle', 'Progress', 'Block', 'Idle', 'Holder']
 
     @staticmethod
     def declareORM(Type):
-        BaseEntity.declareORM(Type)
+        BaseScopeEntity.declareORM(Type)
 
         Type.addActionActivate("Tabs")
         Type.addActionActivate("Choice", Update=Type._updateChoice)
@@ -35,7 +36,6 @@ class MovieTabsGroup(BaseEntity):
         super(MovieTabsGroup, self).__init__()
 
         self.tabs = {}
-        self.raceTask = None
         self.old_choice = None
         pass
 
@@ -48,9 +48,10 @@ class MovieTabsGroup(BaseEntity):
     def get_default(self):
         return self.object.getTabs()[0]
 
-    def _onActivate(self):
-        super(MovieTabsGroup, self)._onActivate()
+    def _getScopeGroup(self):
+        return None
 
+    def _onScopeActivate(self, source):
         for tab in self.tabs.itervalues():
             tab[1].setEnable(True)
             tab[0].setEnable(False)
@@ -60,15 +61,11 @@ class MovieTabsGroup(BaseEntity):
         self.tabs[self.old_choice][0].setEnable(True)
         self.tabs[self.old_choice][1].setEnable(False)
 
-        self.raceTask = TaskManager.createTaskChain(Repeat=True)
-        with self.raceTask as tc:
-            for (key, value), source_slot in tc.addRaceTaskList(self.tabs.iteritems()):
-                source_slot.addTask("TaskMovieButtonClick", MovieButton=value[1])
-                source_slot.addFunction(self.object.setParam, 'Choice', key)
-                source_slot.addNotify(Notificator.onTabGroupSelect, self.object, key)
-                pass
+        for (key, value), source_slot in source.addRaceTaskList(self.tabs.iteritems()):
+            source_slot.addTask("TaskMovieButtonClick", MovieButton=value[1])
+            source_slot.addFunction(self.object.setParam, 'Choice', key)
+            source_slot.addNotify(Notificator.onTabGroupSelect, self.object, key)
             pass
-
         pass
 
     def _onFinalize(self):
@@ -79,7 +76,6 @@ class MovieTabsGroup(BaseEntity):
                 state.onDestroy()
 
         self.tabs = {}
-        self.raceTask = None
         pass
 
     def __set_tabs(self):
@@ -96,12 +92,8 @@ class MovieTabsGroup(BaseEntity):
             self.addChild(btn_false.getEntityNode())
             self.tabs[tab] = btn_true, btn_false
 
-    def _onDeactivate(self):
-        super(MovieTabsGroup, self)._onDeactivate()
-
+    def _onScopeDeactivate(self):
         for tab in self.tabs.itervalues():
             for state in tab:
                 state.setEnable(False)
-        self.raceTask.cancel()
-        self.raceTask = None
         pass

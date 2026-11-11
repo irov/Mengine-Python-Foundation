@@ -19,6 +19,18 @@ class TaskGuard(Task):
         return False
 
     def _onSkip(self):
-        if self.Enable is True:
-            self.Guard(False)
-            Notification.notify(Notificator.onTaskGuardUpdate, False)
+        guard = self.Guard
+        self.Guard = None
+
+        if self.Enable is not True:
+            return
+        if guard is None:
+            return
+
+        guard(False)
+        Notification.notify(Notificator.onTaskGuardUpdate, False)
+
+    def _onFinally(self):
+        super(TaskGuard, self)._onFinally()
+
+        self._onSkip()

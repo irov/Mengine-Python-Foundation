@@ -97,6 +97,10 @@ class Task(Params, Initializer):
     def _onFinally(self):
         pass
 
+    @staticmethod
+    def onCancelIdle(base):
+        pass
+
     def onValidate(self, params):
         #print "Task %s onValidate, skiped: %d" % (self.base, self.isSkiped())
         try:
