@@ -1,5 +1,5 @@
 def baseslots(*slots):
-    def meta(cls, name, bases, classdict):
+    def _baseslots_new(cls, name, bases, classdict):
         new_classdict = {}
         new_classdict.update(classdict)
 
@@ -9,11 +9,11 @@ def baseslots(*slots):
         return type(name, bases, new_classdict)
         pass
 
-    return type("meta_baseslots", (type,), dict(__new__=meta))
+    return type("meta_baseslots", (type,), dict(__new__=_baseslots_new))
     pass
 
 def finalslots(*slots):
-    def meta(cls, name, bases, classdict):
+    def _finalslots_new(cls, name, bases, classdict):
         mro = type(name, bases, {}).mro()
 
         final_slots = []
@@ -43,5 +43,5 @@ def finalslots(*slots):
         return type(name, bases, new_classdict)
         pass
 
-    return type("meta_finalslots", (type,), dict(__new__=meta))
+    return type("meta_finalslots", (type,), dict(__new__=_finalslots_new))
     pass
