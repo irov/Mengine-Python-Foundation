@@ -35,7 +35,9 @@ class TaskSceneLayerGroupEnable(MixinObserver, Task):
                 pass
 
     def __cbOnSceneInit(self, scene_name):
-        if scene_name != self.SceneName:
+        if self.SceneName is None:
+            self.SceneName = scene_name
+        elif scene_name != self.SceneName:
             return False
 
         self.__enableGroup()
@@ -47,8 +49,14 @@ class TaskSceneLayerGroupEnable(MixinObserver, Task):
             cur_scene_name = SceneManager.getCurrentSceneName()
 
             if cur_scene_name is None:
-                if SceneManager.isTransitionProgress() is False:
-                    self.invalidTask("Layer '%s' CurrentSceneName is None" % self.LayerName)
+                if SceneManager.isTransitionProgress() is True:
+                    return True
+
+                if SceneManager.isChangeScene() is True:
+                    self.addObserver(Notificator.onSceneInit, self.__cbOnSceneInit)
+                    return False
+
+                self.invalidTask("Layer '%s' CurrentSceneName is None" % self.LayerName)
 
                 return True
 

@@ -1,130 +1,123 @@
-MixinCode = '''
-from Foundation.ObjectManager import ObjectManager
-
-class {MixinType}(MixinGroup, Initializer):
-    def _onParams(self, params):
-        super({MixinType}, self)._onParams(params)
-
-        self.{TypeElement} = params.get("{TypeElement}")
-        self.{TypeElementName} = params.get("{TypeElementName}")
-        self.{TypeElementGroup} = params.get("{TypeElementGroup}")
-        self.{TypeElementGroupName} = params.get("{TypeElementGroupName}")
-        pass
-
-    def _onInitialize(self):
-        super({MixinType}, self)._onInitialize()
-        
-        def __checkObjectType():
-            TypeElements = tuple(ObjectManager.getObjectType(Type) for Type in {AliasElement})
-            
-            if issubclass(type(self.{TypeElement}), TypeElements) is False:
-                #self.initializeFailed("Mixin {TypeElement} type '%s' is not '%s'", type(self.{TypeElement}).__name__, TypeElements)
-                pass
-            pass
-
-        if self.{TypeElement} is not None:
-            if _DEVELOPMENT is True:
-                __checkObjectType()
-                pass
-                
-            self.{TypeElementName} = self.{TypeElement}.getName()
-            elementGroup = self.{TypeElement}.getGroup()
-
-            if elementGroup is not None:
-                self.{TypeElementGroup} = elementGroup
-                self.{TypeElementGroupName} = elementGroup.getName()
-                pass
-            return
-            pass
-
-        if self.{TypeElementName} is None:
-            self.initializeFailed("Mixin {TypeElementName} is not setup")
-            pass
-
-        if self.{TypeElementGroup} is None:
-            if self.{TypeElementGroupName} is None:
-                if self.Group is None:
-                    self.initializeFailed("Mixin {TypeElementGroupName} %s is not setup")
-                    pass
-
-                self.{TypeElementGroup} = self.Group
-                self.{TypeElementGroupName} = self.Group.getName()
-                pass
-            else:
-                if _DEVELOPMENT is True:
-                    if GroupManager.hasGroup(self.{TypeElementGroupName}) is False:
-                        self.initializeFailed("Mixin {TypeElement} not found Group %s"%(self.{TypeElementGroupName}))
-                        pass
-                    pass
-
-                elementGroup = GroupManager.getGroup(elementGroupName)
-
-                self.{TypeElementGroup} = elementGroup
-                self.{TypeElementGroupName} = elementGroup.getName()
-                pass
-            pass
-
-        if _DEVELOPMENT is True:
-            if self.{TypeElementGroup}.hasObject(self.{TypeElementName}) is False:
-                self.initializeFailed("Mixin {TypeElementName} Group %s not found Object %s"%(self.{TypeElementGroupName}, self.{TypeElementName}))
-                pass
-            pass
-
-        self.{TypeElement} = self.{TypeElementGroup}.getObject(self.{TypeElementName})
-        
-        if _DEVELOPMENT is True:
-            __checkObjectType()
-            pass      
-        pass
-    pass
-'''
-
 from Foundation.GroupManager import GroupManager
 from Foundation.Initializer import Initializer
 from Foundation.Task.MixinGroup import MixinGroup
+from Foundation.ObjectManager import ObjectManager
 
-def MixinObjectTemplate(TypeElement, AliasElement=None):
-    MixinType = "Mixin%s" % (TypeElement)
-    TypeElementName = "%sName" % (TypeElement)
-    TypeElementGroup = "%sGroup" % (TypeElement)
-    TypeElementGroupName = "%sGroupName" % (TypeElement)
-    AliasElement = AliasElement if AliasElement is not None else (TypeElement,)
 
-    MixinCodeElement = MixinCode.format(MixinType=MixinType, TypeElement=TypeElement, AliasElement=AliasElement, TypeElementName=TypeElementName, TypeElementGroup=TypeElementGroup, TypeElementGroupName=TypeElementGroupName)
+@meta.template
+def MixinObjectTemplate(TypeElement, AliasElement=None, MixinType=None):
+    if MixinType is None:
+        MixinType = @meta.concat("Mixin", TypeElement)
 
-    code = compile(MixinCodeElement, MixinType, "exec")
+    TypeElementName = @meta.concat(TypeElement, "Name")
+    TypeElementGroup = @meta.concat(TypeElement, "Group")
+    TypeElementGroupName = @meta.concat(TypeElement, "GroupName")
+    if AliasElement is None:
+        AliasElement = (TypeElement,)
 
-    MixinClass = dict(MixinGroup=MixinGroup, GroupManager=GroupManager, Initializer=Initializer)
-    exec(code, MixinClass)
+    @meta.emit(name=MixinType)
+    class Generated(MixinGroup, Initializer):
+        def _onParams(self, params):
+            super(@meta.current_class(), self)._onParams(params)
 
-    return MixinClass[MixinType]
-    pass
+            @meta.setattr(self, TypeElement, params.get(TypeElement))
+            @meta.setattr(self, TypeElementName, params.get(TypeElementName))
+            @meta.setattr(self, TypeElementGroup, params.get(TypeElementGroup))
+            @meta.setattr(self, TypeElementGroupName, params.get(TypeElementGroupName))
+            pass
 
-MixinHOG = MixinObjectTemplate("HOG")
-MixinItem = MixinObjectTemplate("Item")
-MixinSocket = MixinObjectTemplate("Socket")
-MixinInteraction = MixinObjectTemplate("Interaction")
-MixinShift = MixinObjectTemplate("Shift")
-MixinPuff = MixinObjectTemplate("Puff")
-MixinZoom = MixinObjectTemplate("Zoom")
-MixinDialog = MixinObjectTemplate("Dialog")
-MixinCutZoom = MixinObjectTemplate("CutZoom")
-MixinMovie = MixinObjectTemplate("Movie")
-MixinMovie2 = MixinObjectTemplate("Movie2")
-MixinPoint = MixinObjectTemplate("Point")
-MixinButton = MixinObjectTemplate("Button")
-MixinAnimation = MixinObjectTemplate("Animation")
-MixinTransition = MixinObjectTemplate("Transition")
-MixinFan = MixinObjectTemplate("Fan")
-MixinFanItem = MixinObjectTemplate("FanItem")
-MixinCheckBox = MixinObjectTemplate("CheckBox")
-MixinMovieCheckBox = MixinObjectTemplate("MovieCheckBox")
-MixinMovie2CheckBox = MixinObjectTemplate("Movie2CheckBox")
-MixinCheckBoxAlias = MixinObjectTemplate("CheckBox", ("CheckBox", "MovieCheckBox", "Movie2CheckBox"))
-MixinVideo = MixinObjectTemplate("Video")
-MixinText = MixinObjectTemplate("Text")
-MixinStates = MixinObjectTemplate("States")
-MixinInventoryItem = MixinObjectTemplate("InventoryItem")
-MixinMovieButton = MixinObjectTemplate("MovieButton")
-MixinMovie2Button = MixinObjectTemplate("Movie2Button")
-MixinMovieItem = MixinObjectTemplate("MovieItem")
+        def _onInitialize(self):
+            super(@meta.current_class(), self)._onInitialize()
+
+            def __checkObjectType():
+                TypeElements = tuple(ObjectManager.getObjectType(Type) for Type in AliasElement)
+
+                if issubclass(type(@meta.getattr(self, TypeElement)), TypeElements) is False:
+                    # self.initializeFailed("Mixin object has an unexpected type")
+                    pass
+                pass
+
+            if @meta.getattr(self, TypeElement) is not None:
+                if _DEVELOPMENT is True:
+                    __checkObjectType()
+                    pass
+
+                @meta.setattr(self, TypeElementName, @meta.getattr(self, TypeElement).getName())
+                elementGroup = @meta.getattr(self, TypeElement).getGroup()
+
+                if elementGroup is not None:
+                    @meta.setattr(self, TypeElementGroup, elementGroup)
+                    @meta.setattr(self, TypeElementGroupName, elementGroup.getName())
+                    pass
+                return
+
+            if @meta.getattr(self, TypeElementName) is None:
+                self.initializeFailed(@meta.concat("Mixin ", TypeElementName, " is not setup"))
+                pass
+
+            if @meta.getattr(self, TypeElementGroup) is None:
+                if @meta.getattr(self, TypeElementGroupName) is None:
+                    if self.Group is None:
+                        self.initializeFailed(@meta.concat("Mixin ", TypeElementGroupName, " %s is not setup"))
+                        pass
+
+                    @meta.setattr(self, TypeElementGroup, self.Group)
+                    @meta.setattr(self, TypeElementGroupName, self.Group.getName())
+                    pass
+                else:
+                    if _DEVELOPMENT is True:
+                        if GroupManager.hasGroup(@meta.getattr(self, TypeElementGroupName)) is False:
+                            self.initializeFailed(@meta.concat("Mixin ", TypeElement, " not found Group %s") % (@meta.getattr(self, TypeElementGroupName)))
+                            pass
+                        pass
+
+                    elementGroup = GroupManager.getGroup(@meta.getattr(self, TypeElementGroupName))
+
+                    @meta.setattr(self, TypeElementGroup, elementGroup)
+                    @meta.setattr(self, TypeElementGroupName, elementGroup.getName())
+                    pass
+                pass
+
+            if _DEVELOPMENT is True:
+                if @meta.getattr(self, TypeElementGroup).hasObject(@meta.getattr(self, TypeElementName)) is False:
+                    self.initializeFailed(@meta.concat("Mixin ", TypeElementName, " Group %s not found Object %s") % (@meta.getattr(self, TypeElementGroupName), @meta.getattr(self, TypeElementName)))
+                    pass
+                pass
+
+            @meta.setattr(self, TypeElement, @meta.getattr(self, TypeElementGroup).getObject(@meta.getattr(self, TypeElementName)))
+
+            if _DEVELOPMENT is True:
+                __checkObjectType()
+                pass
+            pass
+        pass
+
+
+MixinHOG = @meta.expand(MixinObjectTemplate, "HOG")
+MixinItem = @meta.expand(MixinObjectTemplate, "Item")
+MixinSocket = @meta.expand(MixinObjectTemplate, "Socket")
+MixinInteraction = @meta.expand(MixinObjectTemplate, "Interaction")
+MixinShift = @meta.expand(MixinObjectTemplate, "Shift")
+MixinPuff = @meta.expand(MixinObjectTemplate, "Puff")
+MixinZoom = @meta.expand(MixinObjectTemplate, "Zoom")
+MixinDialog = @meta.expand(MixinObjectTemplate, "Dialog")
+MixinCutZoom = @meta.expand(MixinObjectTemplate, "CutZoom")
+MixinMovie = @meta.expand(MixinObjectTemplate, "Movie")
+MixinMovie2 = @meta.expand(MixinObjectTemplate, "Movie2")
+MixinPoint = @meta.expand(MixinObjectTemplate, "Point")
+MixinButton = @meta.expand(MixinObjectTemplate, "Button")
+MixinAnimation = @meta.expand(MixinObjectTemplate, "Animation")
+MixinTransition = @meta.expand(MixinObjectTemplate, "Transition")
+MixinFan = @meta.expand(MixinObjectTemplate, "Fan")
+MixinFanItem = @meta.expand(MixinObjectTemplate, "FanItem")
+MixinCheckBox = @meta.expand(MixinObjectTemplate, "CheckBox")
+MixinMovieCheckBox = @meta.expand(MixinObjectTemplate, "MovieCheckBox")
+MixinMovie2CheckBox = @meta.expand(MixinObjectTemplate, "Movie2CheckBox")
+MixinCheckBoxAlias = @meta.expand(MixinObjectTemplate, "CheckBox", ("CheckBox", "MovieCheckBox", "Movie2CheckBox"), MixinType="MixinCheckBoxAlias")
+MixinVideo = @meta.expand(MixinObjectTemplate, "Video")
+MixinText = @meta.expand(MixinObjectTemplate, "Text")
+MixinStates = @meta.expand(MixinObjectTemplate, "States")
+MixinInventoryItem = @meta.expand(MixinObjectTemplate, "InventoryItem")
+MixinMovieButton = @meta.expand(MixinObjectTemplate, "MovieButton")
+MixinMovie2Button = @meta.expand(MixinObjectTemplate, "Movie2Button")
+MixinMovieItem = @meta.expand(MixinObjectTemplate, "MovieItem")

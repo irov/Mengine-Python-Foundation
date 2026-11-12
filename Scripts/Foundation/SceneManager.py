@@ -688,6 +688,10 @@ class SceneManager(Manager):
 
     @staticmethod
     def restartCurrentScene(cb, cb_removed = None, cb_preparation = None):
+        if SceneManager.s_changeScene is True:
+            Trace.log("SceneManager", 0, "SceneManager.restartCurrentScene: already changing scene")
+            return
+
         if SceneManager.s_currentSceneName is None:
             Trace.log("SceneManager", 0, "SceneManager.restartCurrentScene: current scene is None")
             return
@@ -1008,14 +1012,30 @@ class SceneManager(Manager):
 
     @staticmethod
     def removeCurrentScene(cb):
+        if SceneManager.s_changeScene is True:
+            Trace.log("SceneManager", 0, "SceneManager.removeCurrentScene: already changing scene")
+            return
+
+        if SceneManager.s_currentSceneName is None:
+            Trace.log("SceneManager", 0, "SceneManager.removeCurrentScene: current scene is None")
+            return
+
         SceneManager.s_currentScene = None
         SceneManager.s_currentSceneName = None
         SceneManager.s_currentDescription = None
         SceneManager.s_currentSceneEntering = False
         SceneManager.s_changeSceneName = None
-        SceneManager.s_changeScene = False
+        SceneManager.s_changeScene = True
 
-        Mengine.removeCurrentScene(False, cb)
+        def __onRemoveScene():
+            SceneManager.s_changeScene = False
+
+            if cb is not None:
+                cb()
+                pass
+            pass
+
+        Mengine.removeCurrentScene(False, __onRemoveScene)
 
     @staticmethod
     def setCurrentSceneEntering(Value):
