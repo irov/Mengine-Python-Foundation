@@ -111,7 +111,7 @@ class SystemAnalytics(System):
 
     def _onFinalize(self):
         # clean up
-        for analytics_unit in SystemAnalytics.s_active_analytics.values():
+        for analytics_unit in SystemAnalytics.s_active_analytics.itervalues():
             analytics_unit.clean()
         SystemAnalytics.s_active_analytics = {}
         SystemAnalytics.__static_extra_params_methods = []

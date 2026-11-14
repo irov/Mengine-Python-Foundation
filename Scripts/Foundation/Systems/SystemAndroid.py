@@ -19,13 +19,13 @@ class SystemAndroid(System):
 
     def _removeAndroidCallbacks(self, plugin_name=None):
         if plugin_name is None:
-            for current_plugin_name in list(self._android_callbacks.keys()):
+            for current_plugin_name in list(self._android_callbacks.iterkeys()):
                 self._removeAndroidCallbacks(current_plugin_name)
             return
 
         plugin_callbacks = self._android_callbacks.pop(plugin_name, {})
 
-        for callback_name, identity in plugin_callbacks.items():
+        for callback_name, identity in plugin_callbacks.iteritems():
             Mengine.removeAndroidCallback(plugin_name, callback_name, identity)
 
     def _onInitializeFailed(self, ex):

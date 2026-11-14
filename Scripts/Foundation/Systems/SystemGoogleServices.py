@@ -350,7 +350,7 @@ class SystemGoogleServices(SystemAndroid):
 
         currency = None
         products = {}
-        for prod_id, details in SystemGoogleServices.s_products.items():
+        for prod_id, details in SystemGoogleServices.s_products.iteritems():
             offer = details.get("oneTimePurchaseOfferDetails")
             if (offer is None or "priceAmountMicros" not in offer or
                     (offer.get("priceCurrencyCode") in (None, "") and
@@ -854,7 +854,7 @@ class SystemGoogleServices(SystemAndroid):
             return
         if Mengine.hasDevToDebugTab("GoogleServices"):
             return
-        if True not in SystemGoogleServices.b_plugins.values():
+        if True not in SystemGoogleServices.b_plugins.itervalues():
             return
 
         tab = Mengine.addDevToDebugTab("GoogleServices")

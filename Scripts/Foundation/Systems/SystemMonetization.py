@@ -701,7 +701,7 @@ class SystemMonetization(System):
         receipts = Mengine.decodeJSON(raw)
         if not isinstance(receipts, dict):
             raise ValueError("Invalid purchaseRewards journal")
-        for key, receipt in receipts.items():
+        for key, receipt in receipts.iteritems():
             identity = Mengine.decodeJSON(key)
             if not isinstance(identity, list) or len(identity) != 2 or not isinstance(receipt, dict):
                 raise ValueError("Invalid purchase receipt")
@@ -779,7 +779,7 @@ class SystemMonetization(System):
             if Mengine.saveAccounts() is False:
                 raise RuntimeError("Unable to save finalized purchase journal")
         except Exception:
-            for name, value in previous.items():
+            for name, value in previous.iteritems():
                 Mengine.changeAccountSetting(account_id, name, value)
             raise
         if SystemMonetization._loaded_account == account_id:
@@ -1080,7 +1080,7 @@ class SystemMonetization(System):
 
         def _cbSentRewardParams(prod_id, rewards):
             params = {"product_id": prod_id}
-            params.update({str(key): value for key, value in rewards.items()})
+            params.update({str(key): value for key, value in rewards.iteritems()})
             return params
 
         advert_prod_id = MonetizationManager.getGeneralSetting("AdvertProductID")
@@ -1136,7 +1136,7 @@ class SystemMonetization(System):
             storage[today_viewed_ads] = SecureValue(today_viewed_ads, 0)
             storage[last_viewed_date] = SecureStringValue(last_viewed_date, "")
 
-        for key, (value_type, default) in SystemMonetization.s_storage_types.items():
+        for key, (value_type, default) in SystemMonetization.s_storage_types.iteritems():
             if key in storage:
                 raise ValueError("Duplicate monetization storage key {!r}".format(key))
             storage[key] = value_type(key, default)
@@ -1573,7 +1573,7 @@ class SystemMonetization(System):
         def _getSettingsWidgetTitle():
             title = "**Monetization settings**"
             title += "".join(["\n* {}: `{}`".format(key, val)
-                              for key, val in MonetizationManager.getGeneralSettings().items()])
+                              for key, val in MonetizationManager.getGeneralSettings().iteritems()])
             return title
 
         w_settings_descr = Mengine.createDevToDebugWidgetText("monetization_settings_descr")

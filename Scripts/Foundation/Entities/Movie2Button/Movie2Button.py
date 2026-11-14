@@ -59,7 +59,7 @@ class Movie2Button(BaseEntity):
         self.EventSetState = Event("SetState")
 
     def hasSlot(self, slot_name):
-        for movie in self.Movies.values():
+        for movie in self.Movies.itervalues():
             if movie is None:
                 continue
             if movie.hasMovieSlot(slot_name):

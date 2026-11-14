@@ -48,7 +48,7 @@ class CurrencyManager(Manager):
     def _getCurrencyTextIds():
         """ util for getCurrentCurrencySymbol. Returns: dict = {currency_code: currency_text_id} """
         currency_text_ids = {}
-        for text_id, currencies in CurrencyManager.CURRENCY_TEXTS_IDS.items():
+        for text_id, currencies in CurrencyManager.CURRENCY_TEXTS_IDS.iteritems():
             for currency in currencies:
                 currency_text_ids[currency] = text_id
         return currency_text_ids

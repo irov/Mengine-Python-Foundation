@@ -98,8 +98,8 @@ class Initializer(object):
     def validate(cls):
         if _VALIDATION is True:
             print "Validating Initializers..."
-            for initializer, objs in Initializer.InitializerReferences.items():
-                for obj, stack in objs.items():
+            for initializer, objs in Initializer.InitializerReferences.iteritems():
+                for obj, stack in objs.iteritems():
                     trace_lines = ["Initializeback (most recent call last):\n"]
 
                     for filename, lineno, funcname, _ in stack:

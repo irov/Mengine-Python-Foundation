@@ -295,7 +295,7 @@ class DatabaseManager(Manager):
 
             `Rarity` is None, so we remove key `Rarity` from search and ignore it.
         """
-        keys_items = {key: value for key, value in keys.items() if value is not None}
+        keys_items = {key: value for key, value in keys.iteritems() if value is not None}
         if len(keys_items) == 0:
             Trace.log("Manager", 0, "Can't select records with None keys {}".format(keys.keys()))
             return orm

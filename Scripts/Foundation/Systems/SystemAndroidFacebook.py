@@ -72,7 +72,7 @@ class SystemAndroidFacebook(System):
             Mengine.removeAndroidCallback(PLUGIN_NAME, name, callback)
         self._android_callbacks = []
 
-        for event, callbacks in SystemAndroidFacebook.callbacks.items():
+        for event, callbacks in SystemAndroidFacebook.callbacks.iteritems():
             for callback in callbacks:
                 event.removeObserver(callback)
         SystemAndroidFacebook.callbacks.clear()

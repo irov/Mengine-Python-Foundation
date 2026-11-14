@@ -1022,7 +1022,7 @@ def getCurrentPlatformParams():
         "WINDOWS": (_WINDOWS is True or Mengine.getOptionValue(option) == "windows") and Mengine.hasTouchpad() is False,
         "MAC": (_MACOS is True or Mengine.getOptionValue(option) == "mac") and Mengine.hasTouchpad() is False
     }
-    if True not in platforms.values():
+    if True not in platforms.itervalues():
         if _DEVELOPMENT is True:
             Trace.msg("!!!! Utils.getCurrentPlatformParams: remove -touchpad or add -{}:android|ios".format(option))
             Trace.msg("!!!! Utils.getCurrentPlatformParams: set Platform to 'WINDOWS' until you fix the conflict")
@@ -1032,7 +1032,7 @@ def getCurrentPlatformParams():
 def getCurrentPlatform():
     """ :returns: 'Android' or 'IOS' or 'WINDOWS' """
     platforms = getCurrentPlatformParams()
-    __active_platforms = [p for (p, v) in platforms.items() if v is True]
+    __active_platforms = [p for (p, v) in platforms.iteritems() if v is True]
     cur_platform = __active_platforms[0]
     return cur_platform
 
@@ -1283,7 +1283,7 @@ def getWeightedRandomByKey(records, key, randomizer=None):
             weights.append(_get(record, key))
     else:
         # dict-type records, we'll get key as output
-        for name, record in records.items():
+        for name, record in records.iteritems():
             if key not in record:
                 continue
             elements.append(name)
@@ -1322,6 +1322,6 @@ def dictToStruct(d):
     if not isinstance(d, dict):
         return d
 
-    p = {key: dictToStruct(value) for key, value in d.items()}
+    p = {key: dictToStruct(value) for key, value in d.iteritems()}
 
     return type("Struct", (), p)()

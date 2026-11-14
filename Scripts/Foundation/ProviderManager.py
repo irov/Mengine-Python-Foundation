@@ -74,7 +74,7 @@ class ProviderManager(Manager):
 
     @staticmethod
     def _onFinalize():
-        for provider in ProviderManager.s_providers.values():
+        for provider in ProviderManager.s_providers.itervalues():
             ProviderManager.__removeTaskSourceInjections(provider)
             provider.removeProvider()
             pass

@@ -68,7 +68,7 @@ class SystemQALogger(System):
             "onShowBattleCardInfo": "show battle card info: %s",
             "onBattleCardClick": "click on card at position %s",
         }
-        for identity, message in identities_with_message.items():
+        for identity, message in identities_with_message.iteritems():
             self.__createMessageObserver(identity, message)
 
     def _addFilterObservers(self):
@@ -84,7 +84,7 @@ class SystemQALogger(System):
             "onInventoryCombineInventoryItem": self._cbInventoryCombineInventoryItem,
             "onHintActionStart": self._cbHintActionStart,
         }
-        for identity, Filter in identities_with_filter.items():
+        for identity, Filter in identities_with_filter.iteritems():
             if Notificator.hasIdentity(identity) is False:
                 continue
             notificator = Notificator.getIdentity(identity)

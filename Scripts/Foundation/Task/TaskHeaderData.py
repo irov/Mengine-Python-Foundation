@@ -35,7 +35,7 @@ def _redact_value(value):
     if isinstance(value, dict):
         redacted_value = {}
 
-        for key, item in value.items():
+        for key, item in value.iteritems():
             if _is_sensitive_field(key) is True:
                 redacted_value[key] = _REDACTED_VALUE
             else:

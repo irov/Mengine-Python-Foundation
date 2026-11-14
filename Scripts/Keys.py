@@ -172,7 +172,7 @@ VK_MAP = {
     'VK_PA1': Mengine.KC_PA1,
     'VK_OEM_CLEAR': Mengine.KC_OEM_CLEAR
 }
-KC_MAP = {KC: VK for VK, KC in VK_MAP.items()}
+KC_MAP = {KC: VK for VK, KC in VK_MAP.iteritems()}
 
 
 def getVirtualKeysCode(*vks):

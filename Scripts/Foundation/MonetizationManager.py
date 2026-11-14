@@ -169,7 +169,7 @@ class MonetizationManager(CurrencyManager):
         if _DEVELOPMENT is False:
             return True
 
-        for product in MonetizationManager.s_products.values():
+        for product in MonetizationManager.s_products.itervalues():
             currency = product.getCurrency()
             if currency == "Advert":
                 if " " in product.name:
@@ -285,7 +285,7 @@ class MonetizationManager(CurrencyManager):
     def _loadRedirector(records):
         TYPES_BLACKLIST = ["redirect"]
         HUMAN_TABLE_NAMES = {
-            value: key for key, value in MonetizationManager.__PARAMS_TABLE_NAMES.items()
+            value: key for key, value in MonetizationManager.__PARAMS_TABLE_NAMES.iteritems()
             if key not in TYPES_BLACKLIST
         }
 
@@ -308,7 +308,7 @@ class MonetizationManager(CurrencyManager):
 
             platforms = getCurrentPlatformParams()
 
-            for platform, b_active in platforms.items():
+            for platform, b_active in platforms.iteritems():
                 if b_active is False:
                     continue
                 table_name = record.get(platform)
@@ -340,11 +340,11 @@ class MonetizationManager(CurrencyManager):
 
         Trace.msg("--- Platform ---".center(SIZE, " "))
         platform_params = getCurrentPlatformParams()
-        for platform, status in platform_params.items():
+        for platform, status in platform_params.iteritems():
             Trace.msg("{}:  ".format(platform).rjust(HALF_SIZE) + str(status).ljust(HALF_SIZE))
 
         Trace.msg("--- Used tables ---".center(SIZE, " "))
-        for key, table_name in MonetizationManager.__PARAMS_TABLE_NAMES.items():
+        for key, table_name in MonetizationManager.__PARAMS_TABLE_NAMES.iteritems():
             Trace.msg("{}:  ".format(key).rjust(HALF_SIZE) + table_name.ljust(HALF_SIZE))
 
         Trace.msg("-" * SIZE)
@@ -414,7 +414,7 @@ class MonetizationManager(CurrencyManager):
 
         MonetizationManager.addObserver(Notificator.onGetRemoteConfig, MonetizationManager._cbGetRemoteConfig)
 
-        for ad_type, ad_names in MonetizationManager.s_advert_names.items():
+        for ad_type, ad_names in MonetizationManager.s_advert_names.iteritems():
             if len(ad_names) == 0:
                 MonetizationManager.s_advert_names[ad_type] = [ad_type]     # default name
 
@@ -448,7 +448,7 @@ class MonetizationManager(CurrencyManager):
         if currency is not None and currency != "":
             MonetizationManager.setCurrentCurrencyCode(currency)
 
-        for prod_id, new_params_dict in upd_params_dict.items():
+        for prod_id, new_params_dict in upd_params_dict.iteritems():
             if MonetizationManager.hasProductInfo(prod_id) is False:
                 continue
 
@@ -456,7 +456,7 @@ class MonetizationManager(CurrencyManager):
             if "price" in new_params_dict and "formatted_price" not in new_params_dict:
                 # A numeric price change invalidates the old localized price.
                 product.formatted_price = None
-            for key, value in new_params_dict.items():
+            for key, value in new_params_dict.iteritems():
                 if key not in whitelist_params:
                     continue
                 product.__dict__[key] = value
@@ -490,7 +490,7 @@ class MonetizationManager(CurrencyManager):
         try:
             patch = Mengine.decodeJSON(json_string)
 
-            for key, value in patch.items():
+            for key, value in patch.iteritems():
                 if key not in whitelist:
                     continue
 

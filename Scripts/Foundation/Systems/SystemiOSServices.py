@@ -363,7 +363,7 @@ class SystemiOSServices(System):
         if product is None:
             Notification.notify(Notificator.onPayFailed, product_id)
             Notification.notify(Notificator.onPayComplete, product_id)
-            Trace.log("System", 0, "Product with id {} not found in responded products {}!!!".format(product_id, list(SystemiOSServices._products.keys())))
+            Trace.log("System", 0, "Product with id {} not found in responded products {}!!!".format(product_id, list(SystemiOSServices._products.iterkeys())))
             return
 
         Mengine.iOSStoreInAppPurchasePurchaseProduct(product)

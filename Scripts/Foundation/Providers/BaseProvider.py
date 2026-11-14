@@ -12,7 +12,7 @@ class BaseProvider(object):
     def _isMethodsValid(cls, methods):
         is_valid = True
 
-        for name, method in methods.items():
+        for name, method in methods.iteritems():
             if name not in cls.s_allowed_methods:
                 Trace.log("Provider", 0, "Unknown method {!r} ({})".format(name, method))
                 is_valid = False

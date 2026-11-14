@@ -62,7 +62,7 @@ class SystemiOSFacebook(System):
 
         Mengine.iOSFacebookSetProvider({})
 
-        for event, callbacks in SystemiOSFacebook.callbacks.items():
+        for event, callbacks in SystemiOSFacebook.callbacks.iteritems():
             for callback in callbacks:
                 event.removeObserver(callback)
         SystemiOSFacebook.callbacks.clear()

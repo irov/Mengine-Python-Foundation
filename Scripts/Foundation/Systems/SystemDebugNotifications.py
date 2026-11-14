@@ -44,7 +44,7 @@ class SystemDebugNotifications(System):
                     return str(arg)
 
             args = tuple(map(mapper, args))  # fix for unicode values
-            kwargs = dict(map(lambda pair: (pair[0], mapper(pair[1])), kwargs.items()))
+            kwargs = dict(map(lambda pair: (pair[0], mapper(pair[1])), kwargs.iteritems()))
 
             f_args = " {}".format(args) if show_args is True else ""
             f_msg = self._prepareMessageArgs(identity, message, args)

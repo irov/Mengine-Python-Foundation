@@ -13,8 +13,8 @@ class SystemAndroidLifecycle(System):
     def __setCallbacks(self):
         plugins_callbacks = {}
 
-        for plugin, plugin_callbacks in plugins_callbacks.items():
-            for method, notificator in plugin_callbacks.items():
+        for plugin, plugin_callbacks in plugins_callbacks.iteritems():
+            for method, notificator in plugin_callbacks.iteritems():
                 Mengine.addAndroidCallback(plugin, method, self.__createCallback(notificator))
 
     def __createCallback(self, notificator):

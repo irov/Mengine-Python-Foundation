@@ -58,7 +58,7 @@ class MonetizationTransaction(object):
         previous = {}
         MonetizationTransaction.active = True
         try:
-            for key, value in settings.items():
+            for key, value in settings.iteritems():
                 if Mengine.hasCurrentAccountSetting(key) is False:
                     if Mengine.addCurrentAccountSetting(key, u'None', None) is not True:
                         raise RuntimeError("Unable to create purchase setting {!r}".format(key))
@@ -71,7 +71,7 @@ class MonetizationTransaction(object):
             if settings and Mengine.saveAccount() is False:
                 raise RuntimeError("Unable to commit purchase account {!r}".format(self.account_id))
         except Exception:
-            for key, value in previous.items():
+            for key, value in previous.iteritems():
                 Mengine.changeCurrentAccountSetting(key, value)
             raise
         finally:

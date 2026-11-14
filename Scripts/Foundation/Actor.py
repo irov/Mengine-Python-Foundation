@@ -80,7 +80,7 @@ class Actor(object):
         pass
 
     def validateAction(self, params, consts):
-        for action in self.ACTOR_ACTIONS.keys():
+        for action in self.ACTOR_ACTIONS.iterkeys():
             if action not in params and action not in consts:
                 typeActor = type(self)
                 self._actorFailed(typeActor, "Actor actions '%s' params '%s' invalid action '%s'"%(self.ACTOR_ACTIONS.keys(), params.keys(), action))
