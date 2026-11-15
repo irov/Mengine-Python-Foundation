@@ -86,6 +86,14 @@ class SystemManager(Manager):
 
             return False
 
+        # Callbacks may add or remove systems during dispatch.
+        for system in SystemManager.systems.values():
+            if system is sys:
+                continue
+
+            SystemManager.callSystemMethod(system, "onSystemRun", sys)
+            pass
+
         return sys
 
     @staticmethod
@@ -116,6 +124,30 @@ class SystemManager(Manager):
     @staticmethod
     def getSystems():
         return SystemManager.systems
+
+    @staticmethod
+    def callSystemMethod(system, method, *args):
+        if system.isRun() is False:
+            return
+
+        callback = getattr(system, method, None)
+        if callable(callback) is False:
+            return
+
+        try:
+            callback(*args)
+            pass
+        except Exception as ex:
+            Trace.log_exception("System", 0, "SystemManager.callSystemMethod %s.%s error: %s" % (system.getName(), method, ex))
+            pass
+        pass
+
+    @staticmethod
+    def broadcastSystemMethod(method, *args):
+        for system in SystemManager.systems.values():
+            SystemManager.callSystemMethod(system, method, *args)
+            pass
+        pass
 
     @staticmethod
     def removeSystem(name):

@@ -909,6 +909,7 @@ def onInitialize():
         , "ConsentProvider"
         , "SupportProvider"
         , "LocalNotificationsProvider"
+        , "AdminPanelProvider"
     ]
 
     from Foundation.ProviderManager import ProviderManager
