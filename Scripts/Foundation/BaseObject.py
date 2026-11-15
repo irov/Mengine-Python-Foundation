@@ -36,6 +36,18 @@ class BaseObject(Params, Initializer):
     def getGroup(self):
         return self.Group
 
+    def getRootGroup(self):
+        group = self.getGroup()
+        if group is None:
+            return None
+
+        while True:
+            parentGroup = group.getGroup()
+            if parentGroup is None:
+                return group
+
+            group = parentGroup
+
     def setLayerName(self, layerName):
         self.layerName = layerName
 
