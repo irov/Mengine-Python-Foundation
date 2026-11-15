@@ -47,8 +47,8 @@ class SystemAndroidOpButton(SystemAndroid):
     def isAvailable():
         return Mengine.androidBooleanMethod(SystemAndroidOpButton.PLUGIN_NAME, "isInitialized")
 
-    def addButton(self, tab, identifier, title, callback):
-        self.__commands[(tab, identifier)] = callback
+    def addButton(self, tab, identifier, title, callback, *args):
+        self.__commands[(tab, identifier)] = (callback, args)
         Mengine.androidMethod(self.PLUGIN_NAME, "addCommandButton", tab, identifier, title)
         return True
 
@@ -59,9 +59,10 @@ class SystemAndroidOpButton(SystemAndroid):
         pass
 
     def __onCommand(self, tab, identifier):
-        callback = self.__commands.get((tab, identifier))
-        if callback is None:
+        command = self.__commands.get((tab, identifier))
+        if command is None:
             return
 
-        callback()
+        callback, args = command
+        callback(*args)
         pass

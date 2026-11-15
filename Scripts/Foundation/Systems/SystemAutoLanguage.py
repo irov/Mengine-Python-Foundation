@@ -40,11 +40,22 @@ class SystemAutoLanguage(System):
 
         return True
 
+    def setDisabled(self, disabled):
+        self.disabled = disabled
+
+        if Mengine.hasCurrentAccount() is False:
+            return
+
+        if Mengine.hasCurrentAccountSetting("AutoLanguageDisable") is False:
+            return
+
+        Mengine.changeCurrentAccountSettingBool("AutoLanguageDisable", disabled)
+        Mengine.saveAccounts()
+        pass
+
     def disable(self):
-        self.disabled = True
-        if Mengine.hasCurrentAccountSetting("AutoLanguageDisable"):
-            Mengine.changeCurrentAccountSettingBool("AutoLanguageDisable", True)
-            Mengine.saveAccounts()
+        self.setDisabled(True)
+        pass
 
     def setGameLangAsDevice(self):
         self._setLocale(self._default_locale)

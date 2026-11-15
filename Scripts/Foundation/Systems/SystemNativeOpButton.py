@@ -31,8 +31,8 @@ class SystemNativeOpButton(System):
             pass
         pass
 
-    def addButton(self, tab, identifier, title, callback):
-        if Mengine.opButtonAddButton(tab, identifier, title, callback) is False:
+    def addButton(self, tab, identifier, title, callback, *args):
+        if Mengine.opButtonAddButton(tab, identifier, title, callback, *args) is False:
             return False
 
         self._tabs.add(tab)
