@@ -684,7 +684,7 @@ class Params(object):
         return True
 
     def validateParams(self):
-        l = list(set(self.params.keys() + self.consts.keys()) - set(self.DECLARE_PARAMS + self.DECLARE_CONSTS))
+        l = list(set(xchain(self.params.iterkeys(), self.consts.iterkeys())) - set(xchain(self.DECLARE_PARAMS, self.DECLARE_CONSTS)))
 
         if len(l) > 0:
             Trace.log("Params", 0, "Params %s params %s declare %s invalid params %s" % (self.__class__.__name__, self.params.keys() + self.consts.keys(), self.DECLARE_PARAMS + self.DECLARE_CONSTS, l))

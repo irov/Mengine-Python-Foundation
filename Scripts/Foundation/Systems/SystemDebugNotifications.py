@@ -77,7 +77,7 @@ class SystemDebugNotifications(System):
         if notificator is None:
             return
 
-        args = [int(arg) if arg.isdigit() else arg for arg in params[1:]]
+        args = [int(arg) if arg.isdigit() else arg for arg in xslice(params, 1, None)]
         Notification.notify(notificator, *args)
         Trace.msg("<SystemDebugNotifications> sent notify '{} {}' via DevToDebug".format(identity, args))
 

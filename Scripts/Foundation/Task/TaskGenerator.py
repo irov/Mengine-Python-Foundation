@@ -820,7 +820,7 @@ class TaskSource(object):
         return TaskSourceTgsList(tgs)
 
     def addParallelTaskZip(self, *objects):
-        return self.addParallelTaskList(list(zip(*objects)))
+        return self.addParallelTaskList(zip(*objects))
 
     def addRaceTask(self, count, NoSkip=False, RaceSkip=False):
         assert self.complete is False
@@ -865,7 +865,7 @@ class TaskSource(object):
         return TaskSourceTgsList(tgs)
 
     def addRaceTaskZip(self, *Objects, **Kwargs):
-        return self.addRaceTaskList(list(zip(*Objects)), **Kwargs)
+        return self.addRaceTaskList(zip(*Objects), **Kwargs)
 
     def addRaceScope(self, count, scope, NoSkip=False, RaceSkip=False):
         winner = _Capture(None, -1)

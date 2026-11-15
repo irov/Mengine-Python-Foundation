@@ -136,7 +136,7 @@ def caller(deep=0):
 
 def __getTraceback():
     message = "\nTraceback (most recent call last):"
-    for (filename, line_number, function_name, text) in extract_stack()[2:]:
+    for (filename, line_number, function_name, text) in xslice(extract_stack(), 2, None):
         message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
     return message
 

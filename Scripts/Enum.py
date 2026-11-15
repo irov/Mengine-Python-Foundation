@@ -1,5 +1,5 @@
 def make_enum(*sequential, **named):
-    enums = dict(zip(sequential, range(len(sequential))), **named)
+    enums = dict(xzip(sequential, xrange(len(sequential))), **named)
     return type('Enum', (), enums)
     pass
 

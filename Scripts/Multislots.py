@@ -16,7 +16,7 @@ def finalslots(*slots):
 
         final_slots = []
 
-        for b in mro[1:]:
+        for b in xslice(mro, 1, None):
             if hasattr(b, "__multislots__") is False:
                 continue
 

@@ -1146,7 +1146,7 @@ class SimpleLogger(object):
         if trace is True:
             f_message += "\n"
             f_message += "\nTraceback (most recent call last):"
-            for (filename, line_number, function_name, text) in Trace.extract_stack()[1:]:
+            for (filename, line_number, function_name, text) in xslice(Trace.extract_stack(), 1, None):
                 f_message += "\n  File \"%s\", line %s in %s" % (filename, line_number, function_name)
 
         if err is True:
