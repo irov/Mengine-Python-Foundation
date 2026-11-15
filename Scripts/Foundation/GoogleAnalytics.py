@@ -39,7 +39,7 @@ class GoogleAnalytics(Manager):
                 new_dict[key] = value
         # check min count of parameters
         for param in ['cid', 't']:
-            if param not in new_dict.iterkeys():
+            if param not in new_dict:
                 print('Not all parameters are present')
                 print(new_dict)
                 return

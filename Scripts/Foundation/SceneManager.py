@@ -226,7 +226,7 @@ class SceneManager(Manager):
             pass
 
         def hasSlotsGroup(self, slotsName):
-            return slotsName in self.slots.iterkeys()
+            return slotsName in self.slots
             pass
         pass
 
@@ -299,7 +299,7 @@ class SceneManager(Manager):
 
     @staticmethod
     def getStageStartScene(stageName):
-        if stageName not in SceneManager.s_stageScenes.iterkeys():
+        if stageName not in SceneManager.s_stageScenes:
             return None
             pass
 
