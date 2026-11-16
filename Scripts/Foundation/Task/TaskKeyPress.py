@@ -4,8 +4,8 @@ from Foundation.Task.Task import Task
 
 class TaskKeyPress(MixinObserver, Task):
 
-    def onParams(self, params):
-        super(TaskKeyPress, self).onParams(params)
+    def _onParams(self, params):
+        super(TaskKeyPress, self)._onParams(params)
         self.keys = params.get("Keys")
         self.add_keys = params.get('AdditionKeys', [])
         self.isDown = params.get("isDown", True)

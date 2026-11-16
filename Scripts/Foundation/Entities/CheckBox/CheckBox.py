@@ -42,7 +42,7 @@ class CheckBox(BaseEntity):
 
     def __onKeyEvent(self, event):
         if event.isDown != True:
-            return False
+            return
             pass
 
         KeyTag = CheckBox.s_keys[self.KeyTag]
@@ -51,7 +51,7 @@ class CheckBox(BaseEntity):
             self._changeState()
             pass
 
-        return False
+        return
         pass
 
     def _restorePolygon(self, value):

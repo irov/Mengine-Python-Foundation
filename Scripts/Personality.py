@@ -186,6 +186,10 @@ def onHandleTextEvent(event):
     Notification.notify(Notificator.onTextEvent, event)
     return False
 
+def onHandleMouseMove(event):
+    Notification.notify(Notificator.onMouseMove, event)
+    return False
+
 def onHandleMouseButtonEventBegin(event):
     Notification.notify(Notificator.onMouseButtonEventBegin, event)
     return False
