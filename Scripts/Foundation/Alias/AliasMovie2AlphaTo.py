@@ -43,8 +43,10 @@ class AliasMovie2AlphaTo(MixinMovie2, MixinTime, TaskAlias):
 
         entity_node = self.Movie2.getEntityNode()
         if self.time == 0.0 or entity_node.isActivate() is False:
-            if entity_node.isActivate() is False and _DEVELOPMENT is True:
-                Trace.log("Task", 0, "AliasMovie2AlphaTo: {!r} node is not active - alpha task interrupted".format(entity_node.getName()))
+            if _DEVELOPMENT is True:
+                if entity_node.isActivate() is False:
+                    if source.isSkiped() is False:
+                        Trace.log("Task", 0, "AliasMovie2AlphaTo: {!r} node is not active - alpha task interrupted".format(entity_node.getName()))
             if not self.b_layers_only:
                 self.Movie2.setParam("Alpha", self.alpha_to)
             self.__setLayersExtraOpacity(self.alpha_to)
@@ -59,3 +61,4 @@ class AliasMovie2AlphaTo(MixinMovie2, MixinTime, TaskAlias):
                 movie_en_alpha_to_param = dict(Node=entity_node, To=self.alpha_to, From=self.alpha_from, Time=self.time, Easing=self.easing)
                 parallel_movie.addTask("TaskNodeAlphaTo", **movie_en_alpha_to_param)
                 source.addFunction(self.Movie2.setAlpha, self.alpha_to)
+        pass

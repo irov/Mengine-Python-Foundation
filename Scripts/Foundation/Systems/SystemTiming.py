@@ -33,6 +33,7 @@ class SystemTiming(System):
         pass
 
     def _onStop(self):
+        self.__removeSchedule()
         pass
 
     #########################################################
@@ -45,11 +46,12 @@ class SystemTiming(System):
         Mengine.destroyNode(self.textNode)
         self.textNode = None
 
-        if Mengine.scheduleRemove(self._scheduleId) is False:
+        schedule_id = self._scheduleId
+        self._scheduleId = SystemTiming.SCHEDULE_NOT_INIT
+
+        if Mengine.scheduleRemove(schedule_id) is False:
             Trace.trace()
             pass
-
-        self._scheduleId = SystemTiming.SCHEDULE_NOT_INIT
         pass
 
     def cb_timing(self, *args):
@@ -67,10 +69,6 @@ class SystemTiming(System):
 
     def __disableTextNode(self, ID, isRemoved, somefunc):
         if self._scheduleId != ID:
-            return
-            pass
-
-        if isRemoved is False:
             return
             pass
 

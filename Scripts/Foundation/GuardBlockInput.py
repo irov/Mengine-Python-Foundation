@@ -12,6 +12,17 @@ class GuardBlockInput(object):
         pass
 
     @staticmethod
+    def isBlocked(GroupName="BlockInput", SocketName="Socket_Click"):
+        if GroupManager.hasObject(GroupName, SocketName) is False:
+            return False
+
+        socket = GroupManager.getObject(GroupName, SocketName)
+        if socket.isActive() is False:
+            return False
+
+        return socket.getEntity().getHotSpot().isActivate()
+
+    @staticmethod
     def enableBlockSocket(value, GroupName="BlockInput", SocketName="Socket_Click"):
         socket = GroupManager.getObject(GroupName, SocketName)
         socket.setInteractive(value)
