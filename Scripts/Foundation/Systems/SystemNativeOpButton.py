@@ -15,6 +15,7 @@ class SystemNativeOpButton(System):
         AdminPanelProvider.setProvider(self.PROVIDER_NAME, dict(
             isAvailable=Mengine.opButtonIsInitialized,
             addButton=self.addButton,
+            setTab=self.setTab,
             removeTab=self.removeTab,
         ))
         pass
@@ -33,6 +34,13 @@ class SystemNativeOpButton(System):
 
     def addButton(self, tab, identifier, title, callback, *args):
         if Mengine.opButtonAddButton(tab, identifier, title, callback, *args) is False:
+            return False
+
+        self._tabs.add(tab)
+        return True
+
+    def setTab(self, tab, layout, callback, *args):
+        if Mengine.opButtonSetTab(tab, layout, callback, *args) is False:
             return False
 
         self._tabs.add(tab)

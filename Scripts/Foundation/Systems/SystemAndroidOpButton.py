@@ -10,6 +10,7 @@ class SystemAndroidOpButton(SystemAndroid):
         super(SystemAndroidOpButton, self).__init__()
 
         self.__commands = {}
+        self.__panels = {}
         pass
 
     @staticmethod
@@ -20,10 +21,12 @@ class SystemAndroidOpButton(SystemAndroid):
         super(SystemAndroidOpButton, self)._onInitialize()
 
         self._addAndroidCallback(self.PLUGIN_NAME, "onOpButtonCommand", self.__onCommand)
+        self._addAndroidCallback(self.PLUGIN_NAME, "onOpButtonPanelCommand", self.__onPanelCommand)
 
         AdminPanelProvider.setProvider(self.PROVIDER_NAME, dict(
             isAvailable=SystemAndroidOpButton.isAvailable,
             addButton=self.addButton,
+            setTab=self.setTab,
             removeTab=self.removeTab,
         ))
         pass
@@ -32,6 +35,7 @@ class SystemAndroidOpButton(SystemAndroid):
         super(SystemAndroidOpButton, self)._onFinalize()
 
         tabs = set(tab for tab, identifier in self.__commands)
+        tabs.update(self.__panels)
         for tab in tabs:
             self.removeTab(tab)
             pass
@@ -48,14 +52,30 @@ class SystemAndroidOpButton(SystemAndroid):
         return Mengine.androidBooleanMethod(SystemAndroidOpButton.PLUGIN_NAME, "isInitialized")
 
     def addButton(self, tab, identifier, title, callback, *args):
-        self.__commands[(tab, identifier)] = (callback, args)
         Mengine.androidMethod(self.PLUGIN_NAME, "addCommandButton", tab, identifier, title)
+        self.__commands[(tab, identifier)] = (callback, args)
+        return True
+
+    def setTab(self, tab, layout, callback, *args):
+        Mengine.androidMethod(self.PLUGIN_NAME, "setCommandTab", tab, layout)
+        self.__commands.remove_if(lambda key, value: key[0] == tab)
+        self.__panels[tab] = (callback, args)
         return True
 
     def removeTab(self, tab):
         Mengine.androidMethod(self.PLUGIN_NAME, "removeCommandTab", tab)
 
         self.__commands.remove_if(lambda key, value: key[0] == tab)
+        self.__panels.pop(tab, None)
+        pass
+
+    def __onPanelCommand(self, tab, identifier, value):
+        panel = self.__panels.get(tab)
+        if panel is None:
+            return
+
+        callback, args = panel
+        callback(identifier, value, *args)
         pass
 
     def __onCommand(self, tab, identifier):
